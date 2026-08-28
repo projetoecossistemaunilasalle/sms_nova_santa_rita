@@ -25,6 +25,7 @@ point; do not add a marketing homepage or a portal shortcut into gameplay.
 
 - [Product truth](PRODUCT.md)
 - [Current architecture and route boundaries](docs/current-architecture.md)
+- [Visual demo plan](docs/demo-visual-plan.md)
 - [Design system](DESIGN.md)
 - [Runtime JSON Schemas](contracts/schemas)
 - [Database schema](prisma/schema.prisma)
