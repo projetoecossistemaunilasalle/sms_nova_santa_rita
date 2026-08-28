@@ -1,0 +1,8 @@
+.next
+node_modules
+src/generated
+package-lock.json
+contracts
+docs
+portal-v1-specification.md
+prisma/schema.prisma

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://missoes.example/schemas/attempt-create-response.v1.schema.json",
+  "title": "Create attempt response V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "attempt_token", "token_expires_at", "context"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "attempt_token": { "type": "string", "minLength": 32, "maxLength": 2048 },
+    "token_expires_at": { "type": "string", "format": "date-time" },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id_tentativa",
+        "id_atividade",
+        "id_mecanica",
+        "versao_atividade",
+        "id_casa",
+        "sequencia_tentativa",
+        "numero_tentativa_atividade",
+        "semente",
+        "dificuldade",
+        "parametros"
+      ],
+      "properties": {
+        "id_tentativa": { "$ref": "#/$defs/id" },
+        "id_atividade": { "$ref": "#/$defs/id" },
+        "id_mecanica": { "$ref": "#/$defs/key" },
+        "versao_atividade": { "$ref": "#/$defs/positiveInteger" },
+        "id_casa": { "type": "integer", "minimum": 0 },
+        "sequencia_tentativa": { "$ref": "#/$defs/positiveInteger" },
+        "numero_tentativa_atividade": { "$ref": "#/$defs/positiveInteger" },
+        "semente": { "type": "integer", "minimum": 0, "maximum": 2147483647 },
+        "dificuldade": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "parametros": { "type": "object" }
+      }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 100 },
+    "key": { "type": "string", "pattern": "^[a-z][a-z0-9_]{1,99}$" },
+    "positiveInteger": { "type": "integer", "minimum": 1 }
+  }
+}

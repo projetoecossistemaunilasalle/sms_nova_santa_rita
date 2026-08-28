@@ -1,0 +1,158 @@
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+import { isAuthDevBypassEnabled } from "@/server/config/env";
+import { runtimeEnvSchema } from "@/server/config/env";
+import { isProtectedPathname } from "@/server/auth/gateway";
+
+const validEnvironment = {
+  DATABASE_URL:
+    "postgresql://user:password@example.neon.tech/database?sslmode=require",
+  NEON_AUTH_BASE_URL:
+    "https://example.neonauth.us-east-2.aws.neon.tech/neondb/auth",
+  NEON_AUTH_COOKIE_SECRET: "a".repeat(32),
+  APPLICATION_SECRET: "b".repeat(32),
+};
+
+async function loadGatewayWithEnv(env: Record<string, string>) {
+  vi.resetModules();
+
+  const overrides: Record<string, string> = { ...validEnvironment, ...env };
+  const previous = new Map<string, string | undefined>();
+  for (const key of Object.keys(overrides)) {
+    previous.set(key, process.env[key]);
+    process.env[key] = overrides[key];
+  }
+
+  try {
+    const { getAuthGateway } = await import("@/server/auth/gateway");
+    // The gateway must be created while the environment is set: it reads and
+    // caches the runtime env at construction time.
+    return getAuthGateway();
+  } finally {
+    for (const [key, value] of previous) {
+      if (value === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = value;
+      }
+    }
+  }
+}
+
+afterEach(() => {
+  vi.resetModules();
+});
+
+describe("runtimeEnvSchema AUTH_DEV_BYPASS", () => {
+  it("defaults to disabled", () => {
+    const result = runtimeEnvSchema.parse(validEnvironment);
+
+    expect(result.AUTH_DEV_BYPASS).toBe(false);
+  });
+
+  it("parses string booleans", () => {
+    expect(
+      runtimeEnvSchema.parse({
+        ...validEnvironment,
+        AUTH_DEV_BYPASS: "true",
+      }).AUTH_DEV_BYPASS,
+    ).toBe(true);
+    expect(
+      runtimeEnvSchema.parse({
+        ...validEnvironment,
+        AUTH_DEV_BYPASS: "false",
+      }).AUTH_DEV_BYPASS,
+    ).toBe(false);
+  });
+
+  it("rejects unknown flag values", () => {
+    expect(() =>
+      runtimeEnvSchema.parse({
+        ...validEnvironment,
+        AUTH_DEV_BYPASS: "maybe",
+      }),
+    ).toThrow();
+  });
+
+  it("rejects enabling the bypass in production", () => {
+    expect(() =>
+      runtimeEnvSchema.parse({
+        ...validEnvironment,
+        NODE_ENV: "production",
+        AUTH_DEV_BYPASS: "true",
+      }),
+    ).toThrow(/AUTH_DEV_BYPASS/);
+  });
+
+  it("allows enabling the bypass outside production", () => {
+    expect(() =>
+      runtimeEnvSchema.parse({
+        ...validEnvironment,
+        NODE_ENV: "development",
+        AUTH_DEV_BYPASS: "true",
+      }),
+    ).not.toThrow();
+  });
+});
+
+describe("getAuthGateway", () => {
+  it("serves a synthetic dev session when the flag is enabled", async () => {
+    const gateway = await loadGatewayWithEnv({
+      AUTH_DEV_BYPASS: "true",
+    });
+
+    const session = await gateway.getSession();
+    expect(session?.actor.displayName).toBe("Adriana Martins");
+    expect(session?.actor.email).toBe("dev@localhost");
+    expect(session?.actor.authUserId).toBe("dev-bypass-local");
+    expect(session?.expiresAt.getTime()).toBeGreaterThan(Date.now());
+  });
+
+  it("yields no session when the flag is disabled", async () => {
+    const gateway = await loadGatewayWithEnv({
+      AUTH_DEV_BYPASS: "false",
+    });
+
+    await expect(gateway.getSession()).resolves.toBeNull();
+  });
+});
+
+describe("isProtectedPathname", () => {
+  it("matches the portal root and nested portal routes", () => {
+    expect(isProtectedPathname("/portal")).toBe(true);
+    expect(isProtectedPathname("/portal/atividades")).toBe(true);
+    expect(isProtectedPathname("/portal/atividades/nova")).toBe(true);
+  });
+
+  it("does not match other routes or lookalike prefixes", () => {
+    expect(isProtectedPathname("/")).toBe(false);
+    expect(isProtectedPathname("/entrar")).toBe(false);
+    expect(isProtectedPathname("/portal-backup")).toBe(false);
+    expect(isProtectedPathname("/atividade/token/jogar")).toBe(false);
+  });
+});
+
+describe("isAuthDevBypassEnabled", () => {
+  const flagKey = "AUTH_DEV_BYPASS";
+
+  afterEach(() => {
+    delete process.env[flagKey];
+  });
+
+  it("is disabled by default", () => {
+    expect(isAuthDevBypassEnabled()).toBe(false);
+  });
+
+  it("follows the flag value", () => {
+    process.env[flagKey] = "true";
+    expect(isAuthDevBypassEnabled()).toBe(true);
+
+    process.env[flagKey] = "false";
+    expect(isAuthDevBypassEnabled()).toBe(false);
+  });
+
+  it("fails closed on unparseable values", () => {
+    process.env[flagKey] = "maybe";
+    expect(isAuthDevBypassEnabled()).toBe(false);
+  });
+});

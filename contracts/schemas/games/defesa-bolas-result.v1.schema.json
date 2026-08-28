@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://missoes.example/schemas/games/defesa-bolas-result.v1.schema.json",
+  "title": "Defesa de bolas metrics V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "bolas_bloqueadas",
+    "bolas_perdidas",
+    "trocas_concluidas",
+    "pontuacao_local",
+    "acao_escolhida"
+  ],
+  "properties": {
+    "bolas_bloqueadas": { "type": "integer", "minimum": 0, "maximum": 100000 },
+    "bolas_perdidas": { "type": "integer", "minimum": 0, "maximum": 100000 },
+    "trocas_concluidas": { "type": "integer", "minimum": 0, "maximum": 100000 },
+    "pontuacao_local": { "type": "integer", "minimum": 0, "maximum": 100000000 },
+    "acao_escolhida": { "enum": ["individual", "grupo", "pedir_ajuda"] }
+  }
+}

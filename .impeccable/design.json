@@ -1,0 +1,702 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-24T12:00:00-03:00",
+  "title": "Design System: Missões do Caramelito",
+  "extensions": {
+    "colorMeta": {
+      "green": {
+        "role": "primary",
+        "displayName": "Verde Caminho",
+        "canonical": "#3d9b4e",
+        "tonalRamp": [
+          "oklch(18% 0.144 147.1)",
+          "oklch(29% 0.144 147.1)",
+          "oklch(40% 0.144 147.1)",
+          "oklch(51% 0.144 147.1)",
+          "oklch(62% 0.144 147.1)",
+          "oklch(73% 0.144 147.1)",
+          "oklch(84% 0.144 147.1)",
+          "oklch(95% 0.144 147.1)"
+        ]
+      },
+      "green-action": {
+        "role": "primary",
+        "displayName": "Verde Ação Acessível",
+        "canonical": "#2f8541",
+        "tonalRamp": [
+          "oklch(18% 0.117 146.7)",
+          "oklch(29% 0.117 146.7)",
+          "oklch(40% 0.117 146.7)",
+          "oklch(51% 0.117 146.7)",
+          "oklch(62% 0.117 146.7)",
+          "oklch(73% 0.117 146.7)",
+          "oklch(84% 0.117 146.7)",
+          "oklch(95% 0.117 146.7)"
+        ]
+      },
+      "green-dark": {
+        "role": "primary",
+        "displayName": "Verde Caminho Profundo",
+        "canonical": "#26713a",
+        "tonalRamp": [
+          "oklch(18% 0.113 149.0)",
+          "oklch(29% 0.113 149.0)",
+          "oklch(40% 0.113 149.0)",
+          "oklch(51% 0.113 149.0)",
+          "oklch(62% 0.113 149.0)",
+          "oklch(73% 0.113 149.0)",
+          "oklch(84% 0.113 149.0)",
+          "oklch(95% 0.113 149.0)"
+        ]
+      },
+      "green-light": {
+        "role": "primary",
+        "displayName": "Verde Caminho Suave",
+        "canonical": "#e8f5e9",
+        "tonalRamp": [
+          "oklch(18% 0.021 147.6)",
+          "oklch(29% 0.021 147.6)",
+          "oklch(40% 0.021 147.6)",
+          "oklch(51% 0.021 147.6)",
+          "oklch(62% 0.021 147.6)",
+          "oklch(73% 0.021 147.6)",
+          "oklch(84% 0.021 147.6)",
+          "oklch(95% 0.021 147.6)"
+        ]
+      },
+      "blue": {
+        "role": "secondary",
+        "displayName": "Azul Céu",
+        "canonical": "#2e6fb7",
+        "tonalRamp": [
+          "oklch(18% 0.131 253.4)",
+          "oklch(29% 0.131 253.4)",
+          "oklch(40% 0.131 253.4)",
+          "oklch(51% 0.131 253.4)",
+          "oklch(62% 0.131 253.4)",
+          "oklch(73% 0.131 253.4)",
+          "oklch(84% 0.131 253.4)",
+          "oklch(95% 0.131 253.4)"
+        ]
+      },
+      "blue-dark": {
+        "role": "secondary",
+        "displayName": "Azul Céu Profundo",
+        "canonical": "#1d4f8a",
+        "tonalRamp": [
+          "oklch(18% 0.111 254.8)",
+          "oklch(29% 0.111 254.8)",
+          "oklch(40% 0.111 254.8)",
+          "oklch(51% 0.111 254.8)",
+          "oklch(62% 0.111 254.8)",
+          "oklch(73% 0.111 254.8)",
+          "oklch(84% 0.111 254.8)",
+          "oklch(95% 0.111 254.8)"
+        ]
+      },
+      "blue-light": {
+        "role": "secondary",
+        "displayName": "Azul Céu Suave",
+        "canonical": "#e7f0fa",
+        "tonalRamp": [
+          "oklch(18% 0.017 250.8)",
+          "oklch(29% 0.017 250.8)",
+          "oklch(40% 0.017 250.8)",
+          "oklch(51% 0.017 250.8)",
+          "oklch(62% 0.017 250.8)",
+          "oklch(73% 0.017 250.8)",
+          "oklch(84% 0.017 250.8)",
+          "oklch(95% 0.017 250.8)"
+        ]
+      },
+      "yellow": {
+        "role": "secondary",
+        "displayName": "Amarelo Marco",
+        "canonical": "#f7c948",
+        "tonalRamp": [
+          "oklch(18% 0.150 88.7)",
+          "oklch(29% 0.150 88.7)",
+          "oklch(40% 0.150 88.7)",
+          "oklch(51% 0.150 88.7)",
+          "oklch(62% 0.150 88.7)",
+          "oklch(73% 0.150 88.7)",
+          "oklch(84% 0.150 88.7)",
+          "oklch(95% 0.150 88.7)"
+        ]
+      },
+      "yellow-dark": {
+        "role": "secondary",
+        "displayName": "Amarelo Marco Profundo",
+        "canonical": "#7a5c05",
+        "tonalRamp": [
+          "oklch(18% 0.099 85.9)",
+          "oklch(29% 0.099 85.9)",
+          "oklch(40% 0.099 85.9)",
+          "oklch(51% 0.099 85.9)",
+          "oklch(62% 0.099 85.9)",
+          "oklch(73% 0.099 85.9)",
+          "oklch(84% 0.099 85.9)",
+          "oklch(95% 0.099 85.9)"
+        ]
+      },
+      "yellow-light": {
+        "role": "secondary",
+        "displayName": "Amarelo Marco Suave",
+        "canonical": "#fdf3d7",
+        "tonalRamp": [
+          "oklch(18% 0.038 90.6)",
+          "oklch(29% 0.038 90.6)",
+          "oklch(40% 0.038 90.6)",
+          "oklch(51% 0.038 90.6)",
+          "oklch(62% 0.038 90.6)",
+          "oklch(73% 0.038 90.6)",
+          "oklch(84% 0.038 90.6)",
+          "oklch(95% 0.038 90.6)"
+        ]
+      },
+      "orange": {
+        "role": "secondary",
+        "displayName": "Laranja Percurso",
+        "canonical": "#f08c2e",
+        "tonalRamp": [
+          "oklch(18% 0.158 58.4)",
+          "oklch(29% 0.158 58.4)",
+          "oklch(40% 0.158 58.4)",
+          "oklch(51% 0.158 58.4)",
+          "oklch(62% 0.158 58.4)",
+          "oklch(73% 0.158 58.4)",
+          "oklch(84% 0.158 58.4)",
+          "oklch(95% 0.158 58.4)"
+        ]
+      },
+      "orange-dark": {
+        "role": "secondary",
+        "displayName": "Laranja Percurso Profundo",
+        "canonical": "#aa560b",
+        "tonalRamp": [
+          "oklch(18% 0.149 55.2)",
+          "oklch(29% 0.149 55.2)",
+          "oklch(40% 0.149 55.2)",
+          "oklch(51% 0.149 55.2)",
+          "oklch(62% 0.149 55.2)",
+          "oklch(73% 0.149 55.2)",
+          "oklch(84% 0.149 55.2)",
+          "oklch(95% 0.149 55.2)"
+        ]
+      },
+      "orange-light": {
+        "role": "secondary",
+        "displayName": "Laranja Percurso Suave",
+        "canonical": "#fdeede",
+        "tonalRamp": [
+          "oklch(18% 0.027 69.3)",
+          "oklch(29% 0.027 69.3)",
+          "oklch(40% 0.027 69.3)",
+          "oklch(51% 0.027 69.3)",
+          "oklch(62% 0.027 69.3)",
+          "oklch(73% 0.027 69.3)",
+          "oklch(84% 0.027 69.3)",
+          "oklch(95% 0.027 69.3)"
+        ]
+      },
+      "purple": {
+        "role": "tertiary",
+        "displayName": "Violeta Descoberta",
+        "canonical": "#8a63b8",
+        "tonalRamp": [
+          "oklch(18% 0.132 303.7)",
+          "oklch(29% 0.132 303.7)",
+          "oklch(40% 0.132 303.7)",
+          "oklch(51% 0.132 303.7)",
+          "oklch(62% 0.132 303.7)",
+          "oklch(73% 0.132 303.7)",
+          "oklch(84% 0.132 303.7)",
+          "oklch(95% 0.132 303.7)"
+        ]
+      },
+      "purple-dark": {
+        "role": "tertiary",
+        "displayName": "Violeta Descoberta Profundo",
+        "canonical": "#6a4794",
+        "tonalRamp": [
+          "oklch(18% 0.124 302.9)",
+          "oklch(29% 0.124 302.9)",
+          "oklch(40% 0.124 302.9)",
+          "oklch(51% 0.124 302.9)",
+          "oklch(62% 0.124 302.9)",
+          "oklch(73% 0.124 302.9)",
+          "oklch(84% 0.124 302.9)",
+          "oklch(95% 0.124 302.9)"
+        ]
+      },
+      "purple-light": {
+        "role": "tertiary",
+        "displayName": "Violeta Descoberta Suave",
+        "canonical": "#f1eaf9",
+        "tonalRamp": [
+          "oklch(18% 0.021 306.8)",
+          "oklch(29% 0.021 306.8)",
+          "oklch(40% 0.021 306.8)",
+          "oklch(51% 0.021 306.8)",
+          "oklch(62% 0.021 306.8)",
+          "oklch(73% 0.021 306.8)",
+          "oklch(84% 0.021 306.8)",
+          "oklch(95% 0.021 306.8)"
+        ]
+      },
+      "coral": {
+        "role": "tertiary",
+        "displayName": "Coral Atenção",
+        "canonical": "#e05b4b",
+        "tonalRamp": [
+          "oklch(18% 0.169 29.4)",
+          "oklch(29% 0.169 29.4)",
+          "oklch(40% 0.169 29.4)",
+          "oklch(51% 0.169 29.4)",
+          "oklch(62% 0.169 29.4)",
+          "oklch(73% 0.169 29.4)",
+          "oklch(84% 0.169 29.4)",
+          "oklch(95% 0.169 29.4)"
+        ]
+      },
+      "coral-dark": {
+        "role": "tertiary",
+        "displayName": "Coral Atenção Profundo",
+        "canonical": "#b23a2c",
+        "tonalRamp": [
+          "oklch(18% 0.158 29.9)",
+          "oklch(29% 0.158 29.9)",
+          "oklch(40% 0.158 29.9)",
+          "oklch(51% 0.158 29.9)",
+          "oklch(62% 0.158 29.9)",
+          "oklch(73% 0.158 29.9)",
+          "oklch(84% 0.158 29.9)",
+          "oklch(95% 0.158 29.9)"
+        ]
+      },
+      "coral-light": {
+        "role": "tertiary",
+        "displayName": "Coral Atenção Suave",
+        "canonical": "#fbe9e6",
+        "tonalRamp": [
+          "oklch(18% 0.020 28.9)",
+          "oklch(29% 0.020 28.9)",
+          "oklch(40% 0.020 28.9)",
+          "oklch(51% 0.020 28.9)",
+          "oklch(62% 0.020 28.9)",
+          "oklch(73% 0.020 28.9)",
+          "oklch(84% 0.020 28.9)",
+          "oklch(95% 0.020 28.9)"
+        ]
+      },
+      "aqua": {
+        "role": "tertiary",
+        "displayName": "Aqua Cuidado",
+        "canonical": "#2ba8a0",
+        "tonalRamp": [
+          "oklch(18% 0.105 188.5)",
+          "oklch(29% 0.105 188.5)",
+          "oklch(40% 0.105 188.5)",
+          "oklch(51% 0.105 188.5)",
+          "oklch(62% 0.105 188.5)",
+          "oklch(73% 0.105 188.5)",
+          "oklch(84% 0.105 188.5)",
+          "oklch(95% 0.105 188.5)"
+        ]
+      },
+      "aqua-dark": {
+        "role": "tertiary",
+        "displayName": "Aqua Cuidado Profundo",
+        "canonical": "#16706b",
+        "tonalRamp": [
+          "oklch(18% 0.085 188.6)",
+          "oklch(29% 0.085 188.6)",
+          "oklch(40% 0.085 188.6)",
+          "oklch(51% 0.085 188.6)",
+          "oklch(62% 0.085 188.6)",
+          "oklch(73% 0.085 188.6)",
+          "oklch(84% 0.085 188.6)",
+          "oklch(95% 0.085 188.6)"
+        ]
+      },
+      "aqua-light": {
+        "role": "tertiary",
+        "displayName": "Aqua Cuidado Suave",
+        "canonical": "#e2f4f3",
+        "tonalRamp": [
+          "oklch(18% 0.019 192.8)",
+          "oklch(29% 0.019 192.8)",
+          "oklch(40% 0.019 192.8)",
+          "oklch(51% 0.019 192.8)",
+          "oklch(62% 0.019 192.8)",
+          "oklch(73% 0.019 192.8)",
+          "oklch(84% 0.019 192.8)",
+          "oklch(95% 0.019 192.8)"
+        ]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Tinta Floresta",
+        "canonical": "#23402e",
+        "tonalRamp": [
+          "oklch(18% 0.047 155.7)",
+          "oklch(29% 0.047 155.7)",
+          "oklch(40% 0.047 155.7)",
+          "oklch(51% 0.047 155.7)",
+          "oklch(62% 0.047 155.7)",
+          "oklch(73% 0.047 155.7)",
+          "oklch(84% 0.047 155.7)",
+          "oklch(95% 0.047 155.7)"
+        ]
+      },
+      "text-muted": {
+        "role": "neutral",
+        "displayName": "Tinta Floresta Suave",
+        "canonical": "#4c6656",
+        "tonalRamp": [
+          "oklch(18% 0.040 157.5)",
+          "oklch(29% 0.040 157.5)",
+          "oklch(40% 0.040 157.5)",
+          "oklch(51% 0.040 157.5)",
+          "oklch(62% 0.040 157.5)",
+          "oklch(73% 0.040 157.5)",
+          "oklch(84% 0.040 157.5)",
+          "oklch(95% 0.040 157.5)"
+        ]
+      },
+      "text-on-dark-muted": {
+        "role": "neutral",
+        "displayName": "Tinta Clara sobre Floresta",
+        "canonical": "#9bb3a1",
+        "tonalRamp": [
+          "oklch(18% 0.031 153.8)",
+          "oklch(29% 0.031 153.8)",
+          "oklch(40% 0.031 153.8)",
+          "oklch(51% 0.031 153.8)",
+          "oklch(62% 0.031 153.8)",
+          "oklch(73% 0.031 153.8)",
+          "oklch(84% 0.031 153.8)",
+          "oklch(95% 0.031 153.8)"
+        ]
+      },
+      "background": {
+        "role": "neutral",
+        "displayName": "Papel Creme",
+        "canonical": "#fffdf6",
+        "tonalRamp": [
+          "oklch(18% 0.009 93.6)",
+          "oklch(29% 0.009 93.6)",
+          "oklch(40% 0.009 93.6)",
+          "oklch(51% 0.009 93.6)",
+          "oklch(62% 0.009 93.6)",
+          "oklch(73% 0.009 93.6)",
+          "oklch(84% 0.009 93.6)",
+          "oklch(95% 0.009 93.6)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Folha Branca",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(18% 0.000 89.9)",
+          "oklch(29% 0.000 89.9)",
+          "oklch(40% 0.000 89.9)",
+          "oklch(51% 0.000 89.9)",
+          "oklch(62% 0.000 89.9)",
+          "oklch(73% 0.000 89.9)",
+          "oklch(84% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Linha de Caderno",
+        "canonical": "#dce8d8",
+        "tonalRamp": [
+          "oklch(18% 0.025 137.8)",
+          "oklch(29% 0.025 137.8)",
+          "oklch(40% 0.025 137.8)",
+          "oklch(51% 0.025 137.8)",
+          "oklch(62% 0.025 137.8)",
+          "oklch(73% 0.025 137.8)",
+          "oklch(84% 0.025 137.8)",
+          "oklch(95% 0.025 137.8)"
+        ]
+      },
+      "sky": {
+        "role": "neutral",
+        "displayName": "Céu Suave",
+        "canonical": "#d9eff9",
+        "tonalRamp": [
+          "oklch(18% 0.027 226.8)",
+          "oklch(29% 0.027 226.8)",
+          "oklch(40% 0.027 226.8)",
+          "oklch(51% 0.027 226.8)",
+          "oklch(62% 0.027 226.8)",
+          "oklch(73% 0.027 226.8)",
+          "oklch(84% 0.027 226.8)",
+          "oklch(95% 0.027 226.8)"
+        ]
+      },
+      "grass": {
+        "role": "neutral",
+        "displayName": "Grama Suave",
+        "canonical": "#eef7e4",
+        "tonalRamp": [
+          "oklch(18% 0.027 127.7)",
+          "oklch(29% 0.027 127.7)",
+          "oklch(40% 0.027 127.7)",
+          "oklch(51% 0.027 127.7)",
+          "oklch(62% 0.027 127.7)",
+          "oklch(73% 0.027 127.7)",
+          "oklch(84% 0.027 127.7)",
+          "oklch(95% 0.027 127.7)"
+        ]
+      },
+      "yellow-shadow": {
+        "role": "accent",
+        "displayName": "Sombra Amarelo Marco",
+        "canonical": "#9f7b10"
+      },
+      "surface-sky": {
+        "role": "neutral",
+        "displayName": "Céu de Superfície",
+        "canonical": "#eef8fc"
+      },
+      "surface-game": {
+        "role": "neutral",
+        "displayName": "Fundo do Jogo",
+        "canonical": "#15271c"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display de Missão",
+        "purpose": "Heróis e estados públicos de grande impacto."
+      },
+      "headline": {
+        "displayName": "Título de Página",
+        "purpose": "Títulos principais do portal e detalhes."
+      },
+      "title": {
+        "displayName": "Título de Cartão",
+        "purpose": "Cartões, painéis e seções."
+      },
+      "body": {
+        "displayName": "Texto de Trabalho",
+        "purpose": "Descrições, instruções e conteúdo operacional."
+      },
+      "action": {
+        "displayName": "Ação",
+        "purpose": "Botões, links fortes e controles compactos."
+      },
+      "label": {
+        "displayName": "Etiqueta de Caderno",
+        "purpose": "Datas, categorias, grupos e marcadores curtos."
+      },
+      "status": {
+        "displayName": "Estado",
+        "purpose": "Chips e indicadores de disponibilidade."
+      }
+    },
+    "shadows": [
+      {
+        "name": "press-green",
+        "value": "0 5px 0 var(--green-dark)",
+        "purpose": "Pressão tátil de botões principais."
+      },
+      {
+        "name": "press-yellow",
+        "value": "0 4px 0 #9f7b10",
+        "purpose": "Pressão tátil da navegação ativa."
+      },
+      {
+        "name": "hover-low",
+        "value": "0 10px 24px rgb(35 64 46 / 7%)",
+        "purpose": "Resposta discreta de linhas e cartões operacionais."
+      },
+      {
+        "name": "catalogue",
+        "value": "0 14px 35px rgb(35 64 46 / 9%)",
+        "purpose": "Elevação de cartões navegáveis."
+      },
+      {
+        "name": "mission",
+        "value": "0 28px 65px rgb(35 64 46 / 16%)",
+        "purpose": "Arte principal e superfícies públicas excepcionais."
+      }
+    ],
+    "motion": [
+      {
+        "name": "control",
+        "value": "150ms ease",
+        "purpose": "Hover, pressão e deslocamento curto de controles."
+      },
+      {
+        "name": "card",
+        "value": "160ms ease",
+        "purpose": "Elevação e deslocamento de cartões navegáveis."
+      },
+      {
+        "name": "toast-in",
+        "value": "220ms ease",
+        "purpose": "Entrada vertical curta de confirmações."
+      },
+      {
+        "name": "mission-float",
+        "value": "4.2s ease-in-out infinite",
+        "purpose": "Movimento ambiente do marco público da missão."
+      },
+      {
+        "name": "route-spin",
+        "value": "35s linear infinite",
+        "purpose": "Rotação quase imperceptível de uma trilha decorativa."
+      }
+    ],
+    "breakpoints": [
+      { "name": "catalogue-compact", "value": "1120px" },
+      { "name": "portal-mobile-nav", "value": "900px" },
+      { "name": "marketing-stack", "value": "850px" },
+      { "name": "public-stack", "value": "760px" },
+      { "name": "portal-compact", "value": "680px" },
+      { "name": "marketing-compact", "value": "600px" },
+      { "name": "public-compact", "value": "520px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ação positiva principal com resposta tátil.",
+      "html": "<button class=\"ds-btn-primary\">Nova atividade</button>",
+      "css": ".ds-btn-primary { min-height:44px; padding:10px 17px; border:0; border-radius:12px; color:#fff; background:var(--green-action,#2f8541); box-shadow:0 5px 0 var(--green-dark,#26713a); font:850 .75rem/1.5 Bahnschrift,Candara,'Trebuchet MS',sans-serif; cursor:pointer; transition:transform 150ms ease,box-shadow 150ms ease,background 150ms ease; } .ds-btn-primary:hover { transform:translateY(-2px); } .ds-btn-primary:active { transform:translateY(2px); box-shadow:0 2px 0 var(--green-dark,#26713a); } .ds-btn-primary:focus-visible { outline:3px solid #fff; outline-offset:3px; box-shadow:0 0 0 6px var(--blue-dark,#1d4f8a); }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Ação alternativa com contorno azul e elevação mínima.",
+      "html": "<button class=\"ds-btn-secondary\">Compartilhar</button>",
+      "css": ".ds-btn-secondary { min-height:44px; padding:10px 17px; border:2px solid var(--blue,#2e6fb7); border-radius:12px; color:var(--blue-dark,#1d4f8a); background:var(--surface,#fff); box-shadow:0 4px 0 rgb(46 111 183 / 17%); font:850 .75rem/1.5 Bahnschrift,Candara,'Trebuchet MS',sans-serif; cursor:pointer; transition:transform 150ms ease,box-shadow 150ms ease; } .ds-btn-secondary:hover { transform:translateY(-2px); } .ds-btn-secondary:active { transform:translateY(1px); box-shadow:0 1px 0 rgb(46 111 183 / 17%); } .ds-btn-secondary:focus-visible { outline:3px solid #fff; outline-offset:3px; box-shadow:0 0 0 6px var(--blue-dark,#1d4f8a); }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Campo de trabalho claro, compacto e legível.",
+      "html": "<label class=\"ds-field\"><span>Título da atividade</span><input placeholder=\"Ex.: Hábitos saudáveis\"></label>",
+      "css": ".ds-field { display:grid; gap:7px; color:var(--text,#23402e); font:850 .75rem/1.5 Bahnschrift,Candara,'Trebuchet MS',sans-serif; } .ds-field input { min-height:44px; padding:9px 12px; border:1px solid var(--border,#dce8d8); border-radius:11px; color:var(--text,#23402e); background:var(--surface,#fff); font:400 1rem/1.5 Bahnschrift,Candara,'Trebuchet MS',sans-serif; } .ds-field input:focus-visible { outline:3px solid #fff; outline-offset:3px; box-shadow:0 0 0 6px var(--blue-dark,#1d4f8a); } .ds-field input::placeholder { color:var(--text-muted,#4c6656); }"
+    },
+    {
+      "name": "Positive Status",
+      "kind": "chip",
+      "refersTo": "status-positive",
+      "description": "Estado positivo em pílula tonal com ponto de leitura rápida.",
+      "html": "<span class=\"ds-status-positive\">Aberta</span>",
+      "css": ".ds-status-positive { display:inline-flex; width:fit-content; align-items:center; gap:6px; padding:5px 9px; border-radius:999px; color:var(--green-dark,#26713a); background:var(--green-light,#e8f5e9); font:850 .6875rem/1.5 Bahnschrift,Candara,'Trebuchet MS',sans-serif; white-space:nowrap; } .ds-status-positive::before { content:''; width:7px; height:7px; border-radius:50%; background:currentColor; }"
+    },
+    {
+      "name": "Active Navigation Item",
+      "kind": "nav",
+      "refersTo": "navigation-active",
+      "description": "Destino atual tratado como uma aba física no caminho lateral.",
+      "html": "<a class=\"ds-nav-active\" href=\"#\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M3 11.5 12 4l9 7.5v8a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/></svg><span>Visão geral</span></a>",
+      "css": ".ds-nav-active { display:flex; min-height:44px; align-items:center; gap:12px; padding:9px 12px 9px 22px; border-radius:12px; color:var(--text,#23402e); background:var(--yellow,#f7c948); box-shadow:0 4px 0 #9f7b10; font:800 .82rem/1.5 Bahnschrift,Candara,'Trebuchet MS',sans-serif; text-decoration:none; transition:transform 150ms ease; } .ds-nav-active svg { width:20px; height:20px; } .ds-nav-active:hover { transform:translateX(2px); } .ds-nav-active:focus-visible { outline:3px solid #fff; outline-offset:3px; box-shadow:0 0 0 6px var(--blue-dark,#1d4f8a); }"
+    },
+    {
+      "name": "Activity Row",
+      "kind": "card",
+      "refersTo": "card-standard",
+      "description": "Linha operacional que reúne identidade, estado e métricas sem parecer uma tabela rígida.",
+      "html": "<a class=\"ds-activity-row\" href=\"#\"><span class=\"ds-activity-mark\">●</span><span class=\"ds-activity-copy\"><strong>Água também é saúde</strong><small>Hoje, 08:14</small></span><span class=\"ds-activity-status\">Aberta</span><span class=\"ds-activity-metric\"><strong>42</strong><small>participações</small></span><span class=\"ds-activity-arrow\">›</span></a>",
+      "css": ".ds-activity-row { display:grid; grid-template-columns:auto minmax(160px,1fr) auto auto 44px; gap:16px; align-items:center; padding:14px 15px; border:1px solid var(--border,#dce8d8); border-radius:15px; color:var(--text,#23402e); background:var(--surface,#fff); text-decoration:none; font-family:Bahnschrift,Candara,'Trebuchet MS',sans-serif; transition:border 150ms ease,box-shadow 150ms ease,transform 150ms ease; } .ds-activity-row:hover { border-color:rgb(61 155 78 / 45%); box-shadow:0 10px 24px rgb(35 64 46 / 7%); transform:translateY(-1px); } .ds-activity-row:focus-visible { outline:3px solid #fff; outline-offset:3px; box-shadow:0 0 0 6px var(--blue-dark,#1d4f8a); } .ds-activity-mark { display:grid; width:44px; height:44px; place-items:center; border-radius:13px 13px 13px 5px; color:var(--aqua-dark,#16706b); background:var(--aqua-light,#e2f4f3); } .ds-activity-copy { display:grid; } .ds-activity-copy strong { font-size:.8125rem; } .ds-activity-copy small,.ds-activity-metric small { color:var(--text-muted,#4c6656); font-size:.6875rem; } .ds-activity-status { padding:5px 9px; border-radius:999px; color:var(--green-dark,#26713a); background:var(--green-light,#e8f5e9); font-size:.6875rem; font-weight:850; } .ds-activity-metric { display:grid; } .ds-activity-metric strong { font:700 .75rem/1.5 Consolas,'Courier New',monospace; } .ds-activity-arrow { display:grid; width:44px; height:44px; place-items:center; border:1px solid var(--border,#dce8d8); border-radius:10px; color:var(--text-muted,#4c6656); }"
+    },
+    {
+      "name": "Module Card",
+      "kind": "card",
+      "refersTo": "card-standard",
+      "description": "Cartão de catálogo com arte tonal e o canto marcado do sistema.",
+      "html": "<a class=\"ds-module-card\" href=\"#\"><span class=\"ds-module-art\">MC</span><h3>Alimentação adequada e saudável</h3><p>Escolhas alimentares, variedade e composição de refeições.</p><span class=\"ds-module-meta\">4 jogos · 12–16 min</span></a>",
+      "css": ".ds-module-card { display:flex; width:280px; min-height:290px; flex-direction:column; padding:22px; border:1px solid var(--border,#dce8d8); border-radius:21px 21px 21px 10px; color:var(--text,#23402e); background:var(--surface,#fff); text-decoration:none; font-family:Bahnschrift,Candara,'Trebuchet MS',sans-serif; transition:transform 150ms ease,box-shadow 150ms ease; } .ds-module-card:hover { box-shadow:0 14px 35px rgb(35 64 46 / 9%); transform:translateY(-3px); } .ds-module-card:focus-visible { outline:3px solid #fff; outline-offset:3px; box-shadow:0 0 0 6px var(--blue-dark,#1d4f8a); } .ds-module-art { display:grid; min-height:92px; place-items:center; border-radius:15px 15px 15px 5px; color:var(--orange-dark,#aa560b); background:var(--orange-light,#fdeede); font:900 1.5rem/1 'Arial Rounded MT Bold','Trebuchet MS',sans-serif; } .ds-module-card h3 { margin:18px 0 0; font:700 1.125rem/1.1 'Arial Rounded MT Bold','Trebuchet MS',sans-serif; } .ds-module-card p { margin:8px 0 18px; color:var(--text-muted,#4c6656); font-size:.875rem; } .ds-module-meta { margin-top:auto; color:var(--blue-dark,#1d4f8a); font-size:.6875rem; font-weight:850; }"
+    },
+    {
+      "name": "Mission Feature",
+      "kind": "custom",
+      "refersTo": "card-standard",
+      "description": "Destaque de missão que amplia a escala sem abandonar a disciplina do portal.",
+      "html": "<article class=\"ds-mission-feature\"><span class=\"ds-mission-label\">Aberta</span><h2>Hábitos saudáveis: a jornada continua</h2><p>Esta missão está ativa há 6 dias. Acompanhe como a turma está avançando.</p><button>Ver resultados</button></article>",
+      "css": ".ds-mission-feature { position:relative; width:min(560px,100%); min-height:250px; padding:38px; overflow:hidden; border:1px solid rgb(46 111 183 / 16%); border-radius:26px 26px 26px 10px; color:var(--text,#23402e); background:linear-gradient(125deg,var(--blue-light,#e7f0fa),var(--surface-sky,#eef8fc) 65%); font-family:Bahnschrift,Candara,'Trebuchet MS',sans-serif; } .ds-mission-feature::after { content:''; position:absolute; width:195px; height:195px; right:-55px; bottom:-58px; border:42px solid rgb(46 111 183 / 9%); border-radius:50%; } .ds-mission-label { position:relative; z-index:1; padding:5px 9px; border-radius:999px; color:var(--green-dark,#26713a); background:var(--green-light,#e8f5e9); font-size:.6875rem; font-weight:850; } .ds-mission-feature h2 { position:relative; z-index:1; max-width:18ch; margin:16px 0 0; font:700 2rem/1.04 'Arial Rounded MT Bold','Trebuchet MS',sans-serif; letter-spacing:-.04em; } .ds-mission-feature p { position:relative; z-index:1; max-width:480px; margin:10px 0 24px; color:var(--blue-dark,#1d4f8a); font-size:.875rem; } .ds-mission-feature button { position:relative; z-index:1; min-height:44px; padding:10px 17px; border:0; border-radius:12px; color:#fff; background:var(--green-action,#2f8541); box-shadow:0 5px 0 var(--green-dark,#26713a); font-weight:850; cursor:pointer; } .ds-mission-feature button:focus-visible { outline:3px solid #fff; outline-offset:3px; box-shadow:0 0 0 6px var(--blue-dark,#1d4f8a); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "O Caderno de Missões",
+    "overview": "O sistema parece um caderno de campo contemporâneo usado para preparar, conduzir e registrar missões de aprendizagem. A linguagem é acolhedora, lúdica, confiável e municipal: títulos arredondados, pequenos marcadores de percurso, superfícies de papel e cores que lembram anotações, sinais e materiais escolares.\n\nO lúdico aparece na geometria, na cor e nos detalhes de rota, não em excesso de ornamentos. As superfícies profissionais permanecem disciplinadas e escaneáveis; as experiências públicas podem ampliar ilustração, escala e movimento. O resultado deve ser amigável para alunos e profissionais sem parecer corporativo frio nem infantilizado.",
+    "keyCharacteristics": [
+      "Papel creme como campo principal, com branco reservado a cartões e controles.",
+      "Verde profundo como tinta estrutural e verde vivo para ação positiva.",
+      "Títulos arredondados, densos e expressivos; texto de trabalho compacto e legível.",
+      "Cantos assimétricos que lembram páginas marcadas e caminhos de missão.",
+      "Ações táteis, superfícies leves e pequenos sinais gráficos de percurso."
+    ],
+    "rules": [
+      {
+        "name": "Cor com Função",
+        "body": "Cada cor saturada deve orientar uma ação, estado, categoria ou ponto da jornada; nunca espalhar a paleta inteira apenas como decoração.",
+        "section": "colors"
+      },
+      {
+        "name": "Papel Primeiro",
+        "body": "Papel Creme é o campo padrão. Folha Branca cria recortes funcionais, não páginas inteiras sem contraste.",
+        "section": "colors"
+      },
+      {
+        "name": "Marco Tipográfico",
+        "body": "Cada região começa com uma etiqueta pequena e um título arredondado dominante; não crie três níveis de títulos com o mesmo peso visual.",
+        "section": "typography"
+      },
+      {
+        "name": "Mono com Propósito",
+        "body": "Use a fonte utilitária apenas para metadados e sinalização curta. Texto narrativo ou instrucional permanece na fonte de corpo.",
+        "section": "typography"
+      },
+      {
+        "name": "Tarefa Primeiro",
+        "body": "Quando a largura diminui, preserve ação, título, estado e próximo passo; remova métricas e contexto secundário antes de reduzir a legibilidade.",
+        "section": "layout"
+      },
+      {
+        "name": "Leve em Repouso",
+        "body": "Cartões de trabalho permanecem planos por padrão. Sombras amplas indicam destaque, interação ou uma experiência pública, nunca apenas separação básica.",
+        "section": "elevation"
+      },
+      {
+        "name": "Pressão é Ação",
+        "body": "Sombras sólidas e curtas pertencem a elementos clicáveis ou à marca; não as aplique em recipientes passivos.",
+        "section": "elevation"
+      },
+      {
+        "name": "Canto Marcado",
+        "body": "Em cartões de identidade ou missão, reduza apenas um canto. Não combine múltiplos cortes, bolhas aleatórias ou raios diferentes sem uma leitura clara de percurso.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "Do usar Papel Creme como atmosfera contínua e Folha Branca para recortes funcionais.",
+      "Do reservar Verde Caminho para ação positiva, disponibilidade e marca.",
+      "Do combinar etiqueta mono curta com um título arredondado claramente dominante.",
+      "Do usar um único canto marcado para dar assinatura a cartões e marcos de missão.",
+      "Do manter transições operacionais entre 150–170ms e desativar movimento não essencial quando `prefers-reduced-motion` estiver ativo.",
+      "Do adaptar o portal preservando tarefa, estado e próximo passo antes de métricas secundárias."
+    ],
+    "donts": [
+      "Don't transformar a paleta completa em decoração sem função semântica.",
+      "Don't usar sombras amplas em todos os cartões ou recipientes passivos.",
+      "Don't aplicar fonte mono em parágrafos, instruções longas ou conteúdo infantil.",
+      "Don't usar cantos genéricos idênticos em toda parte nem misturar vários cortes no mesmo componente.",
+      "Don't reduzir controles interativos abaixo de 42–44px nas experiências de trabalho e participação.",
+      "Don't tornar a interface corporativa fria ou infantilizada; o lúdico deve vir de percurso, forma e cor controlada."
+    ]
+  }
+}
