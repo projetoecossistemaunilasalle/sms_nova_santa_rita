@@ -5,18 +5,39 @@ import { PageHeader } from "@/components/portal/page-header";
 import styles from "@/components/portal/portal.module.css";
 import { StatusBadge } from "@/components/portal/status-badge";
 import { Icon } from "@/components/shared/icon";
-import { getDashboardData } from "@/server/services/portal-view-service";
+import {
+  getDashboardData,
+  listClassGroups,
+  listMaterials,
+} from "@/server/services/portal-view-service";
 
 export default function PortalDashboard() {
   const { featured, links, weeklyParticipation, activeLinkCount } =
     getDashboardData();
+  const classGroups = listClassGroups();
+  const materials = listMaterials();
+  const recentClassGroups = classGroups.slice(0, 3);
+  const recentMaterials = materials.slice(0, 3);
 
   return (
     <>
       <PageHeader
         eyebrow="Visão geral"
         title="Missões do Caramelito"
-        description="Gerencie links de acesso, acompanhe sessões e leia resultados agregados da experiência GameMaker."
+        description="Acompanhe turmas, links, materiais e resultados coletivos em uma única visão."
+        actions={
+          <div className={styles.dashboardShortcuts}>
+            <Link className={styles.buttonGhost} href="/portal/turmas">
+              <Icon name="school" /> Nova turma
+            </Link>
+            <Link className={styles.buttonGhost} href="/portal/atividades/nova">
+              <Icon name="link" /> Novo link
+            </Link>
+            <Link className={styles.button} href="/portal/materiais/novo">
+              <Icon name="book" /> Novo material
+            </Link>
+          </div>
+        }
       />
 
       <section className={styles.dashboardGrid} aria-label="Resumo do portal">
@@ -69,7 +90,15 @@ export default function PortalDashboard() {
           <small>Por turma ou grupo</small>
         </article>
         <article className={styles.summaryCard}>
-          <p>Sessões totais</p>
+          <p>Turmas ativas</p>
+          <strong>
+            {classGroups.filter((classGroup) => classGroup.status === "Ativa")
+              .length || "—"}
+          </strong>
+          <small>Grupos acompanhados</small>
+        </article>
+        <article className={styles.summaryCard}>
+          <p>Sessões no período</p>
           <strong>168</strong>
           <small>Nos links publicados</small>
         </article>
@@ -79,11 +108,76 @@ export default function PortalDashboard() {
           <small>Leitura coletiva</small>
         </article>
         <article className={styles.summaryCard}>
-          <p>Jogo conectado</p>
-          <strong>1</strong>
-          <small>Experiência GameMaker</small>
+          <p>Materiais publicados</p>
+          <strong>
+            {materials.filter((material) => material.status === "Publicado")
+              .length || "—"}
+          </strong>
+          <small>Conteúdos de apoio</small>
         </article>
       </section>
+
+      {recentClassGroups.length > 0 && (
+        <div className={styles.dashboardContextGrid}>
+          <section>
+            <div className={styles.sectionHeader}>
+              <h2>Turmas com atividade recente</h2>
+              <Link className={styles.textLink} href="/portal/turmas">
+                Ver turmas
+              </Link>
+            </div>
+            <div className={styles.dashboardCompactList}>
+              {recentClassGroups.map((classGroup) => (
+                <Link
+                  href={`/portal/turmas/${classGroup.id}`}
+                  key={classGroup.id}
+                >
+                  <span className={styles.directoryIcon}>
+                    <Icon name="school" />
+                  </span>
+                  <span>
+                    <strong>{classGroup.name}</strong>
+                    <small>{classGroup.organization}</small>
+                  </span>
+                  <span>
+                    <strong>{classGroup.sessions}</strong>
+                    <small>sessões</small>
+                  </span>
+                  <Icon name="chevron" />
+                </Link>
+              ))}
+            </div>
+          </section>
+          <section>
+            <div className={styles.sectionHeader}>
+              <h2>Materiais recentes</h2>
+              <Link className={styles.textLink} href="/portal/materiais">
+                Ver materiais
+              </Link>
+            </div>
+            <div className={styles.dashboardCompactList}>
+              {recentMaterials.map((material) => (
+                <Link
+                  href={`/portal/materiais/${material.id}/editar`}
+                  key={material.id}
+                >
+                  <span className={styles.directoryIcon}>
+                    <Icon name="book" />
+                  </span>
+                  <span>
+                    <strong>{material.title}</strong>
+                    <small>
+                      {material.type} · {material.audience}
+                    </small>
+                  </span>
+                  <StatusBadge status={material.status} />
+                  <Icon name="chevron" />
+                </Link>
+              ))}
+            </div>
+          </section>
+        </div>
+      )}
 
       <div className={styles.sectionHeader}>
         <h2>Links de acesso recentes</h2>

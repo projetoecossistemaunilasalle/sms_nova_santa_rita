@@ -10,9 +10,6 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-// The portal renders per request because the session is request-scoped.
-export const dynamic = "force-dynamic";
-
 export default async function ProfessionalLayout({
   children,
 }: {

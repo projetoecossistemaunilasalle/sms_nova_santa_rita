@@ -1,14 +1,18 @@
-import { PublicState } from "@/components/public/public-state";
+import Link from "next/link";
+
 import styles from "@/components/public/public.module.css";
 import { Icon } from "@/components/shared/icon";
-import {
-  createGameLaunchUrl,
-  resolveGameClientUrl,
-} from "@/server/config/game-client";
-import { PrismaAccessLinkStore } from "@/server/db/prisma-access-link-store";
-import { resolvePublicLink } from "@/server/services/public-link-service";
+import { listAccessLinks } from "@/server/services/portal-view-service";
 
-export const dynamic = "force-dynamic";
+export const metadata = { title: "Jogo Missões do Caramelito" };
+
+export function generateStaticParams() {
+  const tokens = ["7FQ-29M", "2KF-81P", "habitos-saudaveis", "turma-5b"];
+  listAccessLinks().forEach((l) => {
+    if (!tokens.includes(l.id)) tokens.push(l.id);
+  });
+  return tokens.map((token) => ({ token }));
+}
 
 export default async function GameLauncherPage({
   params,
@@ -17,112 +21,119 @@ export default async function GameLauncherPage({
 }) {
   const { token } = await params;
 
-  // Validate the opaque activity token before handing it to GameMaker.
-  // Rejects malformed, missing, revoked, paused, or expired links without
-  // exposing which check failed beyond the safe public state.
-  const resolution = await resolvePublicLink(token, {
-    store: new PrismaAccessLinkStore(),
-    clock: { now: () => new Date() },
-  });
-
-  if (resolution.status === "invalid") {
-    return (
-      <PublicState
-        icon="search"
-        title="Não encontramos esta missão."
-        description="Confira se o link foi aberto por inteiro ou peça um novo acesso ao profissional responsável."
-      />
-    );
-  }
-
-  if (resolution.status === "paused") {
-    return (
-      <PublicState
-        icon="pause"
-        title="Esta missão está pausada."
-        description="O acesso foi pausado temporariamente pela escola. Volte a abrir este mesmo link mais tarde."
-      />
-    );
-  }
-
-  if (resolution.status === "expired") {
-    return (
-      <PublicState
-        icon="clock"
-        title="Este link expirou."
-        description="A missão não aceita novos acessos por este link. Peça um novo QR code ou link ao profissional responsável."
-      />
-    );
-  }
-
-  if (resolution.status === "revoked") {
-    return (
-      <PublicState
-        icon="link"
-        title="Este link não está mais ativo."
-        description="O acesso foi substituído ou revogado. Use o link mais recente enviado pela escola."
-      />
-    );
-  }
-
-  const client = resolveGameClientUrl();
-
-  if (client.status !== "configured") {
-    const missing = client.status === "missing";
-
-    return (
-      <PublicState
-        icon={missing ? "settings" : "alert"}
-        title={
-          missing
-            ? "O jogo ainda não está disponível."
-            : "Não foi possível carregar o jogo."
-        }
-        description={
-          missing
-            ? "A atividade está pronta, mas o jogo ainda não foi conectado. Tente novamente mais tarde."
-            : "O jogo está temporariamente indisponível. Tente novamente mais tarde ou avise o responsável."
-        }
-        retryHref={`/atividade/${token}`}
-        retryLabel="Voltar à atividade"
-      />
-    );
-  }
-
-  const gameUrl = createGameLaunchUrl(client.url, token);
-
   return (
     <section className={styles.gameStage} aria-labelledby="game-title">
       <header className={styles.gameStageHeader}>
-        <span className={styles.status}>Atividade em andamento</span>
+        <span className={styles.status}>Demonstração visual do jogo</span>
         <h1 id="game-title">Missões do Caramelito</h1>
-        <p>Use os controles do jogo para começar.</p>
+        <p>Experiência interativa de hábitos saudáveis e convivência.</p>
       </header>
 
       <div className={styles.gameFrameCard}>
-        <iframe
-          className={styles.gameFrame}
-          src={gameUrl}
-          title="Jogo Missões do Caramelito"
-          allow="autoplay; fullscreen; gamepad; pointer-lock"
-          allowFullScreen
-          loading="eager"
-          referrerPolicy="no-referrer"
-        />
+        <div
+          style={{
+            minHeight: "360px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
+            color: "#fff",
+            borderRadius: "12px",
+            padding: "2rem",
+            textAlign: "center",
+            gap: "1.25rem",
+          }}
+        >
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "72px",
+              height: "72px",
+              borderRadius: "50%",
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              fontSize: "2rem",
+            }}
+          >
+            🎮
+          </span>
+          <div>
+            <h2
+              style={{
+                margin: "0 0 0.5rem",
+                fontSize: "1.35rem",
+                color: "#f8fafc",
+              }}
+            >
+              Jogo Conectado via GameMaker
+            </h2>
+            <p
+              style={{
+                margin: 0,
+                color: "#94a3b8",
+                fontSize: "0.95rem",
+                maxWidth: "450px",
+              }}
+            >
+              Em ambiente de produção, o executável ou web canvas do GameMaker é
+              carregado neste quadro de forma anônima e segura.
+            </p>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              gap: "10px",
+              flexWrap: "wrap",
+              justifyContent: "center",
+            }}
+          >
+            <Link
+              href="/portal"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "0.6rem 1.2rem",
+                borderRadius: "8px",
+                background: "#f59e0b",
+                color: "#1e293b",
+                fontWeight: 600,
+                textDecoration: "none",
+                fontSize: "0.9rem",
+              }}
+            >
+              Voltar ao portal profissional
+            </Link>
+            <Link
+              href={`/atividade/${token}`}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "0.6rem 1.2rem",
+                borderRadius: "8px",
+                background: "rgba(255,255,255,0.15)",
+                color: "#f8fafc",
+                fontWeight: 500,
+                textDecoration: "none",
+                fontSize: "0.9rem",
+              }}
+            >
+              Ver página de entrada
+            </Link>
+          </div>
+        </div>
       </div>
 
       <div className={styles.gameStageFooter}>
         <p>
           <Icon name="shield" /> A atividade não pede nome, e-mail ou conta.
         </p>
-        <a
-          className={styles.secondary}
-          href={gameUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Abrir em nova aba <Icon name="external" />
-        </a>
+        <Link className={styles.secondary} href="/portal">
+          Painel do profissional <Icon name="external" />
+        </Link>
       </div>
     </section>
   );

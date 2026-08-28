@@ -1,18 +1,17 @@
 import type { NextConfig } from "next";
 
+const isProd = process.env.NODE_ENV === "production";
+const basePath =
+  process.env.NEXT_PUBLIC_BASE_PATH ?? (isProd ? "/SMS_Portal" : "");
+
 const nextConfig: NextConfig = {
-  output: "standalone",
+  output: "export",
+  basePath: basePath || undefined,
+  trailingSlash: true,
   poweredByHeader: false,
   reactStrictMode: true,
-  serverExternalPackages: ["pino"],
-  async redirects() {
-    return [
-      {
-        source: "/",
-        destination: "/entrar",
-        permanent: false,
-      },
-    ];
+  images: {
+    unoptimized: true,
   },
 };
 

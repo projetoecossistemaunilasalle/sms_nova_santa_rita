@@ -1,17 +1,22 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 
 import styles from "@/components/marketing/marketing.module.css";
-import { requestPasswordResetAction } from "./actions";
-
-export const metadata = { title: "Recuperar acesso" };
-
-export const dynamic = "force-dynamic";
 
 export default function RecoverAccessPage() {
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
+
   return (
     <main className={styles.authPage}>
       <section className={styles.authArt}>
-        <Link className={styles.brand} href="/">
+        <Link className={styles.brand} href="/portal">
           <span className={styles.brandMark}>MC</span>
           <span className={styles.brandCopy}>
             <strong>Missões do Caramelito</strong>
@@ -38,24 +43,53 @@ export default function RecoverAccessPage() {
           <p>
             Informe seu e-mail profissional para receber as próximas instruções.
           </p>
-          <form className={styles.form} action={requestPasswordResetAction}>
-            <label className={styles.field}>
-              E-mail profissional
-              <input
-                type="email"
-                name="email"
-                autoComplete="email"
-                placeholder="nome@novasantarita.rs.gov.br"
-                required
-              />
-            </label>
-            <button className={styles.submit} type="submit">
-              Enviar instruções
-            </button>
-          </form>
+
+          {submitted ? (
+            <div style={{ marginTop: "1rem" }}>
+              <p
+                role="status"
+                style={{
+                  margin: "0 0 16px",
+                  color: "var(--green-dark, #26713a)",
+                  fontWeight: 600,
+                  fontSize: "0.95rem",
+                }}
+              >
+                Demonstração: se o e-mail existisse, as instruções seriam
+                enviadas.
+              </p>
+              <Link
+                className={styles.submit}
+                href="/entrar"
+                style={{
+                  display: "inline-block",
+                  textAlign: "center",
+                  textDecoration: "none",
+                }}
+              >
+                Voltar para o início
+              </Link>
+            </div>
+          ) : (
+            <form className={styles.form} onSubmit={handleSubmit}>
+              <label className={styles.field}>
+                E-mail profissional
+                <input
+                  type="email"
+                  name="email"
+                  autoComplete="email"
+                  placeholder="profissional@exemplo.gov.br"
+                  required
+                />
+              </label>
+              <button className={styles.submit} type="submit">
+                Enviar instruções
+              </button>
+            </form>
+          )}
+
           <p className={styles.authHelp}>
-            Se o endereço estiver cadastrado, a mensagem será enviada. O portal
-            não confirma publicamente se uma conta existe.
+            <Link href="/entrar">← Voltar para o login</Link>
           </p>
         </div>
       </section>

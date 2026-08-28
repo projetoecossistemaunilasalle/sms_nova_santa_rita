@@ -1,48 +1,33 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-
+import { useState } from "react";
 import type { ActivityStatus } from "@/server/services/portal-view-service";
 import { Icon } from "@/components/shared/icon";
-import {
-  pauseAccessLinkAction,
-  resumeAccessLinkAction,
-  revokeAccessLinkAction,
-  rotateAccessLinkAction,
-  type AccessLifecycleActionResult,
-} from "@/app/(professional)/portal/atividades/actions";
-
 import { StatusBadge } from "./status-badge";
 import styles from "./portal.module.css";
 
-/**
- * Inline panel shown after a successful rotation. The raw token exists only
- * in this client state — it must never be placed in an href or URL.
- */
 type RotateFeedback =
   { kind: "none" } | { kind: "token"; url: string; token: string };
 
-/** Toast tone drives the icon: "check" for success, "alert" for errors. */
 type Toast = { tone: "success" | "error"; text: string } | null;
 
 export function ActivityControls({
   initialStatus,
-  linkId,
 }: {
   initialStatus: ActivityStatus;
   linkId?: string;
 }) {
-  const router = useRouter();
   const [status, setStatus] = useState(initialStatus);
   const [toast, setToast] = useState<Toast>(null);
   const [rotateFeedback, setRotateFeedback] = useState<RotateFeedback>({
     kind: "none",
   });
-  const [pending, startTransition] = useTransition();
 
   function showToast(text: string, tone: "success" | "error" = "success") {
     setToast({ tone, text });
+    setTimeout(() => {
+      setToast(null);
+    }, 4000);
   }
 
   function updateStatus(next: ActivityStatus, feedback: string) {
@@ -50,73 +35,14 @@ export function ActivityControls({
     showToast(feedback);
   }
 
-  /**
-   * Runs a throw-free lifecycle action (pause/resume/revoke) and reflects
-   * the returned state locally; errors arrive pre-localized in pt-BR.
-   */
-  function handleLifecycle(
-    action: (formData: FormData) => Promise<AccessLifecycleActionResult>,
-    options: { reason?: string; next: ActivityStatus; feedback: string },
-  ) {
-    if (!linkId) {
-      updateStatus(options.next, options.feedback);
-      return;
-    }
-    const formData = new FormData();
-    formData.set("linkId", linkId);
-    if (options.reason) formData.set("reason", options.reason);
-    startTransition(async () => {
-      try {
-        const result = await action(formData);
-        if (result.status === "success") {
-          // A pause/resume/revoke invalidates any previously rotated token
-          // panel (the token itself may be gone or no longer shareable).
-          setRotateFeedback({ kind: "none" });
-          updateStatus(options.next, options.feedback);
-          router.refresh();
-        } else {
-          showToast(result.message, "error");
-        }
-      } catch {
-        showToast(
-          "Não foi possível atualizar o link. Tente novamente em instantes.",
-          "error",
-        );
-      }
-    });
-  }
-
   function handleRotate() {
-    if (!linkId) {
-      setRotateFeedback({ kind: "none" });
-      updateStatus("Aberta", "Novo link gerado.");
-      return;
-    }
-    const formData = new FormData();
-    formData.set("linkId", linkId);
-    startTransition(async () => {
-      try {
-        // Rotation returns the new one-time token inside its result value;
-        // it is displayed once below and never written to a URL.
-        const result = await rotateAccessLinkAction(formData);
-        if (result.status === "success") {
-          setStatus("Aberta");
-          showToast("Novo link gerado.");
-          setRotateFeedback({
-            kind: "token",
-            url: `${window.location.origin}/atividade/${result.token}`,
-            token: result.token,
-          });
-          router.refresh();
-        } else {
-          showToast(result.message, "error");
-        }
-      } catch {
-        showToast(
-          "Não foi possível rotacionar o link. Tente novamente em instantes.",
-          "error",
-        );
-      }
+    const newToken = `MC-${Math.random().toString(36).substring(2, 6).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+    setStatus("Aberta");
+    showToast("Novo link gerado.");
+    setRotateFeedback({
+      kind: "token",
+      url: `https://niciniv.github.io/SMS_Portal/atividade/${newToken}`,
+      token: newToken,
     });
   }
 
@@ -143,13 +69,11 @@ export function ActivityControls({
           <button
             className={styles.buttonGhost}
             type="button"
-            disabled={pending}
             onClick={() =>
-              handleLifecycle(pauseAccessLinkAction, {
-                reason: "Link pausado pelo profissional",
-                next: "Pausada",
-                feedback: "Link pausado. O mesmo link pode ser reaberto.",
-              })
+              updateStatus(
+                "Pausada",
+                "Demonstração: link pausado. O mesmo link pode ser reaberto.",
+              )
             }
           >
             <Icon name="pause" /> Pausar
@@ -159,13 +83,11 @@ export function ActivityControls({
           <button
             className={styles.button}
             type="button"
-            disabled={pending}
             onClick={() =>
-              handleLifecycle(resumeAccessLinkAction, {
-                next: "Aberta",
-                feedback:
-                  "Link reaberto. O mesmo link volta a funcionar — não é preciso enviar um novo link à turma.",
-              })
+              updateStatus(
+                "Aberta",
+                "Demonstração: link reaberto. O mesmo link volta a funcionar.",
+              )
             }
           >
             <Icon name="play" /> Reabrir
@@ -175,14 +97,11 @@ export function ActivityControls({
           <button
             className={styles.buttonDanger}
             type="button"
-            disabled={pending}
             onClick={() =>
-              handleLifecycle(revokeAccessLinkAction, {
-                reason: "Link encerrado pelo profissional",
-                next: "Encerrada",
-                feedback:
-                  "Link encerrado. Os resultados continuam disponíveis.",
-              })
+              updateStatus(
+                "Encerrada",
+                "Demonstração: link encerrado. Os resultados continuam disponíveis.",
+              )
             }
           >
             <Icon name="archive" /> Encerrar
@@ -192,7 +111,6 @@ export function ActivityControls({
           <button
             className={styles.buttonSecondary}
             type="button"
-            disabled={pending}
             onClick={handleRotate}
           >
             <Icon name="history" /> Gerar novo link

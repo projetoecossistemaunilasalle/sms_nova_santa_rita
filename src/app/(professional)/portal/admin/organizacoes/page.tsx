@@ -1,42 +1,15 @@
-import { redirect } from "next/navigation";
+import Link from "next/link";
 
 import { PageHeader } from "@/components/portal/page-header";
+import { DemoActionButton } from "@/components/portal/demo-action-button";
 import styles from "@/components/portal/portal.module.css";
 import { StatusBadge } from "@/components/portal/status-badge";
 import { Icon } from "@/components/shared/icon";
-import { getAuthGateway } from "@/server/auth/gateway";
-import { Capability } from "@/generated/prisma/enums";
-import { isAuthDevBypassEnabled } from "@/server/config/env";
-import { getAuthorizationService } from "@/server/services/service-container";
 import { organizations } from "@/server/services/portal-view-service";
 
 export const metadata = { title: "Organizações" };
 
-export default async function OrganizationsPage() {
-  const session = await getAuthGateway().getSession();
-  if (!session) redirect("/entrar");
-
-  // P1-7 FIX: resolve effective scope; org-scoped grants must not see platform-wide fixture unfiltered.
-  // Organizations are scoped: platform sees all, org-scoped sees filtered subset, denied redirects.
-  // Stricter alternative for platform-wide admin screens: require platform grant
-  // (`if (scope.kind !== "platform") redirect(...)`).
-  let visibleOrganizations: (typeof organizations)[number][] = [
-    ...organizations,
-  ];
-  if (!isAuthDevBypassEnabled()) {
-    const scope = await getAuthorizationService().resolveEffectiveScope(
-      session.actor.profileId,
-      Capability.ORGANIZATION_MANAGE,
-    );
-    if (scope.kind === "denied") redirect("/portal/sem-acesso");
-    if (scope.kind === "organizations") {
-      visibleOrganizations = organizations.filter((organization) =>
-        scope.organizationIds.includes(organization.id),
-      );
-      // To enforce platform-only for this screen, replace filter with:
-      // redirect("/portal/sem-acesso");
-    }
-  }
+export default function OrganizationsPage() {
   return (
     <>
       <PageHeader
@@ -44,40 +17,51 @@ export default async function OrganizationsPage() {
         title="Organizações"
         description="Gerencie as unidades usadas para limitar links, resultados e permissões profissionais."
         actions={
-          <button className={styles.button} type="button">
+          <DemoActionButton
+            className={styles.button}
+            message="Organização preparada apenas nesta demonstração. Nada foi gravado no servidor."
+          >
             <Icon name="plus" /> Nova organização
-          </button>
+          </DemoActionButton>
         }
       />
       <div className={styles.adminTable}>
-        <div className={styles.tableHeader}>
+        <div className={`${styles.tableHeader} ${styles.organizationTableRow}`}>
           <span>Organização</span>
           <span>Tipo</span>
           <span>Estado</span>
-          <span>Membros</span>
+          <span>Turmas</span>
+          <span>Links ativos</span>
           <span />
         </div>
-        {visibleOrganizations.map((organization) => (
-          <div className={styles.tableRow} key={organization.name}>
-            <span className={styles.tableIdentity}>
+        {organizations.map((organization) => (
+          <div
+            className={`${styles.tableRow} ${styles.organizationTableRow}`}
+            key={organization.name}
+          >
+            <Link
+              className={styles.tableIdentity}
+              href={`/portal/admin/organizacoes/${organization.id}`}
+            >
               <i className={styles.tableIdentityIcon}>
                 {organization.initials}
               </i>
               <span>
                 <strong>{organization.name}</strong>
-                <small>Nova Santa Rita</small>
+                <small>Município Modelo</small>
               </span>
-            </span>
+            </Link>
             <span>{organization.type}</span>
             <StatusBadge status={organization.status} />
-            <span>{organization.members}</span>
-            <button
+            <span>{organization.classGroups}</span>
+            <span>{organization.activeLinks}</span>
+            <Link
               className={styles.iconButton}
-              type="button"
-              aria-label={`Gerenciar ${organization.name}`}
+              href={`/portal/admin/organizacoes/${organization.id}`}
+              aria-label={`Abrir ${organization.name}`}
             >
-              <Icon name="more" />
-            </button>
+              <Icon name="chevron" />
+            </Link>
           </div>
         ))}
       </div>

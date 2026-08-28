@@ -7,13 +7,18 @@ type Status =
   | "Ativa"
   | "Ativo"
   | "Arquivado"
+  | "Publicado"
+  | "Inativa"
   | "Convite pendente"
   | "Lançamentos bloqueados"
   | "Novas atividades bloqueadas";
 
 export function StatusBadge({ status }: { status: Status }) {
   const tone =
-    status === "Aberta" || status === "Ativa" || status === "Ativo"
+    status === "Aberta" ||
+    status === "Ativa" ||
+    status === "Ativo" ||
+    status === "Publicado"
       ? styles.statusPositive
       : status === "Rascunho" || status === "Convite pendente"
         ? styles.statusWarning

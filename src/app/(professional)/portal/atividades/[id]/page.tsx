@@ -1,21 +1,23 @@
 import Link from "next/link";
-import { headers } from "next/headers";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 import { ActivityControls } from "@/components/portal/activity-controls";
 import styles from "@/components/portal/portal.module.css";
 import { StatusBadge } from "@/components/portal/status-badge";
 import { Icon } from "@/components/shared/icon";
-import { getAuthGateway } from "@/server/auth/gateway";
-import { getPublicBaseUrl } from "@/server/http/base-url";
-import { HttpError } from "@/server/http/errors";
-import { logger } from "@/server/observability/logger";
-import type { AccessLinkRecord } from "@/server/services/access-link-service";
+import {
+  getDevBypassAccessLink,
+  listAccessLinks,
+} from "@/server/services/portal-view-service";
 import { resolveLinkStatus } from "@/server/services/link-status";
-import { isAuthDevBypassEnabled } from "@/server/config/env";
-import { getDevBypassAccessLink } from "@/server/services/portal-view-service";
 
-export const dynamic = "force-dynamic";
+export const metadata = { title: "Detalhes do link" };
+
+export function generateStaticParams() {
+  return listAccessLinks().map((link) => ({
+    id: link.id,
+  }));
+}
 
 export default async function ActivityDetailPage({
   params,
@@ -23,54 +25,12 @@ export default async function ActivityDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const dbLink = getDevBypassAccessLink(id);
 
-  const session = await getAuthGateway().getSession();
-  if (!session) redirect("/entrar");
-
-  let dbLink: AccessLinkRecord;
-  if (isAuthDevBypassEnabled()) {
-    const fixtureLink = getDevBypassAccessLink(id);
-    if (!fixtureLink) notFound();
-    dbLink = fixtureLink;
-  } else {
-    try {
-      const { getAccessLinkService } =
-        await import("@/server/services/service-container");
-      dbLink = await getAccessLinkService().getAccessLink(session.actor, id);
-    } catch (error) {
-      if (error instanceof HttpError) {
-        if (error.status === 404 || error.code === "RESOURCE_NOT_FOUND") {
-          notFound();
-        }
-        if (error.status === 403 || error.code === "FORBIDDEN") {
-          redirect("/portal/sem-acesso");
-        }
-      }
-      logger.error(
-        {
-          err: error,
-          correlationId: (await headers()).get("x-correlation-id"),
-        },
-        "failed to load access link for detail page",
-      );
-      return (
-        <section className={styles.detailPanel} aria-live="polite">
-          <h1>Não foi possível carregar este link agora.</h1>
-          <p className={styles.muted}>
-            Tente novamente em alguns instantes. Se o problema persistir, fale
-            com o suporte da escola.
-          </p>
-          <div style={{ marginTop: 15 }}>
-            <Link className={styles.buttonSecondary} href="/portal/atividades">
-              Voltar para atividades
-            </Link>
-          </div>
-        </section>
-      );
-    }
+  if (!dbLink) {
+    notFound();
   }
 
-  const baseUrl = await getPublicBaseUrl();
   const link = {
     id: dbLink.id,
     label: dbLink.label,
@@ -81,7 +41,7 @@ export default async function ActivityDetailPage({
     expires: dbLink.expiresAt
       ? new Date(dbLink.expiresAt).toLocaleDateString("pt-BR")
       : "Sem expiração",
-    url: `${baseUrl}/atividade/${dbLink.id} (token sigiloso)`,
+    url: `https://niciniv.github.io/SMS_Portal/atividade/${dbLink.id}`,
   };
 
   return (

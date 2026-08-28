@@ -2,11 +2,17 @@ import Link from "next/link";
 
 import styles from "@/components/public/public.module.css";
 import { Icon } from "@/components/shared/icon";
-import { PublicState } from "@/components/public/public-state";
-import { PrismaAccessLinkStore } from "@/server/db/prisma-access-link-store";
-import { resolvePublicLink } from "@/server/services/public-link-service";
+import { listAccessLinks } from "@/server/services/portal-view-service";
 
-export const dynamic = "force-dynamic";
+export const metadata = { title: "Atividade liberada" };
+
+export function generateStaticParams() {
+  const tokens = ["7FQ-29M", "2KF-81P", "habitos-saudaveis", "turma-5b"];
+  listAccessLinks().forEach((l) => {
+    if (!tokens.includes(l.id)) tokens.push(l.id);
+  });
+  return tokens.map((token) => ({ token }));
+}
 
 export default async function PublicActivityPage({
   params,
@@ -14,51 +20,6 @@ export default async function PublicActivityPage({
   params: Promise<{ token: string }>;
 }) {
   const { token } = await params;
-
-  const resolution = await resolvePublicLink(token, {
-    store: new PrismaAccessLinkStore(),
-    clock: { now: () => new Date() },
-  });
-
-  if (resolution.status === "invalid") {
-    return (
-      <PublicState
-        icon="search"
-        title="Não encontramos esta missão."
-        description="Confira se o link foi aberto por inteiro ou peça um novo acesso ao profissional responsável."
-      />
-    );
-  }
-
-  if (resolution.status === "paused") {
-    return (
-      <PublicState
-        icon="pause"
-        title="Esta missão está pausada."
-        description="O acesso foi pausado temporariamente pela escola. Volte a abrir este mesmo link mais tarde."
-      />
-    );
-  }
-
-  if (resolution.status === "expired") {
-    return (
-      <PublicState
-        icon="clock"
-        title="Este link expirou."
-        description="A missão não aceita novos acessos por este link. Peça um novo QR code ou link ao profissional responsável."
-      />
-    );
-  }
-
-  if (resolution.status === "revoked") {
-    return (
-      <PublicState
-        icon="link"
-        title="Este link não está mais ativo."
-        description="O acesso foi substituído ou revogado. Use o link mais recente enviado pela escola."
-      />
-    );
-  }
 
   return (
     <div>

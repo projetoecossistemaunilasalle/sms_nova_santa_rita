@@ -1,11 +1,8 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-import type { Capability as CapabilityValue } from "@/generated/prisma/enums";
 import type { ActorSession } from "@/server/auth/session";
-
 import { Icon } from "@/components/shared/icon";
-
 import { PortalNavigation } from "./portal-navigation";
 import styles from "./portal.module.css";
 
@@ -35,7 +32,7 @@ export function Brand({ compact = false }: { compact?: boolean }) {
   );
 }
 
-export async function PortalShell({
+export function PortalShell({
   session,
   children,
 }: {
@@ -43,43 +40,11 @@ export async function PortalShell({
   children: ReactNode;
 }) {
   const initials = initialsFrom(session.actor.displayName);
-
-  // Determine which admin destinations the current actor may see.
-  // When the dev bypass is active the synthetic actor has no DB
-  // assignments, but we still show the admin navigation for walkthroughs.
-  // P1-7 FIX: authorize navigation via effective scope resolution (deny-by-default)
-  // instead of permissive canUse without org. Resolve every destination from one
-  // profile snapshot, and show a link if its scope is not denied (platform or any
-  // org grant). For platform-wide admin screens a stricter policy would require
-  // `scope.kind === "platform"` only.
-  let allowedAdminHrefs: string[] | undefined;
-  const { isAuthDevBypassEnabled } = await import("@/server/config/env");
-  if (!isAuthDevBypassEnabled()) {
-    try {
-      const { getAuthorizationService } =
-        await import("@/server/services/service-container");
-      const { Capability } = await import("@/generated/prisma/enums");
-      const authz = getAuthorizationService();
-      const checks: Array<[string, CapabilityValue]> = [
-        ["/portal/admin/equipe", Capability.USER_MANAGE],
-        ["/portal/admin/organizacoes", Capability.ORGANIZATION_MANAGE],
-        ["/portal/admin/auditoria", Capability.AUDIT_VIEW],
-        // Jogos/módulos currently redirect; keep them hidden unless org-manage is present.
-        ["/portal/admin/jogos", Capability.ORGANIZATION_MANAGE],
-        ["/portal/admin/modulos", Capability.ORGANIZATION_MANAGE],
-      ];
-      const results = await authz.resolveEffectiveScopes(
-        session.actor.profileId,
-        checks.map(([, capability]) => capability),
-      );
-      allowedAdminHrefs = checks
-        .filter((_, idx) => results[idx]?.kind !== "denied")
-        .map(([href]) => href);
-      // Stricter platform-only navigation: replace `!== "denied"` with `=== "platform"`.
-    } catch {
-      allowedAdminHrefs = [];
-    }
-  }
+  const allowedAdminHrefs = [
+    "/portal/admin/equipe",
+    "/portal/admin/organizacoes",
+    "/portal/admin/auditoria",
+  ];
 
   return (
     <div className={styles.shell}>

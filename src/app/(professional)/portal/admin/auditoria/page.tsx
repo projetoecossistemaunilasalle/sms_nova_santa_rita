@@ -1,38 +1,11 @@
-import { redirect } from "next/navigation";
-
 import { PageHeader } from "@/components/portal/page-header";
 import styles from "@/components/portal/portal.module.css";
 import { Icon } from "@/components/shared/icon";
-import { getAuthGateway } from "@/server/auth/gateway";
-import { Capability } from "@/generated/prisma/enums";
-import { isAuthDevBypassEnabled } from "@/server/config/env";
-import { getAuthorizationService } from "@/server/services/service-container";
 import { auditEvents } from "@/server/services/portal-view-service";
 
 export const metadata = { title: "Auditoria" };
 
-export default async function AuditPage() {
-  const session = await getAuthGateway().getSession();
-  if (!session) redirect("/entrar");
-
-  // P1-7 FIX: resolve effective scope; audit trail is scoped by organization.
-  // Platform sees all events, org-scoped sees filtered events, denied redirects.
-  // Stricter platform-only variant: `if (scope.kind !== "platform") redirect(...)`.
-  let visibleAuditEvents: (typeof auditEvents)[number][] = [...auditEvents];
-  if (!isAuthDevBypassEnabled()) {
-    const scope = await getAuthorizationService().resolveEffectiveScope(
-      session.actor.profileId,
-      Capability.AUDIT_VIEW,
-    );
-    if (scope.kind === "denied") redirect("/portal/sem-acesso");
-    if (scope.kind === "organizations") {
-      visibleAuditEvents = auditEvents.filter((event) =>
-        scope.organizationIds.includes(event.organizationId),
-      );
-      // To require platform grant instead of filtered view, replace filter with:
-      // redirect("/portal/sem-acesso");
-    }
-  }
+export default function AuditPage() {
   return (
     <>
       <PageHeader
@@ -78,7 +51,7 @@ export default async function AuditPage() {
       </div>
       <section className={styles.detailPanel}>
         <div className={styles.auditTimeline}>
-          {visibleAuditEvents.map((event) => (
+          {auditEvents.map((event) => (
             <article
               className={styles.auditEvent}
               key={`${event.date}-${event.action}`}

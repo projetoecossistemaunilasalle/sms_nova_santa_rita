@@ -43,6 +43,20 @@ const states: Record<
   },
 };
 
+export function generateStaticParams() {
+  const tokens = ["7FQ-29M", "2KF-81P", "habitos-saudaveis", "turma-5b"];
+  const stateKeys = Object.keys(states);
+  const params: Array<{ token: string; state: string }> = [];
+
+  for (const token of tokens) {
+    for (const state of stateKeys) {
+      params.push({ token, state });
+    }
+  }
+
+  return params;
+}
+
 export default async function PublicActivityStatePage({
   params,
 }: {

@@ -1,5 +1,3 @@
-import "server-only";
-
 import { DEV_BYPASS_ACTOR } from "@/server/auth/dev-bypass-gateway";
 import type { AccessLinkRecord } from "@/server/services/access-link-service";
 import { hashToken } from "@/server/security/tokens";
@@ -39,6 +37,40 @@ export type AccessLinkSummary = {
   createdAt?: string;
   updatedAt?: string;
   expiresAt?: string | null;
+};
+
+export type ClassGroupStatus = "Ativa" | "Inativa";
+
+export type ClassGroupSummary = {
+  id: string;
+  name: string;
+  organizationId: string;
+  organization: string;
+  grade: string;
+  shift: "Manhã" | "Tarde";
+  schoolYear: number;
+  activeLinks: number;
+  sessions: number;
+  completion: number;
+  status: ClassGroupStatus;
+  lastActivity: string;
+  linkIds: string[];
+};
+
+export type MaterialStatus = "Publicado" | "Rascunho" | "Arquivado";
+
+export type MaterialSummary = {
+  id: string;
+  title: string;
+  summary: string;
+  type: "Guia" | "Material pedagógico" | "Artigo" | "Comunicado" | "Atividade";
+  theme: string;
+  audience: "Professores" | "Famílias" | "Todos";
+  status: MaterialStatus;
+  updated: string;
+  editor: string;
+  accent: "blue" | "orange" | "aqua" | "purple" | "green";
+  body: string;
 };
 
 /** Canonical organization ids used by the mock fixtures. Keep in sync with seed data. */
@@ -148,6 +180,9 @@ export const organizations = [
     name: "EMEF Victor Aggens",
     type: "Escola municipal",
     members: 3,
+    classGroups: 3,
+    activeLinks: 4,
+    participation: 168,
     status: "Ativa" as const,
   },
   {
@@ -156,9 +191,176 @@ export const organizations = [
     name: "Rede municipal de ensino",
     type: "Escopo de visualização",
     members: 2,
+    classGroups: 1,
+    activeLinks: 1,
+    participation: 38,
     status: "Ativa" as const,
   },
 ] as const;
+
+const classGroups: ClassGroupSummary[] = [
+  {
+    id: "3a-victor-aggens",
+    name: "3º A",
+    organizationId: ORGANIZATION_IDS.VICTOR_AGGENS,
+    organization: "EMEF Victor Aggens",
+    grade: "3º ano",
+    shift: "Manhã",
+    schoolYear: 2026,
+    activeLinks: 1,
+    sessions: 36,
+    completion: 84,
+    status: "Ativa",
+    lastActivity: "Hoje, 08:42",
+    linkIds: ["habitos-saudaveis"],
+  },
+  {
+    id: "4a-victor-aggens",
+    name: "4º A",
+    organizationId: ORGANIZATION_IDS.VICTOR_AGGENS,
+    organization: "EMEF Victor Aggens",
+    grade: "4º ano",
+    shift: "Manhã",
+    schoolYear: 2026,
+    activeLinks: 1,
+    sessions: 48,
+    completion: 79,
+    status: "Ativa",
+    lastActivity: "Ontem, 15:10",
+    linkIds: ["habitos-saudaveis"],
+  },
+  {
+    id: "5b-victor-aggens",
+    name: "5º B",
+    organizationId: ORGANIZATION_IDS.VICTOR_AGGENS,
+    organization: "EMEF Victor Aggens",
+    grade: "5º ano",
+    shift: "Tarde",
+    schoolYear: 2026,
+    activeLinks: 2,
+    sessions: 42,
+    completion: 76,
+    status: "Ativa",
+    lastActivity: "Hoje, 09:18",
+    linkIds: ["turma-5b", "habitos-saudaveis"],
+  },
+  {
+    id: "5a-rede-municipal",
+    name: "5º A",
+    organizationId: ORGANIZATION_IDS.REDE_MUNICIPAL,
+    organization: "EMEF Campos Verdes",
+    grade: "5º ano",
+    shift: "Manhã",
+    schoolYear: 2026,
+    activeLinks: 1,
+    sessions: 38,
+    completion: 88,
+    status: "Ativa",
+    lastActivity: "25 ago., 11:04",
+    linkIds: ["habitos-saudaveis"],
+  },
+  {
+    id: "4b-rede-municipal",
+    name: "4º B",
+    organizationId: ORGANIZATION_IDS.REDE_MUNICIPAL,
+    organization: "EMEF Campos Verdes",
+    grade: "4º ano",
+    shift: "Tarde",
+    schoolYear: 2025,
+    activeLinks: 0,
+    sessions: 27,
+    completion: 74,
+    status: "Inativa",
+    lastActivity: "18 dez. 2025",
+    linkIds: [],
+  },
+];
+
+const materials: MaterialSummary[] = [
+  {
+    id: "convivencia-no-recreio",
+    title: "Guia de conversa: convivência no recreio",
+    summary:
+      "Perguntas e combinados para mediar conversas sobre cuidado coletivo no recreio.",
+    type: "Guia",
+    theme: "Convivência",
+    audience: "Professores",
+    status: "Publicado",
+    updated: "Hoje, 09:24",
+    editor: "Adriana Martins",
+    accent: "blue",
+    body: "Comece a conversa perguntando o que torna o recreio acolhedor para todas as pessoas. Registre os combinados construídos pelo grupo e retome-os ao longo da semana.",
+  },
+  {
+    id: "alimentacao-saudavel",
+    title: "Alimentação saudável em sala",
+    summary:
+      "Propostas simples para conversar sobre escolhas alimentares sem julgamentos.",
+    type: "Material pedagógico",
+    theme: "Alimentação",
+    audience: "Professores",
+    status: "Publicado",
+    updated: "Ontem, 16:10",
+    editor: "Lucas Ribeiro",
+    accent: "green",
+    body: "Use alimentos presentes no cotidiano da comunidade como ponto de partida. Convide a turma a observar cores, origens e diferentes formas de preparo.",
+  },
+  {
+    id: "vacinacao-em-familia",
+    title: "Vacinação: perguntas para conversar em família",
+    summary: "Um apoio para aproximar escola, famílias e equipes de saúde.",
+    type: "Artigo",
+    theme: "Prevenção",
+    audience: "Famílias",
+    status: "Publicado",
+    updated: "26 ago., 14:40",
+    editor: "Carla Freitas",
+    accent: "aqua",
+    body: "Converse com a equipe de saúde de referência para esclarecer dúvidas e verificar as orientações atualizadas do calendário de vacinação.",
+  },
+  {
+    id: "combate-a-dengue",
+    title: "Semana de combate à dengue",
+    summary:
+      "Comunicado para organizar ações de prevenção na escola e no entorno.",
+    type: "Comunicado",
+    theme: "Prevenção",
+    audience: "Todos",
+    status: "Rascunho",
+    updated: "25 ago., 11:32",
+    editor: "Adriana Martins",
+    accent: "orange",
+    body: "Durante a semana, cada turma poderá mapear pontos de atenção e compartilhar atitudes simples para evitar água parada.",
+  },
+  {
+    id: "cultura-de-paz",
+    title: "Cultura de paz: roteiro para roda de conversa",
+    summary:
+      "Uma atividade guiada para reconhecer conflitos e construir acordos coletivos.",
+    type: "Atividade",
+    theme: "Convivência",
+    audience: "Professores",
+    status: "Publicado",
+    updated: "22 ago., 08:50",
+    editor: "Lucas Ribeiro",
+    accent: "purple",
+    body: "Organize a roda em um espaço tranquilo. Convide cada pessoa a falar sobre como gostaria de ser acolhida em uma situação de conflito.",
+  },
+  {
+    id: "saude-emocional",
+    title: "Saúde emocional: sinais para acolher e conversar",
+    summary:
+      "Orientações iniciais para uma escuta cuidadosa no cotidiano escolar.",
+    type: "Guia",
+    theme: "Saúde emocional",
+    audience: "Professores",
+    status: "Rascunho",
+    updated: "20 ago., 17:05",
+    editor: "Carla Freitas",
+    accent: "aqua",
+    body: "Acolha sem pressionar por respostas. Escute, registre apenas o necessário e acione os fluxos de cuidado da rede quando houver necessidade.",
+  },
+];
 
 export const auditEvents = [
   {
@@ -223,6 +425,42 @@ export function getActivity(id: string) {
 
 export function listAccessLinks() {
   return accessLinks;
+}
+
+function demoData<T>(fixtures: T[]): T[] {
+  return fixtures;
+}
+
+export function listClassGroups() {
+  return demoData(classGroups);
+}
+
+export function getClassGroup(id: string) {
+  return demoData(classGroups).find((classGroup) => classGroup.id === id);
+}
+
+export function listMaterials() {
+  return demoData(materials);
+}
+
+export function getMaterial(id: string) {
+  return demoData(materials).find((material) => material.id === id);
+}
+
+export function getOrganization(id: string) {
+  return organizations.find((organization) => organization.id === id);
+}
+
+export function getOrganizationDemoData(id: string) {
+  return {
+    classGroups: classGroups.filter(
+      (classGroup) => classGroup.organizationId === id,
+    ),
+    professionals: professionals.filter(
+      (professional) => professional.organizationId === id,
+    ),
+    links: accessLinks.filter((link) => link.organizationId === id),
+  };
 }
 
 /**

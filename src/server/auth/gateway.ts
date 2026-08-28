@@ -1,5 +1,3 @@
-import { getRuntimeEnv } from "@/server/config/env";
-
 import { DevBypassAuthGateway } from "./dev-bypass-gateway";
 import type { ActorSession } from "./session";
 
@@ -53,12 +51,15 @@ export class UnauthenticatedAuthGateway implements AuthGateway {
   }
 }
 
+import { isAuthDevBypassEnabled } from "@/server/config/env";
+
 let cachedGateway: AuthGateway | undefined;
 
 export function getAuthGateway(): AuthGateway {
-  cachedGateway ??= getRuntimeEnv().AUTH_DEV_BYPASS
-    ? new DevBypassAuthGateway()
-    : new UnauthenticatedAuthGateway();
+  cachedGateway ??=
+    isAuthDevBypassEnabled() || process.env.NODE_ENV === "production"
+      ? new DevBypassAuthGateway()
+      : new UnauthenticatedAuthGateway();
   return cachedGateway;
 }
 

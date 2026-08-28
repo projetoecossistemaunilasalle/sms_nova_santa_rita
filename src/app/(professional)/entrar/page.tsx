@@ -1,54 +1,25 @@
-import Link from "next/link";
+"use client";
 
-import { isAuthDevBypassEnabled } from "@/server/config/env";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
 import styles from "@/components/marketing/marketing.module.css";
 
-import { signInAction } from "./actions";
+export default function SignInPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState("adriana.martins@exemplo.gov.br");
+  const [password, setPassword] = useState("••••••••");
 
-export const metadata = { title: "Entrar" };
-
-// Entrar must be dynamic so the per-request CSP nonce can be stamped correctly
-// and so the POST action is not statically cached.
-export const dynamic = "force-dynamic";
-
-/**
- * Fixed pt-BR copy for the query-string states set by ./actions.ts
- * (auth_not_configured | credentials_required) and by /entrar/recuperar
- * (reset=sent). Only these fixed strings are ever rendered — user input is
- * never echoed back.
- */
-function feedbackFor(
-  error: string | undefined,
-  reset: string | undefined,
-): { alert: string | null; notice: string | null } {
-  const alert =
-    error === "auth_not_configured"
-      ? "Autenticação ainda não está configurada neste ambiente."
-      : error === "credentials_required"
-        ? "Informe e-mail e senha."
-        : null;
-  const notice =
-    reset === "sent"
-      ? "Se o e-mail existir, enviaremos instruções de redefinição."
-      : null;
-  return { alert, notice };
-}
-
-export default async function SignInPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ error?: string; reset?: string }>;
-}) {
-  // While the local dev bypass is active the form accepts an empty submit so
-  // the mock screen can be walked through without credentials (P1-04 pending).
-  const requireCredentials = !isAuthDevBypassEnabled();
-  const { error, reset } = await searchParams;
-  const { alert, notice } = feedbackFor(error, reset);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    router.push("/portal");
+  };
 
   return (
     <main className={styles.authPage}>
       <section className={styles.authArt}>
-        <Link className={styles.brand} href="/">
+        <Link className={styles.brand} href="/portal">
           <span className={styles.brandMark}>MC</span>
           <span className={styles.brandCopy}>
             <strong>Missões do Caramelito</strong>
@@ -65,37 +36,26 @@ export default async function SignInPage({
       </section>
       <section className={styles.authFormWrap}>
         <div className={styles.authForm}>
-          <Link className={styles.brand} href="/">
+          <Link className={styles.brand} href="/portal">
             <span className={styles.brandMark}>MC</span>
             <span className={styles.brandCopy}>
               <strong>Portal do profissional</strong>
-              <small>Acesso restrito</small>
+              <small>Demonstração visual</small>
             </span>
           </Link>
           <h2>Entre no portal.</h2>
-          <p>Use o acesso profissional fornecido pela administração.</p>
-          {alert !== null && (
-            <p
-              role="alert"
-              style={{
-                margin: "0 0 12px",
-                color: "var(--coral-dark, #b23a2c)",
-                fontWeight: 600,
-                fontSize: "0.875rem",
-              }}
-            >
-              {alert}
-            </p>
-          )}
-          <form className={styles.form} action={signInAction}>
+          <p>Esta é uma versão demonstrativa visual navegável.</p>
+
+          <form className={styles.form} onSubmit={handleSubmit}>
             <label className={styles.field}>
               E-mail profissional
               <input
                 type="email"
                 name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
-                placeholder="nome@novasantarita.rs.gov.br"
-                required={requireCredentials}
+                placeholder="profissional@exemplo.gov.br"
               />
             </label>
             <label className={styles.field}>
@@ -103,38 +63,27 @@ export default async function SignInPage({
               <input
                 type="password"
                 name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
                 placeholder="Sua senha"
-                required={requireCredentials}
               />
             </label>
             <div className={styles.formRow}>
               <label>
-                <input type="checkbox" name="remember" /> Manter acesso neste
-                dispositivo
+                <input type="checkbox" name="remember" defaultChecked /> Manter
+                acesso neste dispositivo
               </label>
               <Link href="/entrar/recuperar">Esqueci minha senha</Link>
             </div>
             <button className={styles.submit} type="submit">
-              Entrar
+              Entrar na demonstração
             </button>
           </form>
-          {notice !== null && (
-            <p
-              role="status"
-              style={{
-                margin: "12px 0 0",
-                color: "var(--green-dark, #26713a)",
-                fontWeight: 600,
-                fontSize: "0.875rem",
-              }}
-            >
-              {notice}
-            </p>
-          )}
+
           <p className={styles.authHelp}>
-            Ainda não tem acesso? Convites e permissões são gerenciados por um
-            administrador da plataforma.
+            Ambiente de visualização. Clique em &quot;Entrar na
+            demonstração&quot; para navegar por todas as telas do portal.
           </p>
         </div>
       </section>

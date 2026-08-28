@@ -2,6 +2,10 @@ import { redirect } from "next/navigation";
 
 export const metadata = { title: "Experiência" };
 
+export function generateStaticParams() {
+  return [{ id: "habitos-saudaveis" }];
+}
+
 export default async function ModuleDetailPage({
   params,
 }: {

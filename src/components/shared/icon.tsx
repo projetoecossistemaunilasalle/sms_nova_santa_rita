@@ -5,6 +5,7 @@ export type IconName =
   | "archive"
   | "arrow"
   | "building"
+  | "book"
   | "calendar"
   | "chart"
   | "check"
@@ -27,12 +28,15 @@ export type IconName =
   | "menu"
   | "module"
   | "more"
+  | "paperclip"
   | "pause"
   | "play"
   | "plus"
   | "search"
   | "settings"
   | "shield"
+  | "school"
+  | "upload"
   | "users";
 
 type IconProps = SVGProps<SVGSVGElement> & { name: IconName };
@@ -75,6 +79,18 @@ export function Icon({ name, ...props }: IconProps) {
       {name === "plus" && <path d="M12 5v14M5 12h14" />}
       {name === "building" && (
         <path d="M3 21h18M6 21V7l6-4 6 4v14M9 10h.01M15 10h.01M9 14h.01M15 14h.01M10 21v-3h4v3" />
+      )}
+      {name === "school" && (
+        <>
+          <path d="m3 10 9-5 9 5-9 5-9-5Z" />
+          <path d="M7 13v5c3 2 7 2 10 0v-5M21 10v6" />
+        </>
+      )}
+      {name === "book" && (
+        <>
+          <path d="M4 5.5A3.5 3.5 0 0 1 7.5 2H11v17H7.5A3.5 3.5 0 0 0 4 22Z" />
+          <path d="M20 5.5A3.5 3.5 0 0 0 16.5 2H13v17h3.5A3.5 3.5 0 0 1 20 22Z" />
+        </>
       )}
       {name === "chevron" && <path d="m9 18 6-6-6-6" />}
       {name === "more" && (
@@ -129,6 +145,15 @@ export function Icon({ name, ...props }: IconProps) {
           <rect x="3" y="4" width="18" height="5" rx="1" />
           <path d="M5 9v11h14V9m-9 4h4" />
         </>
+      )}
+      {name === "upload" && (
+        <>
+          <path d="M12 16V3m-5 5 5-5 5 5" />
+          <path d="M4 15v5h16v-5" />
+        </>
+      )}
+      {name === "paperclip" && (
+        <path d="m21.4 11.6-8.9 8.9a6 6 0 0 1-8.5-8.5l9.6-9.6a4 4 0 0 1 5.7 5.7l-9.7 9.6a2 2 0 0 1-2.8-2.8l8.9-8.9" />
       )}
       {name === "settings" && (
         <>

@@ -35,6 +35,18 @@ const primaryItems: NavItem[] = [
     icon: "chart",
     mobile: true,
   },
+  {
+    href: "/portal/turmas",
+    label: "Turmas",
+    icon: "school",
+    mobile: true,
+  },
+  {
+    href: "/portal/materiais",
+    label: "Materiais",
+    icon: "book",
+    mobile: true,
+  },
 ];
 
 const adminItems: NavItem[] = [
@@ -42,7 +54,6 @@ const adminItems: NavItem[] = [
     href: "/portal/admin/equipe",
     label: "Equipe",
     icon: "users",
-    mobile: true,
   },
   {
     href: "/portal/admin/organizacoes",
@@ -56,6 +67,9 @@ function isCurrent(pathname: string, item: NavItem) {
   if (item.exact) return pathname === item.href;
   if (item.label === "Links de acesso") {
     return pathname.startsWith(item.href) && !pathname.endsWith("/resultados");
+  }
+  if (item.label === "Resultados") {
+    return pathname.endsWith("/resultados");
   }
   return pathname.startsWith(item.href);
 }

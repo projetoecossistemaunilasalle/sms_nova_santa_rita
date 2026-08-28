@@ -1,47 +1,12 @@
-import { redirect } from "next/navigation";
-
 import { PageHeader } from "@/components/portal/page-header";
 import styles from "@/components/portal/portal.module.css";
 import { StatusBadge } from "@/components/portal/status-badge";
 import { Icon } from "@/components/shared/icon";
-import { getAuthGateway } from "@/server/auth/gateway";
-import { Capability } from "@/generated/prisma/enums";
-import { isAuthDevBypassEnabled } from "@/server/config/env";
-import { getAuthorizationService } from "@/server/services/service-container";
 import { professionals } from "@/server/services/portal-view-service";
 
 export const metadata = { title: "Equipe" };
 
-export default async function TeamAdminPage() {
-  const session = await getAuthGateway().getSession();
-  if (!session) redirect("/entrar");
-
-  // P1-7 FIX: authorize with effective scope instead of permissive canUse without org.
-  // Platform-wide admin screens must not leak other orgs' data to org-scoped grants.
-  // Current policy: allow platform or filtered org view. Stricter platform-only policy
-  // would be `if (scope.kind !== "platform") redirect(...)` to deny org-scoped entirely.
-  let visibleProfessionals: (typeof professionals)[number][] = [
-    ...professionals,
-  ];
-  if (!isAuthDevBypassEnabled()) {
-    const scope = await getAuthorizationService().resolveEffectiveScope(
-      session.actor.profileId,
-      Capability.USER_MANAGE,
-    );
-    if (scope.kind === "denied") redirect("/portal/sem-acesso");
-    if (scope.kind === "organizations") {
-      // Filter to the union of organizationIds held for USER_MANAGE.
-      // Platform-scoped professionals (organizationId === null) are only visible to platform scope.
-      visibleProfessionals = professionals.filter(
-        (professional) =>
-          professional.organizationId !== null &&
-          scope.organizationIds.includes(professional.organizationId),
-      );
-      // To require a platform grant for this platform-wide screen instead of filtering,
-      // replace the filter above with: redirect("/portal/sem-acesso");
-    }
-    // scope.kind === "platform" keeps all professionals
-  }
+export default function TeamAdminPage() {
   return (
     <>
       <PageHeader
@@ -57,13 +22,13 @@ export default async function TeamAdminPage() {
       <section className={styles.summaryStrip} aria-label="Resumo da equipe">
         <article className={styles.summaryCard}>
           <p>Profissionais</p>
-          <strong>{visibleProfessionals.length}</strong>
+          <strong>{professionals.length}</strong>
         </article>
         <article className={styles.summaryCard}>
           <p>Acessos ativos</p>
           <strong>
             {
-              visibleProfessionals.filter(
+              professionals.filter(
                 (professional) => professional.status === "Ativa",
               ).length
             }
@@ -73,7 +38,7 @@ export default async function TeamAdminPage() {
           <p>Convites pendentes</p>
           <strong>
             {
-              visibleProfessionals.filter(
+              professionals.filter(
                 (professional) => professional.status === "Convite pendente",
               ).length
             }
@@ -83,7 +48,7 @@ export default async function TeamAdminPage() {
           <p>Organizações</p>
           <strong>
             {new Set(
-              visibleProfessionals
+              professionals
                 .map((professional) => professional.organizationId)
                 .filter(Boolean),
             ).size || 1}
@@ -123,7 +88,7 @@ export default async function TeamAdminPage() {
           <span>Estado</span>
           <span />
         </div>
-        {visibleProfessionals.map((professional) => (
+        {professionals.map((professional) => (
           <div className={styles.tableRow} key={professional.email}>
             <span className={styles.tableIdentity}>
               <i className={styles.personAvatar}>{professional.initials}</i>

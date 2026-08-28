@@ -1,24 +1,12 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { Icon } from "@/components/shared/icon";
-import {
-  createAccessLinkAction,
-  updateAccessLinkAction,
-  type CreateAccessLinkActionState,
-  type UpdateAccessLinkActionState,
-} from "@/app/(professional)/portal/atividades/actions";
-
 import { ShareActions } from "./share-actions";
 import styles from "./portal.module.css";
-
-/** Idle state used before the first submission of the create form. */
-const initialCreateState: CreateAccessLinkActionState = { status: "idle" };
-/** Idle state used before the first submission of the edit form. */
-const initialEditState: UpdateAccessLinkActionState = { status: "idle" };
 
 export function AccessLinkBuilder({
   editing = false,
@@ -36,22 +24,24 @@ export function AccessLinkBuilder({
   initialExpiresAt?: string;
 }) {
   const router = useRouter();
-  const [state, formAction, pending] = useActionState(
-    createAccessLinkAction,
-    initialCreateState,
-  );
-  // Both hooks run unconditionally (hooks cannot be conditional); the edit
-  // action is simply never invoked in create mode and vice versa.
-  const [editState, editFormAction, editPending] = useActionState(
-    updateAccessLinkAction,
-    initialEditState,
-  );
-  const activeError =
-    editState.status === "error"
-      ? editState.message
-      : state.status === "error"
-        ? state.message
-        : null;
+  const [createdState, setCreatedState] = useState<{
+    status: "idle" | "success";
+    linkId: string;
+    label: string;
+    audience: string;
+    token: string;
+  }>({
+    status: "idle",
+    linkId: linkId ?? "turma-5b",
+    label: initialLabel ?? (editing ? "Link principal" : "Turma 5B"),
+    audience:
+      initialAudience ??
+      (editing
+        ? "Todas as turmas · EMEF Victor Aggens"
+        : "Turma 5B · EMEF Victor Aggens"),
+    token: "7FQ-29M",
+  });
+
   const [label, setLabel] = useState(
     initialLabel ?? (editing ? "Link principal" : "Turma 5B"),
   );
@@ -64,11 +54,23 @@ export function AccessLinkBuilder({
   const [expiration, setExpiration] = useState(initialExpiration ?? "never");
   const [customDate, setCustomDate] = useState(initialExpiresAt ?? "");
 
-  // Success panel replaces the form in create mode: the raw one-time token is
-  // rendered here from the action's return value. The share URL is built on
-  // the client because this branch only appears after a server action
-  // resolves (post-hydration), so `window` is always available.
-  if (!editing && state.status === "success") {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editing) {
+      router.push(`/portal/atividades/${linkId ?? "turma-5b"}`);
+    } else {
+      const demoToken = `MC-${Math.random().toString(36).substring(2, 6).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+      setCreatedState({
+        status: "success",
+        linkId: "turma-5b",
+        label,
+        audience,
+        token: demoToken,
+      });
+    }
+  };
+
+  if (!editing && createdState.status === "success") {
     return (
       <div className={styles.shareLayout}>
         <article className={styles.successPanel} aria-live="polite">
@@ -77,10 +79,10 @@ export function AccessLinkBuilder({
           </span>
           <h1>Link criado</h1>
           <p>
-            {state.label} · {state.audience}
+            {createdState.label} · {createdState.audience}
           </p>
           <div className={styles.linkCard}>
-            <code>{state.token}</code>
+            <code>{createdState.token}</code>
             <div className={styles.linkMeta}>
               <span>Token de acesso</span>
               <span>exibido apenas uma vez</span>
@@ -95,16 +97,12 @@ export function AccessLinkBuilder({
             }}
           >
             <Icon name="shield" />
-            <span>
-              Guarde este token agora: por segurança ele é mostrado somente
-              nesta tela e não pode ser recuperado depois. Para gerar outro
-              token, rotacione o link na página do acesso.
-            </span>
+            <span>Demonstração: este token foi gerado no seu navegador.</span>
           </div>
           <div style={{ marginTop: 18 }}>
             <Link
               className={styles.buttonSecondary}
-              href={`/portal/atividades/${state.linkId}`}
+              href={`/portal/atividades/${createdState.linkId}`}
             >
               Ver link criado
             </Link>
@@ -115,7 +113,7 @@ export function AccessLinkBuilder({
           <h2>Compartilhar com a turma</h2>
           <p>Use o QR code em sala ou envie o link pelos canais da escola.</p>
           <ShareActions
-            url={`${window.location.origin}/atividade/${state.token}`}
+            url={`https://niciniv.github.io/SMS_Portal/atividade/${createdState.token}`}
           />
         </aside>
       </div>
@@ -135,14 +133,7 @@ export function AccessLinkBuilder({
           separa as sessões nos resultados.
         </p>
 
-        {/* Both modes run through useActionState so failures surface inline:
-            editing redirects back to the detail page on success (the action
-            performs the redirect itself), creation renders the one-time token
-            from the action's return value instead of a URL. */}
-        <form action={editing ? editFormAction : formAction}>
-          {editing && linkId && (
-            <input type="hidden" name="linkId" value={linkId} />
-          )}
+        <form onSubmit={handleSubmit}>
           <div className={styles.formGrid}>
             <label className={`${styles.field} ${styles.fieldFull}`}>
               <span>Nome do link</span>
@@ -212,20 +203,9 @@ export function AccessLinkBuilder({
             </span>
           </div>
 
-          {activeError !== null && (
-            <div
-              className={styles.toast}
-              role="alert"
-              style={{ marginTop: 14 }}
-            >
-              <Icon name="alert" />
-              {activeError}
-            </div>
-          )}
-
           <footer className={styles.builderFooter}>
             <span className={styles.savedState}>
-              <Icon name="check" /> Persistido no banco com auditoria
+              <Icon name="check" /> Demonstração visual
             </span>
             <div>
               <button
@@ -235,19 +215,8 @@ export function AccessLinkBuilder({
               >
                 Cancelar
               </button>
-              <button
-                className={styles.button}
-                type="submit"
-                disabled={editing ? editPending : pending}
-              >
-                {editing
-                  ? editPending
-                    ? "Salvando…"
-                    : "Salvar link"
-                  : pending
-                    ? "Criando link…"
-                    : "Criar link"}{" "}
-                <Icon name="arrow" />
+              <button className={styles.button} type="submit">
+                {editing ? "Salvar link" : "Criar link"} <Icon name="arrow" />
               </button>
             </div>
           </footer>

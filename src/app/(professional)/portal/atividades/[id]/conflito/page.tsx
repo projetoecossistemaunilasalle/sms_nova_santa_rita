@@ -2,8 +2,15 @@ import Link from "next/link";
 
 import { PortalState } from "@/components/portal/portal-state";
 import styles from "@/components/portal/portal.module.css";
+import { listAccessLinks } from "@/server/services/portal-view-service";
 
 export const metadata = { title: "Link atualizado" };
+
+export function generateStaticParams() {
+  return listAccessLinks().map((link) => ({
+    id: link.id,
+  }));
+}
 
 export default async function StaleDraftPage({
   params,
