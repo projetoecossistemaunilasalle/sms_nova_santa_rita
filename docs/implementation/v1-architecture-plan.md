@@ -322,6 +322,8 @@ Implemented in this slice:
 
 ### Slice 2: Numbered players and class sessions
 
+Status: Complete on 22 September 2026.
+
 Outcome: a teacher can prepare classroom access and a child can reach a waiting or
 active session with one QR scan.
 
@@ -337,6 +339,25 @@ active session with one QR scan.
 
 Minimum verification: create 25 slots, scan one QR, rotate it, reject the old QR, and
 enter an active session with the new QR.
+
+Implemented in this slice:
+
+- durable class-scoped player slots use a transactional allocation watermark so
+  disabled or historical numbers are never recycled;
+- 256-bit opaque credentials are stored only as SHA-256 hashes in production,
+  rotated independently from player history, and rendered as printable QR cards;
+- one partial unique index limits each class to one active session, while one unique
+  participation key makes repeated player entry idempotent;
+- application services authorize only active organization administrators and active
+  teachers assigned to the class, including organization and class status checks;
+- `/jogar/?cred=...` is a fixed static shell: the server resolves hashed credentials
+  and issues a five-minute signed launch token, while the demo resolves clearly
+  prefixed non-production credentials from browser state;
+- invalid, revoked, inactive, waiting, and ready entry states are visible, and the
+  adult UI supports allocation, credential replacement/printing, and session start/end.
+
+See [`slice-02-player-access-decisions.md`](slice-02-player-access-decisions.md) for
+the exact lifecycle and static-export decisions.
 
 ### Slice 3: Game bootstrap and cross-device state
 
@@ -403,11 +424,8 @@ The remaining work should proceed in this order. Runtime, Neon Auth, adult roles
 organization/class administration, and the V1 transport contracts are already in
 place.
 
-1. Add player slots and bulk allocation.
-2. Add player credentials, QR generation, and rotation.
-3. Add the one-active-session class workflow.
-4. Implement bootstrap and state persistence as the first real portal-to-game slice.
-5. Connect the browser host to the companion GameMaker HTML5 bridge.
+1. Implement bootstrap and state persistence as the first real portal-to-game slice.
+2. Connect the browser host to the companion GameMaker HTML5 bridge.
 
 Do not begin offline synchronization, advanced reporting, generalized permissions, or
 legacy cleanup before item 4 works end to end.

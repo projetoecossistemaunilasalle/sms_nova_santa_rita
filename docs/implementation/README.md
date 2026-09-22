@@ -31,8 +31,14 @@ technical decisions, and divides delivery into end-to-end slices.
 - The V1 GameMaker transport contract is frozen in JSON Schema and Zod, with fixtures
   covering bootstrap, state saves and conflicts, results, active time, visibility,
   acknowledgements, and typed errors.
-- Slice 2 and later remain unimplemented. In particular, there are no player slots,
-  QR credentials, game sessions, result ingestion, or offline synchronization yet.
+- Slice 2 is complete: classes have durable monotonic player slots, rotatable QR
+  credentials, one active game session, idempotent participation, and a fixed player
+  entry route. The GitHub Pages demo mirrors the workflow in browser-persisted state.
+- Slice 3 and later remain unimplemented. In particular, GameMaker bootstrap/state,
+  result and active-time ingestion, and offline synchronization are still pending.
+
+Slice 2 lifecycle and static-hosting decisions are recorded in
+[`slice-02-player-access-decisions.md`](slice-02-player-access-decisions.md).
 
 Each slice ends with a demonstrable workflow. Broad hardening, large test matrices, and
 secondary administration features should not delay the first complete portal-to-game
