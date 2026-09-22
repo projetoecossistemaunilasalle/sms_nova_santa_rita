@@ -1,5 +1,6 @@
 import { PublicState } from "@/components/public/public-state";
 import type { IconName } from "@/components/shared/icon";
+import { isDemoRuntime } from "@/runtime/mode";
 
 const states: Record<
   string,
@@ -44,6 +45,7 @@ const states: Record<
 };
 
 export function generateStaticParams() {
+  if (!isDemoRuntime()) return [];
   const tokens = ["7FQ-29M", "2KF-81P", "habitos-saudaveis", "turma-5b"];
   const stateKeys = Object.keys(states);
   const params: Array<{ token: string; state: string }> = [];

@@ -1,25 +1,20 @@
-"use client";
-
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { Suspense } from "react";
 
+import { SignInError } from "@/components/auth/sign-in-error";
 import styles from "@/components/marketing/marketing.module.css";
+import { getRuntimeMode } from "@/runtime/mode";
+
+import { signInAction } from "@runtime/sign-in-action";
 
 export default function SignInPage() {
-  const router = useRouter();
-  const [email, setEmail] = useState("adriana.martins@exemplo.gov.br");
-  const [password, setPassword] = useState("••••••••");
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    router.push("/portal");
-  };
+  const mode = getRuntimeMode();
+  const isDemo = mode === "demo";
 
   return (
     <main className={styles.authPage}>
       <section className={styles.authArt}>
-        <Link className={styles.brand} href="/portal">
+        <Link className={styles.brand} href={isDemo ? "/portal" : "/entrar"}>
           <span className={styles.brandMark}>MC</span>
           <span className={styles.brandCopy}>
             <strong>Missões do Caramelito</strong>
@@ -29,61 +24,81 @@ export default function SignInPage() {
         <div className={styles.authQuote}>
           <h1>Prepare caminhos. Acompanhe o coletivo.</h1>
           <p>
-            Um espaço de trabalho para profissionais autorizados criarem e
-            compartilharem atividades.
+            Um espaço de trabalho para profissionais autorizados organizarem
+            turmas e acompanharem a experiência.
           </p>
+
+          {!isDemo && (
+            <Suspense>
+              <SignInError />
+            </Suspense>
+          )}
         </div>
       </section>
       <section className={styles.authFormWrap}>
         <div className={styles.authForm}>
-          <Link className={styles.brand} href="/portal">
+          <div className={styles.brand}>
             <span className={styles.brandMark}>MC</span>
             <span className={styles.brandCopy}>
               <strong>Portal do profissional</strong>
-              <small>Demonstração visual</small>
+              <small>{isDemo ? "Demonstração" : "Acesso seguro"}</small>
             </span>
-          </Link>
+          </div>
           <h2>Entre no portal.</h2>
-          <p>Esta é uma versão demonstrativa visual navegável.</p>
+          <p>
+            {isDemo
+              ? "Explore a demonstração estática sem usar uma conta real."
+              : "Use a conta profissional configurada no Neon Auth."}
+          </p>
 
-          <form className={styles.form} onSubmit={handleSubmit}>
-            <label className={styles.field}>
-              E-mail profissional
-              <input
-                type="email"
-                name="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="email"
-                placeholder="profissional@exemplo.gov.br"
-              />
-            </label>
-            <label className={styles.field}>
-              Senha
-              <input
-                type="password"
-                name="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="current-password"
-                placeholder="Sua senha"
-              />
-            </label>
-            <div className={styles.formRow}>
-              <label>
-                <input type="checkbox" name="remember" defaultChecked /> Manter
-                acesso neste dispositivo
+          {isDemo ? (
+            <div className={styles.form}>
+              <label className={styles.field}>
+                E-mail profissional
+                <input
+                  type="email"
+                  defaultValue="demonstracao@localhost"
+                  readOnly
+                />
               </label>
-              <Link href="/entrar/recuperar">Esqueci minha senha</Link>
+              <label className={styles.field}>
+                Senha
+                <input type="password" defaultValue="demonstracao" readOnly />
+              </label>
+              <Link className={styles.submit} href="/portal">
+                Entrar na demonstração
+              </Link>
             </div>
-            <button className={styles.submit} type="submit">
-              Entrar na demonstração
-            </button>
-          </form>
+          ) : (
+            <form className={styles.form} action={signInAction}>
+              <label className={styles.field}>
+                E-mail profissional
+                <input
+                  type="email"
+                  name="email"
+                  autoComplete="email"
+                  required
+                />
+              </label>
+              <label className={styles.field}>
+                Senha
+                <input
+                  type="password"
+                  name="password"
+                  autoComplete="current-password"
+                  required
+                />
+              </label>
+              <button className={styles.submit} type="submit">
+                Entrar
+              </button>
+            </form>
+          )}
 
           <p className={styles.authHelp}>
-            Ambiente de visualização. Clique em &quot;Entrar na
-            demonstração&quot; para navegar por todas as telas do portal.
+            {isDemo
+              ? "Os dados são fictícios e as alterações ficam somente neste navegador."
+              : "O acesso depende de um perfil profissional ativo vinculado à identidade autenticada."}
           </p>
         </div>
       </section>

@@ -10,6 +10,9 @@ export default defineConfig({
   },
   test: {
     environment: "node",
+    env: {
+      APP_RUNTIME_MODE: "demo",
+    },
     include: ["tests/**/*.test.ts"],
     coverage: {
       reporter: ["text", "json", "html"],

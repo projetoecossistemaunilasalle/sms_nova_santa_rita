@@ -3,10 +3,12 @@ import Link from "next/link";
 import styles from "@/components/public/public.module.css";
 import { Icon } from "@/components/shared/icon";
 import { listAccessLinks } from "@/server/services/portal-view-service";
+import { isDemoRuntime } from "@/runtime/mode";
 
 export const metadata = { title: "Atividade liberada" };
 
 export function generateStaticParams() {
+  if (!isDemoRuntime()) return [];
   const tokens = ["7FQ-29M", "2KF-81P", "habitos-saudaveis", "turma-5b"];
   listAccessLinks().forEach((l) => {
     if (!tokens.includes(l.id)) tokens.push(l.id);

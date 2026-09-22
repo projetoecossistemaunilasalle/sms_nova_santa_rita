@@ -49,7 +49,7 @@ cpSync(path.join(projectRoot, "public"), path.join(standaloneDir, "public"), {
 });
 
 const args = process.argv.slice(2);
-const runtimeEnv = { ...process.env };
+const runtimeEnv = { ...process.env, APP_RUNTIME_MODE: "server" };
 
 for (let index = 0; index < args.length; index += 1) {
   if (args[index] === "--port" || args[index] === "-p") {

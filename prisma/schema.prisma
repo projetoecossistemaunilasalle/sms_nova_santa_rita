@@ -26,59 +26,105 @@ enum Capability {
   @@map("capability")
 }
 
+enum PlatformRole {
+  PLATFORM_ADMIN @map("platform_admin")
+
+  @@map("platform_role")
+}
+
+enum OrganizationRole {
+  ORGANIZATION_ADMIN @map("organization_admin")
+  TEACHER            @map("teacher")
+
+  @@map("organization_role")
+}
+
 model ProfessionalProfile {
-  id                  String       @id @default(uuid()) @db.Uuid
-  authUserId          String       @unique @map("auth_user_id") @db.VarChar(255)
-  displayName         String       @map("display_name") @db.VarChar(160)
-  status              RecordStatus @default(ACTIVE)
-  createdAt           DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt           DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
-  memberships         OrganizationMembership[]
-  createdAccessLinks  AccessLink[] @relation("AccessLinkCreator")
-  auditEvents         AuditEvent[] @relation("AuditActor")
+  id                 String                   @id @default(uuid()) @db.Uuid
+  authUserId         String                   @unique @map("auth_user_id") @db.VarChar(255)
+  displayName        String                   @map("display_name") @db.VarChar(160)
+  platformRole       PlatformRole?            @map("platform_role")
+  status             RecordStatus             @default(ACTIVE)
+  createdAt          DateTime                 @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt          DateTime                 @updatedAt @map("updated_at") @db.Timestamptz(3)
+  memberships        OrganizationMembership[]
+  createdAccessLinks AccessLink[]             @relation("AccessLinkCreator")
+  auditEvents        AuditEvent[]             @relation("AuditActor")
 
   @@map("professional_profiles")
 }
 
 model Organization {
-  id                 String       @id @default(uuid()) @db.Uuid
-  name               String       @db.VarChar(200)
-  type               String       @db.VarChar(80)
-  status             RecordStatus @default(ACTIVE)
-  createdAt          DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt          DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  id                 String                   @id @default(uuid()) @db.Uuid
+  name               String                   @db.VarChar(200)
+  type               String                   @db.VarChar(80)
+  status             RecordStatus             @default(ACTIVE)
+  createdAt          DateTime                 @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt          DateTime                 @updatedAt @map("updated_at") @db.Timestamptz(3)
   memberships        OrganizationMembership[]
-  scopedCapabilities CapabilityAssignment[] @relation("CapabilityScope")
+  scopedCapabilities CapabilityAssignment[]   @relation("CapabilityScope")
   accessLinks        AccessLink[]
+  classGroups        ClassGroup[]
 
   @@index([status])
   @@map("organizations")
 }
 
 model OrganizationMembership {
-  id                    String       @id @default(uuid()) @db.Uuid
-  professionalProfileId String       @map("professional_profile_id") @db.Uuid
-  organizationId        String       @map("organization_id") @db.Uuid
-  status                RecordStatus @default(ACTIVE)
-  createdAt             DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt             DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
-  professionalProfile   ProfessionalProfile @relation(fields: [professionalProfileId], references: [id], onDelete: Restrict)
-  organization          Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  id                    String                 @id @default(uuid()) @db.Uuid
+  professionalProfileId String                 @map("professional_profile_id") @db.Uuid
+  organizationId        String                 @map("organization_id") @db.Uuid
+  role                  OrganizationRole
+  status                RecordStatus           @default(ACTIVE)
+  createdAt             DateTime               @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt             DateTime               @updatedAt @map("updated_at") @db.Timestamptz(3)
+  professionalProfile   ProfessionalProfile    @relation(fields: [professionalProfileId], references: [id], onDelete: Restrict)
+  organization          Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   capabilityAssignments CapabilityAssignment[]
+  teacherAssignments    TeacherAssignment[]
 
   @@unique([professionalProfileId, organizationId])
   @@index([organizationId, status])
   @@map("organization_memberships")
 }
 
+model ClassGroup {
+  id                 String              @id @default(uuid()) @db.Uuid
+  organizationId     String              @map("organization_id") @db.Uuid
+  name               String              @db.VarChar(160)
+  status             RecordStatus        @default(ACTIVE)
+  createdAt          DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt          DateTime            @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization       Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  teacherAssignments TeacherAssignment[]
+
+  @@index([organizationId, status])
+  @@map("class_groups")
+}
+
+model TeacherAssignment {
+  id           String                 @id @default(uuid()) @db.Uuid
+  membershipId String                 @map("membership_id") @db.Uuid
+  classGroupId String                 @map("class_group_id") @db.Uuid
+  status       RecordStatus           @default(ACTIVE)
+  createdAt    DateTime               @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime               @updatedAt @map("updated_at") @db.Timestamptz(3)
+  membership   OrganizationMembership @relation(fields: [membershipId], references: [id], onDelete: Restrict)
+  classGroup   ClassGroup             @relation(fields: [classGroupId], references: [id], onDelete: Restrict)
+
+  @@unique([membershipId, classGroupId])
+  @@index([classGroupId, status])
+  @@map("teacher_assignments")
+}
+
 model CapabilityAssignment {
-  id                  String     @id @default(uuid()) @db.Uuid
-  membershipId        String     @map("membership_id") @db.Uuid
+  id                  String                 @id @default(uuid()) @db.Uuid
+  membershipId        String                 @map("membership_id") @db.Uuid
   capability          Capability
-  scopeOrganizationId String?    @map("scope_organization_id") @db.Uuid
-  createdAt           DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
+  scopeOrganizationId String?                @map("scope_organization_id") @db.Uuid
+  createdAt           DateTime               @default(now()) @map("created_at") @db.Timestamptz(3)
   membership          OrganizationMembership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
-  scopeOrganization   Organization? @relation("CapabilityScope", fields: [scopeOrganizationId], references: [id], onDelete: Restrict)
+  scopeOrganization   Organization?          @relation("CapabilityScope", fields: [scopeOrganizationId], references: [id], onDelete: Restrict)
 
   // Uniqueness of (membershipId, capability, scopeOrganizationId) with NULLS NOT
   // DISTINCT semantics for the nullable scope is enforced by a raw unique index
@@ -88,18 +134,18 @@ model CapabilityAssignment {
 }
 
 model AccessLink {
-  id             String   @id @default(uuid()) @db.Uuid
-  organizationId String   @map("organization_id") @db.Uuid
-  createdById    String   @map("created_by_id") @db.Uuid
-  label          String   @db.VarChar(200)
-  audience       String   @db.VarChar(200)
-  tokenHash      String   @unique @map("token_hash") @db.Char(64)
-  expiresAt      DateTime? @map("expires_at") @db.Timestamptz(3)
-  revokedAt      DateTime? @map("revoked_at") @db.Timestamptz(3)
-  pausedAt       DateTime? @map("paused_at") @db.Timestamptz(3)
-  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  id             String              @id @default(uuid()) @db.Uuid
+  organizationId String              @map("organization_id") @db.Uuid
+  createdById    String              @map("created_by_id") @db.Uuid
+  label          String              @db.VarChar(200)
+  audience       String              @db.VarChar(200)
+  tokenHash      String              @unique @map("token_hash") @db.Char(64)
+  expiresAt      DateTime?           @map("expires_at") @db.Timestamptz(3)
+  revokedAt      DateTime?           @map("revoked_at") @db.Timestamptz(3)
+  pausedAt       DateTime?           @map("paused_at") @db.Timestamptz(3)
+  createdAt      DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime            @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization   Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   createdBy      ProfessionalProfile @relation("AccessLinkCreator", fields: [createdById], references: [id], onDelete: Restrict)
 
   @@index([organizationId, revokedAt])
@@ -108,16 +154,16 @@ model AccessLink {
 }
 
 model AuditEvent {
-  id            String    @id @default(uuid()) @db.Uuid
-  actorId       String?   @map("actor_id") @db.Uuid
-  action        String    @db.VarChar(120)
-  entityType    String    @map("entity_type") @db.VarChar(80)
-  entityId      String    @map("entity_id") @db.Uuid
-  before        Json?     @db.JsonB
-  after         Json?     @db.JsonB
-  reason        String?   @db.VarChar(500)
-  correlationId String    @map("correlation_id") @db.VarChar(64)
-  occurredAt    DateTime  @default(now()) @map("occurred_at") @db.Timestamptz(3)
+  id            String               @id @default(uuid()) @db.Uuid
+  actorId       String?              @map("actor_id") @db.Uuid
+  action        String               @db.VarChar(120)
+  entityType    String               @map("entity_type") @db.VarChar(80)
+  entityId      String               @map("entity_id") @db.Uuid
+  before        Json?                @db.JsonB
+  after         Json?                @db.JsonB
+  reason        String?              @db.VarChar(500)
+  correlationId String               @map("correlation_id") @db.VarChar(64)
+  occurredAt    DateTime             @default(now()) @map("occurred_at") @db.Timestamptz(3)
   actor         ProfessionalProfile? @relation("AuditActor", fields: [actorId], references: [id], onDelete: Restrict)
 
   @@index([entityType, entityId, occurredAt])

@@ -20,7 +20,18 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@runtime/sign-in-action": ["./src/app/(professional)/entrar/actions.ts"],
+      "@runtime/sign-out-action": [
+        "./src/app/(professional)/portal/sign-out-action.ts"
+      ],
+      "@runtime/adult-portal": ["./src/runtime/adult-portal-server.ts"],
+      "@runtime/adult-portal-actions": [
+        "./src/app/(professional)/portal/adult-portal-actions.ts"
+      ],
+      "@runtime/adult-portal-client": [
+        "./src/runtime/adult-portal-server-client.ts"
+      ]
     }
   },
   "include": [

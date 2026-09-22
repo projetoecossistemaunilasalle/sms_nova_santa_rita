@@ -2284,7 +2284,7 @@
 .teamTable .tableRow {
   grid-template-columns:
     minmax(210px, 1.25fr) minmax(200px, 1fr) minmax(150px, 0.8fr)
-    120px 38px;
+    120px minmax(112px, 0.55fr);
 }
 
 .tableHeader {
@@ -3493,7 +3493,374 @@
 .organizationTableRow {
   grid-template-columns:
     minmax(225px, 1.25fr) minmax(160px, 0.8fr)
-    105px 75px 90px 44px;
+    105px 75px 90px minmax(102px, auto);
+}
+
+.demoRoleControls {
+  display: grid;
+  gap: 8px;
+  margin-top: 28px;
+  padding: 12px;
+  border: 1px solid rgb(255 255 255 / 14%);
+  border-radius: var(--radius-large);
+  background: rgb(255 255 255 / 6%);
+}
+
+.demoRoleControls label,
+.demoRoleControls label span {
+  display: grid;
+}
+
+.demoRoleControls label span {
+  margin-bottom: 5px;
+  color: color-mix(in srgb, var(--surface) 72%, var(--text) 28%);
+  font-size: var(--type-compact);
+  font-weight: 800;
+}
+
+.demoRoleControls select,
+.demoRoleControls button {
+  width: 100%;
+  min-height: 42px;
+  padding: 8px 10px;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: var(--radius-field);
+  font: inherit;
+  font-size: var(--type-compact);
+}
+
+.demoRoleControls select {
+  color: var(--text);
+  background: var(--surface);
+}
+
+.demoRoleControls button {
+  color: #fff;
+  background: rgb(255 255 255 / 7%);
+  cursor: pointer;
+}
+
+.demoRoleControls > span {
+  color: color-mix(in srgb, var(--surface) 76%, var(--green) 24%);
+  font-size: var(--type-compact);
+}
+
+.demoRoleControls + .navigation {
+  margin-top: 18px;
+}
+
+.demoScopeNotice,
+.provisioningNotice,
+.inactiveNotice {
+  margin: 0 0 18px;
+  padding: 13px 16px;
+  border-radius: var(--radius-large);
+  font-size: var(--type-small);
+}
+
+.demoScopeNotice {
+  border: 1px solid color-mix(in srgb, var(--yellow) 55%, var(--border) 45%);
+  color: var(--yellow-dark);
+  background: var(--yellow-light);
+}
+
+.provisioningNotice,
+.inactiveNotice {
+  border: 1px solid color-mix(in srgb, var(--blue) 20%, var(--border) 80%);
+  background: var(--blue-light);
+}
+
+.inactiveNotice {
+  border-color: color-mix(in srgb, var(--coral) 25%, var(--border) 75%);
+  color: var(--coral-dark);
+  background: var(--coral-light);
+}
+
+.provisioningNotice strong,
+.inactiveNotice strong {
+  font-family: var(--font-display);
+}
+
+.provisioningNotice p,
+.inactiveNotice p {
+  max-width: 72ch;
+  margin: 4px 0 0;
+  color: inherit;
+}
+
+.managementPanel {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.6fr) minmax(420px, 1fr);
+  gap: 28px;
+  align-items: start;
+  margin-bottom: 22px;
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: color-mix(in srgb, var(--surface) 88%, var(--grass) 12%);
+}
+
+.managementPanel h2,
+.nextSlicePanel h2 {
+  margin: 0;
+  font-family: var(--font-display);
+}
+
+.managementPanel > div > p,
+.nextSlicePanel p {
+  max-width: 60ch;
+  margin: 6px 0 0;
+  color: var(--text-muted);
+  font-size: var(--type-small);
+}
+
+.portalForm {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.portalForm > .formSuccess,
+.portalForm > .formError {
+  grid-column: 1 / -1;
+}
+
+.inlineMutationForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.inlineMutationForm .button {
+  min-height: 38px;
+  padding: 7px 11px;
+  color: var(--blue-dark);
+  background: var(--surface);
+  box-shadow: none;
+  border: 1px solid color-mix(in srgb, var(--blue) 35%, var(--border) 65%);
+}
+
+.formSuccess,
+.formError {
+  margin: 0;
+  font-size: var(--type-small);
+  font-weight: 750;
+}
+
+.formSuccess {
+  color: var(--green-dark);
+}
+
+.formError {
+  color: var(--coral-dark);
+}
+
+.button:disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+
+.mutedCell {
+  color: var(--text-muted);
+  font-size: var(--type-compact);
+}
+
+.inlineEmpty,
+.inlineWarning {
+  margin: 0;
+  padding: 14px;
+  border-radius: var(--radius-large);
+  color: var(--text-muted);
+  background: var(--background);
+  font-size: var(--type-small);
+}
+
+.inlineWarning {
+  color: var(--orange-dark);
+  background: var(--orange-light);
+}
+
+.compactDirectoryRow {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  gap: 11px;
+  align-items: center;
+  min-height: 62px;
+  padding: 9px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-large);
+  background: var(--surface);
+}
+
+.compactDirectoryRow strong,
+.compactDirectoryRow small {
+  display: block;
+}
+
+.compactDirectoryRow small {
+  color: var(--text-muted);
+  font-size: var(--type-compact);
+}
+
+.roleContextBand {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin-bottom: 18px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--border);
+}
+
+.roleContextBand > div {
+  display: grid;
+  gap: 5px;
+  padding: 17px;
+  background: var(--surface);
+}
+
+.roleContextBand span {
+  color: var(--text-muted);
+  font-size: var(--type-compact);
+}
+
+.roleContextBand strong {
+  font-size: var(--type-small);
+}
+
+.classManagementGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.75fr);
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.assignmentList {
+  display: grid;
+  gap: 8px;
+}
+
+.assignmentList article {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(110px, auto);
+  gap: 12px;
+  align-items: center;
+  min-height: 62px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.assignmentList article:last-child {
+  border-bottom: 0;
+}
+
+.assignmentList strong,
+.assignmentList small {
+  display: block;
+}
+
+.assignmentList small {
+  margin-top: 3px;
+  color: var(--text-muted);
+  font-size: var(--type-compact);
+}
+
+.nextSlicePanel {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+  margin-top: 18px;
+  padding: 20px;
+  border: 1px dashed color-mix(in srgb, var(--blue) 32%, var(--border) 68%);
+  border-radius: var(--radius-card);
+  background: var(--surface-sky);
+}
+
+.nextSlicePanel > span {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: var(--radius-field);
+  color: var(--blue-dark);
+  background: var(--surface);
+}
+
+.nextSlicePanel svg {
+  width: 22px;
+}
+
+@media (max-width: 980px) {
+  .managementPanel,
+  .classManagementGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .portalForm {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .portalForm > .button {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+
+  .teamTable .tableHeader,
+  .teamTable .tableRow {
+    grid-template-columns: minmax(210px, 1fr) minmax(150px, 0.7fr) 110px minmax(
+        108px,
+        auto
+      );
+  }
+
+  .teamTable .tableHeader > :nth-child(3),
+  .teamTable .tableRow > :nth-child(3) {
+    display: none;
+  }
+}
+
+@media (max-width: 680px) {
+  .roleContextBand,
+  .portalForm {
+    grid-template-columns: 1fr;
+  }
+
+  .portalForm > .button {
+    width: 100%;
+  }
+
+  .teamTable .tableHeader {
+    display: none;
+  }
+
+  .teamTable .tableRow {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+  }
+
+  .teamTable .tableRow > :nth-child(2),
+  .teamTable .tableRow > :nth-child(3),
+  .teamTable .tableRow > :nth-child(4) {
+    display: none;
+  }
+
+  .assignmentList article {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .assignmentList article .inlineMutationForm {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
 }
 
 .organizationTableRow .tableIdentity {
@@ -3971,5 +4338,25 @@
   .resultContext > span {
     min-width: 50%;
     border-bottom: 1px solid var(--border);
+  }
+}
+
+@media (max-width: 900px) {
+  .demoRoleControls {
+    display: none;
+  }
+
+  .demoRoleControls + .navigation {
+    margin-top: 0;
+  }
+
+  .sidebar {
+    overflow: hidden;
+  }
+
+  .navigation {
+    grid-template-columns: none;
+    grid-auto-columns: 1fr;
+    grid-auto-flow: column;
   }
 }

@@ -1,12 +1,10 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-import { isAuthDevBypassEnabled } from "@/server/config/env";
 import {
   correlationIdFromRequest,
   CORRELATION_HEADER,
 } from "@/server/http/correlation";
-import { isProtectedPathname } from "@/server/auth/gateway";
 
 function createNonce(): string {
   const bytes = crypto.getRandomValues(new Uint8Array(16));
@@ -89,34 +87,6 @@ function contentSecurityPolicy(nonce: string): string {
     .join("; ");
 }
 
-function hasSessionCookie(request: NextRequest): boolean {
-  // Neon Auth (via @neondatabase/auth) issues an HttpOnly session cookie.
-  // The exact name is SDK-dependent (`neon-auth`, `__Secure-neon-auth`,
-  // `portal_session`, etc.). Check a small allowlist and fall back to any
-  // cookie that looks like a session/auth token so a future valid Neon
-  // session is not rejected by the edge boundary.
-  const candidates = [
-    "neon-auth.session",
-    "neon-auth",
-    "__Secure-neon-auth",
-    "portal_session",
-    "__Host-portal_session",
-    "__session",
-    "authjs.session-token",
-    "__Secure-authjs.session-token",
-  ];
-  for (const name of candidates) {
-    if (request.cookies.has(name)) return true;
-  }
-  // Fallback: any cookie whose name suggests an auth session.
-  for (const cookie of request.cookies.getAll()) {
-    const n = cookie.name.toLowerCase();
-    if (n.includes("neon") && n.includes("auth")) return true;
-    if (n.includes("session") && n.includes("auth")) return true;
-  }
-  return false;
-}
-
 export function proxy(request: NextRequest): NextResponse {
   const correlationId = correlationIdFromRequest(request);
   const nonce = createNonce();
@@ -129,20 +99,9 @@ export function proxy(request: NextRequest): NextResponse {
   // the response so the browser can enforce it.
   requestHeaders.set("Content-Security-Policy", csp);
 
-  // Protect the professional portal before rendering so unauthenticated page
-  // data cannot stream before the boundary responds. Activity links and the
-  // sign-in route remain public.
-  // In production (bypass disabled) we only redirect when no session cookie
-  // is present; if a cookie is present we let the request reach the layout,
-  // where `getAuthGateway().getSession()` validates it. This allows a future
-  // valid Neon session to be admitted instead of being blocked at the edge.
-  const isProtected = isProtectedPathname(request.nextUrl.pathname);
-  const shouldRedirect =
-    isProtected && !isAuthDevBypassEnabled() && !hasSessionCookie(request);
-
-  const response = shouldRedirect
-    ? NextResponse.redirect(new URL("/entrar", request.url))
-    : NextResponse.next({ request: { headers: requestHeaders } });
+  // Authentication is enforced in the portal server layout through the
+  // official Neon Auth adapter. This proxy never interprets auth cookies.
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
 
   response.headers.set(CORRELATION_HEADER, correlationId);
   response.headers.set("Content-Security-Policy", csp);

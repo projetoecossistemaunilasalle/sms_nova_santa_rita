@@ -5,6 +5,7 @@ import { runtimeEnvSchema } from "@/server/config/env";
 import { isProtectedPathname } from "@/server/auth/gateway";
 
 const validEnvironment = {
+  APP_RUNTIME_MODE: "server",
   DATABASE_URL:
     "postgresql://user:password@example.neon.tech/database?sslmode=require",
   NEON_AUTH_BASE_URL:
@@ -98,6 +99,7 @@ describe("runtimeEnvSchema AUTH_DEV_BYPASS", () => {
 describe("getAuthGateway", () => {
   it("serves a synthetic dev session when the flag is enabled", async () => {
     const gateway = await loadGatewayWithEnv({
+      NODE_ENV: "development",
       AUTH_DEV_BYPASS: "true",
     });
 
@@ -108,12 +110,33 @@ describe("getAuthGateway", () => {
     expect(session?.expiresAt.getTime()).toBeGreaterThan(Date.now());
   });
 
-  it("yields no session when the flag is disabled", async () => {
+  it("selects Neon Auth when the server bypass is disabled", async () => {
     const gateway = await loadGatewayWithEnv({
       AUTH_DEV_BYPASS: "false",
     });
 
-    await expect(gateway.getSession()).resolves.toBeNull();
+    expect(gateway.constructor.name).toBe("ServerNeonAuthGateway");
+  });
+
+  it("cannot select the development bypass in a production server", async () => {
+    await expect(
+      loadGatewayWithEnv({
+        NODE_ENV: "production",
+        AUTH_DEV_BYPASS: "true",
+      }),
+    ).rejects.toThrow(/AUTH_DEV_BYPASS/);
+  });
+
+  it("selects the isolated demo gateway only for the demo target", async () => {
+    const gateway = await loadGatewayWithEnv({
+      APP_RUNTIME_MODE: "demo",
+      AUTH_DEV_BYPASS: "false",
+    });
+
+    expect(gateway.constructor.name).toBe("DemoAuthGateway");
+    await expect(gateway.getSession()).resolves.toMatchObject({
+      actor: { authUserId: "demo-user" },
+    });
   });
 });
 
@@ -137,6 +160,8 @@ describe("isAuthDevBypassEnabled", () => {
 
   afterEach(() => {
     delete process.env[flagKey];
+    delete process.env.APP_RUNTIME_MODE;
+    delete (process.env as Record<string, string | undefined>).NODE_ENV;
   });
 
   it("is disabled by default", () => {
@@ -144,6 +169,9 @@ describe("isAuthDevBypassEnabled", () => {
   });
 
   it("follows the flag value", () => {
+    process.env.APP_RUNTIME_MODE = "server";
+    (process.env as Record<string, string | undefined>).NODE_ENV =
+      "development";
     process.env[flagKey] = "true";
     expect(isAuthDevBypassEnabled()).toBe(true);
 
@@ -152,6 +180,9 @@ describe("isAuthDevBypassEnabled", () => {
   });
 
   it("fails closed on unparseable values", () => {
+    process.env.APP_RUNTIME_MODE = "server";
+    (process.env as Record<string, string | undefined>).NODE_ENV =
+      "development";
     process.env[flagKey] = "maybe";
     expect(isAuthDevBypassEnabled()).toBe(false);
   });

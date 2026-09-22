@@ -43,12 +43,18 @@ import {
 } from "@/app/(professional)/portal/atividades/actions";
 
 const originalBypass = process.env.AUTH_DEV_BYPASS;
+const originalRuntimeMode = process.env.APP_RUNTIME_MODE;
 
 afterEach(() => {
   if (originalBypass === undefined) {
     delete process.env.AUTH_DEV_BYPASS;
   } else {
     process.env.AUTH_DEV_BYPASS = originalBypass;
+  }
+  if (originalRuntimeMode === undefined) {
+    delete process.env.APP_RUNTIME_MODE;
+  } else {
+    process.env.APP_RUNTIME_MODE = originalRuntimeMode;
   }
 });
 
@@ -60,6 +66,7 @@ function form(values: Record<string, string>): FormData {
 
 describe("portal activity actions in development bypass mode", () => {
   it("handles create and lifecycle actions without the Prisma-backed services", async () => {
+    process.env.APP_RUNTIME_MODE = "server";
     process.env.AUTH_DEV_BYPASS = "true";
 
     const created = await createAccessLinkAction(
@@ -94,6 +101,7 @@ describe("portal activity actions in development bypass mode", () => {
   });
 
   it("redirects edit submissions to the fixture detail route", async () => {
+    process.env.APP_RUNTIME_MODE = "server";
     process.env.AUTH_DEV_BYPASS = "true";
 
     await expect(

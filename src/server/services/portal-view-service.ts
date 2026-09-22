@@ -1,6 +1,10 @@
 import { DEV_BYPASS_ACTOR } from "@/server/auth/dev-bypass-gateway";
 import type { AccessLinkRecord } from "@/server/services/access-link-service";
 import { hashToken } from "@/server/security/tokens";
+import { isDemoRuntime } from "@/runtime/mode";
+import { isAuthDevBypassEnabled } from "@/server/config/env";
+
+const demoRuntime = isDemoRuntime();
 
 export type ActivityStatus = "Aberta" | "Rascunho" | "Pausada" | "Encerrada";
 
@@ -134,7 +138,7 @@ const accessLinks: AccessLinkSummary[] = [
   },
 ];
 
-export const professionals = [
+const demoProfessionals = [
   {
     initials: "AM",
     name: "Adriana Martins",
@@ -173,7 +177,9 @@ export const professionals = [
   },
 ] as const;
 
-export const organizations = [
+export const professionals = demoRuntime ? demoProfessionals : [];
+
+const demoOrganizations = [
   {
     id: ORGANIZATION_IDS.VICTOR_AGGENS,
     initials: "VA",
@@ -197,6 +203,8 @@ export const organizations = [
     status: "Ativa" as const,
   },
 ] as const;
+
+export const organizations = demoRuntime ? demoOrganizations : [];
 
 const classGroups: ClassGroupSummary[] = [
   {
@@ -362,7 +370,7 @@ const materials: MaterialSummary[] = [
   },
 ];
 
-export const auditEvents = [
+const demoAuditEvents = [
   {
     date: "23 ago. · 10:32",
     actor: "Adriana Martins",
@@ -405,7 +413,12 @@ export const auditEvents = [
   },
 ] as const;
 
+export const auditEvents = demoRuntime ? demoAuditEvents : [];
+
 export function getDashboardData() {
+  if (!demoRuntime) {
+    throw new Error("Server portal data is not connected in Slice 0.");
+  }
   return {
     featured: activities[0]!,
     links: accessLinks,
@@ -416,19 +429,21 @@ export function getDashboardData() {
 }
 
 export function listActivities() {
-  return activities;
+  return demoRuntime ? activities : [];
 }
 
 export function getActivity(id: string) {
-  return activities.find((activity) => activity.id === id);
+  return demoRuntime
+    ? activities.find((activity) => activity.id === id)
+    : undefined;
 }
 
 export function listAccessLinks() {
-  return accessLinks;
+  return demoRuntime ? accessLinks : [];
 }
 
 function demoData<T>(fixtures: T[]): T[] {
-  return fixtures;
+  return demoRuntime ? fixtures : [];
 }
 
 export function listClassGroups() {
@@ -448,10 +463,15 @@ export function getMaterial(id: string) {
 }
 
 export function getOrganization(id: string) {
-  return organizations.find((organization) => organization.id === id);
+  return demoRuntime
+    ? organizations.find((organization) => organization.id === id)
+    : undefined;
 }
 
 export function getOrganizationDemoData(id: string) {
+  if (!demoRuntime) {
+    return { classGroups: [], professionals: [], links: [] };
+  }
   return {
     classGroups: classGroups.filter(
       (classGroup) => classGroup.organizationId === id,
@@ -471,6 +491,7 @@ export function getOrganizationDemoData(id: string) {
 export function getDevBypassAccessLink(
   id: string,
 ): AccessLinkRecord | undefined {
+  if (!demoRuntime && !isAuthDevBypassEnabled()) return undefined;
   const summary = accessLinks.find((link) => link.id === id);
   if (!summary) return undefined;
 

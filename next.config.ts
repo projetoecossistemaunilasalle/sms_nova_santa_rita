@@ -1,17 +1,57 @@
 import type { NextConfig } from "next";
+import { z } from "zod";
 
-const isProd = process.env.NODE_ENV === "production";
-const basePath =
-  process.env.NEXT_PUBLIC_BASE_PATH ?? (isProd ? "/SMS_Portal" : "");
+const runtimeMode = z
+  .enum(["demo", "server"])
+  .parse(process.env.APP_RUNTIME_MODE);
+
+if (runtimeMode === "server") {
+  z.object({
+    DATABASE_URL: z.string().url(),
+    NEON_AUTH_BASE_URL: z.string().url(),
+    NEON_AUTH_COOKIE_SECRET: z.string().min(32),
+    APPLICATION_SECRET: z.string().min(32),
+    AUTH_DEV_BYPASS: z.literal("false").optional(),
+  }).parse(process.env);
+}
 
 const nextConfig: NextConfig = {
-  output: "export",
-  basePath: basePath || undefined,
-  trailingSlash: true,
+  ...(runtimeMode === "demo"
+    ? {
+        output: "export" as const,
+        basePath: "/SMS_Portal",
+        trailingSlash: true,
+        images: { unoptimized: true },
+      }
+    : { output: "standalone" as const }),
   poweredByHeader: false,
   reactStrictMode: true,
-  images: {
-    unoptimized: true,
+  env: {
+    APP_RUNTIME_MODE: runtimeMode,
+  },
+  turbopack: {
+    resolveAlias: {
+      "@runtime/sign-in-action":
+        runtimeMode === "demo"
+          ? "./src/runtime/demo-auth-actions.ts"
+          : "./src/app/(professional)/entrar/actions.ts",
+      "@runtime/sign-out-action":
+        runtimeMode === "demo"
+          ? "./src/runtime/demo-auth-actions.ts"
+          : "./src/app/(professional)/portal/sign-out-action.ts",
+      "@runtime/adult-portal":
+        runtimeMode === "demo"
+          ? "./src/runtime/adult-portal-demo.ts"
+          : "./src/runtime/adult-portal-server.ts",
+      "@runtime/adult-portal-actions":
+        runtimeMode === "demo"
+          ? "./src/runtime/adult-portal-demo-actions.ts"
+          : "./src/app/(professional)/portal/adult-portal-actions.ts",
+      "@runtime/adult-portal-client":
+        runtimeMode === "demo"
+          ? "./src/runtime/adult-portal-demo-client.ts"
+          : "./src/runtime/adult-portal-server-client.ts",
+    },
   },
 };
 

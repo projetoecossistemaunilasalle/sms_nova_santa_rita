@@ -40,7 +40,7 @@ The portal must not become a minigame catalog or game editor.
 - [Design system](DESIGN.md)
 - [Runtime JSON Schemas](contracts/schemas)
 - [Database schema](prisma/schema.prisma)
-- [Implementation roadmap](docs/implementation/README.md) (must be reconciled with the V1 dossier)
+- [Implementation roadmap](docs/implementation/README.md)
 - [Legacy portal proposal](portal-v1-specification.md) (historical research only)
 
 ## Current application structure
@@ -71,13 +71,32 @@ cp .env.example .env.local
 npm run dev
 ```
 
-The local application is available at `http://localhost:3000`.
+`npm run dev` starts the server runtime and validates the database and Neon Auth
+settings in `.env.local`. For the credential-free static demonstration, use
+`npm run dev:demo`. The Slice 1 demo stores organization, team, class, assignment,
+and selected demo-role changes in browser `localStorage`; use **Restaurar demo** in
+the portal sidebar to return to the representative seed data.
+
+## Runtime targets
+
+- `npm run build:demo` creates the production-optimized GitHub Pages export in
+  `out/`. It uses the `/SMS_Portal` base path and requires no server secrets.
+- `npm run build:server` creates the standalone, server-capable Next.js build.
+  It requires `DATABASE_URL`, `NEON_AUTH_BASE_URL`,
+  `NEON_AUTH_COOKIE_SECRET`, and `APPLICATION_SECRET`.
+- `npm run build` is intentionally an alias for `build:server`.
+
+In server mode, an adult must first exist in Neon Auth and have a matching active
+`ProfessionalProfile`. Organization/team screens bind that already-provisioned
+profile to an application-owned membership; the portal does not create passwords or
+silently synthesize authentication identities.
 
 ## Verification
 
 ```bash
 npm run check
-npm run build
+npm run build:demo
+npm run build:server
 ```
 
 The repository currently also supports a static GitHub Pages demo configuration. That demo is useful for visual validation but does not represent production persistence, authentication, player identity, or GameMaker synchronization.

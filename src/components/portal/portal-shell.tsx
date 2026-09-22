@@ -2,17 +2,18 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import type { ActorSession } from "@/server/auth/session";
+import type { RuntimeMode } from "@/runtime/mode";
+import type { PortalShellDto } from "@/application/adult-portal/types";
+import { signOutAction } from "@runtime/sign-out-action";
 import { Icon } from "@/components/shared/icon";
 import { PortalNavigation } from "./portal-navigation";
+import { DemoRoleControls } from "./demo-role-controls";
+import {
+  PortalScopeContext,
+  PortalShellIdentity,
+  PortalTopbarAvatar,
+} from "./portal-shell-context";
 import styles from "./portal.module.css";
-
-function initialsFrom(displayName: string): string {
-  return displayName
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part.charAt(0).toUpperCase())
-    .join("");
-}
 
 export function Brand({ compact = false }: { compact?: boolean }) {
   return (
@@ -34,36 +35,46 @@ export function Brand({ compact = false }: { compact?: boolean }) {
 
 export function PortalShell({
   session,
+  runtimeMode,
+  shell,
   children,
 }: {
   session: ActorSession;
+  runtimeMode: RuntimeMode;
+  shell: PortalShellDto;
   children: ReactNode;
 }) {
-  const initials = initialsFrom(session.actor.displayName);
-  const allowedAdminHrefs = [
-    "/portal/admin/equipe",
-    "/portal/admin/organizacoes",
-    "/portal/admin/auditoria",
-  ];
-
   return (
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
         <Brand />
-        <PortalNavigation allowedAdminHrefs={allowedAdminHrefs} />
+        {runtimeMode === "demo" && <DemoRoleControls />}
+        <PortalNavigation items={shell.navigation} runtimeMode={runtimeMode} />
         <div className={styles.sidebarProfile}>
-          <span className={styles.avatar}>{initials}</span>
-          <span className={styles.sidebarProfileCopy}>
-            <strong>{session.actor.displayName}</strong>
-            <small>Profissional de saúde</small>
-          </span>
-          <Link
-            href="/entrar"
-            aria-label="Sair do portal"
-            className={styles.logoutButton}
-          >
-            <Icon name="logout" />
-          </Link>
+          <PortalShellIdentity
+            defaultName={session.actor.displayName}
+            shell={shell}
+            runtimeMode={runtimeMode}
+          />
+          {runtimeMode === "demo" ? (
+            <Link
+              href="/entrar"
+              aria-label="Sair do portal"
+              className={styles.logoutButton}
+            >
+              <Icon name="logout" />
+            </Link>
+          ) : (
+            <form action={signOutAction}>
+              <button
+                type="submit"
+                aria-label="Sair do portal"
+                className={styles.logoutButton}
+              >
+                <Icon name="logout" />
+              </button>
+            </form>
+          )}
         </div>
       </aside>
 
@@ -72,22 +83,18 @@ export function PortalShell({
           <div className={styles.schoolChip}>
             <Icon name="building" />
             <span>
-              <small>Organização ativa</small>
-              <strong>EMEF Victor Aggens</strong>
+              <small>Escopo de acesso</small>
+              <PortalScopeContext shell={shell} runtimeMode={runtimeMode} />
             </span>
           </div>
           <div className={styles.topbarActions}>
             <Link className={styles.helpLink} href="/portal/ajuda">
               Ajuda
             </Link>
-            <Link
-              className={styles.newActivityShortcut}
-              href="/portal/atividades/nova"
-            >
-              <Icon name="link" />
-              <span>Novo link</span>
-            </Link>
-            <span className={styles.topbarAvatar}>{initials}</span>
+            <PortalTopbarAvatar
+              defaultName={session.actor.displayName}
+              runtimeMode={runtimeMode}
+            />
           </div>
         </header>
         <main className={styles.content}>{children}</main>

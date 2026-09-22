@@ -4,8 +4,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { Icon, type IconName } from "@/components/shared/icon";
+import type { NavigationItemDto } from "@/application/adult-portal/types";
+import type { RuntimeMode } from "@/runtime/mode";
+import {
+  OrganizationRole,
+  PlatformRole,
+  RecordStatus,
+} from "@/generated/prisma/enums";
 
 import styles from "./portal.module.css";
+import { useDemoPortalState } from "./use-demo-portal";
 
 type NavItem = {
   href: string;
@@ -14,54 +22,6 @@ type NavItem = {
   exact?: boolean;
   mobile?: boolean;
 };
-
-const primaryItems: NavItem[] = [
-  {
-    href: "/portal",
-    label: "Visão geral",
-    icon: "home",
-    exact: true,
-    mobile: true,
-  },
-  {
-    href: "/portal/atividades",
-    label: "Links de acesso",
-    icon: "flag",
-    mobile: true,
-  },
-  {
-    href: "/portal/atividades/habitos-saudaveis/resultados",
-    label: "Resultados",
-    icon: "chart",
-    mobile: true,
-  },
-  {
-    href: "/portal/turmas",
-    label: "Turmas",
-    icon: "school",
-    mobile: true,
-  },
-  {
-    href: "/portal/materiais",
-    label: "Materiais",
-    icon: "book",
-    mobile: true,
-  },
-];
-
-const adminItems: NavItem[] = [
-  {
-    href: "/portal/admin/equipe",
-    label: "Equipe",
-    icon: "users",
-  },
-  {
-    href: "/portal/admin/organizacoes",
-    label: "Organizações",
-    icon: "building",
-  },
-  { href: "/portal/admin/auditoria", label: "Auditoria", icon: "history" },
-];
 
 function isCurrent(pathname: string, item: NavItem) {
   if (item.exact) return pathname === item.href;
@@ -96,32 +56,85 @@ function NavigationLink({
 }
 
 export function PortalNavigation({
-  allowedAdminHrefs,
+  items,
+  runtimeMode,
 }: {
-  allowedAdminHrefs?: string[];
+  items: NavigationItemDto[];
+  runtimeMode: RuntimeMode;
 }) {
   const pathname = usePathname();
+  const demo = useDemoPortalState();
 
-  const visibleAdminItems =
-    allowedAdminHrefs === undefined
-      ? adminItems
-      : adminItems.filter((item) => allowedAdminHrefs.includes(item.href));
+  let visibleItems: NavItem[] = items;
+  if (runtimeMode === "demo" && demo) {
+    const profile = demo.profiles.find(
+      (item) => item.id === demo.activeProfileId,
+    );
+    const memberships = demo.memberships.filter(
+      (item) =>
+        item.profileId === demo.activeProfileId &&
+        item.status === RecordStatus.ACTIVE,
+    );
+    const organizationAdmin = memberships.find(
+      (item) => item.role === OrganizationRole.ORGANIZATION_ADMIN,
+    );
+    visibleItems = [
+      {
+        href: "/portal",
+        label: "Visão geral",
+        icon: "home",
+        exact: true,
+        mobile: true,
+      },
+    ];
+    if (profile?.platformRole === PlatformRole.PLATFORM_ADMIN) {
+      visibleItems.push(
+        {
+          href: "/portal/admin/organizacoes",
+          label: "Organizações",
+          icon: "building",
+          mobile: true,
+        },
+        {
+          href: "/portal/admin/equipe",
+          label: "Equipe",
+          icon: "users",
+          mobile: true,
+        },
+      );
+    } else {
+      visibleItems.push({
+        href: "/portal/turmas",
+        label: "Turmas",
+        icon: "school",
+        mobile: true,
+      });
+      if (organizationAdmin) {
+        visibleItems.push(
+          {
+            href: "/portal/admin/equipe",
+            label: "Equipe",
+            icon: "users",
+            mobile: true,
+          },
+          {
+            href: `/portal/admin/organizacoes/${organizationAdmin.organizationId}`,
+            label: "Minha organização",
+            icon: "building",
+            mobile: true,
+          },
+        );
+      }
+    }
+  }
 
   return (
     <nav className={styles.navigation} aria-label="Navegação do portal">
       <div className={styles.navGroup}>
-        {primaryItems.map((item) => (
+        {visibleItems.map((item) => (
           <NavigationLink key={item.href} item={item} pathname={pathname} />
         ))}
       </div>
-      {visibleAdminItems.length > 0 && (
-        <div className={`${styles.navGroup} ${styles.adminNavGroup}`}>
-          <p className={styles.navLabel}>Administração</p>
-          {visibleAdminItems.map((item) => (
-            <NavigationLink key={item.href} item={item} pathname={pathname} />
-          ))}
-        </div>
-      )}
     </nav>
   );
 }

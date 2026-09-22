@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { runtimeEnvSchema } from "@/server/config/env";
+import { runtimeEnvSchema, serverRuntimeEnvSchema } from "@/server/config/env";
 
 const validEnvironment = {
+  APP_RUNTIME_MODE: "server",
   DATABASE_URL:
     "postgresql://user:password@example.neon.tech/database?sslmode=require",
   NEON_AUTH_BASE_URL:
@@ -13,8 +14,33 @@ const validEnvironment = {
 };
 
 describe("runtimeEnvSchema", () => {
+  it("allows the demo runtime without server secrets", () => {
+    expect(
+      runtimeEnvSchema.parse({
+        APP_RUNTIME_MODE: "demo",
+        NODE_ENV: "production",
+      }),
+    ).toMatchObject({ APP_RUNTIME_MODE: "demo", AUTH_DEV_BYPASS: false });
+  });
+
+  it("requires an explicit supported runtime mode", () => {
+    expect(() => runtimeEnvSchema.parse({})).toThrow();
+    expect(() =>
+      runtimeEnvSchema.parse({ APP_RUNTIME_MODE: "preview" }),
+    ).toThrow();
+  });
+
+  it("rejects the development bypass in demo mode", () => {
+    expect(() =>
+      runtimeEnvSchema.parse({
+        APP_RUNTIME_MODE: "demo",
+        AUTH_DEV_BYPASS: "true",
+      }),
+    ).toThrow(/AUTH_DEV_BYPASS/);
+  });
+
   it("parses required runtime settings and allowed origins", () => {
-    const result = runtimeEnvSchema.parse(validEnvironment);
+    const result = serverRuntimeEnvSchema.parse(validEnvironment);
 
     expect(result.ALLOWED_ORIGINS).toEqual([
       "https://portal.example.org",

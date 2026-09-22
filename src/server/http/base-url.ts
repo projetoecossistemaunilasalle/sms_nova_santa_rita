@@ -20,7 +20,11 @@ import { getRuntimeEnv } from "@/server/config/env";
  *   FIRST configured origin wins (defaults to http://localhost:3000).
  */
 export async function getPublicBaseUrl(): Promise<string> {
-  const allowedOrigins = getRuntimeEnv().ALLOWED_ORIGINS;
+  const environment = getRuntimeEnv();
+  const allowedOrigins =
+    environment.APP_RUNTIME_MODE === "server"
+      ? environment.ALLOWED_ORIGINS
+      : ["http://localhost:3000"];
   const fallbackOrigin = allowedOrigins[0] ?? "http://localhost:3000";
 
   try {
