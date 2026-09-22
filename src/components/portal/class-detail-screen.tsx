@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import type { ClassDetailDto } from "@/application/adult-portal/types";
+import type { ClassWorkflowDto } from "@/application/player-access/types";
 import type { RuntimeMode } from "@/runtime/mode";
 import { RecordStatus } from "@/generated/prisma/enums";
 import {
@@ -10,10 +11,12 @@ import {
   changeClassStatusAction,
   deactivateTeacherAssignmentAction,
 } from "@runtime/adult-portal-actions";
-import { Icon } from "@/components/shared/icon";
-
 import { AdultPortalForm } from "./adult-portal-form";
 import { demoClassDetail, recordStatusLabel } from "./adult-portal-helpers";
+import {
+  PlayerAccessWorkflow,
+  workflowFromDemoState,
+} from "./player-access-workflow";
 import { PortalState } from "./portal-state";
 import { StatusBadge } from "./status-badge";
 import { useDemoPortalState } from "./use-demo-portal";
@@ -21,9 +24,11 @@ import styles from "./portal.module.css";
 
 export function ClassDetailScreen({
   initialClass,
+  initialWorkflow,
   runtimeMode,
 }: {
   initialClass: ClassDetailDto;
+  initialWorkflow: ClassWorkflowDto;
   runtimeMode: RuntimeMode;
 }) {
   const demo = useDemoPortalState();
@@ -47,6 +52,7 @@ export function ClassDetailScreen({
   const assignableTeachers = classGroup.availableTeachers.filter(
     (teacher) => !assignedMembershipIds.has(teacher.id),
   );
+  const workflow = workflowFromDemoState(demo, classGroup.id, initialWorkflow);
 
   return (
     <>
@@ -85,7 +91,8 @@ export function ClassDetailScreen({
       </section>
       {runtimeMode === "demo" && (
         <p className={styles.demoScopeNotice}>
-          Atribuições demo persistem somente neste navegador.
+          Demonstração local: jogadores, sessões e credenciais ficam somente
+          neste navegador e não têm validade em produção.
         </p>
       )}
       {classGroup.status !== RecordStatus.ACTIVE && (
@@ -96,6 +103,14 @@ export function ClassDetailScreen({
           </p>
         </section>
       )}
+      <PlayerAccessWorkflow
+        classGroupId={classGroup.id}
+        className={classGroup.name}
+        disabled={classGroup.status !== RecordStatus.ACTIVE}
+        organizationName={classGroup.organizationName}
+        runtimeMode={runtimeMode}
+        workflow={workflow}
+      />
       <div className={styles.classManagementGrid}>
         <section className={styles.detailPanel}>
           <div className={styles.sectionHeader}>
@@ -191,19 +206,6 @@ export function ClassDetailScreen({
           </section>
         )}
       </div>
-      <section className={styles.nextSlicePanel}>
-        <span>
-          <Icon name="grid" />
-        </span>
-        <div>
-          <h2>Acesso dos jogadores vem a seguir</h2>
-          <p>
-            Os slots numerados, credenciais QR e sessões de jogo serão
-            implementados no próximo slice. Nenhum dado infantil é solicitado
-            aqui.
-          </p>
-        </div>
-      </section>
     </>
   );
 }

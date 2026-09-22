@@ -3802,9 +3802,422 @@
   width: 22px;
 }
 
+.playerWorkflow {
+  display: grid;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.sessionControl {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+  padding: 22px;
+  border: 1px solid color-mix(in srgb, var(--orange) 28%, var(--border) 72%);
+  border-radius: var(--radius-card);
+  background: var(--orange-light);
+}
+
+.sessionControlActive {
+  border-color: color-mix(in srgb, var(--green) 32%, var(--border) 68%);
+  background: var(--green-light);
+}
+
+.sessionSignal {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  border-radius: var(--radius-circle);
+  color: var(--orange-dark);
+  background: var(--surface);
+}
+
+.sessionControlActive .sessionSignal {
+  color: var(--green-dark);
+}
+
+.sessionSignal svg {
+  width: 24px;
+  height: 24px;
+}
+
+.sessionControlCopy h2,
+.playerAllocationPanel h2,
+.playerDirectoryHeader h2,
+.issuedCredentialsHeader h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  line-height: 1.15;
+}
+
+.sessionControlCopy p,
+.playerAllocationPanel > div > p,
+.playerDirectoryHeader p,
+.issuedCredentialsHeader p {
+  max-width: 68ch;
+  margin: 5px 0 0;
+  color: var(--text-muted);
+  font-size: var(--type-small);
+}
+
+.sessionControlCopy .formSuccess,
+.sessionControlCopy .formError {
+  margin-top: 7px;
+}
+
+.sessionControlActions {
+  display: grid;
+  gap: 8px;
+  width: min(100%, 400px);
+  min-width: 0;
+}
+
+.confirmationDialog {
+  position: fixed;
+  inset: 0;
+  width: min(calc(100vw - 32px), 480px);
+  max-width: none;
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 22px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  color: var(--text);
+  background: var(--surface);
+  box-shadow: 0 22px 55px rgb(35 64 46 / 22%);
+}
+
+.confirmationDialog:not([open]) {
+  display: none;
+}
+
+.confirmationDialog::backdrop {
+  background: rgb(21 39 28 / 46%);
+}
+
+.confirmationDialogWarning {
+  border-color: color-mix(in srgb, var(--orange) 36%, var(--border) 64%);
+  background: color-mix(in srgb, var(--orange-light) 58%, var(--surface) 42%);
+}
+
+.confirmationDialog h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  line-height: 1.15;
+}
+
+.confirmationDialog p {
+  max-width: 60ch;
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: var(--type-small);
+  line-height: 1.45;
+}
+
+.confirmationDialogActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.confirmationDialogActions > button {
+  min-height: 44px;
+  padding-inline: 12px;
+}
+
+.playerAllocationPanel {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.8fr) minmax(360px, 1fr);
+  gap: 24px;
+  align-items: end;
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+
+.playerAllocationForm {
+  display: grid;
+  grid-template-columns: minmax(110px, 0.45fr) minmax(170px, auto);
+  gap: 10px;
+  align-items: end;
+}
+
+.playerAllocationForm .formSuccess,
+.playerAllocationForm .formError {
+  grid-column: 1 / -1;
+}
+
+.playerDirectory {
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+
+.playerDirectoryHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 17px;
+  border-bottom: 1px solid var(--border);
+}
+
+.playerDirectoryHeader > span {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: var(--radius-pill);
+  color: var(--green-dark);
+  background: var(--green-light);
+  font-size: var(--type-compact);
+  font-weight: 850;
+}
+
+.playerList {
+  display: grid;
+}
+
+.playerRow {
+  display: grid;
+  grid-template-columns: auto minmax(150px, 1fr) auto minmax(170px, auto);
+  gap: 13px;
+  align-items: center;
+  min-height: 76px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.playerRow:last-child {
+  border-bottom: 0;
+}
+
+.playerNumber {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: var(--radius-large) var(--radius-large) var(--radius-large)
+    var(--radius-mark);
+  color: var(--blue-dark);
+  background: var(--blue-light);
+  font-family: var(--font-display);
+  font-size: var(--type-title);
+  font-variant-numeric: tabular-nums;
+}
+
+.playerRow strong,
+.playerRow small {
+  display: block;
+}
+
+.playerRow small {
+  margin-top: 3px;
+  color: var(--text-muted);
+  font-size: var(--type-compact);
+}
+
+.playerStatusActive,
+.playerStatusInactive {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 9px;
+  border-radius: var(--radius-pill);
+  font-size: var(--type-compact);
+  font-weight: 850;
+}
+
+.playerStatusActive {
+  color: var(--green-dark);
+  background: var(--green-light);
+}
+
+.playerStatusInactive {
+  color: var(--coral-dark);
+  background: var(--coral-light);
+}
+
+.playerStatusActive::before,
+.playerStatusInactive::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-circle);
+  background: currentColor;
+}
+
+.playerCredentialAction {
+  display: grid;
+  gap: 8px;
+  justify-items: end;
+}
+
+.playerCredentialAction form {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+  width: 100%;
+}
+
+.playerCredentialAction .confirmationDialog {
+  width: min(calc(100vw - 32px), 390px);
+}
+
+.playerCredentialAction .buttonGhost {
+  color: var(--blue-dark);
+}
+
+.playerCredentialAction .issuedCredentials {
+  grid-column: 1 / -1;
+}
+
+.playerCredentialActionIssued {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+.playerCredentialActionIssued > form,
+.playerCredentialActionIssued > .formSuccess,
+.playerCredentialActionIssued > .formError {
+  justify-self: end;
+}
+
+.playerEmptyState {
+  display: flex;
+  min-height: 145px;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  color: var(--text-muted);
+}
+
+.playerEmptyState > svg {
+  width: 34px;
+  color: var(--blue);
+}
+
+.playerEmptyState strong {
+  color: var(--text);
+  font-family: var(--font-display);
+}
+
+.playerEmptyState p {
+  margin: 3px 0 0;
+  font-size: var(--type-small);
+}
+
+.issuedCredentials {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin-top: 4px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.issuedCredentialsHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 16px;
+}
+
+.printSheet {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 12px;
+}
+
+.credentialPrintCard {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  min-width: 0;
+  padding: 20px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--blue) 22%, var(--border) 78%);
+  border-radius: var(--radius-card);
+  text-align: center;
+  background: var(--surface-sky);
+  break-inside: avoid;
+}
+
+.credentialPrintHeading {
+  display: grid;
+  gap: 3px;
+}
+
+.credentialPrintHeading > span {
+  color: var(--green-dark);
+  font-size: var(--type-compact);
+  font-weight: 850;
+}
+
+.credentialPrintHeading strong {
+  font-family: var(--font-display);
+  font-size: var(--type-display-small);
+  line-height: 1.1;
+}
+
+.credentialPrintHeading small {
+  color: var(--text-muted);
+  font-size: var(--type-small);
+}
+
+.credentialPrintCard img {
+  width: min(100%, 230px);
+  height: auto;
+  margin: 13px auto;
+  border-radius: var(--radius-compact);
+  background: #fff;
+}
+
+.credentialPrintCard > p {
+  max-width: 28ch;
+  margin: 0;
+  color: var(--text);
+  font-size: var(--type-small);
+  font-weight: 750;
+}
+
+.credentialPrivacy {
+  max-width: 34ch;
+  margin-top: 7px;
+  color: var(--text-muted);
+  font-size: var(--type-compact);
+}
+
+.demoCredentialMark {
+  width: calc(100% + 40px);
+  margin: -20px -20px 16px;
+  padding: 6px 10px;
+  color: var(--yellow-dark);
+  background: var(--yellow-light);
+  font-size: var(--type-compact);
+  font-weight: 900;
+  letter-spacing: 0.07em;
+}
+
+.qrPreparing {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 30px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
 @media (max-width: 980px) {
   .managementPanel,
-  .classManagementGrid {
+  .classManagementGrid,
+  .playerAllocationPanel {
     grid-template-columns: 1fr;
   }
 
@@ -3867,6 +4280,106 @@
   .assignmentList article .inlineMutationForm {
     grid-column: 1 / -1;
     justify-content: flex-start;
+  }
+
+  .sessionControl {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .sessionControlActions {
+    grid-column: 1 / -1;
+  }
+
+  .sessionControlActions > button {
+    width: 100%;
+  }
+
+  .playerAllocationForm,
+  .playerRow {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .playerAllocationForm .field,
+  .playerAllocationForm .button,
+  .playerAllocationForm .formSuccess,
+  .playerAllocationForm .formError {
+    grid-column: 1 / -1;
+  }
+
+  .playerAllocationForm .button {
+    width: 100%;
+  }
+
+  .playerRow .playerStatusActive,
+  .playerRow .playerStatusInactive {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .playerCredentialAction {
+    grid-column: 1 / -1;
+    justify-items: stretch;
+  }
+
+  .playerCredentialAction button {
+    width: 100%;
+  }
+
+  .confirmationDialogActions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .confirmationDialogActions > button {
+    width: 100%;
+  }
+
+  .issuedCredentialsHeader,
+  .playerDirectoryHeader {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .issuedCredentialsHeader .buttonSecondary {
+    width: 100%;
+  }
+}
+
+@media print {
+  :global(body) > * {
+    visibility: hidden;
+  }
+
+  .printSheet,
+  .printSheet * {
+    visibility: visible;
+  }
+
+  .printSheet:not([data-player-print-active]) {
+    display: none;
+  }
+
+  .printSheet {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9mm;
+    padding: 5mm;
+    color: #23402e;
+    background: #fff;
+  }
+
+  .credentialPrintCard {
+    min-height: 122mm;
+    padding: 8mm;
+    border: 1px solid #9bb3a1;
+    background: #fff;
+  }
+
+  .credentialPrintCard img {
+    width: 58mm;
   }
 }
 
