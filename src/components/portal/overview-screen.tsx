@@ -46,6 +46,16 @@ export function OverviewScreen({
       : `${new Set(classes.map((item) => item.organizationName)).size || 0} organização(ões) no escopo`
     : initial.scopeLabel;
 
+  if (!role) {
+    return (
+      <PortalState
+        icon="lock"
+        title="Este perfil não possui acesso ativo"
+        description="Selecione um perfil demo ativo vinculado a uma organização ativa."
+      />
+    );
+  }
+
   return (
     <>
       <PageHeader

@@ -27,6 +27,15 @@ export function DemoRoleControls() {
 
   if (!state) return null;
 
+  const activeProfiles = state.profiles.filter(
+    (profile) => profile.status === RecordStatus.ACTIVE,
+  );
+  const selectedProfileId = activeProfiles.some(
+    (profile) => profile.id === state.activeProfileId,
+  )
+    ? state.activeProfileId
+    : "";
+
   function roleLabel(profileId: string) {
     const profile = state?.profiles.find((item) => item.id === profileId);
     if (profile?.platformRole === PlatformRole.PLATFORM_ADMIN)
@@ -45,13 +54,18 @@ export function DemoRoleControls() {
       <label>
         <span>Perfil demonstrado</span>
         <select
-          value={state.activeProfileId}
+          value={selectedProfileId}
           onChange={(event) => {
             changeDemoProfile(event.target.value);
             setNotice("Perfil demo alterado.");
           }}
         >
-          {state.profiles.slice(0, 3).map((profile) => (
+          {!selectedProfileId && (
+            <option value="" disabled>
+              Selecione um perfil ativo
+            </option>
+          )}
+          {activeProfiles.slice(0, 3).map((profile) => (
             <option key={profile.id} value={profile.id}>
               {profile.displayName} · {roleLabel(profile.id)}
             </option>

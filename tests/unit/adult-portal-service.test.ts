@@ -123,6 +123,29 @@ describe("AdultPortalService", () => {
     ).rejects.toMatchObject({ code: "VALIDATION" });
   });
 
+  it("excludes inactive professional profiles from teacher assignment", async () => {
+    const { service, state } = setup();
+    state.profiles.find(
+      (item) => item.id === DEMO_PROFILE_IDS.TEACHER,
+    )!.status = RecordStatus.INACTIVE;
+
+    const classGroup = await service.getClass(
+      DEMO_PROFILE_IDS.ORGANIZATION_ADMIN,
+      DEMO_CLASS_IDS.FIFTH_B,
+    );
+    expect(
+      classGroup.availableTeachers.some(
+        (teacher) => teacher.profileId === DEMO_PROFILE_IDS.TEACHER,
+      ),
+    ).toBe(false);
+    await expect(
+      service.assignTeacherToClass(DEMO_PROFILE_IDS.ORGANIZATION_ADMIN, {
+        classGroupId: DEMO_CLASS_IDS.FIFTH_B,
+        membershipId: "demo-membership-teacher",
+      }),
+    ).rejects.toMatchObject({ code: "VALIDATION" });
+  });
+
   it("reactivates an inactive assignment without creating a duplicate", async () => {
     const { service, state } = setup();
     const assignment = state.assignments.find(
@@ -180,6 +203,44 @@ describe("AdultPortalService", () => {
         status: RecordStatus.INACTIVE,
       }),
     ).rejects.toMatchObject({ code: "FORBIDDEN" });
+
+    await expect(
+      service.changeMembership(DEMO_PROFILE_IDS.ORGANIZATION_ADMIN, {
+        membershipId: "demo-membership-teacher",
+        role: OrganizationRole.ORGANIZATION_ADMIN,
+        status: RecordStatus.ACTIVE,
+      }),
+    ).rejects.toMatchObject({ code: "FORBIDDEN" });
+  });
+
+  it("lets a platform admin change membership roles and clears teacher assignments on promotion", async () => {
+    const { service, state } = setup();
+
+    const promoted = await service.assignOrganizationAdministrator(
+      DEMO_PROFILE_IDS.PLATFORM_ADMIN,
+      {
+        organizationId: DEMO_ORGANIZATION_IDS.VICTOR_AGGENS,
+        profileId: DEMO_PROFILE_IDS.TEACHER,
+      },
+    );
+    expect(promoted).toMatchObject({
+      id: "demo-membership-teacher",
+      role: OrganizationRole.ORGANIZATION_ADMIN,
+      status: RecordStatus.ACTIVE,
+    });
+    expect(
+      state.assignments.find(
+        (assignment) => assignment.membershipId === "demo-membership-teacher",
+      )?.status,
+    ).toBe(RecordStatus.INACTIVE);
+
+    await expect(
+      service.changeMembership(DEMO_PROFILE_IDS.PLATFORM_ADMIN, {
+        membershipId: "demo-membership-teacher",
+        role: OrganizationRole.TEACHER,
+        status: RecordStatus.ACTIVE,
+      }),
+    ).resolves.toMatchObject({ role: OrganizationRole.TEACHER });
   });
 
   it("keeps demo mutations browser-scoped and rejects duplicates", async () => {

@@ -2284,7 +2284,7 @@
 .teamTable .tableRow {
   grid-template-columns:
     minmax(210px, 1.25fr) minmax(200px, 1fr) minmax(150px, 0.8fr)
-    120px minmax(112px, 0.55fr);
+    120px minmax(220px, 0.8fr);
 }
 
 .tableHeader {
@@ -3641,6 +3641,13 @@
   background: var(--surface);
   box-shadow: none;
   border: 1px solid color-mix(in srgb, var(--blue) 35%, var(--border) 65%);
+}
+
+.membershipActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
 }
 
 .formSuccess,

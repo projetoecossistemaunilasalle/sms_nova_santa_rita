@@ -37,7 +37,7 @@ const membershipSelect = {
   organizationId: true,
   role: true,
   status: true,
-  professionalProfile: { select: { displayName: true } },
+  professionalProfile: { select: { displayName: true, status: true } },
   organization: { select: { name: true } },
 } as const;
 
@@ -77,12 +77,13 @@ function membershipDto(record: {
   organizationId: string;
   role: OrganizationRole;
   status: RecordStatus;
-  professionalProfile: { displayName: string };
+  professionalProfile: { displayName: string; status: RecordStatus };
   organization: { name: string };
 }): TeamMemberDto {
   return {
     id: record.id,
     profileId: record.professionalProfileId,
+    profileStatus: record.professionalProfile.status,
     displayName: record.professionalProfile.displayName,
     organizationId: record.organizationId,
     organizationName: record.organization.name,
@@ -261,6 +262,7 @@ class PrismaAdultPortalReader {
         organizationId: record.organizationId,
         role: OrganizationRole.TEACHER,
         status: RecordStatus.ACTIVE,
+        professionalProfile: { status: RecordStatus.ACTIVE },
       },
       orderBy: { professionalProfile: { displayName: "asc" } },
       select: membershipSelect,
@@ -437,6 +439,13 @@ class PrismaAdultPortalTransaction
       displayName: record.membership.professionalProfile.displayName,
       status: record.status,
     };
+  }
+
+  async deactivateAssignmentsForMembership(membershipId: string) {
+    await this.db.teacherAssignment.updateMany({
+      where: { membershipId, status: RecordStatus.ACTIVE },
+      data: { status: RecordStatus.INACTIVE },
+    });
   }
 }
 

@@ -47,6 +47,7 @@ export type OrganizationDetailDto = OrganizationSummaryDto & {
 export type TeamMemberDto = {
   id: string;
   profileId: string;
+  profileStatus: RecordStatus;
   displayName: string;
   organizationId: string;
   organizationName: string;

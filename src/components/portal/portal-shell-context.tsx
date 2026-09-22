@@ -11,7 +11,8 @@ import {
 import { useDemoPortalState } from "./use-demo-portal";
 import styles from "./portal.module.css";
 
-function roleLabel(role: PortalShellDto["effectiveRole"]): string {
+function roleLabel(role: PortalShellDto["effectiveRole"] | null): string {
+  if (!role) return "Sem acesso ativo";
   return role === "platform_admin"
     ? "Administrador da plataforma"
     : role === "organization_admin"
@@ -59,6 +60,8 @@ export function PortalScopeContext({
     const role = demoRole(demo);
     if (role === "platform_admin") {
       label = "Escopo de toda a plataforma";
+    } else if (!role) {
+      label = "Sem escopo ativo";
     } else {
       const ids = demoAccessibleOrganizationIds(demo);
       const names = demo.organizations

@@ -77,6 +77,7 @@ export interface AdultPortalTransaction extends AdultPortalReader {
     id: string,
     status: RecordStatus,
   ): Promise<TeacherAssignmentDto>;
+  deactivateAssignmentsForMembership(membershipId: string): Promise<void>;
 }
 
 export interface AdultPortalStore extends AdultPortalReader {

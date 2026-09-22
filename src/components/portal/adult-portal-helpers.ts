@@ -31,10 +31,11 @@ export function initials(name: string): string {
     .toUpperCase();
 }
 
-export function demoRole(state: DemoAdultPortalState): AdultRole {
+export function demoRole(state: DemoAdultPortalState): AdultRole | null {
   const profile = state.profiles.find(
     (item) => item.id === state.activeProfileId,
   );
+  if (!profile || profile.status !== RecordStatus.ACTIVE) return null;
   if (profile?.platformRole === PlatformRole.PLATFORM_ADMIN)
     return "platform_admin";
   const hasAdminMembership = state.memberships.some(
@@ -54,7 +55,9 @@ export function demoRole(state: DemoAdultPortalState): AdultRole {
 export function demoAccessibleOrganizationIds(
   state: DemoAdultPortalState,
 ): string[] {
-  if (demoRole(state) === "platform_admin") {
+  const role = demoRole(state);
+  if (!role) return [];
+  if (role === "platform_admin") {
     return state.organizations.map((organization) => organization.id);
   }
   const activeOrganizationIds = new Set(
@@ -76,7 +79,7 @@ export function demoOrganizations(
   state: DemoAdultPortalState,
 ): OrganizationSummaryDto[] {
   const role = demoRole(state);
-  if (role === "teacher") return [];
+  if (!role || role === "teacher") return [];
   const ids = demoAccessibleOrganizationIds(state);
   return state.organizations
     .filter((organization) => ids.includes(organization.id))
@@ -93,13 +96,16 @@ export function demoOrganizations(
 
 export function demoTeam(state: DemoAdultPortalState): TeamMemberDto[] {
   const role = demoRole(state);
-  if (role === "teacher") return [];
+  if (!role || role === "teacher") return [];
   const ids = demoAccessibleOrganizationIds(state);
   return state.memberships
     .filter((membership) => ids.includes(membership.organizationId))
     .map((membership) => ({
       id: membership.id,
       profileId: membership.profileId,
+      profileStatus:
+        state.profiles.find((profile) => profile.id === membership.profileId)
+          ?.status ?? RecordStatus.INACTIVE,
       displayName:
         state.profiles.find((profile) => profile.id === membership.profileId)
           ?.displayName ?? "Perfil provisionado",
@@ -115,7 +121,7 @@ export function demoTeam(state: DemoAdultPortalState): TeamMemberDto[] {
 
 export function demoClasses(state: DemoAdultPortalState): ClassSummaryDto[] {
   const role = demoRole(state);
-  if (role === "platform_admin") return [];
+  if (!role || role === "platform_admin") return [];
   const activeOrganizationIds = new Set(
     state.organizations
       .filter((organization) => organization.status === RecordStatus.ACTIVE)
@@ -172,7 +178,8 @@ export function demoClassDetail(
   const members = demoTeamForOrganization(state, summary.organizationId).filter(
     (member) =>
       member.role === OrganizationRole.TEACHER &&
-      member.status === RecordStatus.ACTIVE,
+      member.status === RecordStatus.ACTIVE &&
+      member.profileStatus === RecordStatus.ACTIVE,
   );
   return {
     ...summary,
@@ -203,6 +210,9 @@ export function demoTeamForOrganization(
     .map((membership) => ({
       id: membership.id,
       profileId: membership.profileId,
+      profileStatus:
+        state.profiles.find((profile) => profile.id === membership.profileId)
+          ?.status ?? RecordStatus.INACTIVE,
       displayName:
         state.profiles.find((profile) => profile.id === membership.profileId)
           ?.displayName ?? "Perfil provisionado",

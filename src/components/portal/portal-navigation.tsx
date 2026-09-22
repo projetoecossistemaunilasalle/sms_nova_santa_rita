@@ -6,13 +6,10 @@ import { usePathname } from "next/navigation";
 import { Icon, type IconName } from "@/components/shared/icon";
 import type { NavigationItemDto } from "@/application/adult-portal/types";
 import type { RuntimeMode } from "@/runtime/mode";
-import {
-  OrganizationRole,
-  PlatformRole,
-  RecordStatus,
-} from "@/generated/prisma/enums";
+import { OrganizationRole, RecordStatus } from "@/generated/prisma/enums";
 
 import styles from "./portal.module.css";
+import { demoRole } from "./adult-portal-helpers";
 import { useDemoPortalState } from "./use-demo-portal";
 
 type NavItem = {
@@ -67,17 +64,7 @@ export function PortalNavigation({
 
   let visibleItems: NavItem[] = items;
   if (runtimeMode === "demo" && demo) {
-    const profile = demo.profiles.find(
-      (item) => item.id === demo.activeProfileId,
-    );
-    const memberships = demo.memberships.filter(
-      (item) =>
-        item.profileId === demo.activeProfileId &&
-        item.status === RecordStatus.ACTIVE,
-    );
-    const organizationAdmin = memberships.find(
-      (item) => item.role === OrganizationRole.ORGANIZATION_ADMIN,
-    );
+    const role = demoRole(demo);
     visibleItems = [
       {
         href: "/portal",
@@ -87,7 +74,7 @@ export function PortalNavigation({
         mobile: true,
       },
     ];
-    if (profile?.platformRole === PlatformRole.PLATFORM_ADMIN) {
+    if (role === "platform_admin") {
       visibleItems.push(
         {
           href: "/portal/admin/organizacoes",
@@ -102,14 +89,26 @@ export function PortalNavigation({
           mobile: true,
         },
       );
-    } else {
+    } else if (role) {
       visibleItems.push({
         href: "/portal/turmas",
         label: "Turmas",
         icon: "school",
         mobile: true,
       });
-      if (organizationAdmin) {
+      if (role === "organization_admin") {
+        const organizationAdmin = demo.memberships.find(
+          (membership) =>
+            membership.profileId === demo.activeProfileId &&
+            membership.status === RecordStatus.ACTIVE &&
+            membership.role === OrganizationRole.ORGANIZATION_ADMIN &&
+            demo.organizations.some(
+              (organization) =>
+                organization.id === membership.organizationId &&
+                organization.status === RecordStatus.ACTIVE,
+            ),
+        );
+        if (!organizationAdmin) return null;
         visibleItems.push(
           {
             href: "/portal/admin/equipe",

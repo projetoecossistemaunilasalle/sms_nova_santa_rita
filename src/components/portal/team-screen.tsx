@@ -54,12 +54,16 @@ export function TeamScreen({
       }))
     : profiles;
 
-  if (role === "teacher") {
+  if (!role || role === "teacher") {
     return (
       <PortalState
         icon="lock"
         title="A gestão da equipe não faz parte do seu acesso"
-        description="Seu perfil de professor permanece focado nas turmas atribuídas."
+        description={
+          role
+            ? "Seu perfil de professor permanece focado nas turmas atribuídas."
+            : "O perfil ou a organização selecionada não está ativo."
+        }
       />
     );
   }
@@ -68,11 +72,6 @@ export function TeamScreen({
     role === "platform_admin"
       ? assignOrganizationAdministratorAction
       : assignTeacherMembershipAction;
-  const roleForNewMembership =
-    role === "platform_admin"
-      ? OrganizationRole.ORGANIZATION_ADMIN
-      : OrganizationRole.TEACHER;
-
   return (
     <>
       <PageHeader
@@ -101,10 +100,14 @@ export function TeamScreen({
         <div>
           <h2>
             {role === "platform_admin"
-              ? "Vincular administrador"
+              ? "Vincular ou promover administrador"
               : "Vincular professor"}
           </h2>
-          <p>Selecione um perfil provisionado e o escopo organizacional.</p>
+          <p>
+            {role === "platform_admin"
+              ? "Selecione um perfil provisionado e o escopo. Um professor já vinculado será promovido sem criar outro vínculo."
+              : "Selecione um perfil provisionado e o escopo organizacional."}
+          </p>
         </div>
         <AdultPortalForm action={membershipAction} submitLabel="Criar vínculo">
           <label className={styles.field}>
@@ -192,8 +195,7 @@ export function TeamScreen({
           </div>
           {members.map((member) => {
             const canManage =
-              (role === "platform_admin" &&
-                member.role === OrganizationRole.ORGANIZATION_ADMIN) ||
+              role === "platform_admin" ||
               (role === "organization_admin" &&
                 member.role === OrganizationRole.TEACHER);
             return (
@@ -211,35 +213,64 @@ export function TeamScreen({
                 <span>{member.organizationName}</span>
                 <StatusBadge status={recordStatusLabel(member.status)} />
                 {canManage ? (
-                  <AdultPortalForm
-                    action={changeMembershipAction}
-                    submitLabel={
-                      member.status === RecordStatus.ACTIVE
-                        ? "Desativar"
-                        : "Ativar"
-                    }
-                    compact
-                  >
-                    <input
-                      type="hidden"
-                      name="membershipId"
-                      value={member.id}
-                    />
-                    <input
-                      type="hidden"
-                      name="role"
-                      value={roleForNewMembership}
-                    />
-                    <input
-                      type="hidden"
-                      name="status"
-                      value={
+                  <div className={styles.membershipActions}>
+                    {role === "platform_admin" && (
+                      <AdultPortalForm
+                        action={changeMembershipAction}
+                        submitLabel={
+                          member.role === OrganizationRole.TEACHER
+                            ? "Promover"
+                            : "Tornar professor"
+                        }
+                        compact
+                      >
+                        <input
+                          type="hidden"
+                          name="membershipId"
+                          value={member.id}
+                        />
+                        <input
+                          type="hidden"
+                          name="role"
+                          value={
+                            member.role === OrganizationRole.TEACHER
+                              ? OrganizationRole.ORGANIZATION_ADMIN
+                              : OrganizationRole.TEACHER
+                          }
+                        />
+                        <input
+                          type="hidden"
+                          name="status"
+                          value={member.status}
+                        />
+                      </AdultPortalForm>
+                    )}
+                    <AdultPortalForm
+                      action={changeMembershipAction}
+                      submitLabel={
                         member.status === RecordStatus.ACTIVE
-                          ? RecordStatus.INACTIVE
-                          : RecordStatus.ACTIVE
+                          ? "Desativar"
+                          : "Ativar"
                       }
-                    />
-                  </AdultPortalForm>
+                      compact
+                    >
+                      <input
+                        type="hidden"
+                        name="membershipId"
+                        value={member.id}
+                      />
+                      <input type="hidden" name="role" value={member.role} />
+                      <input
+                        type="hidden"
+                        name="status"
+                        value={
+                          member.status === RecordStatus.ACTIVE
+                            ? RecordStatus.INACTIVE
+                            : RecordStatus.ACTIVE
+                        }
+                      />
+                    </AdultPortalForm>
+                  </div>
                 ) : (
                   <span className={styles.mutedCell}>Somente leitura</span>
                 )}

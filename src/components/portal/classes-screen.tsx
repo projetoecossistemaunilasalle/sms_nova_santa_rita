@@ -41,6 +41,16 @@ export function ClassesScreen({
   const classes = demo ? demoClasses(demo) : initialClasses;
   const organizations = demo ? demoOrganizations(demo) : initialOrganizations;
 
+  if (!role) {
+    return (
+      <PortalState
+        icon="lock"
+        title="Este perfil não possui acesso ativo"
+        description="Selecione um perfil demo ativo vinculado a uma organização ativa."
+      />
+    );
+  }
+
   if (role === "platform_admin") {
     return (
       <PortalState

@@ -43,7 +43,7 @@ export function OrganizationsScreen({
   const actorCanCreate = demo ? demoRole(demo) === "platform_admin" : canCreate;
 
   const role = demo ? demoRole(demo) : initialRole;
-  if (role === "teacher") {
+  if (!role || role === "teacher") {
     return (
       <PortalState
         icon="lock"

@@ -8,15 +8,20 @@ ALTER TABLE "organization_memberships"
 ADD COLUMN "role" "organization_role";
 
 -- A legacy platform-wide organization management grant maps to the new
--- platform administrator role. Capability rows remain in place for old routes.
+-- platform administrator role only when its membership and organization are
+-- active. Capability rows remain in place for old routes.
 UPDATE "professional_profiles" AS profile
 SET "platform_role" = 'platform_admin'::"platform_role"
 WHERE EXISTS (
   SELECT 1
   FROM "organization_memberships" AS membership
+  JOIN "organizations" AS organization
+    ON organization."id" = membership."organization_id"
   JOIN "capability_assignments" AS assignment
     ON assignment."membership_id" = membership."id"
   WHERE membership."professional_profile_id" = profile."id"
+    AND membership."status" = 'active'::"record_status"
+    AND organization."status" = 'active'::"record_status"
     AND assignment."capability" = 'organization:manage'
     AND assignment."scope_organization_id" IS NULL
 );

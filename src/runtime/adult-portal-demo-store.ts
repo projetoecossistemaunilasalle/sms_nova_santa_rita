@@ -226,7 +226,12 @@ export function resetDemoAdultPortalState(): DemoAdultPortalState {
 
 export function setDemoActiveProfile(profileId: string): DemoAdultPortalState {
   const state = readDemoAdultPortalState();
-  if (state.profiles.some((profile) => profile.id === profileId)) {
+  if (
+    state.profiles.some(
+      (profile) =>
+        profile.id === profileId && profile.status === RecordStatus.ACTIVE,
+    )
+  ) {
     state.activeProfileId = profileId;
     writeDemoAdultPortalState(state);
   }
@@ -366,7 +371,12 @@ export class DemoAdultPortalStore
         (membership) =>
           membership.organizationId === classGroup.organizationId &&
           membership.role === OrganizationRole.TEACHER &&
-          membership.status === RecordStatus.ACTIVE,
+          membership.status === RecordStatus.ACTIVE &&
+          this.state.profiles.some(
+            (profile) =>
+              profile.id === membership.profileId &&
+              profile.status === RecordStatus.ACTIVE,
+          ),
       )
       .map((membership) => this.membershipDto(membership));
     return {
@@ -513,6 +523,17 @@ export class DemoAdultPortalStore
     };
   }
 
+  async deactivateAssignmentsForMembership(membershipId: string) {
+    for (const assignment of this.state.assignments) {
+      if (
+        assignment.membershipId === membershipId &&
+        assignment.status === RecordStatus.ACTIVE
+      ) {
+        assignment.status = RecordStatus.INACTIVE;
+      }
+    }
+  }
+
   private organizationDto(
     organization: DemoOrganization,
   ): OrganizationSummaryDto {
@@ -537,6 +558,7 @@ export class DemoAdultPortalStore
     return {
       id: membership.id,
       profileId: membership.profileId,
+      profileStatus: profile.status,
       displayName: profile.displayName,
       organizationId: membership.organizationId,
       organizationName: organization.name,

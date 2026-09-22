@@ -336,12 +336,22 @@ export class AdultPortalService {
       if (!canManageOrganizations(authorizationActor(actor))) forbidden();
       await this.assertActiveOrganization(transaction, data.organizationId);
       await this.assertActiveProfile(transaction, data.profileId);
-      if (
-        await transaction.findMembership(data.profileId, data.organizationId)
-      ) {
+      const existing = await transaction.findMembership(
+        data.profileId,
+        data.organizationId,
+      );
+      if (existing?.role === OrganizationRole.ORGANIZATION_ADMIN) {
         throw new AdultPortalError(
-          "Este profissional já possui vínculo com a organização.",
+          "Este profissional já é administrador da organização.",
           "CONFLICT",
+        );
+      }
+      if (existing) {
+        await transaction.deactivateAssignmentsForMembership(existing.id);
+        return transaction.updateMembership(
+          existing.id,
+          OrganizationRole.ORGANIZATION_ADMIN,
+          RecordStatus.ACTIVE,
         );
       }
       return transaction.createMembership({
@@ -390,13 +400,16 @@ export class AdultPortalService {
       if (!membership) return notFound("Vínculo");
       const platformAdmin = canManageOrganizations(authorizationActor(actor));
       if (platformAdmin) {
-        if (
-          membership.role !== OrganizationRole.ORGANIZATION_ADMIN ||
-          data.role !== OrganizationRole.ORGANIZATION_ADMIN
-        ) {
-          forbidden(
-            "Administradores da plataforma gerenciam apenas administradores de organização.",
+        const roleChanged = membership.role !== data.role;
+        if (data.status === RecordStatus.ACTIVE || roleChanged) {
+          await this.assertActiveOrganization(
+            transaction,
+            membership.organizationId,
           );
+          await this.assertActiveProfile(transaction, membership.profileId);
+        }
+        if (roleChanged && data.role === OrganizationRole.ORGANIZATION_ADMIN) {
+          await transaction.deactivateAssignmentsForMembership(membership.id);
         }
       } else {
         if (
@@ -410,6 +423,9 @@ export class AdultPortalService {
           forbidden(
             "Administradores da organização gerenciam apenas professores da própria organização.",
           );
+        }
+        if (data.status === RecordStatus.ACTIVE) {
+          await this.assertActiveProfile(transaction, membership.profileId);
         }
       }
       return transaction.updateMembership(
@@ -514,7 +530,8 @@ export class AdultPortalService {
       if (
         membership.organizationId !== classGroup.organizationId ||
         membership.role !== OrganizationRole.TEACHER ||
-        membership.status !== RecordStatus.ACTIVE
+        membership.status !== RecordStatus.ACTIVE ||
+        membership.profileStatus !== RecordStatus.ACTIVE
       ) {
         throw new AdultPortalError(
           "A atribuição exige um vínculo de professor ativo na mesma organização.",
