@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "const": "portal.bootstrap.v1"
+    },
+    "request_id": {
+      "$ref": "#/$defs/__schema0"
+    },
+    "protocol_version": {
+      "type": "number",
+      "const": 1
+    },
+    "player_id": {
+      "$ref": "#/$defs/__schema0"
+    },
+    "class_session_id": {
+      "$ref": "#/$defs/__schema0"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "new_player": {
+      "type": "boolean",
+      "const": true
+    },
+    "state": {
+      "type": "null"
+    }
+  },
+  "required": [
+    "type",
+    "request_id",
+    "protocol_version",
+    "player_id",
+    "class_session_id",
+    "revision",
+    "new_player",
+    "state"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "__schema0": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    }
+  },
+  "$id": "https://missoes.example/schemas/v1/new-player-bootstrap.v1.schema.json",
+  "title": "new-player-bootstrap V1"
+}

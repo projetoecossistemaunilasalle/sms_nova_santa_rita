@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "const": "protocol.error.v1"
+    },
+    "code": {
+      "type": "string",
+      "enum": [
+        "VALIDATION_FAILED",
+        "PROTOCOL_VERSION_UNSUPPORTED",
+        "STATE_SCHEMA_VERSION_UNSUPPORTED",
+        "STATE_TOO_LARGE"
+      ]
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "request_id": {
+      "$ref": "#/$defs/__schema0"
+    },
+    "client_event_id": {
+      "$ref": "#/$defs/__schema0"
+    },
+    "path": {
+      "type": "string",
+      "maxLength": 500
+    }
+  },
+  "required": [
+    "type",
+    "code",
+    "message"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "__schema0": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    }
+  },
+  "$id": "https://missoes.example/schemas/v1/protocol-error.v1.schema.json",
+  "title": "protocol-error V1"
+}

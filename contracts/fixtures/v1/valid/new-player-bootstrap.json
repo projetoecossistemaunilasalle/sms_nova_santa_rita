@@ -1,0 +1,10 @@
+{
+  "type": "portal.bootstrap.v1",
+  "request_id": "request-bootstrap-new-001",
+  "protocol_version": 1,
+  "player_id": "player-fixture-25",
+  "class_session_id": "session-fixture-morning",
+  "revision": 0,
+  "new_player": true,
+  "state": null
+}

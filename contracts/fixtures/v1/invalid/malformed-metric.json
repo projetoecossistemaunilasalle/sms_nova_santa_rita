@@ -1,0 +1,20 @@
+{
+  "type": "game.result.v1",
+  "request_id": "request-result-bad-metric",
+  "client_event_id": "event-result-bad-metric",
+  "activity_id": "lia_memory",
+  "mission_id": "lia_memory",
+  "context": {
+    "id_tentativa": "4beee88e-fcea-4924-805f-ab76ae106044",
+    "id_atividade": "atitudes_positivas",
+    "id_mecanica": "memory_pairs",
+    "versao_atividade": 1,
+    "id_casa": 1,
+    "sequencia_tentativa": 1,
+    "numero_tentativa_atividade": 1,
+    "semente": 1,
+    "dificuldade": 1,
+    "parametros": { "pares_para_concluir": 4 }
+  },
+  "result": { "estado": "sucesso", "duracao_ms": 1000, "metricas": { "pares": "four", "jogadas": 7 } }
+}

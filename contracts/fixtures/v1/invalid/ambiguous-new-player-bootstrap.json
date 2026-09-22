@@ -1,0 +1,20 @@
+{
+  "type": "portal.bootstrap.v1",
+  "request_id": "request-ambiguous-new-player",
+  "protocol_version": 1,
+  "player_id": "player-fixture-25",
+  "class_session_id": "session-fixture-morning",
+  "revision": 0,
+  "new_player": true,
+  "state": {
+    "schema_version": 1,
+    "content_version": "heroes_trial_school_v1",
+    "missions": {
+      "when_play_stops_being_play": { "status": "available", "stage_id": "start", "checkpoints": {}, "data": {} },
+      "lia_memory": { "status": "available", "stage_id": "start", "checkpoints": {}, "data": {} },
+      "pingpong_soccer": { "status": "available", "stage_id": "start", "checkpoints": {}, "data": {} },
+      "respect_also_cares": { "status": "available", "stage_id": "start", "checkpoints": {}, "data": {} }
+    },
+    "progression": { "coins": 0, "stars": 0, "challenges": {}, "rewards": {} }
+  }
+}

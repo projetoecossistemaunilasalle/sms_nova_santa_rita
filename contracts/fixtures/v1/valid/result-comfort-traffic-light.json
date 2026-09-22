@@ -1,0 +1,20 @@
+{
+  "type": "game.result.v1",
+  "request_id": "request-result-comfort-001",
+  "client_event_id": "event-result-comfort-001",
+  "activity_id": "comfort_traffic_light",
+  "mission_id": "respect_also_cares",
+  "context": {
+    "id_tentativa": "af967027-c62f-4596-9d94-7e4cd6ae6614",
+    "id_atividade": "comfort_traffic_light_content",
+    "id_mecanica": "comfort_traffic_light_drag",
+    "versao_atividade": 1,
+    "id_casa": 0,
+    "sequencia_tentativa": 1,
+    "numero_tentativa_atividade": 1,
+    "semente": 12003,
+    "dificuldade": 1,
+    "parametros": { "total_cards": 4 }
+  },
+  "result": { "estado": "sucesso", "duracao_ms": 31750, "metricas": { "situacoes_classificadas": 4 } }
+}

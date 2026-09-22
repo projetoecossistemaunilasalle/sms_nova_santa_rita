@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "const": "game.bootstrap_applied.v1"
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    }
+  },
+  "required": [
+    "type",
+    "request_id"
+  ],
+  "additionalProperties": false,
+  "$id": "https://missoes.example/schemas/v1/bootstrap-applied.v1.schema.json",
+  "title": "bootstrap-applied V1"
+}

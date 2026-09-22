@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "type": {
+      "$ref": "#/$defs/__schema0"
+    },
+    "acknowledged_event_ids": {
+      "$ref": "#/$defs/__schema1"
+    }
+  },
+  "required": [
+    "type",
+    "acknowledged_event_ids"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "__schema0": {
+      "type": "string",
+      "const": "portal.active_time_ack.v1"
+    },
+    "__schema1": {
+      "minItems": 1,
+      "maxItems": 100,
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/__schema2"
+      },
+      "uniqueItems": true
+    },
+    "__schema2": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    }
+  },
+  "$id": "https://missoes.example/schemas/v1/active-time-acknowledgement.v1.schema.json",
+  "title": "active-time-acknowledgement V1"
+}

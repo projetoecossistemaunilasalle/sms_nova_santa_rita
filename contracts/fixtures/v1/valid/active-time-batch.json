@@ -1,0 +1,8 @@
+{
+  "type": "game.active_time.v1",
+  "events": [
+    { "request_id": "request-time-001", "client_event_id": "event-time-001", "active_ms": 30000, "mode": "exploration" },
+    { "request_id": "request-time-002", "client_event_id": "event-time-002", "active_ms": 12500, "mode": "dialogue" },
+    { "request_id": "request-time-003", "client_event_id": "event-time-003", "active_ms": 8400, "mode": "activity" }
+  ]
+}
