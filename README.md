@@ -1,63 +1,69 @@
-# Missoes do Caramelito Portal and Activity Host
+# Missoes do Caramelito Portal and Game Host
 
-This workspace contains the authenticated professional/admin portal and the public
-activity-link surface for one existing GameMaker experience. There is no marketing
-landing page. Participants do not enter through the portal: they open a customized
-opaque activity link and are handed off to the configured game client.
+This workspace contains the authenticated professional/admin portal, the low-friction player entry surface, and backend integration for one existing GameMaker experience.
 
-## Scope
+There is no marketing landing page.
 
-- The professional/admin portal is an authenticated work surface for the operational
-  and administrative workflows supported by the product.
-- The public activity route accepts a customized opaque token and exposes only the
-  entry, unavailable, or handoff state needed for that link.
-- Portal navigation must not launch gameplay, enumerate public activity links for
-  participant discovery, or act as a game/minigame catalog.
-- `GAME_CLIENT_URL` identifies the deployed GameMaker client that receives the activity
-  handoff. The existing GameMaker project owns the single game experience.
+V1 is focused on the complete portal-to-game workflow: organizations and classes are prepared by administrators, teachers use already-prepared classes, children enter through numbered player QR credentials, game state persists across supported school tablets, and results/active time return to authorized adults.
 
-The link shape is an implementation detail of the link system. In the current Next.js
-route tree, the public activity boundary is represented by
-`src/app/(public-play)/atividade/[token]`. A generated link is the only public entry
-point; do not add a marketing homepage or a portal shortcut into gameplay.
+Materials/content management is deferred beyond V1.
+
+## V1 scope
+
+- Three adult access levels: platform administrator, organization administrator, and teacher.
+- Organization administrators create classes and assign teachers.
+- Teachers work with assigned classes and should have minimal setup burden.
+- Children do not create conventional username/password accounts.
+- Classes use numbered player slots rather than a nominal child roster.
+- Player QR credentials support fast access on shared tablets.
+- Player game state must persist server-side and work across devices.
+- Results may be associated with both the class and numbered player.
+- Active-play time is a supported classroom participation metric.
+- Temporary offline operation should queue supported changes and synchronize after reconnection.
+- Cross-year player migration is deferred.
+- Materials is not part of V1.
+
+## Product boundary
+
+The portal/backend owns adult access, organizational structure, classes, player credentials, session context, persistence services, reporting, and integration boundaries.
+
+The existing GameMaker project owns gameplay content, activities/minigames, game rules, world behavior, progression semantics, cosmetics, rewards, and other gameplay logic.
+
+The portal must not become a minigame catalog or game editor.
 
 ## Documents
 
 - [Product truth](PRODUCT.md)
+- [V1 game integration dossier](docs/v1-game-integration-dossier.md)
 - [Current architecture and route boundaries](docs/current-architecture.md)
-- [Visual demo plan](docs/demo-visual-plan.md)
+- [Visual demo plan](docs/demo-visual-plan.md) (demo reference, not V1 product authority)
 - [Design system](DESIGN.md)
 - [Runtime JSON Schemas](contracts/schemas)
 - [Database schema](prisma/schema.prisma)
-- [Implementation roadmap](docs/implementation/README.md)
+- [Implementation roadmap](docs/implementation/README.md) (must be reconciled with the V1 dossier)
 - [Legacy portal proposal](portal-v1-specification.md) (historical research only)
 
-## Application structure
+## Current application structure
 
 ```text
 src/
   app/
     (professional)/ authenticated professional/admin portal routes
-    (public-play)/   customized activity-link entry and state routes
+    (public-play)/   current demo public/player route surface
     health/          liveness and readiness route handlers
   components/
     portal/          professional/admin shell and workflow components
-    public/          activity entry, handoff, and unavailable states
+    public/          player/activity entry and unavailable states
     shared/          cross-surface primitives
   server/
     config/ db/ http/ observability/ services/
 ```
 
-The portal and public activity route are separate surfaces. Portal services enforce
-professional/admin authentication and authorization; public services resolve the
-opaque link and prepare the GameMaker handoff. The exact handoff payload and transport
-are defined by the versioned GameMaker integration contract, not by a portal-created
-game or minigame catalog.
+The current static/demo route and data model predate the numbered-player V1 direction. Do not treat the demo's anonymous session-link model or aggregate-only reporting as final architecture.
 
 ## Local setup
 
-The runtime is pinned to Node.js `24.19.0` and npm `11.6.x`. Use `.nvmrc` or your Node
-version manager before installing dependencies.
+The runtime is pinned to Node.js `24.19.0` and npm `11.6.x`. Use `.nvmrc` or your Node version manager before installing dependencies.
 
 ```bash
 npm install
@@ -65,22 +71,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Set `GAME_CLIENT_URL` in `.env.local` to the deployed URL of the existing GameMaker
-client. Configure the Neon database and Neon Auth values for the authenticated portal;
-`AUTH_DEV_BYPASS` is for local development only and must remain disabled in production.
-Replace every example secret and deployment URL before using a shared environment.
-
-The local application is available at `http://localhost:3000`. Liveness is exposed at
-`/health/live`; readiness is exposed at `/health/ready` and performs a time-bounded
-database query when database-backed services are configured.
-
-To preview the production server locally, run:
-
-```bash
-npm start
-```
-
-Use `npm start -- --port 3010` to select another port.
+The local application is available at `http://localhost:3000`.
 
 ## Verification
 
@@ -89,10 +80,4 @@ npm run check
 npm run build
 ```
 
-The production image uses the Next.js standalone output and runs as an unprivileged
-`nextjs` user:
-
-```bash
-docker build -t missoes-caramelito-portal .
-docker run --env-file .env.local -p 3000:3000 missoes-caramelito-portal
-```
+The repository currently also supports a static GitHub Pages demo configuration. That demo is useful for visual validation but does not represent production persistence, authentication, player identity, or GameMaker synchronization.
