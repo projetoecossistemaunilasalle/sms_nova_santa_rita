@@ -1,6 +1,8 @@
 import {
+  GameSessionStatus,
   OrganizationRole,
   PlatformRole,
+  PlayerCredentialStatus,
   RecordStatus,
 } from "@/generated/prisma/enums";
 import type {
@@ -18,6 +20,19 @@ import type {
   ProfessionalOptionDto,
   TeamMemberDto,
 } from "@/application/adult-portal/types";
+import type {
+  NewSlotCredential,
+  PlayerAccessStore,
+  PlayerAccessTransaction,
+  ResolvedCredential,
+} from "@/application/player-access/ports";
+import type {
+  ClassScope,
+  GameSessionDto,
+  ParticipationDto,
+  PlayerSlotDto,
+} from "@/application/player-access/types";
+import { AdultPortalError } from "@/application/adult-portal/errors";
 
 export const DEMO_PROFILE_IDS = {
   PLATFORM_ADMIN: "demo-profile-platform-admin",
@@ -61,6 +76,7 @@ type DemoClass = {
   organizationId: string;
   name: string;
   status: RecordStatus;
+  nextPlayerNumber: number;
 };
 
 type DemoAssignment = {
@@ -70,21 +86,65 @@ type DemoAssignment = {
   status: RecordStatus;
 };
 
+export type DemoPlayerSlot = {
+  id: string;
+  classGroupId: string;
+  playerNumber: number;
+  status: RecordStatus;
+  createdAt: string;
+};
+
+export type DemoPlayerCredential = {
+  id: string;
+  playerSlotId: string;
+  token: string;
+  tokenHash: string;
+  status: PlayerCredentialStatus;
+  createdAt: string;
+  revokedAt: string | null;
+};
+
+export type DemoGameSession = {
+  id: string;
+  classGroupId: string;
+  status: GameSessionStatus;
+  startedAt: string;
+  endedAt: string | null;
+};
+
+export type DemoParticipation = {
+  id: string;
+  gameSessionId: string;
+  playerSlotId: string;
+  joinedAt: string;
+};
+
 export type DemoAdultPortalState = {
-  version: 1;
+  version: 2;
   activeProfileId: string;
   profiles: DemoProfile[];
   organizations: DemoOrganization[];
   memberships: DemoMembership[];
   classes: DemoClass[];
   assignments: DemoAssignment[];
+  playerSlots: DemoPlayerSlot[];
+  playerCredentials: DemoPlayerCredential[];
+  gameSessions: DemoGameSession[];
+  participations: DemoParticipation[];
 };
 
 export const DEMO_ADULT_PORTAL_STORAGE_KEY =
-  "missoes-caramelito:adult-portal:v1";
+  "missoes-caramelito:adult-portal:v2";
+
+export const DEMO_PLAYER_TOKENS = {
+  THIRD_A_PLAYER_01: "demo_player_seed_third_a_01_active",
+  THIRD_A_PLAYER_02_REVOKED: "demo_player_seed_third_a_02_revoked",
+  THIRD_A_PLAYER_02: "demo_player_seed_third_a_02_active",
+  THIRD_A_PLAYER_03: "demo_player_seed_third_a_03_active",
+} as const;
 
 export const demoAdultPortalSeed: DemoAdultPortalState = {
-  version: 1,
+  version: 2,
   activeProfileId: DEMO_PROFILE_IDS.PLATFORM_ADMIN,
   profiles: [
     {
@@ -155,18 +215,21 @@ export const demoAdultPortalSeed: DemoAdultPortalState = {
       organizationId: DEMO_ORGANIZATION_IDS.VICTOR_AGGENS,
       name: "3º A",
       status: RecordStatus.ACTIVE,
+      nextPlayerNumber: 4,
     },
     {
       id: DEMO_CLASS_IDS.FIFTH_B,
       organizationId: DEMO_ORGANIZATION_IDS.VICTOR_AGGENS,
       name: "5º B",
       status: RecordStatus.ACTIVE,
+      nextPlayerNumber: 1,
     },
     {
       id: DEMO_CLASS_IDS.FOURTH_A,
       organizationId: DEMO_ORGANIZATION_IDS.CAMPOS_VERDES,
       name: "4º A",
       status: RecordStatus.ACTIVE,
+      nextPlayerNumber: 1,
     },
   ],
   assignments: [
@@ -181,6 +244,84 @@ export const demoAdultPortalSeed: DemoAdultPortalState = {
       membershipId: "demo-membership-second-teacher",
       classGroupId: DEMO_CLASS_IDS.FOURTH_A,
       status: RecordStatus.ACTIVE,
+    },
+  ],
+  playerSlots: [
+    {
+      id: "demo-player-third-a-01",
+      classGroupId: DEMO_CLASS_IDS.THIRD_A,
+      playerNumber: 1,
+      status: RecordStatus.ACTIVE,
+      createdAt: "2026-09-15T13:00:00.000Z",
+    },
+    {
+      id: "demo-player-third-a-02",
+      classGroupId: DEMO_CLASS_IDS.THIRD_A,
+      playerNumber: 2,
+      status: RecordStatus.ACTIVE,
+      createdAt: "2026-09-15T13:00:00.000Z",
+    },
+    {
+      id: "demo-player-third-a-03",
+      classGroupId: DEMO_CLASS_IDS.THIRD_A,
+      playerNumber: 3,
+      status: RecordStatus.ACTIVE,
+      createdAt: "2026-09-15T13:00:00.000Z",
+    },
+  ],
+  playerCredentials: [
+    {
+      id: "demo-credential-third-a-01",
+      playerSlotId: "demo-player-third-a-01",
+      token: DEMO_PLAYER_TOKENS.THIRD_A_PLAYER_01,
+      tokenHash: DEMO_PLAYER_TOKENS.THIRD_A_PLAYER_01,
+      status: PlayerCredentialStatus.ACTIVE,
+      createdAt: "2026-09-15T13:00:00.000Z",
+      revokedAt: null,
+    },
+    {
+      id: "demo-credential-third-a-02-old",
+      playerSlotId: "demo-player-third-a-02",
+      token: DEMO_PLAYER_TOKENS.THIRD_A_PLAYER_02_REVOKED,
+      tokenHash: DEMO_PLAYER_TOKENS.THIRD_A_PLAYER_02_REVOKED,
+      status: PlayerCredentialStatus.REVOKED,
+      createdAt: "2026-09-15T13:00:00.000Z",
+      revokedAt: "2026-09-18T14:30:00.000Z",
+    },
+    {
+      id: "demo-credential-third-a-02",
+      playerSlotId: "demo-player-third-a-02",
+      token: DEMO_PLAYER_TOKENS.THIRD_A_PLAYER_02,
+      tokenHash: DEMO_PLAYER_TOKENS.THIRD_A_PLAYER_02,
+      status: PlayerCredentialStatus.ACTIVE,
+      createdAt: "2026-09-18T14:30:00.000Z",
+      revokedAt: null,
+    },
+    {
+      id: "demo-credential-third-a-03",
+      playerSlotId: "demo-player-third-a-03",
+      token: DEMO_PLAYER_TOKENS.THIRD_A_PLAYER_03,
+      tokenHash: DEMO_PLAYER_TOKENS.THIRD_A_PLAYER_03,
+      status: PlayerCredentialStatus.ACTIVE,
+      createdAt: "2026-09-15T13:00:00.000Z",
+      revokedAt: null,
+    },
+  ],
+  gameSessions: [
+    {
+      id: "demo-session-third-a-ended",
+      classGroupId: DEMO_CLASS_IDS.THIRD_A,
+      status: GameSessionStatus.ENDED,
+      startedAt: "2026-09-18T13:00:00.000Z",
+      endedAt: "2026-09-18T13:45:00.000Z",
+    },
+  ],
+  participations: [
+    {
+      id: "demo-participation-third-a-01-ended",
+      gameSessionId: "demo-session-third-a-ended",
+      playerSlotId: "demo-player-third-a-01",
+      joinedAt: "2026-09-18T13:04:00.000Z",
     },
   ],
 };
@@ -203,7 +344,7 @@ export function readDemoAdultPortalState(): DemoAdultPortalState {
   if (!stored) return cloneSeed();
   try {
     const value = JSON.parse(stored) as DemoAdultPortalState;
-    return value.version === 1 ? value : cloneSeed();
+    return value.version === 2 ? value : cloneSeed();
   } catch {
     return cloneSeed();
   }
@@ -473,6 +614,7 @@ export class DemoAdultPortalStore
       id: demoId("class"),
       ...input,
       status: RecordStatus.ACTIVE,
+      nextPlayerNumber: 1,
     };
     this.state.classes.push(classGroup);
     return this.classDto(classGroup);
@@ -582,6 +724,296 @@ export class DemoAdultPortalStore
           assignment.classGroupId === classGroup.id &&
           assignment.status === RecordStatus.ACTIVE,
       ).length,
+    };
+  }
+}
+
+export class DemoPlayerAccessStore
+  implements PlayerAccessStore, PlayerAccessTransaction
+{
+  constructor(readonly state: DemoAdultPortalState = cloneSeed()) {}
+
+  async transaction<T>(
+    work: (transaction: PlayerAccessTransaction) => Promise<T>,
+  ): Promise<T> {
+    const before = structuredClone(this.state);
+    try {
+      return await work(this);
+    } catch (error) {
+      Object.assign(this.state, before);
+      throw error;
+    }
+  }
+
+  getActor(profileId: string): Promise<ActorSnapshot | null> {
+    return new DemoAdultPortalStore(this.state).getActor(profileId);
+  }
+
+  async getClassScope(classGroupId: string): Promise<ClassScope | null> {
+    const classGroup = this.state.classes.find(
+      (item) => item.id === classGroupId,
+    );
+    if (!classGroup) return null;
+    const organization = this.state.organizations.find(
+      (item) => item.id === classGroup.organizationId,
+    );
+    if (!organization) return null;
+    return {
+      id: classGroup.id,
+      organizationId: classGroup.organizationId,
+      organizationStatus: organization.status,
+      status: classGroup.status,
+    };
+  }
+
+  async getSlot(slotId: string): Promise<PlayerSlotDto | null> {
+    const slot = this.state.playerSlots.find((item) => item.id === slotId);
+    return slot ? this.slotDto(slot) : null;
+  }
+
+  async listSlots(classGroupId: string): Promise<PlayerSlotDto[]> {
+    return this.state.playerSlots
+      .filter((slot) => slot.classGroupId === classGroupId)
+      .sort((a, b) => a.playerNumber - b.playerNumber)
+      .map((slot) => this.slotDto(slot));
+  }
+
+  async getActiveSession(classGroupId: string): Promise<GameSessionDto | null> {
+    const session = this.state.gameSessions.find(
+      (item) =>
+        item.classGroupId === classGroupId &&
+        item.status === GameSessionStatus.ACTIVE,
+    );
+    return session ? this.sessionDto(session) : null;
+  }
+
+  async resolveCredential(
+    tokenHash: string,
+  ): Promise<ResolvedCredential | null> {
+    const credential = this.state.playerCredentials.find(
+      (item) => item.tokenHash === tokenHash,
+    );
+    if (!credential) return null;
+    const slot = this.state.playerSlots.find(
+      (item) => item.id === credential.playerSlotId,
+    );
+    if (!slot) return null;
+    const classGroup = await this.getClassScope(slot.classGroupId);
+    if (!classGroup) return null;
+    return {
+      id: credential.id,
+      status: credential.status,
+      slot: {
+        id: slot.id,
+        classGroupId: slot.classGroupId,
+        playerNumber: slot.playerNumber,
+        status: slot.status,
+      },
+      classGroup,
+    };
+  }
+
+  async allocateSlots(
+    classGroupId: string,
+    credentials: readonly NewSlotCredential[],
+  ): Promise<PlayerSlotDto[]> {
+    const classGroup = this.state.classes.find(
+      (item) => item.id === classGroupId,
+    );
+    if (!classGroup) {
+      throw new AdultPortalError("Turma não encontrada.", "NOT_FOUND");
+    }
+    const createdAt = new Date().toISOString();
+    return credentials.map(({ tokenHash }) => {
+      if (
+        this.state.playerCredentials.some(
+          (credential) => credential.tokenHash === tokenHash,
+        )
+      ) {
+        throw new AdultPortalError("Credencial demo duplicada.", "CONFLICT");
+      }
+      const playerNumber = classGroup.nextPlayerNumber;
+      classGroup.nextPlayerNumber += 1;
+      const slot: DemoPlayerSlot = {
+        id: demoId("player-slot"),
+        classGroupId,
+        playerNumber,
+        status: RecordStatus.ACTIVE,
+        createdAt,
+      };
+      const credential: DemoPlayerCredential = {
+        id: demoId("player-credential"),
+        playerSlotId: slot.id,
+        token: tokenHash,
+        tokenHash,
+        status: PlayerCredentialStatus.ACTIVE,
+        createdAt,
+        revokedAt: null,
+      };
+      this.state.playerSlots.push(slot);
+      this.state.playerCredentials.push(credential);
+      return this.slotDto(slot);
+    });
+  }
+
+  async rotateCredential(
+    slotId: string,
+    tokenHash: string,
+    revokedAt: Date,
+  ): Promise<PlayerSlotDto> {
+    const slot = this.state.playerSlots.find((item) => item.id === slotId);
+    if (!slot) {
+      throw new AdultPortalError("Jogador não encontrado.", "NOT_FOUND");
+    }
+    if (
+      this.state.playerCredentials.some(
+        (credential) => credential.tokenHash === tokenHash,
+      )
+    ) {
+      throw new AdultPortalError("Credencial demo duplicada.", "CONFLICT");
+    }
+    const rotatedAt = revokedAt.toISOString();
+    for (const credential of this.state.playerCredentials) {
+      if (
+        credential.playerSlotId === slotId &&
+        credential.status === PlayerCredentialStatus.ACTIVE
+      ) {
+        credential.status = PlayerCredentialStatus.REVOKED;
+        credential.revokedAt = rotatedAt;
+      }
+    }
+    this.state.playerCredentials.push({
+      id: demoId("player-credential"),
+      playerSlotId: slotId,
+      token: tokenHash,
+      tokenHash,
+      status: PlayerCredentialStatus.ACTIVE,
+      createdAt: rotatedAt,
+      revokedAt: null,
+    });
+    return this.slotDto(slot);
+  }
+
+  async createSession(
+    classGroupId: string,
+    startedAt: Date,
+  ): Promise<GameSessionDto> {
+    if (await this.getActiveSession(classGroupId)) {
+      throw new AdultPortalError(
+        "A turma já possui uma sessão ativa.",
+        "CONFLICT",
+      );
+    }
+    if (!this.state.classes.some((item) => item.id === classGroupId)) {
+      throw new AdultPortalError("Turma não encontrada.", "NOT_FOUND");
+    }
+    const session: DemoGameSession = {
+      id: demoId("game-session"),
+      classGroupId,
+      status: GameSessionStatus.ACTIVE,
+      startedAt: startedAt.toISOString(),
+      endedAt: null,
+    };
+    this.state.gameSessions.push(session);
+    return this.sessionDto(session);
+  }
+
+  async endSession(sessionId: string, endedAt: Date): Promise<GameSessionDto> {
+    const session = this.state.gameSessions.find(
+      (item) => item.id === sessionId,
+    );
+    if (!session || session.status !== GameSessionStatus.ACTIVE) {
+      throw new AdultPortalError(
+        "A turma não possui sessão ativa.",
+        "CONFLICT",
+      );
+    }
+    session.status = GameSessionStatus.ENDED;
+    session.endedAt = endedAt.toISOString();
+    return this.sessionDto(session);
+  }
+
+  async findOrCreateActiveParticipation(
+    classGroupId: string,
+    playerSlotId: string,
+    joinedAt: Date,
+  ) {
+    const session = this.state.gameSessions.find(
+      (item) =>
+        item.classGroupId === classGroupId &&
+        item.status === GameSessionStatus.ACTIVE,
+    );
+    if (!session) return null;
+
+    const existing = this.state.participations.find(
+      (item) =>
+        item.gameSessionId === session.id && item.playerSlotId === playerSlotId,
+    );
+    if (existing) {
+      return {
+        session: this.sessionDto(session),
+        participation: this.participationDto(existing),
+      };
+    }
+
+    const slot = this.state.playerSlots.find(
+      (item) => item.id === playerSlotId,
+    );
+    if (!slot || session.classGroupId !== slot.classGroupId) {
+      throw new AdultPortalError(
+        "Jogador e sessão não pertencem à mesma turma.",
+        "CONFLICT",
+      );
+    }
+    const participation: DemoParticipation = {
+      id: demoId("participation"),
+      gameSessionId: session.id,
+      playerSlotId,
+      joinedAt: joinedAt.toISOString(),
+    };
+    this.state.participations.push(participation);
+    return {
+      session: this.sessionDto(session),
+      participation: this.participationDto(participation),
+    };
+  }
+
+  private slotDto(slot: DemoPlayerSlot): PlayerSlotDto {
+    const credentials = this.state.playerCredentials.filter(
+      (item) => item.playerSlotId === slot.id,
+    );
+    const credential =
+      [...credentials]
+        .reverse()
+        .find((item) => item.status === PlayerCredentialStatus.ACTIVE) ??
+      credentials.at(-1) ??
+      null;
+    return {
+      id: slot.id,
+      classGroupId: slot.classGroupId,
+      playerNumber: slot.playerNumber,
+      status: slot.status,
+      credentialId: credential?.id ?? null,
+      credentialStatus: credential?.status ?? null,
+    };
+  }
+
+  private sessionDto(session: DemoGameSession): GameSessionDto {
+    return {
+      id: session.id,
+      classGroupId: session.classGroupId,
+      status: session.status,
+      startedAt: new Date(session.startedAt),
+      endedAt: session.endedAt ? new Date(session.endedAt) : null,
+    };
+  }
+
+  private participationDto(participation: DemoParticipation): ParticipationDto {
+    return {
+      id: participation.id,
+      gameSessionId: participation.gameSessionId,
+      playerSlotId: participation.playerSlotId,
+      joinedAt: new Date(participation.joinedAt),
     };
   }
 }

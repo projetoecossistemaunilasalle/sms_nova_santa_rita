@@ -29,7 +29,15 @@ const environment = {
   NEXT_PUBLIC_APP_RUNTIME_MODE: target,
 };
 
-if (command === "build") environment.NODE_ENV = "production";
+if (command === "build") {
+  environment.NODE_ENV = "production";
+  // Prerendering runs route modules, which validate the production runtime env
+  // and reject the bypass. Pinning it off keeps a local server build possible;
+  // booting the built server still refuses the flag. The value must be set
+  // rather than deleted, because the build re-reads `.env` and never overrides
+  // a variable that already exists.
+  if (target === "server") environment.AUTH_DEV_BYPASS = "false";
+}
 if (target === "demo") {
   for (const name of [
     "DATABASE_URL",

@@ -31,7 +31,14 @@
       ],
       "@runtime/adult-portal-client": [
         "./src/runtime/adult-portal-server-client.ts"
-      ]
+      ],
+      "@runtime/player-access-actions": [
+        "./src/app/(professional)/portal/player-access-actions.ts"
+      ],
+      "@runtime/player-entry-action": [
+        "./src/app/(public-play)/jogar/actions.ts"
+      ],
+      "@runtime/player-access": ["./src/runtime/player-access-server.ts"]
     }
   },
   "include": [

@@ -109,9 +109,12 @@ export function proxy(request: NextRequest): NextResponse {
   // to GameMaker via ?activity_token. Use 'no-referrer' for those routes so
   // the token never leaks via Referer, even same-origin. Other routes keep a
   // stricter default.
-  const referrerPolicy = request.nextUrl.pathname.startsWith("/atividade/")
-    ? "no-referrer"
-    : "strict-origin-when-cross-origin";
+  const referrerPolicy =
+    request.nextUrl.pathname.startsWith("/atividade/") ||
+    request.nextUrl.pathname === "/jogar" ||
+    request.nextUrl.pathname.startsWith("/jogar/")
+      ? "no-referrer"
+      : "strict-origin-when-cross-origin";
   response.headers.set("Referrer-Policy", referrerPolicy);
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-Frame-Options", "DENY");
