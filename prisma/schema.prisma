@@ -39,6 +39,20 @@ enum OrganizationRole {
   @@map("organization_role")
 }
 
+enum PlayerCredentialStatus {
+  ACTIVE  @map("active")
+  REVOKED @map("revoked")
+
+  @@map("player_credential_status")
+}
+
+enum GameSessionStatus {
+  ACTIVE @map("active")
+  ENDED  @map("ended")
+
+  @@map("game_session_status")
+}
+
 model ProfessionalProfile {
   id                 String                   @id @default(uuid()) @db.Uuid
   authUserId         String                   @unique @map("auth_user_id") @db.VarChar(255)
@@ -97,9 +111,69 @@ model ClassGroup {
   updatedAt          DateTime            @updatedAt @map("updated_at") @db.Timestamptz(3)
   organization       Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   teacherAssignments TeacherAssignment[]
+  nextPlayerNumber   Int                 @default(1) @map("next_player_number")
+  playerSlots        PlayerSlot[]
+  gameSessions       GameSession[]
 
   @@index([organizationId, status])
   @@map("class_groups")
+}
+
+model PlayerSlot {
+  id             String             @id @default(uuid()) @db.Uuid
+  classGroupId   String             @map("class_group_id") @db.Uuid
+  playerNumber   Int                @map("player_number")
+  status         RecordStatus       @default(ACTIVE)
+  createdAt      DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime           @updatedAt @map("updated_at") @db.Timestamptz(3)
+  classGroup     ClassGroup         @relation(fields: [classGroupId], references: [id], onDelete: Restrict)
+  credentials    PlayerCredential[]
+  participations Participation[]
+
+  @@unique([classGroupId, playerNumber])
+  @@index([classGroupId, status])
+  @@map("player_slots")
+}
+
+model PlayerCredential {
+  id           String                 @id @default(uuid()) @db.Uuid
+  playerSlotId String                 @map("player_slot_id") @db.Uuid
+  tokenHash    String                 @unique @map("token_hash") @db.Char(64)
+  status       PlayerCredentialStatus @default(ACTIVE)
+  createdAt    DateTime               @default(now()) @map("created_at") @db.Timestamptz(3)
+  revokedAt    DateTime?              @map("revoked_at") @db.Timestamptz(3)
+  playerSlot   PlayerSlot             @relation(fields: [playerSlotId], references: [id], onDelete: Restrict)
+
+  @@index([playerSlotId, status])
+  @@map("player_credentials")
+}
+
+model GameSession {
+  id             String            @id @default(uuid()) @db.Uuid
+  classGroupId   String            @map("class_group_id") @db.Uuid
+  status         GameSessionStatus @default(ACTIVE)
+  startedAt      DateTime          @default(now()) @map("started_at") @db.Timestamptz(3)
+  endedAt        DateTime?         @map("ended_at") @db.Timestamptz(3)
+  createdAt      DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime          @updatedAt @map("updated_at") @db.Timestamptz(3)
+  classGroup     ClassGroup        @relation(fields: [classGroupId], references: [id], onDelete: Restrict)
+  participations Participation[]
+
+  @@index([classGroupId, status])
+  @@map("game_sessions")
+}
+
+model Participation {
+  id            String      @id @default(uuid()) @db.Uuid
+  gameSessionId String      @map("game_session_id") @db.Uuid
+  playerSlotId  String      @map("player_slot_id") @db.Uuid
+  joinedAt      DateTime    @default(now()) @map("joined_at") @db.Timestamptz(3)
+  gameSession   GameSession @relation(fields: [gameSessionId], references: [id], onDelete: Restrict)
+  playerSlot    PlayerSlot  @relation(fields: [playerSlotId], references: [id], onDelete: Restrict)
+
+  @@unique([gameSessionId, playerSlotId])
+  @@index([playerSlotId, joinedAt])
+  @@map("participations")
 }
 
 model TeacherAssignment {
