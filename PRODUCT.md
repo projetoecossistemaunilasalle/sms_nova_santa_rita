@@ -6,66 +6,202 @@
 
 web
 
+## Product purpose
+
+Missões do Caramelito combines an authenticated professional/admin portal with a low-friction player entry flow for one existing GameMaker experience.
+
+V1 is focused on making the full portal-to-game workflow work in production conditions. The portal prepares organizations, classes, adult permissions, player access, game context, persistence, and reporting. The existing GameMaker project remains the single gameplay runtime and source of truth for gameplay content and behavior.
+
+The detailed V1 direction is defined in [docs/v1-game-integration-dossier.md](docs/v1-game-integration-dossier.md). Where older repository documents conflict with that dossier, the dossier wins for V1.
+
 ## Users
 
-- Profissionais usam o portal autenticado para gerenciar links de acesso, organizações,
-  equipe, auditoria e resultados agregados.
-- Administradores usam o portal para o trabalho administrativo suportado pelo produto.
-- Participantes acessam o jogo somente por um link personalizado e opaco; o host nao exige conta ou perfil do participante.
-- O jogo GameMaker existente e o unico cliente e runtime da experiencia. O portal nao cria um catalogo de minijogos nem varias experiencias de jogo.
+- **Platform administrators** manage organizations and organization-level administrators.
+- **Organization administrators** manage organization structure, classes, teacher assignments, and organization staff access.
+- **Teachers** use already-prepared classes, prepare numbered player access with minimal setup, run classroom game sessions, and inspect class and numbered-player results.
+- **Children** access the game through low-friction numbered player credentials, preferably QR codes. They do not create conventional accounts, usernames, passwords, or email-based profiles.
 
-## Product Purpose
+## V1 adult roles
 
-Missoes do Caramelito combina um portal profissional/admin com uma entrada publica link-only para uma experiencia GameMaker existente. O portal atende o trabalho de profissionais e administradores; participantes chegam ao jogo somente por links personalizados e opacos. O produto nao tem landing page institucional ou de marketing.
+V1 has three adult permission levels:
 
-## Positioning
+1. Platform administrator.
+2. Organization administrator.
+3. Teacher.
 
-O diferencial central e manter uma fronteira clara entre operacao profissional e participacao: o portal e uma superficie autenticada de trabalho, enquanto o jogo e acessado por um link direto e controlado. O produto integra um unico jogo GameMaker existente, em vez de criar atividades, modulos ou minijogos no portal.
+Teachers should not be required to create organizations, build school structure, maintain full child rosters, or administer passwords.
 
-## Operating Context
+## Player model
 
-- O portal profissional/admin e uma superficie autenticada para o trabalho operacional do produto.
-- A entrada publica de participante comeca somente em um link personalizado e opaco gerado pelo sistema de links.
-- O portal nao inicia, incorpora ou descobre partidas para participantes; uma pessoa com o link deve abrir a rota publica diretamente.
-- A rota publica resolve o identificador opaco e prepara a entrada ou o handoff para o jogo GameMaker existente.
-- O destino do cliente GameMaker e configurado por `GAME_CLIENT_URL`; o formato exato do handoff deve permanecer no contrato de integracao do jogo.
+V1 does not use a conventional child account model.
 
-## Capabilities and Constraints
+Each class can contain numbered player slots such as:
 
-- A V1 deve manter o portal autenticado para o trabalho profissional/admin e resolver links personalizados para a entrada publica do jogo.
-- O host nao tem landing page e nao deve oferecer uma homepage de marketing como entrada alternativa.
-- O portal nao e uma superficie de gameplay: nao deve iniciar partidas, listar links publicos para descoberta por participantes ou servir como catalogo de minijogos.
-- Existe um unico jogo GameMaker e uma unica experiencia de runtime. O portal nao cria uma composicao de varios jogos, modulos ou minijogos.
-- Links externos devem ser tratados como identificadores opacos. Acesso publico por indice, busca ou navegacao interna nao faz parte do produto.
-- A integracao com o jogo usa contratos versionados e deve permanecer independente do ciclo de release do projeto GameMaker.
-- `GAME_CLIENT_URL` identifica o destino implantado do cliente GameMaker e deve ser configurado por ambiente.
-- A autenticacao do portal e separada do acesso publico por link; participantes nao precisam de conta para abrir o jogo.
-- A especificacao `portal-v1-specification.md` e uma proposta anterior em partes. O portal autenticado permanece relevante, mas requisitos de landing, catalogos de jogos, composicao de minijogos e lancamento de gameplay pelo portal nao sao fonte de verdade.
+- Player 01
+- Player 02
+- Player 03
 
-## Brand Commitments
+The recommended operational convention is to match those numbers to the teacher's attendance-list order. The portal does not need to store the child's name for V1.
 
-- Nome do produto: Missoes do Caramelito.
-- Vinculo institucional: Programa Saude na Escola e rede municipal de Nova Santa Rita.
-- Idioma principal: portugues do Brasil.
-- A comunicacao deve tratar o jogo como meio para conversa, aprendizagem e cuidado coletivo, sem prometer resultados clinicos ou individualizados.
+A numbered player can own persistent game state and can have results and active-play time associated with it.
 
-## Evidence on Hand
+The system must not silently renumber or recycle a player slot after game state or activity has been attached to it.
 
-- O projeto GameMaker existente e a referencia para a experiencia e o comportamento do jogo.
-- `contracts/schemas/` contem contratos JSON versionados que devem ser alinhados com a integracao real antes da producao.
-- O portal autenticado e os fluxos de administracao existentes no projeto sao referencia para o trabalho profissional/admin, mas nao autorizam acesso publico ao jogo.
-- `portal-v1-specification.md` registra uma proposta anterior; sua nota inicial identifica quais partes foram superadas pela fronteira atual.
-- Nao ha neste repositorio depoimentos, estudos de caso, metricas reais, validacao clinica ou comprovacao formal de conformidade. Trabalhos futuros nao devem fabrica-los.
+## Player access
 
-## Product Principles
+Each numbered player receives an opaque access credential, preferably represented as a QR code.
 
-- Separar o portal profissional/admin da experiencia de participante.
-- Fazer do link personalizado o unico ponto de entrada publico para o jogo.
-- Nao permitir que o portal lance ou ajude a descobrir partidas de participantes.
-- Manter o jogo GameMaker existente como unica fonte de verdade para conteudo, regras e comportamento do jogo.
-- Nao criar uma segunda fonte de verdade para catalogos de minijogos ou composicoes de atividades.
-- Manter a fronteira de autenticacao do portal distinta da entrada publica por link.
+The credential is designed for speed on shared school tablets:
 
-## Accessibility & Inclusion
+1. the child uses any available supported tablet;
+2. the child scans their player QR;
+3. the system resolves the numbered player;
+4. the game loads that player's server-persisted state.
 
-As telas do portal e a entrada publica devem funcionar em seus contextos previstos e respeitar preferencias de movimento reduzido. As responsabilidades de acessibilidade entre o portal, o host de link e o cliente GameMaker, assim como qualquer nivel formal de conformidade, ainda precisam de aprovacao e verificacao antes da producao.
+The QR credential is a bearer credential, not strong identity verification. It should be unguessable and rotatable without destroying player state.
+
+## Classes and sessions
+
+Classes are created by organization administrators and assigned to teachers.
+
+A class is an organizational object, not a nominal child roster.
+
+Player identity and game-session context are separate:
+
+- the numbered player identifies which persistent game state is being used;
+- the session/context identifies which classroom use is happening now.
+
+The child flow must remain as low-friction as possible and must not require conventional login.
+
+## Game state
+
+The game must support continuation across different school tablets.
+
+Server-side persistence is authoritative for player game state. Browser storage may support temporary offline operation, but must not be the only copy of world/progression state.
+
+GameMaker owns the meaning and rules of game state, including gameplay progression, cosmetics, rewards, currencies, and other game-owned values. The portal/backend stores and synchronizes the state through a versioned integration contract.
+
+## Results and usage
+
+V1 supports both:
+
+- class-level summaries;
+- per-numbered-player results.
+
+V1 should also support active-play time as an operational participation metric.
+
+Active-play time should represent meaningful game activity rather than simple page-open duration.
+
+The metric is useful for classroom follow-up and incentives, but it is not proof that a specific physical child personally used the device for every recorded second.
+
+## Offline behavior
+
+Temporary offline play is part of the intended V1 experience.
+
+The client may cache synchronized state and queue supported changes or metrics locally. IndexedDB is the preferred direction for structured offline state and queued events; localStorage may still be used for small simple values where appropriate.
+
+A device that has never loaded a player's current state cannot retrieve that state while completely offline. V1 should guarantee offline continuation after an initial synchronized load, not first-ever offline access on an unseen device.
+
+## Cross-year continuity
+
+V1 does not solve long-term student identity across school years.
+
+Automatic promotion, cross-class identity migration, and mapping a player from one year's class to another are explicitly deferred.
+
+The V1 data model should avoid blocking future migration, but no longitudinal student identity workflow should be built now.
+
+## Materials
+
+Materials/content management is not part of V1.
+
+The Materials area should be removed or hidden from the production V1 navigation and must not be a dependency of the portal-to-game workflow.
+
+Material authoring, approval, publishing, attachments, and related CMS behavior are deferred to a later product version.
+
+## Product boundary
+
+V1 has three connected surfaces:
+
+1. the authenticated professional/admin portal;
+2. the player entry and context-resolution surface;
+3. the existing GameMaker runtime.
+
+### Portal/backend owns
+
+- adult authentication and authorization;
+- organizations and adult team access;
+- class management;
+- teacher assignment;
+- numbered player slots;
+- player credential lifecycle;
+- session/context management;
+- player-state persistence services;
+- result ingestion and reporting;
+- active-play metrics;
+- administrative traceability where required.
+
+### GameMaker owns
+
+- gameplay;
+- activities and minigames inside the game;
+- game rules;
+- world behavior;
+- progression meaning;
+- cosmetics and reward logic;
+- production of game-side result/state events.
+
+The portal must not become a game editor, minigame catalog, or second source of truth for gameplay behavior.
+
+## Integration principles
+
+- The GameMaker integration uses versioned contracts.
+- Portal releases and GameMaker releases should remain independently deployable where possible.
+- Player credentials and session context are separate concepts.
+- Game state must not be keyed only by browser or device.
+- Public/player credentials must be opaque and excluded from public discovery.
+- The portal should minimize child data instead of claiming that numbered player records are fully anonymous.
+
+## Privacy posture
+
+V1 intentionally avoids requiring:
+
+- child names;
+- child email addresses;
+- child passwords;
+- birth dates;
+- parent accounts;
+- free-form child profile fields.
+
+However, a numbered player with persistent state is still a persistent record. A teacher may be able to associate Player 07 with a real child through the attendance list.
+
+The product goal is data minimization and low friction, not a claim that no association can exist.
+
+## V1 functional focus
+
+The production-oriented portal should concentrate on:
+
+- Overview;
+- Access / player entry management;
+- Results;
+- Classes;
+- Team and permissions;
+- Organizations;
+- Audit or administrative traceability where required.
+
+Materials is excluded.
+
+## Brand commitments
+
+- Product name: Missões do Caramelito.
+- Institutional context: Programa Saúde na Escola and the municipal network of Nova Santa Rita.
+- Primary language: Brazilian Portuguese.
+- Product communication should present the game as a tool for conversation, learning, and collective care without claiming clinical or individualized outcomes.
+
+## Evidence and legacy documents
+
+- The existing GameMaker project is the reference for gameplay behavior and game-owned state.
+- `contracts/schemas/` contains versioned JSON contracts that must be aligned with the real integration before production.
+- [docs/v1-game-integration-dossier.md](docs/v1-game-integration-dossier.md) is the current detailed V1 product direction.
+- [docs/current-architecture.md](docs/current-architecture.md) describes the current web/technical boundary.
+- `portal-v1-specification.md`, older phase plans, and earlier aggregate-only/link-only assumptions are retained as historical research where they conflict with the current V1 direction.
+- This repository contains no real-world outcome evidence, clinical validation, or formal compliance certification. Future work must not fabricate such evidence.
