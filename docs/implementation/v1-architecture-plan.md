@@ -357,6 +357,15 @@ supported devices.
 Minimum verification: Device A saves state, Device B loads it, and a stale save cannot
 silently overwrite the newer revision.
 
+Contract foundation completed on 22 September 2026:
+
+- the V1 Zod schemas, matching JSON Schemas, parsers, and deterministic valid/invalid
+  fixtures are checked in;
+- the contract freezes content/version ownership, state revision behavior, host event
+  IDs, bridge request IDs, result metrics, active-time limits, acknowledgements, and
+  typed errors;
+- Route Handlers, host persistence, and the live GameMaker bridge remain to be built.
+
 ### Slice 4: Results and active time
 
 Outcome: a teacher can see useful class and player participation after real play.
@@ -390,24 +399,18 @@ and confirm the final state and events from another device.
 
 ## 6. First implementation backlog
 
-Work should begin in this order:
+The remaining work should proceed in this order. Runtime, Neon Auth, adult roles,
+organization/class administration, and the V1 transport contracts are already in
+place.
 
-1. Split the explicit GitHub Pages demo build from the Next.js server build while
-   preserving shared DTOs and visual components.
-2. Implement Neon Auth in the server composition root and ensure the demo composition
-   root cannot be selected there.
-3. Add explicit V1 role and class models to Prisma.
-4. Implement organization, class, and teacher-assignment services.
-5. Replace the organization/class fixtures with those services.
-6. Add player slots and bulk allocation.
-7. Add player credentials, QR generation, and rotation.
-8. Add the one-active-session class workflow.
-9. Encode the adopted GameMaker state, browser bridge, result, conflict, and active-time
-   decisions as schemas and deterministic fixtures.
-10. Implement bootstrap and state persistence as the first real portal-to-game slice.
+1. Add player slots and bulk allocation.
+2. Add player credentials, QR generation, and rotation.
+3. Add the one-active-session class workflow.
+4. Implement bootstrap and state persistence as the first real portal-to-game slice.
+5. Connect the browser host to the companion GameMaker HTML5 bridge.
 
 Do not begin offline synchronization, advanced reporting, generalized permissions, or
-legacy cleanup before item 10 works end to end.
+legacy cleanup before item 4 works end to end.
 
 ## 7. Deliberate non-goals
 

@@ -28,6 +28,9 @@ technical decisions, and divides delivery into end-to-end slices.
   assignments are handled by authorized application services; server pages use
   Prisma and Server Actions; the GitHub Pages build uses browser-persisted demo
   state with a role switcher.
+- The V1 GameMaker transport contract is frozen in JSON Schema and Zod, with fixtures
+  covering bootstrap, state saves and conflicts, results, active time, visibility,
+  acknowledgements, and typed errors.
 - Slice 2 and later remain unimplemented. In particular, there are no player slots,
   QR credentials, game sessions, result ingestion, or offline synchronization yet.
 
