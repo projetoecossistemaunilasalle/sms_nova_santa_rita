@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { PHASE_DEVELOPMENT_SERVER } from "next/constants";
 import { z } from "zod";
 
 const runtimeMode = z
@@ -17,11 +18,14 @@ if (runtimeMode === "server") {
   }).parse(process.env);
 }
 
-const nextConfig: NextConfig = {
+const nextConfig = (phase: string): NextConfig => ({
   ...(runtimeMode === "demo"
     ? {
-        output: "export" as const,
-        basePath: "/SMS_Portal",
+        // Static export is a build target, not a development-server mode.
+        // Proxy and request-dependent API routes cannot run under `output: export`.
+        ...(phase === PHASE_DEVELOPMENT_SERVER
+          ? { distDir: ".next-demo-dev" }
+          : { output: "export" as const, basePath: "/SMS_Portal" }),
         trailingSlash: true,
         images: { unoptimized: true },
       }
@@ -30,7 +34,10 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   env: {
     APP_RUNTIME_MODE: runtimeMode,
-    APP_BASE_PATH: runtimeMode === "demo" ? "/SMS_Portal" : "",
+    APP_BASE_PATH:
+      runtimeMode === "demo" && phase !== PHASE_DEVELOPMENT_SERVER
+        ? "/SMS_Portal"
+        : "",
   },
   turbopack: {
     resolveAlias: {
@@ -66,8 +73,12 @@ const nextConfig: NextConfig = {
         runtimeMode === "demo"
           ? "./src/runtime/player-access-demo.ts"
           : "./src/runtime/player-access-server.ts",
+      "@runtime/game-events":
+        runtimeMode === "demo"
+          ? "./src/runtime/game-events-demo.ts"
+          : "./src/runtime/game-events-server.ts",
     },
   },
-};
+});
 
 export default nextConfig;

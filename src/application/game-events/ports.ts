@@ -1,0 +1,95 @@
+import type { ActiveTimeBatchV1, ResultEventV1 } from "@/contracts/v1";
+import type {
+  GameSessionStatus,
+  PlayerCredentialStatus,
+  RecordStatus,
+} from "@/generated/prisma/enums";
+import type { LaunchTokenContext } from "@/server/security/launch-token";
+
+export type EventLaunchScope = LaunchTokenContext & {
+  credentialStatus: PlayerCredentialStatus;
+  playerStatus: RecordStatus;
+  classStatus: RecordStatus;
+  organizationStatus: RecordStatus;
+  sessionStatus: GameSessionStatus;
+};
+
+export interface GameEventTransaction {
+  getLaunchScope(context: LaunchTokenContext): Promise<EventLaunchScope | null>;
+  acceptResult(participationId: string, event: ResultEventV1): Promise<void>;
+  acceptActiveTime(
+    participationId: string,
+    batch: ActiveTimeBatchV1,
+  ): Promise<void>;
+}
+
+export interface GameEventStore {
+  transaction<T>(
+    work: (transaction: GameEventTransaction) => Promise<T>,
+  ): Promise<T>;
+}
+
+export type EventReportResult = {
+  id: string;
+  activityId: string;
+  missionId: string;
+  attemptId: string;
+  state: string;
+  durationMs: number;
+  metrics: Record<string, number>;
+  receivedAt: Date;
+};
+
+export type PlayerClassReport = {
+  playerSlotId: string;
+  playerNumber: number;
+  playerStatus: RecordStatus;
+  participationCount: number;
+  totalActiveMs: number;
+  resultCount: number;
+  lastPlayedAt: Date | null;
+};
+
+export type ClassReport = {
+  classGroupId: string;
+  className: string;
+  playerCount: number;
+  participatingPlayerCount: number;
+  sessionCount: number;
+  totalActiveMs: number;
+  resultCount: number;
+  players: PlayerClassReport[];
+};
+
+export type PlayerParticipationReport = {
+  gameSessionId: string;
+  sessionStartedAt: Date;
+  sessionEndedAt: Date | null;
+  joinedAt: Date;
+  activeTimeMs: number;
+  activeTimeEventCount: number;
+  resultCount: number;
+  results: EventReportResult[];
+};
+
+export type PlayerReport = {
+  classGroupId: string;
+  className: string;
+  playerSlotId: string;
+  playerNumber: number;
+  playerStatus: RecordStatus;
+  participationCount: number;
+  totalActiveMs: number;
+  resultCount: number;
+  participations: PlayerParticipationReport[];
+};
+
+export interface GameEventReportReader {
+  listClassReports(classGroupIds: readonly string[]): Promise<ClassReport[]>;
+  getPlayerReport(
+    classGroupId: string,
+    playerSlotId: string,
+  ): Promise<PlayerReport | null>;
+}
+
+export type GameEventReportStore = GameEventReportReader;

@@ -1,0 +1,123 @@
+.serverProvisioningGuide {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 10px 24px;
+  margin: 0 0 18px;
+  padding: 17px 20px;
+  border: 1px solid color-mix(in srgb, var(--blue) 20%, var(--border) 80%);
+  border-radius: var(--radius-large);
+  color: var(--text);
+  background: var(--surface-sky);
+}
+
+.serverProvisioningGuide h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--type-title);
+}
+
+.serverProvisioningGuide p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--type-small);
+}
+
+.serverProvisioningGuide ol {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-column: 1 / -1;
+  gap: 8px 22px;
+  margin: 0;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--border);
+  list-style: none;
+}
+
+.serverProvisioningGuide li {
+  color: var(--text-muted);
+  font-size: var(--type-small);
+}
+
+.serverProvisioningGuide li strong {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--text);
+}
+
+.demoAccountNotice {
+  margin: 0 0 18px;
+  padding: 12px 16px;
+  border: 1px solid color-mix(in srgb, var(--yellow) 55%, var(--border) 45%);
+  border-radius: var(--radius-large);
+  color: var(--yellow-dark);
+  background: var(--yellow-light);
+  font-size: var(--type-small);
+}
+
+.demoCreationPanel {
+  margin-bottom: 16px;
+}
+
+.demoCreationPanel h2 {
+  margin: 0;
+  font-family: var(--font-display);
+}
+
+.demoCreationPanel > div > p {
+  max-width: 40ch;
+  margin: 6px 0 0;
+  color: var(--text-muted);
+  font-size: var(--type-small);
+}
+
+.demoProfileForm {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+}
+
+.demoProfileForm > :global(button) {
+  grid-column: 1 / -1;
+  justify-self: end;
+  margin-bottom: 5px;
+}
+
+.demoProfileForm > :global(p) {
+  grid-column: 1 / -1;
+}
+
+.existingMemberForm > .membershipSubmit {
+  margin-bottom: 5px;
+}
+
+.membershipSubmit {
+  white-space: nowrap;
+}
+
+@media (max-width: 980px) {
+  .serverProvisioningGuide {
+    grid-template-columns: 1fr;
+  }
+
+  .demoProfileForm > :global(button) {
+    justify-self: start;
+    margin-bottom: 0;
+  }
+
+  .existingMemberForm > .membershipSubmit {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 680px) {
+  .serverProvisioningGuide ol {
+    grid-template-columns: 1fr;
+  }
+
+  .demoProfileForm {
+    grid-template-columns: 1fr;
+  }
+
+  .demoProfileForm > :global(button) {
+    width: 100%;
+  }
+}

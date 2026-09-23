@@ -377,6 +377,279 @@
   color: var(--green);
 }
 
+.gameHost {
+  width: min(1160px, 100%);
+}
+
+.gameHostHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.gameHostHeader h1 {
+  margin: 12px 0 0;
+  font-family: var(--font-display);
+  font-size: var(--type-hero);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+
+.gameHostHeader p {
+  max-width: 54ch;
+  margin: 12px 0 0;
+  color: var(--text-muted);
+}
+
+.gameConnection {
+  display: inline-flex;
+  min-height: 38px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 11px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  color: var(--text-muted);
+  background: var(--surface);
+  font-size: var(--type-compact);
+  font-weight: 800;
+}
+
+.gameConnection > span {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-circle);
+  background: var(--orange);
+}
+
+.gameConnection[data-state="playing"] > span {
+  background: var(--green);
+}
+
+.gameConnection[data-state="error"] > span,
+.gameConnection[data-state="conflict"] > span {
+  background: var(--coral);
+}
+
+.gameHostAlert {
+  width: 100%;
+  margin: 20px 0 -10px;
+  padding: 13px 16px;
+  border: 1px solid color-mix(in srgb, var(--orange) 35%, white);
+  border-radius: var(--radius-control);
+  color: var(--orange-dark);
+  background: var(--orange-light);
+  font-size: var(--type-small);
+  font-weight: 700;
+}
+
+.gameHostAlertError {
+  border-color: color-mix(in srgb, var(--coral) 35%, white);
+  color: var(--coral-dark);
+  background: var(--coral-light);
+}
+
+.gameHostFrame {
+  width: 100%;
+  margin-top: 24px;
+  overflow: hidden;
+  border: 6px solid var(--surface);
+  border-radius: var(--radius-feature);
+  background: var(--surface-game);
+  box-shadow: 0 24px 58px rgb(29 79 138 / 15%);
+}
+
+.gameHostIframe {
+  display: block;
+  width: 100%;
+  min-height: min(70vh, 700px);
+  aspect-ratio: 16 / 10;
+  border: 0;
+  background: var(--surface-game);
+}
+
+.gameHostUnavailable {
+  display: grid;
+  min-height: min(62vh, 620px);
+  justify-items: center;
+  align-content: center;
+  padding: clamp(26px, 6vw, 66px);
+  color: var(--surface);
+  text-align: center;
+  background:
+    radial-gradient(ellipse at 18% 93%, rgb(61 155 78 / 25%), transparent 44%),
+    var(--surface-game);
+}
+
+.gameUnavailableMark {
+  display: grid;
+  width: 66px;
+  height: 66px;
+  place-items: center;
+  border: 2px solid rgb(255 255 255 / 24%);
+  border-radius: var(--radius-feature);
+  color: var(--yellow-dark);
+  background: var(--yellow);
+  font-family: var(--font-display);
+  font-size: var(--type-headline);
+}
+
+.gameHostUnavailable h2 {
+  max-width: 18ch;
+  margin: 22px 0 0;
+  font-family: var(--font-display);
+  font-size: var(--type-headline);
+  line-height: 1;
+}
+
+.gameHostUnavailable p {
+  max-width: 48ch;
+  margin: 12px 0 0;
+  color: var(--text-on-dark-muted);
+}
+
+.gameHostFooter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 18px;
+  padding: 13px 4px 0;
+  color: var(--text-muted);
+  font-size: var(--type-compact);
+}
+
+.gameDemoLabel,
+.gameRevision {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: var(--radius-pill);
+  font-weight: 800;
+}
+
+.gameDemoLabel {
+  color: var(--yellow-dark);
+  background: var(--yellow-light);
+}
+
+.gameRevision {
+  color: var(--blue-dark);
+  background: var(--blue-light);
+  font-variant-numeric: tabular-nums;
+}
+
+.demoGame {
+  display: grid;
+  min-height: min(70vh, 700px);
+  place-items: center;
+  padding: clamp(20px, 5vw, 64px);
+  background:
+    radial-gradient(ellipse at 100% 0%, rgb(46 111 183 / 18%), transparent 37%),
+    linear-gradient(145deg, #1d4f8a, #15271c 75%);
+}
+
+.demoGameScene {
+  width: min(100%, 620px);
+  padding: clamp(24px, 5vw, 48px);
+  border: 5px solid var(--surface);
+  border-radius: var(--radius-feature) 10px var(--radius-feature)
+    var(--radius-feature);
+  color: var(--text);
+  background: var(--background);
+  box-shadow: 0 20px 44px rgb(0 0 0 / 22%);
+}
+
+.demoGameLabel {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: var(--radius-pill);
+  color: var(--blue-dark);
+  background: var(--blue-light);
+  font-size: var(--type-compact);
+  font-weight: 850;
+}
+
+.demoGameScene h2 {
+  max-width: 16ch;
+  margin: 17px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4vw, 2.65rem);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+
+.demoGameScene > p {
+  max-width: 55ch;
+  margin: 14px 0 0;
+  color: var(--text-muted);
+}
+
+.demoStepReadout {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 25px 0 0;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+}
+
+.demoStepNumber {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: var(--radius-control);
+  color: var(--green-dark);
+  background: var(--green-light);
+  font-family: var(--font-display);
+  font-size: var(--type-title);
+  font-variant-numeric: tabular-nums;
+}
+
+.demoStepReadout strong,
+.demoStepReadout small {
+  display: block;
+}
+
+.demoStepReadout small {
+  margin-top: 3px;
+  color: var(--text-muted);
+  font-size: var(--type-compact);
+}
+
+.demoGameScene .primary {
+  margin-top: 20px;
+}
+
+.demoGameScene .primary:disabled {
+  opacity: 0.62;
+  cursor: wait;
+}
+
+.demoGameSuccess,
+.demoGameError {
+  margin: 14px 0 0 !important;
+  font-size: var(--type-small);
+  font-weight: 750;
+}
+
+.demoGameSuccess {
+  color: var(--green-dark) !important;
+}
+
+.demoGameError {
+  color: var(--coral-dark) !important;
+}
+
 .stateCard {
   display: flex;
   width: min(100%, 680px);
@@ -667,6 +940,45 @@
     min-height: 58vh;
     aspect-ratio: 9 / 14;
     border-radius: var(--radius-control);
+  }
+
+  .gameHostHeader {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .gameHostHeader h1 {
+    font-size: var(--font-size-feature);
+  }
+
+  .gameConnection {
+    min-height: 34px;
+  }
+
+  .gameHostFrame {
+    margin-top: 18px;
+    border-width: 4px;
+    border-radius: var(--radius-panel);
+  }
+
+  .gameHostIframe {
+    min-height: 58vh;
+    aspect-ratio: 9 / 14;
+  }
+
+  .gameHostUnavailable {
+    min-height: 56vh;
+  }
+
+  .demoGame {
+    min-height: 58vh;
+    padding: 18px;
+  }
+
+  .demoGameScene {
+    padding: 25px 20px;
+    border-width: 4px;
   }
 
   .gameStageFooter {

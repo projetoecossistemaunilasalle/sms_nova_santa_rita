@@ -1,27 +1,13 @@
-"use client";
-
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+const signInPath = `${process.env.APP_BASE_PATH ?? ""}/entrar/`;
 
 export default function HomePage() {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.replace("/entrar");
-  }, [router]);
-
   return (
-    <main
-      style={{ padding: "2rem", textAlign: "center", fontFamily: "sans-serif" }}
-    >
+    <main style={{ padding: "2rem", textAlign: "center" }}>
+      <meta httpEquiv="refresh" content={`0;url=${signInPath}`} />
       <p>Redirecionando para o portal...</p>
-      <Link
-        href="/entrar"
-        style={{ color: "#2563eb", textDecoration: "underline" }}
-      >
+      <a href={signInPath}>
         Clique aqui se não for redirecionado automaticamente.
-      </Link>
+      </a>
     </main>
   );
 }

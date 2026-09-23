@@ -12,6 +12,7 @@ import {
   assignOrganizationAdministratorAction,
   assignTeacherMembershipAction,
   changeMembershipAction,
+  createDemoProfessionalAction,
 } from "@runtime/adult-portal-actions";
 
 import { AdultPortalForm } from "./adult-portal-form";
@@ -28,6 +29,7 @@ import { PortalState } from "./portal-state";
 import { StatusBadge } from "./status-badge";
 import { useDemoPortalState } from "./use-demo-portal";
 import styles from "./portal.module.css";
+import teamStyles from "./team-screen.module.css";
 
 export function TeamScreen({
   initialMembers,
@@ -47,12 +49,13 @@ export function TeamScreen({
   const members = demo ? demoTeam(demo) : initialMembers;
   const organizations = demo ? demoOrganizations(demo) : initialOrganizations;
   const availableProfiles = demo
-    ? demo.profiles.map(({ id, displayName, status }) => ({
+    ? demo.profiles.map(({ id, displayName, status, email }) => ({
         id,
         displayName,
         status,
+        email,
       }))
-    : profiles;
+    : profiles.map((profile) => ({ ...profile, email: undefined }));
 
   if (!role || role === "teacher") {
     return (
@@ -68,6 +71,10 @@ export function TeamScreen({
     );
   }
 
+  const demoCreationRole =
+    role === "platform_admin"
+      ? OrganizationRole.ORGANIZATION_ADMIN
+      : OrganizationRole.TEACHER;
   const membershipAction =
     role === "platform_admin"
       ? assignOrganizationAdministratorAction
@@ -83,35 +90,143 @@ export function TeamScreen({
             : "Gerencie professores somente dentro das organizações sob sua responsabilidade."
         }
       />
-      <section className={styles.provisioningNotice}>
-        <strong>O perfil precisa existir antes do vínculo.</strong>
-        <p>
-          O Neon Auth continua responsável por credenciais. Esta tela usa apenas
-          perfis profissionais já provisionados e não cria senhas ou contas
-          paralelas.
-        </p>
-      </section>
       {runtimeMode === "demo" && (
-        <p className={styles.demoScopeNotice}>
-          Vínculos demo persistem somente neste navegador.
+        <p className={teamStyles.demoAccountNotice}>
+          Perfis criados na demonstração ficam neste navegador. Use um e-mail
+          fictício: nenhuma conta real, senha ou mensagem será criada.
         </p>
+      )}
+      {runtimeMode === "server" && (
+        <section className={teamStyles.serverProvisioningGuide}>
+          <div>
+            <h2>Como adicionar alguém à equipe</h2>
+          </div>
+          <p>
+            A criação da identidade e das credenciais é feita pelo Neon Auth;
+            este portal ainda não envia convites. Depois que o perfil
+            profissional correspondente for provisionado, ele aparecerá na lista
+            abaixo para receber um vínculo.
+          </p>
+          <ol>
+            <li>
+              <strong>1. Criar a identidade</strong>
+              Peça ao responsável pelo Neon Auth para cadastrar o profissional.
+            </li>
+            <li>
+              <strong>2. Provisionar o perfil</strong>
+              Peça ao responsável pelo portal para vincular a identidade a um
+              perfil profissional.
+            </li>
+            <li>
+              <strong>3. Conceder acesso</strong>
+              Quando o perfil ativo aparecer abaixo, escolha a organização e
+              crie o vínculo.
+            </li>
+          </ol>
+        </section>
+      )}
+      {runtimeMode === "demo" && (
+        <section
+          className={`${styles.managementPanel} ${teamStyles.demoCreationPanel}`}
+        >
+          <div>
+            <h2>Criar perfil de demonstração</h2>
+            <p>
+              Simule a inclusão de uma pessoa na equipe. O perfil e o vínculo
+              existem apenas nos dados locais desta demonstração.
+            </p>
+          </div>
+          <AdultPortalForm
+            action={createDemoProfessionalAction}
+            submitLabel="Adicionar ao demo"
+            className={teamStyles.demoProfileForm}
+          >
+            <label className={styles.field}>
+              <span>Nome</span>
+              <input
+                className={styles.input}
+                name="displayName"
+                autoComplete="off"
+                maxLength={160}
+                required
+              />
+            </label>
+            <label className={styles.field}>
+              <span>E-mail fictício</span>
+              <input
+                className={styles.input}
+                name="email"
+                type="email"
+                autoComplete="off"
+                placeholder="ana.demo@example.test"
+                maxLength={254}
+                required
+              />
+              <small className={styles.fieldHelp}>
+                Use um endereço .test. É apenas um identificador local e não
+                será enviado.
+              </small>
+            </label>
+            <input type="hidden" name="role" value={demoCreationRole} />
+            <label className={styles.field}>
+              <span>Permissão na organização</span>
+              <input
+                className={styles.input}
+                value={
+                  demoCreationRole === OrganizationRole.ORGANIZATION_ADMIN
+                    ? "Administrador da organização"
+                    : "Professor"
+                }
+                readOnly
+              />
+            </label>
+            <label className={styles.field}>
+              <span>Organização</span>
+              <select
+                className={styles.select}
+                name="organizationId"
+                required
+                defaultValue=""
+              >
+                <option value="" disabled>
+                  Selecione uma organização
+                </option>
+                {organizations
+                  .filter(
+                    (organization) =>
+                      organization.status === RecordStatus.ACTIVE,
+                  )
+                  .map((organization) => (
+                    <option key={organization.id} value={organization.id}>
+                      {organization.name}
+                    </option>
+                  ))}
+              </select>
+            </label>
+          </AdultPortalForm>
+        </section>
       )}
       <section className={styles.managementPanel}>
         <div>
           <h2>
             {role === "platform_admin"
-              ? "Vincular ou promover administrador"
-              : "Vincular professor"}
+              ? "Vincular perfil existente"
+              : "Vincular professor existente"}
           </h2>
           <p>
             {role === "platform_admin"
-              ? "Selecione um perfil provisionado e o escopo. Um professor já vinculado será promovido sem criar outro vínculo."
-              : "Selecione um perfil provisionado e o escopo organizacional."}
+              ? "Use esta opção para alguém cujo perfil profissional já está disponível. Um vínculo existente pode ser promovido sem duplicá-lo."
+              : "Escolha um perfil profissional já provisionado para conceder acesso à organização."}
           </p>
         </div>
-        <AdultPortalForm action={membershipAction} submitLabel="Criar vínculo">
+        <AdultPortalForm
+          action={membershipAction}
+          submitLabel="Criar vínculo"
+          className={teamStyles.existingMemberForm}
+          submitButtonClassName={teamStyles.membershipSubmit}
+        >
           <label className={styles.field}>
-            <span>Perfil profissional</span>
+            <span>Profissional</span>
             <select
               className={styles.select}
               name="profileId"
@@ -125,7 +240,9 @@ export function TeamScreen({
                 .filter((profile) => profile.status === RecordStatus.ACTIVE)
                 .map((profile) => (
                   <option key={profile.id} value={profile.id}>
-                    {profile.displayName}
+                    {profile.email
+                      ? `${profile.displayName} · ${profile.email}`
+                      : profile.displayName}
                   </option>
                 ))}
             </select>
@@ -181,8 +298,12 @@ export function TeamScreen({
       {members.length === 0 ? (
         <PortalState
           icon="users"
-          title="Nenhum vínculo profissional"
-          description="Escolha um perfil já provisionado para criar o primeiro vínculo deste escopo."
+          title="Nenhuma pessoa vinculada"
+          description={
+            runtimeMode === "demo"
+              ? "Crie um perfil demonstrativo acima ou vincule alguém que já esteja na lista."
+              : "Vincule um perfil profissional ativo para começar a liberar acessos neste escopo."
+          }
         />
       ) : (
         <div className={`${styles.adminTable} ${styles.teamTable}`}>
@@ -206,7 +327,13 @@ export function TeamScreen({
                   </i>
                   <span>
                     <strong>{member.displayName}</strong>
-                    <small>Perfil profissional provisionado</small>
+                    <small>
+                      {runtimeMode === "demo"
+                        ? (demo?.profiles.find(
+                            (profile) => profile.id === member.profileId,
+                          )?.email ?? "Perfil fictício de demonstração")
+                        : "Perfil profissional provisionado"}
+                    </small>
                   </span>
                 </span>
                 <span>{roleLabel(member.role)}</span>

@@ -130,6 +130,19 @@ export async function assignTeacherMembershipAction(
   );
 }
 
+export async function createDemoProfessionalAction(
+  _previous: ActionResult,
+  _formData: FormData,
+): Promise<ActionResult> {
+  void _previous;
+  void _formData;
+  return {
+    ok: false,
+    message:
+      "O portal servidor ainda não cria identidades no Neon Auth. Peça ao administrador do acesso que provisione a conta e o perfil antes de vinculá-los aqui.",
+  };
+}
+
 export async function changeMembershipAction(
   _previous: ActionResult,
   formData: FormData,

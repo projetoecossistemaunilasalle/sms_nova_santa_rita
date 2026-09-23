@@ -15,6 +15,7 @@ import {
 import { Icon } from "@/components/shared/icon";
 
 import { AdultPortalForm } from "./adult-portal-form";
+import { DeactivateOrganizationControl } from "./deactivate-organization-control";
 import {
   demoOrganizations,
   demoRole,
@@ -157,30 +158,30 @@ export function OrganizationsScreen({
                 <span>{organization.classCount}</span>
                 <span>{organization.memberCount}</span>
                 {actorCanCreate ? (
-                  <AdultPortalForm
-                    action={changeOrganizationStatusAction}
-                    submitLabel={
-                      organization.status === RecordStatus.ACTIVE
-                        ? "Desativar"
-                        : "Ativar"
-                    }
-                    compact
-                  >
-                    <input
-                      type="hidden"
-                      name="organizationId"
-                      value={organization.id}
+                  organization.status === RecordStatus.ACTIVE ? (
+                    <DeactivateOrganizationControl
+                      organizationId={organization.id}
+                      organizationName={organization.name}
+                      triggerLabel="Desativar"
                     />
-                    <input
-                      type="hidden"
-                      name="status"
-                      value={
-                        organization.status === RecordStatus.ACTIVE
-                          ? RecordStatus.INACTIVE
-                          : RecordStatus.ACTIVE
-                      }
-                    />
-                  </AdultPortalForm>
+                  ) : (
+                    <AdultPortalForm
+                      action={changeOrganizationStatusAction}
+                      submitLabel="Ativar"
+                      compact
+                    >
+                      <input
+                        type="hidden"
+                        name="organizationId"
+                        value={organization.id}
+                      />
+                      <input
+                        type="hidden"
+                        name="status"
+                        value={RecordStatus.ACTIVE}
+                      />
+                    </AdultPortalForm>
+                  )
                 ) : !generatedInBrowser ? (
                   <Link
                     className={styles.iconButton}

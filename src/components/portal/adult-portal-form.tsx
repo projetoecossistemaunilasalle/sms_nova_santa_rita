@@ -18,20 +18,28 @@ export function AdultPortalForm({
   children,
   submitLabel,
   compact = false,
+  className,
+  submitButtonClassName,
 }: {
   action: PortalMutation;
   children: ReactNode;
   submitLabel: string;
   compact?: boolean;
+  className?: string;
+  submitButtonClassName?: string;
 }) {
   const [state, formAction, pending] = useActionState(action, initialState);
   return (
     <form
       action={formAction}
-      className={compact ? styles.inlineMutationForm : styles.portalForm}
+      className={`${compact ? styles.inlineMutationForm : styles.portalForm} ${className ?? ""}`}
     >
       {children}
-      <button className={styles.button} type="submit" disabled={pending}>
+      <button
+        className={`${styles.button} ${submitButtonClassName ?? ""}`}
+        type="submit"
+        disabled={pending}
+      >
         {pending ? "Salvando…" : submitLabel}
       </button>
       {state.message && (

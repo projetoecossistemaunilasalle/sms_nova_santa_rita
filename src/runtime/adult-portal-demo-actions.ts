@@ -16,6 +16,10 @@ import {
 import { AdultPortalService } from "@/application/adult-portal/service";
 import type { ActionResult } from "@/application/adult-portal/types";
 import {
+  createDemoProfessionalMembership,
+  createDemoProfessionalSchema,
+} from "@/runtime/demo-professional-creation";
+import {
   DemoAdultPortalStore,
   readDemoAdultPortalState,
   writeDemoAdultPortalState,
@@ -117,6 +121,37 @@ export async function assignTeacherMembershipAction(
     (service, profileId) => service.assignTeacher(profileId, input),
     "Professor vinculado no demo.",
   );
+}
+
+export async function createDemoProfessionalAction(
+  _previous: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const parsed = createDemoProfessionalSchema.safeParse(formObject(formData));
+  if (!parsed.success) return validationError(parsed.error);
+
+  const state = readDemoAdultPortalState();
+  try {
+    await createDemoProfessionalMembership(
+      state,
+      state.activeProfileId,
+      parsed.data,
+    );
+    writeDemoAdultPortalState(state);
+    return {
+      ok: true,
+      message:
+        "Perfil adicionado ao demo. Nenhuma conta real ou e-mail foi criado.",
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      message:
+        error instanceof AdultPortalError
+          ? error.message
+          : "Não foi possível concluir a operação.",
+    };
+  }
 }
 
 export async function changeMembershipAction(

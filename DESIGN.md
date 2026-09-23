@@ -294,7 +294,7 @@ publica usa a mesma linguagem sem se tornar um atalho para outras atividades.
 
 - **Shape:** controle curvo e compacto, normalmente com 12–13px de raio.
 - **Primary:** Verde Caminho Ação sobre branco, peso alto, altura mínima de 44px e sombra de pressão verde.
-- **Hover / Focus:** sobe 2px em 150ms; foco global usa contorno branco de 3px e halo Azul Caminho Profundo para permanecer visível em superfícies claras e escuras.
+- **Hover / Focus:** sobe 2px em 150ms; foco por teclado usa um único contorno de 2px, afastado 2px, em Verde Caminho Profundo nas superfícies claras e Amarelo Marco na navegação escura.
 - **Secondary:** folha branca, contorno Azul Céu e sombra azul muito leve.
 - **Ghost:** folha branca com Linha de Caderno; sem sombra em repouso.
 - **Danger:** Coral Atenção sobre fundo coral suave, com borda translúcida.

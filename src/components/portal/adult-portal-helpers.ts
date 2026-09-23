@@ -32,24 +32,114 @@ export function initials(name: string): string {
 }
 
 export function demoRole(state: DemoAdultPortalState): AdultRole | null {
-  const profile = state.profiles.find(
-    (item) => item.id === state.activeProfileId,
+  return demoRoleForProfile(state, state.activeProfileId);
+}
+
+export function demoAssignedRoleForProfile(
+  state: DemoAdultPortalState,
+  profileId: string,
+): AdultRole | null {
+  const profile = state.profiles.find((item) => item.id === profileId);
+  if (!profile) return null;
+  if (profile.platformRole === PlatformRole.PLATFORM_ADMIN)
+    return "platform_admin";
+
+  const memberships = state.memberships.filter(
+    (membership) =>
+      membership.profileId === profileId &&
+      membership.status === RecordStatus.ACTIVE,
   );
+  if (
+    memberships.some(
+      (membership) => membership.role === OrganizationRole.ORGANIZATION_ADMIN,
+    )
+  ) {
+    return "organization_admin";
+  }
+  return memberships.some(
+    (membership) => membership.role === OrganizationRole.TEACHER,
+  )
+    ? "teacher"
+    : null;
+}
+
+export function demoRoleForProfile(
+  state: DemoAdultPortalState,
+  profileId: string,
+): AdultRole | null {
+  const profile = state.profiles.find((item) => item.id === profileId);
   if (!profile || profile.status !== RecordStatus.ACTIVE) return null;
   if (profile?.platformRole === PlatformRole.PLATFORM_ADMIN)
     return "platform_admin";
-  const hasAdminMembership = state.memberships.some(
+  const activeMemberships = state.memberships.filter(
     (membership) =>
-      membership.profileId === state.activeProfileId &&
+      membership.profileId === profileId &&
       membership.status === RecordStatus.ACTIVE &&
-      membership.role === OrganizationRole.ORGANIZATION_ADMIN &&
       state.organizations.some(
         (organization) =>
           organization.id === membership.organizationId &&
           organization.status === RecordStatus.ACTIVE,
       ),
   );
-  return hasAdminMembership ? "organization_admin" : "teacher";
+  if (
+    activeMemberships.some(
+      (membership) => membership.role === OrganizationRole.ORGANIZATION_ADMIN,
+    )
+  ) {
+    return "organization_admin";
+  }
+  return activeMemberships.some(
+    (membership) => membership.role === OrganizationRole.TEACHER,
+  )
+    ? "teacher"
+    : null;
+}
+
+export function demoScopeLabel(state: DemoAdultPortalState): string {
+  const role = demoRole(state);
+  if (role === "platform_admin") return "Escopo de toda a plataforma";
+  if (!role) return "Sem escopo ativo";
+
+  if (role === "teacher") {
+    const classCount = demoClasses(state).length;
+    return classCount === 0
+      ? "Sem turmas atribuídas"
+      : classCount === 1
+        ? "1 turma atribuída"
+        : `${classCount} turmas atribuídas`;
+  }
+
+  const organizationIds = new Set(demoAccessibleOrganizationIds(state));
+  const names = state.organizations
+    .filter((organization) => organizationIds.has(organization.id))
+    .map((organization) => organization.name);
+  return names.length === 0
+    ? "Sem organização ativa"
+    : names.length === 1
+      ? names[0]!
+      : `${names.length} organizações acessíveis`;
+}
+
+export function isPortalNavigationItemCurrent(
+  pathname: string,
+  item: { href: string; label: string; exact?: boolean },
+  basePath = process.env.APP_BASE_PATH ?? "",
+): boolean {
+  const pathWithoutBase =
+    basePath && pathname.startsWith(`${basePath}/`)
+      ? pathname.slice(basePath.length)
+      : pathname;
+  const routePath = pathWithoutBase.replace(/\/+$/, "") || "/";
+  const itemPath = item.href.replace(/\/+$/, "") || "/";
+
+  if (item.exact) return routePath === itemPath;
+  if (item.label === "Links de acesso") {
+    return routePath.startsWith(itemPath) && !routePath.endsWith("/resultados");
+  }
+  if (item.label === "Resultados") {
+    return routePath.endsWith("/resultados");
+  }
+  return routePath.startsWith(itemPath);
 }
 
 export function demoAccessibleOrganizationIds(

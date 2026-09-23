@@ -6,14 +6,15 @@ import type { PlayerEntryActionResult } from "@/application/player-access/types"
 import { Icon, type IconName } from "@/components/shared/icon";
 import type { RuntimeMode } from "@/runtime/mode";
 import { resolvePlayerEntryAction } from "@runtime/player-entry-action";
+import { GameHost } from "./game-host";
 import { readPlayerEntryCredential } from "./player-entry-credential";
 
 import styles from "./public.module.css";
 
-type EntryView = PlayerEntryActionResult | { state: "loading" };
+type EntryView = PlayerEntryActionResult | { state: "loading" | "scan" };
 
 const stateCopy: Record<
-  Exclude<EntryView["state"], "loading" | "ready" | "waiting">,
+  Exclude<EntryView["state"], "loading" | "ready" | "scan" | "waiting">,
   { icon: IconName; title: string; description: string }
 > = {
   invalid: {
@@ -56,10 +57,13 @@ const stateCopy: Record<
 
 export function PlayerEntryScreen({
   runtimeMode,
+  gameClientUrl,
 }: {
   runtimeMode: RuntimeMode;
+  gameClientUrl: string | null;
 }) {
   const [view, setView] = useState<EntryView>({ state: "loading" });
+  const [entryCredential, setEntryCredential] = useState<string | null>(null);
   const credential = useRef<string | null>(null);
 
   async function resolve(token: string) {
@@ -83,10 +87,13 @@ export function PlayerEntryScreen({
 
     const token = result.token;
     if (!token) {
-      queueMicrotask(() => setView({ state: "invalid" }));
+      queueMicrotask(() =>
+        setView({ state: result.credentialMissing ? "scan" : "invalid" }),
+      );
       return;
     }
     credential.current = token;
+    setEntryCredential(token);
     queueMicrotask(() => void resolve(token));
   }, []);
 
@@ -131,25 +138,41 @@ export function PlayerEntryScreen({
     );
   }
 
-  if (view.state === "ready") {
+  if (view.state === "scan") {
     return (
-      <section className={`${styles.entryCard} ${styles.entryReady}`}>
+      <section className={`${styles.entryCard} ${styles.entryProblem}`}>
         {runtimeMode === "demo" && (
           <span className={styles.entryDemoMark}>Demonstração local</span>
         )}
-        <span className={styles.entryPlayerNumber}>
-          {String(view.playerNumber).padStart(2, "0")}
+        <span className={styles.entryProblemIcon} aria-hidden="true">
+          <Icon name="gamepad" />
         </span>
-        <span className={styles.entryStatus}>Entrada liberada</span>
-        <h1>Tudo pronto para jogar</h1>
+        <h1>Escaneie seu cartão para jogar</h1>
         <p>
-          A sessão da turma está ativa e seu jogador foi reconhecido. O jogo
-          pode continuar com este acesso temporário.
+          Aponte a câmera para o QR do jogador entregue pelo professor. Se
+          precisar, peça ajuda ao professor.
         </p>
-        <span className={styles.entrySafetyNote}>
-          <Icon name="shield" /> Seu nome, e-mail e senha não são necessários.
-        </span>
       </section>
+    );
+  }
+
+  if (view.state === "ready") {
+    if (!entryCredential) {
+      return (
+        <section className={`${styles.entryCard} ${styles.entryProblem}`}>
+          <h1>Não foi possível preparar o jogo</h1>
+          <p>Escaneie o QR novamente com a orientação do professor.</p>
+        </section>
+      );
+    }
+
+    return (
+      <GameHost
+        credential={entryCredential}
+        entry={view}
+        gameClientUrl={gameClientUrl}
+        runtimeMode={runtimeMode}
+      />
     );
   }
 

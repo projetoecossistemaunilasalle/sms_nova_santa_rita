@@ -53,6 +53,7 @@ export const DEMO_CLASS_IDS = {
 } as const;
 
 type DemoProfile = ProfessionalOptionDto & {
+  email?: string;
   platformRole: PlatformRole | null;
 };
 
@@ -336,6 +337,10 @@ function demoId(kind: string): string {
       ? crypto.randomUUID()
       : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
   return `demo-${kind}-${suffix}`;
+}
+
+export function createDemoProfileId(): string {
+  return demoId("profile");
 }
 
 export function readDemoAdultPortalState(): DemoAdultPortalState {

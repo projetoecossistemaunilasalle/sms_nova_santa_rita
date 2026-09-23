@@ -565,13 +565,19 @@
 }
 
 .submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-height: 49px;
+  padding: 0 16px;
   border: 0;
   border-radius: var(--radius-action);
   color: var(--surface);
   background: var(--green-action);
   box-shadow: 0 5px 0 var(--green-dark);
   font-weight: 850;
+  text-align: center;
+  text-decoration: none;
   cursor: pointer;
 }
 

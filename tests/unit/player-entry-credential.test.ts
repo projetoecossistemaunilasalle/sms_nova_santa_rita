@@ -17,11 +17,24 @@ describe("player entry credential URL handling", () => {
       token: "one-time-token",
       historyUrl: "/jogar/?campaign=classroom#entry",
       shouldResolve: true,
+      credentialMissing: false,
     });
     expect(replayRead).toEqual({
       token: "one-time-token",
       historyUrl: "",
       shouldResolve: false,
+      credentialMissing: false,
+    });
+  });
+
+  it("distinguishes a plain refresh from an invalid supplied credential", () => {
+    expect(
+      readPlayerEntryCredential("https://example.test/jogar/", null),
+    ).toEqual({
+      token: null,
+      historyUrl: "/jogar/",
+      shouldResolve: true,
+      credentialMissing: true,
     });
   });
 
@@ -35,6 +48,7 @@ describe("player entry credential URL handling", () => {
       token: null,
       historyUrl: "/jogar/?keep=1",
       shouldResolve: true,
+      credentialMissing: false,
     });
   });
 });

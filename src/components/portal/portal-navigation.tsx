@@ -9,7 +9,10 @@ import type { RuntimeMode } from "@/runtime/mode";
 import { OrganizationRole, RecordStatus } from "@/generated/prisma/enums";
 
 import styles from "./portal.module.css";
-import { demoRole } from "./adult-portal-helpers";
+import {
+  demoRole,
+  isPortalNavigationItemCurrent,
+} from "./adult-portal-helpers";
 import { useDemoPortalState } from "./use-demo-portal";
 
 type NavItem = {
@@ -20,17 +23,6 @@ type NavItem = {
   mobile?: boolean;
 };
 
-function isCurrent(pathname: string, item: NavItem) {
-  if (item.exact) return pathname === item.href;
-  if (item.label === "Links de acesso") {
-    return pathname.startsWith(item.href) && !pathname.endsWith("/resultados");
-  }
-  if (item.label === "Resultados") {
-    return pathname.endsWith("/resultados");
-  }
-  return pathname.startsWith(item.href);
-}
-
 function NavigationLink({
   item,
   pathname,
@@ -38,7 +30,7 @@ function NavigationLink({
   item: NavItem;
   pathname: string;
 }) {
-  const current = isCurrent(pathname, item);
+  const current = isPortalNavigationItemCurrent(pathname, item);
 
   return (
     <Link
@@ -124,6 +116,12 @@ export function PortalNavigation({
           },
         );
       }
+      visibleItems.push({
+        href: "/portal/resultados",
+        label: "Resultados",
+        icon: "chart",
+        mobile: true,
+      });
     }
   }
 

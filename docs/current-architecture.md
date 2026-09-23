@@ -246,21 +246,20 @@ Exact variable names should be finalized during implementation rather than infer
 
 ## Implementation status
 
-The repository currently contains a navigable static/demo portal and public-link UI backed by demonstration data.
+The server target now has adult role and class administration, numbered player
+slots, rotatable QR credentials, class sessions, a versioned player bootstrap,
+revisioned server game state, retry-safe result and active-time ingestion, and
+class/player reports. The static demo preserves the same entry workflow with a
+clearly synthetic game adapter. The browser host uses a versioned bridge and an
+IndexedDB queue; the server remains the authoritative state source.
 
-Production implementation still requires substantial reconciliation, including:
+These implementations are not yet a production-verified V1. The new migrations
+have not been applied to a real Neon environment; the checked-in `.env` contains
+example hosts. The real GameMaker HTML5 build, two-device state continuity,
+reconnection, and school-tablet QR flow still need end-to-end validation. Legacy
+activity and Materials routes remain in the route tree but are not V1 navigation
+destinations. See the implementation roadmap for slice-level status.
 
-- final adult authentication/authorization;
-- class persistence and teacher assignment;
-- numbered player-slot persistence;
-- player QR credential lifecycle;
-- GameMaker player/session/state contract;
-- server-side game-state persistence;
-- result ingestion;
-- active-time ingestion;
-- teacher-facing reporting;
-- offline queue/synchronization behavior;
-- production route design for player entry;
-- production removal/hiding of Materials.
-
-Older Prisma models, JSON contracts, and implementation plans were written for previous product assumptions. They are migration research until aligned with the V1 dossier and this document.
+Older Prisma models, JSON contracts, and implementation plans written for previous
+product assumptions remain migration research unless explicitly aligned with the
+V1 dossier and this document.

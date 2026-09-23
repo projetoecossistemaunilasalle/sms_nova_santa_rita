@@ -34,11 +34,21 @@ technical decisions, and divides delivery into end-to-end slices.
 - Slice 2 is complete: classes have durable monotonic player slots, rotatable QR
   credentials, one active game session, idempotent participation, and a fixed player
   entry route. The GitHub Pages demo mirrors the workflow in browser-persisted state.
-- Slice 3 and later remain unimplemented. In particular, GameMaker bootstrap/state,
-  result and active-time ingestion, and offline synchronization are still pending.
+- Slices 3-5 have portal-side implementations in the current working tree:
+  bootstrap/revisioned state, the browser bridge and demo adapter, retry-safe
+  result/time ingestion, teacher reports, and the IndexedDB synchronization queue.
+  They are not yet accepted end to end: migrations, real GameMaker HTML5 integration,
+  two-device behavior, reconnect, and school-tablet QR/reporting checks remain.
 
 Slice 2 lifecycle and static-hosting decisions are recorded in
 [`slice-02-player-access-decisions.md`](slice-02-player-access-decisions.md).
+The newer portal integration and verification boundary is recorded in
+[`slice-03-05-portal-handoff.md`](slice-03-05-portal-handoff.md).
+
+The structural debt accumulated by the three coexisting generations (demo CMS, V1 platform, static mock) and the
+phased plan to remove it are recorded in the
+[23 September 2026 architecture audit](../architecture-audit-2026-09-23.md). Treat its phases 0-3 as the precondition
+for further slice work.
 
 Each slice ends with a demonstrable workflow. Broad hardening, large test matrices, and
 secondary administration features should not delay the first complete portal-to-game

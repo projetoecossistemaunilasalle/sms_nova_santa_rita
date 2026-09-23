@@ -378,14 +378,22 @@ supported devices.
 Minimum verification: Device A saves state, Device B loads it, and a stale save cannot
 silently overwrite the newer revision.
 
-Contract foundation completed on 22 September 2026:
+Portal implementation present on 22 September 2026; real-game acceptance pending:
 
 - the V1 Zod schemas, matching JSON Schemas, parsers, and deterministic valid/invalid
   fixtures are checked in;
 - the contract freezes content/version ownership, state revision behavior, host event
   IDs, bridge request IDs, result metrics, active-time limits, acknowledgements, and
   typed errors;
-- Route Handlers, host persistence, and the live GameMaker bridge remain to be built.
+- bootstrap and state-save Route Handlers validate short-lived launches against
+  current credential, player, class, organization, participation, and session status;
+- one `GameState` row per player uses revision-checked saves and returns the
+  authoritative snapshot on a genuine conflict;
+- the host handles versioned `postMessage` traffic from the configured GameMaker
+  origin, renews launch context without sending bearer credentials to the iframe,
+  and provides a synthetic static-demo adapter;
+- actual GameMaker HTML5 integration and two-device database verification remain
+  acceptance gates.
 
 ### Slice 4: Results and active time
 
@@ -400,6 +408,10 @@ Outcome: a teacher can see useful class and player participation after real play
 
 Minimum verification: retrying an event does not double count it, and the corresponding
 class and player views update after one real game session.
+
+Portal-side ingestion, idempotency checks, and authorized class/player reports are
+implemented and unit tested. A real-game session and migrated database still need
+to satisfy the minimum verification.
 
 ### Slice 5: Offline continuation and rollout
 
@@ -418,17 +430,16 @@ and later synchronize.
 Minimum verification: load online once, play through a temporary disconnect, reconnect,
 and confirm the final state and events from another device.
 
+The host has a typed IndexedDB queue and visible synchronization state. Offline and
+cross-device acceptance remains pending on a real GameMaker build and database.
+
 ## 6. First implementation backlog
 
-The remaining work should proceed in this order. Runtime, Neon Auth, adult roles,
-organization/class administration, and the V1 transport contracts are already in
-place.
-
-1. Implement bootstrap and state persistence as the first real portal-to-game slice.
-2. Connect the browser host to the companion GameMaker HTML5 bridge.
-
-Do not begin offline synchronization, advanced reporting, generalized permissions, or
-legacy cleanup before item 4 works end to end.
+The next acceptance path is: configure an actual staging database and GameMaker HTML5
+URL; apply migrations 4 and 5; validate GameMaker import/export and bridge messages;
+then demonstrate Device A save, Device B load, stale-write recovery, event/report
+updates, and reconnect on the target tablet/browser. Keep generalized permissions,
+advanced reporting, and legacy cleanup outside this critical path.
 
 ## 7. Deliberate non-goals
 

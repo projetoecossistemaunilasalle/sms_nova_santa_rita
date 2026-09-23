@@ -9,6 +9,7 @@ import { changeOrganizationStatusAction } from "@runtime/adult-portal-actions";
 import { Icon } from "@/components/shared/icon";
 
 import { AdultPortalForm } from "./adult-portal-form";
+import { DeactivateOrganizationControl } from "./deactivate-organization-control";
 import {
   demoAccessibleOrganizationIds,
   demoRole,
@@ -84,30 +85,29 @@ export function OrganizationDetailScreen({
         description={`${organization.type} · ${recordStatusLabel(organization.status)}`}
         actions={
           canManage ? (
-            <AdultPortalForm
-              action={changeOrganizationStatusAction}
-              submitLabel={
-                organization.status === RecordStatus.ACTIVE
-                  ? "Desativar organização"
-                  : "Ativar organização"
-              }
-              compact
-            >
-              <input
-                type="hidden"
-                name="organizationId"
-                value={organization.id}
+            organization.status === RecordStatus.ACTIVE ? (
+              <DeactivateOrganizationControl
+                organizationId={organization.id}
+                organizationName={organization.name}
               />
-              <input
-                type="hidden"
-                name="status"
-                value={
-                  organization.status === RecordStatus.ACTIVE
-                    ? RecordStatus.INACTIVE
-                    : RecordStatus.ACTIVE
-                }
-              />
-            </AdultPortalForm>
+            ) : (
+              <AdultPortalForm
+                action={changeOrganizationStatusAction}
+                submitLabel="Ativar organização"
+                compact
+              >
+                <input
+                  type="hidden"
+                  name="organizationId"
+                  value={organization.id}
+                />
+                <input
+                  type="hidden"
+                  name="status"
+                  value={RecordStatus.ACTIVE}
+                />
+              </AdultPortalForm>
+            )
           ) : undefined
         }
       />
@@ -132,8 +132,8 @@ export function OrganizationDetailScreen({
         </div>
         <div>
           <StatusBadge status={recordStatusLabel(organization.status)} />
-          <h2>Estrutura adulta e turmas</h2>
-          <p>Somente dados institucionais necessários para o fluxo V1.</p>
+          <h2>Profissionais e turmas</h2>
+          <p>Resumo da equipe vinculada e das turmas cadastradas.</p>
         </div>
         <dl>
           <div>

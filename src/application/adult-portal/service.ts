@@ -147,12 +147,20 @@ export class AdultPortalService {
       },
     ];
     if (role !== "platform_admin") {
-      navigation.push({
-        href: "/portal/turmas",
-        label: "Turmas",
-        icon: "school",
-        mobile: true,
-      });
+      navigation.push(
+        {
+          href: "/portal/turmas",
+          label: "Turmas",
+          icon: "school",
+          mobile: true,
+        },
+        {
+          href: "/portal/resultados",
+          label: "Resultados",
+          icon: "chart",
+          mobile: true,
+        },
+      );
     }
     if (role === "platform_admin") {
       navigation.push(

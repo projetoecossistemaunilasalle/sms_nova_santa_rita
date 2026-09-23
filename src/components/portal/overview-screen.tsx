@@ -11,6 +11,7 @@ import {
   demoClasses,
   demoOrganizations,
   demoRole,
+  demoScopeLabel,
   demoTeam,
   recordStatusLabel,
 } from "./adult-portal-helpers";
@@ -40,11 +41,7 @@ export function OverviewScreen({
       : role === "organization_admin"
         ? "Administrador da organização"
         : "Professor";
-  const scopeLabel = demo
-    ? role === "platform_admin"
-      ? "Toda a plataforma"
-      : `${new Set(classes.map((item) => item.organizationName)).size || 0} organização(ões) no escopo`
-    : initial.scopeLabel;
+  const scopeLabel = demo ? demoScopeLabel(demo) : initial.scopeLabel;
 
   if (!role) {
     return (
@@ -71,8 +68,7 @@ export function OverviewScreen({
       />
       {runtimeMode === "demo" && (
         <p className={styles.demoScopeNotice}>
-          Use o seletor de perfil na navegação para conferir os três níveis
-          adultos.
+          Troque o perfil acima para comparar os acessos de cada função.
         </p>
       )}
       <section className={styles.roleContextBand}>
@@ -225,6 +221,16 @@ export function OverviewScreen({
                   <Icon name="chevron" />
                 </Link>
               ))}
+          </div>
+        </section>
+      )}
+      {role !== "platform_admin" && (
+        <section>
+          <div className={styles.sectionHeader}>
+            <h2>Resultados de jogo</h2>
+            <Link className={styles.textLink} href="/portal/resultados">
+              Ver resultados
+            </Link>
           </div>
         </section>
       )}

@@ -4,6 +4,8 @@
 }
 
 .sidebar {
+  --focus-ring-color: var(--yellow);
+
   position: fixed;
   z-index: 30;
   inset: 0 auto 0 0;
@@ -3545,6 +3547,11 @@
   font-size: var(--type-compact);
 }
 
+.demoRoleControls > .demoRoleBlockNotice {
+  color: var(--yellow);
+  line-height: 1.4;
+}
+
 .demoRoleControls + .navigation {
   margin-top: 18px;
 }
@@ -3571,7 +3578,7 @@
 }
 
 .inactiveNotice {
-  border-color: color-mix(in srgb, var(--coral) 25%, var(--border) 75%);
+  border-color: color-mix(in srgb, var(--coral-dark) 25%, var(--border) 75%);
   color: var(--coral-dark);
   background: var(--coral-light);
 }
@@ -4386,6 +4393,27 @@
 .organizationTableRow .tableIdentity {
   color: var(--text);
   text-decoration: none;
+}
+
+.organizationStatusControl {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.organizationStatusControl > .buttonDanger,
+.organizationDeactivateDialog .buttonDanger {
+  border-color: var(--coral-dark);
+  color: var(--surface);
+  background: var(--coral-dark);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--coral-dark) 80%, var(--text) 20%);
+}
+
+.organizationDeactivateDialog {
+  border-color: color-mix(in srgb, var(--coral-dark) 38%, var(--border) 62%);
+}
+
+.organizationDeactivateDialog .formError {
+  margin-top: 14px;
 }
 
 .organizationOverview {

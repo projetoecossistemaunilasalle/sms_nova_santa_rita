@@ -3,11 +3,7 @@
 import type { PortalShellDto } from "@/application/adult-portal/types";
 import type { RuntimeMode } from "@/runtime/mode";
 
-import {
-  demoAccessibleOrganizationIds,
-  demoRole,
-  initials,
-} from "./adult-portal-helpers";
+import { demoRole, demoScopeLabel, initials } from "./adult-portal-helpers";
 import { useDemoPortalState } from "./use-demo-portal";
 import styles from "./portal.module.css";
 
@@ -57,21 +53,7 @@ export function PortalScopeContext({
   const demo = useDemoPortalState();
   let label = shell.scopeLabel;
   if (runtimeMode === "demo" && demo) {
-    const role = demoRole(demo);
-    if (role === "platform_admin") {
-      label = "Escopo de toda a plataforma";
-    } else if (!role) {
-      label = "Sem escopo ativo";
-    } else {
-      const ids = demoAccessibleOrganizationIds(demo);
-      const names = demo.organizations
-        .filter((item) => ids.includes(item.id))
-        .map((item) => item.name);
-      label =
-        names.length === 1
-          ? names[0]!
-          : `${names.length} organizações acessíveis`;
-    }
+    label = demoScopeLabel(demo);
   }
   return <strong>{label}</strong>;
 }
