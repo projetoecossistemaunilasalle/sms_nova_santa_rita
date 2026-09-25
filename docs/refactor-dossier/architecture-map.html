@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SMS Portal — architecture before / after</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --ink:#1c2430; --ink-soft:#5b6779; --line:#d7dde6;
+    --card:#ffffff; --seam:#7c3aed; --port:#0d9488; --mode:#b45309;
+    --bad:#dc2626; --debt:#94a3b8; --absent:#cbd5e1;
+    --genA:#fee2e2; --genA-b:#fca5a5;
+    --genB:#eef2ff; --genB-b:#c7d2fe;
+    --genC:#ecfdf5; --genC-b:#a7f3d0;
+    --shared:#f1f5f9; --shared-b:#cbd5e1;
+    --shadow:0 1px 2px rgba(16,24,40,.05),0 8px 24px -12px rgba(16,24,40,.18);
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  header{position:sticky;top:0;z-index:20;background:rgba(246,247,249,.92);
+    backdrop-filter:blur(6px);border-bottom:1px solid var(--line);padding:14px 22px}
+  h1{margin:0;font-size:17px;letter-spacing:-.01em}
+  .sub{color:var(--ink-soft);font-size:12.5px;margin-top:2px}
+  .controls{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-top:10px}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--card)}
+  .seg button{appearance:none;border:0;background:transparent;padding:7px 14px;font:inherit;font-size:13px;
+    color:var(--ink-soft);cursor:pointer}
+  .seg button[aria-pressed=true]{background:var(--ink);color:#fff}
+  label.chk{display:inline-flex;gap:7px;align-items:center;font-size:13px;color:var(--ink-soft);cursor:pointer}
+  label.chk.off{opacity:.42}
+  label.chk.off input{cursor:not-allowed}
+  main{display:grid;grid-template-columns:minmax(0,1fr) 372px;gap:18px;padding:18px 22px 34px;align-items:start}
+  @media (max-width:1180px){main{grid-template-columns:1fr}}
+  #scroller{overflow:auto;border:1px solid var(--line);border-radius:14px;background:var(--card);box-shadow:var(--shadow)}
+  #map{display:block}
+  /* layers */
+  .band rect{fill:#fff;stroke:var(--line)}
+  .band .t{font:700 13px/1 system-ui;fill:var(--ink)}
+  .band .s{font:11px/1 system-ui;fill:var(--ink-soft)}
+  /* modules */
+  .mod rect{stroke-width:1.2;rx:8}
+  .mod .nm{font:600 12.5px/1.2 var(--mono);fill:var(--ink)}
+  .mod .ln{font:10.5px/1 var(--mono);fill:var(--ink-soft)}
+  .pa{font:9.5px/1 var(--mono);fill:#8794a6}
+  .genbar{fill:var(--genA-b);stroke:none}
+  /* standalone captions are not inside .band/.mod, so they need these unscoped */
+  .s{font:11px/1 system-ui;fill:var(--ink-soft)}
+  .nm{font:600 12.5px/1.2 var(--mono);fill:var(--ink)}
+  .gone rect{fill:none;stroke:var(--genA-b);stroke-dasharray:5 4;stroke-width:1.2}
+  .gone .ln{font:10px/1 var(--mono);fill:#b91c1c}
+  .mod{cursor:pointer}
+  .mod:hover rect{filter:brightness(.965)}
+  .mod.sel rect{stroke-width:2.6}
+  .mod.vsel rect{stroke:var(--bad);stroke-width:2.4}
+  .vm{cursor:pointer}
+  .vm.act .marker{stroke:var(--ink);stroke-width:2.6}
+  .gen-A rect{fill:var(--genA);stroke:var(--genA-b)}
+  .gen-B rect{fill:var(--genB);stroke:var(--genB-b)}
+  .gen-C rect{fill:var(--genC);stroke:var(--genC-b)}
+  .gen-shared rect{fill:var(--shared);stroke:var(--shared-b)}
+  .gen-new rect{fill:#fff7ed;stroke:#fdba74;stroke-dasharray:5 3}
+  .socket{fill:#fff;stroke:var(--port);stroke-width:2}
+  .mod.debt rect{fill:url(#hatch)}
+  /* edges */
+  .e{fill:none;stroke:#8a97a8;stroke-width:1.4}
+  .e.port{stroke:var(--port);stroke-dasharray:6 4;stroke-width:1.7}
+  .e.seam{stroke:var(--seam);stroke-width:3}
+  .e.mode{stroke:var(--mode);stroke-dasharray:2 4;stroke-width:1.6}
+  .e.absent{stroke:var(--absent);stroke-dasharray:1 4;stroke-width:1.6}
+  .e.bad{stroke:var(--bad);stroke-width:2.2}
+  .e.hi{stroke:#0f172a;stroke-width:2.6}
+  .case{fill:none;stroke:#fff;stroke-width:6;opacity:.92}
+  .ehit{fill:transparent;stroke:transparent;stroke-width:14;cursor:help}
+  .edge.dim{opacity:.12}
+  .edge:hover .e{stroke:#0f172a;stroke-width:2.4}
+  .marker{fill:var(--bad);stroke:#fff;stroke-width:1.6}
+  .mlabel{font:700 10px/1 var(--mono);fill:#fff}
+  .ghost rect{fill:none;stroke:#f59e0b;stroke-dasharray:5 4}
+  .ghost .nm{fill:#b45309}
+  /* panel */
+  aside{position:sticky;top:132px;display:grid;gap:14px;
+    font-size:13.5px;max-height:calc(100vh - 150px);overflow:auto;padding-right:2px}
+  @media (max-width:1180px){aside{position:static;max-height:none}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 15px;box-shadow:var(--shadow)}
+  .card h2{margin:0 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft)}
+  .kv{display:grid;grid-template-columns:88px 1fr;gap:3px 10px;font-size:13px}
+  .kv b{color:var(--ink-soft);font-weight:500}
+  .mono{font-family:var(--mono);font-size:12px}
+  .vlist{display:grid;gap:6px}
+  .vlist button{display:flex;gap:8px;align-items:baseline;text-align:left;width:100%;
+    background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px 10px;font:inherit;font-size:12.8px;cursor:pointer}
+  .vlist button[aria-pressed=true]{border-color:var(--bad);background:#fef2f2}
+  .vlist button[data-off]{opacity:.5}
+  .mod.sel rect{stroke:var(--ink);stroke-width:2.6}
+  .n{flex:none;width:19px;height:19px;border-radius:50%;background:var(--bad);color:#fff;
+    font:700 11px/19px system-ui;text-align:center}
+  .cite{color:var(--ink-soft);font-size:11.5px;font-family:var(--mono)}
+  .legend{display:grid;gap:7px;font-size:12.5px;color:var(--ink-soft)}
+  .legend div{display:flex;gap:9px;align-items:center}
+  svg.sw{flex:none}
+  .tag{display:inline-block;padding:1px 7px;border-radius:99px;font-size:11px;font-family:var(--mono)}
+  .tA{background:var(--genA);color:#7f1d1d;border:1px solid var(--genA-b)}
+  .tB{background:var(--genB);color:#3730a3;border:1px solid var(--genB-b)}
+  .tC{background:var(--genC);color:#065f46;border:1px solid var(--genC-b)}
+  footer{padding:0 22px 28px;color:var(--ink-soft);font-size:12px;max-width:1100px}
+  footer code{font-family:var(--mono);font-size:11.5px}
+</style>
+</head>
+<body>
+<header>
+  <h1>SMS Portal — architecture before / after the V1 refactor</h1>
+  <div class="sub">Every box sits inside the layer that owns it; lines are dependencies, routed through the gutters and arrow-headed toward what is depended on. Numbers come from <span class="mono">docs/refactor-dossier/REFACTOR-DOSSIER.md</span>.</div>
+  <div class="controls">
+    <div class="seg" role="group" aria-label="State">
+      <button id="b-before" aria-pressed="true">Before</button>
+      <button id="b-after" aria-pressed="false">After</button>
+      <button id="b-both" aria-pressed="false">Before + After</button>
+    </div>
+    <label class="chk"><input type="checkbox" id="c-viol" checked> show architecture errors</label>
+    <label class="chk" data-after="1"><input type="checkbox" id="c-ghost"> show cheaper seam option (D-1&nbsp;=&nbsp;b)<span class="cite"> — After only</span></label>
+    <label class="chk" data-after="1"><input type="checkbox" id="c-debt" checked> show outstanding debt<span class="cite"> — After only</span></label>
+  </div>
+</header>
+
+<main>
+  <div id="scroller"><svg id="map" xmlns="http://www.w3.org/2000/svg"></svg></div>
+  <aside>
+    <div class="card" id="detail"><h2>Detail</h2><div id="detail-body">Click a module for its responsibility and path. Hover a line to read it. Click a numbered marker to locate an architecture error.</div></div>
+    <div class="card"><h2>Architecture errors <span id="vcount" class="cite"></span></h2><div class="vlist" id="vlist"></div></div>
+    <div class="card"><h2>Legend</h2><div class="legend" id="legend"></div></div>
+  </aside>
+</main>
+
+<footer>
+  A box is a responsibility, not a file: the surviving components that share a layer (<span class="mono">use-demo-portal</span>,
+  <span class="mono">adult-portal-helpers</span>, the print sheet, the workflow dialogs), the four
+  <span class="mono">service-container</span> composition roots, and the app-level layout/error files are folded into the
+  box that owns them. 261 lines of the 7,802-line purge — <span class="mono">public-link-service</span>,
+  <span class="mono">link-status</span>, <span class="mono">audit-actions</span>,
+  <span class="mono">prisma-capability-reader</span> — get no box of their own.
+  <br>
+  Extensibility is drawn as an open socket with a plug: a port with two adapters behind it, or the composition seam.
+  Hatched boxes are debt that this sprint does not remove. Dashed orange is the audited-alternative seam the dossier
+  recommends instead of a generated entry file (decision <span class="mono">D-1</span>).
+  Generated from <code>docs/refactor-dossier/</code>; read-only with respect to source.
+</footer>
+
+<script>
+/* ============================ DATA ============================ */
+/* states: "B" before, "A" after. gen: A=GenA legacy, B=GenB V1 platform, C=GenC demo twin,
+   shared=neutral, new=created by the refactor, debt=unresolved */
+const LAYERS = [
+  {id:"verify", code:"L1", name:"Verification",            sub:"CI + gates",               only:"A"},
+  {id:"routing",code:"L2", name:"Routing",                 sub:"src/app/**"},
+  {id:"present",code:"L3", name:"Presentation",            sub:"src/components/**"},
+  {id:"seam",   code:"L4", name:"Composition seam",        sub:"src/runtime/**"},
+  {id:"app",    code:"L5", name:"Application (domain)",    sub:"src/application/**"},
+  {id:"infra",  code:"L6", name:"Infrastructure adapters", sub:"src/server/**"},
+  {id:"store",  code:"L7", name:"Contracts & persistence", sub:"src/contracts, prisma"},
+];
+
+const M = [
+  /* ---- routing ---- */
+  {id:"entrar", layer:"routing", gen:"shared", states:"BA", x:0, w:1.5,
+   name:"(professional)/entrar", path:"src/app/(professional)/entrar",
+   role:"Sign-in, logout, password reset. Holds the only server action the demo build must stub.",
+   note:"entrar/page.tsx:8 consumes an @runtime alias; plan §3.1 item 4 edits entrar/actions.ts."},
+  {id:"portal_routes", layer:"routing", gen:"shared", states:"BA", x:1.6, w:2.4,
+   name:"(professional)/portal", path:"src/app/(professional)/portal",
+   role:"Surviving V1 screens: overview, turmas, resultados, admin/{organizacoes,equipe}, ajuda, sem-acesso, sessao-expirada.",
+   note:"17 route files remain after the purge (12 pages + layout + loading + 3 action modules)."},
+  {id:"jogar", layer:"routing", gen:"shared", states:"BA", x:4.1, w:1.4,
+   name:"(public-play)/jogar", path:"src/app/(public-play)/jogar",
+   role:"Player entry + game host. Reads the bearer credential from ?cred=.",
+   note:"No @runtime import here: the page pulls @/runtime/mode and renders the entry screen."},
+  {id:"api_routes", layer:"routing", gen:"shared", states:"BA", x:5.6, w:1.6,
+   name:"api/v1/player/*", path:"src/app/api/v1/player/{bootstrap,state,results,active-time}",
+   role:"GameMaker wire endpoints (non-GET route handlers).",
+   note:"Dropped silently by the static exporter — absent from the demo build by construction."},
+  {id:"genA_routes", layer:"routing", gen:"A", states:"B", x:7.5, w:2.5,
+   name:"Gen A route trees", path:"portal/{atividades,materiais,modulos} · admin/{jogos,modulos,auditoria} · (public-play)/atividade/[token]",
+   role:"Legacy CMS + shared-link product, compiled into the production route tree.",
+   stats:"22 files · 1,754 lines",
+   note:"52 demo-fixture documents under out/atividade (untracked; git ls-files out -> 0). The only surviving duty is deleting the walkthrough.md:11 link — no shim is booked, and none could resolve, since the backing table is DROP TABLEd. Rotated MC-* links this page ever printed were 404 from birth (minted from Math.random())."},
+
+  /* ---- presentation ---- */
+  {id:"screens", layer:"present", gen:"B", states:"BA", x:0, w:2.4, debt:true,
+   name:"portal screens", path:"src/components/portal/{overview,classes,class-detail,organizations,organization-detail,team,results}-screen.tsx",
+   role:"Presentational screens for the V1 portal; they call mutation handlers, and the route files above them call the readers.",
+   stats:"team 411 · workflow 540 lines",
+   note:"team-screen.tsx (411) and player-access-workflow.tsx (540) stay over the size budget — debt."},
+  {id:"status_badge", layer:"present", gen:"shared", states:"BA", x:2.5, w:1.3,
+   name:"status-badge.tsx", path:"src/components/portal/status-badge.tsx",
+   role:"The one shared component that still imports a Generation A service — this file is the purge's only blocker.",
+   note:"10 call sites in 6 surviving screens all pass recordStatusLabel(...), so \"Ativa\"|\"Inativa\" is its whole real domain."},
+  {id:"shell", layer:"present", gen:"shared", states:"BA", x:3.9, w:1.5,
+   name:"portal shell + nav", path:"portal-shell.tsx · portal-navigation.tsx · portal-shell-context.tsx",
+   role:"App chrome, sidebar nav, role switcher.",
+   note:"portal-navigation.tsx:37 uses .mobileNavItem, defined in 0 stylesheets → 45 shipped docs contain class=\"… undefined\"."},
+  {id:"game_host", layer:"present", gen:"B", states:"BA", x:5.5, w:1.3, debt:true,
+   name:"game-host.tsx", path:"src/components/public/game-host.tsx",
+   role:"Iframe host: bridge handshake, token renewal, offline status, alerts.",
+   stats:"932 → ~670 lines",
+   note:"The planned hooks split was refused: 11-13 of 19 mutable slots straddle the boundary."},
+  {id:"css", layer:"present", gen:"shared", states:"BA", x:6.9, w:1.0, debt:true,
+   name:"stylesheets", path:"portal.module.css · public · marketing · results · team-screen",
+   role:"CSS Modules, 68 tokens in globals.css; the five sheets total 7,116 lines.",
+   stats:"portal 4,910 → 3,048",
+   note:"Extraction deferred: per-file class hashing would silently break @media print (blank QR sheets)."},
+  {id:"genA_comp", layer:"present", gen:"A", states:"B", x:8.0, w:2.0,
+   name:"Gen A components", path:"activity-builder · material-editor · materials-explorer · class-groups-explorer · share-actions · activity-controls · activity-mark · public-state",
+   role:"UI for the deleted product generation.",
+   stats:"8 files · 1,257 lines",
+   note:"class-groups-explorer has 0 importers today: pre-existing dead code, not legacy coupling."},
+
+  /* ---- seam ---- */
+  {id:"alias", layer:"seam", gen:"shared", states:"B", x:0, w:2.6,
+   name:"9 @runtime/* aliases", path:"next.config.ts:44-79 (per target) + tsconfig.json:24-42 (server only)",
+   role:"Build-time module swap. Two declarations of the same 9 names that disagree.",
+   note:"Replaced, not deleted: §3.1 item 5 removes the aliases. tsconfig pins all 9 to server variants → typecheck has never seen demo wiring."},
+  {id:"contracts", layer:"seam", gen:"new", states:"A", x:0, w:1.7,
+   name:"contracts.ts", path:"src/runtime/contracts.ts",
+   role:"Interfaces both targets must satisfy: reader members + action members.",
+   note:"Detects a removed/renamed export. Does NOT detect sync↔async drift — those are the same type."},
+  {id:"target", layer:"seam", gen:"new", states:"A", x:1.8, w:1.4, socket:"impl",
+   name:"target.ts (generated)", path:"src/runtime/target.ts → target.{server,demo}.ts",
+   role:"Actions + client bridges. One variant reachable per build.",
+   note:"plan §3.1 mandated. Needs a TARGET_MODE marker + assertion: a wrong-mode build typechecks clean."},
+  {id:"readers", layer:"seam", gen:"new", states:"A", x:3.3, w:1.5, socket:"impl",
+   name:"readers.ts (2nd entry)", path:"src/runtime/readers.ts → readers.{server,demo}.ts",
+   role:"Build-time data readers, kept in their own entry so no Client Component can reach Prisma through the seam.",
+   note:"A required correction to plan §3.1: one seam for actions AND readers pulls server-only modules toward the browser graph."},
+  {id:"mode", layer:"seam", gen:"shared", states:"BA", x:4.9, w:1.1,
+   name:"runtime/mode.ts", path:"src/runtime/mode.ts",
+   role:"getRuntimeMode() — the one switch every mode branch reads.",
+   stats:"95 lines · 23 files",
+   note:"Only 34 of those 95 lines hold a comparison; isDemoRuntime loses its 10 remaining users to the purge."},
+  {id:"demo_store", layer:"seam", gen:"C", states:"BA", x:6.1, w:1.3, debt:true,
+   name:"demo stores", path:"adult-portal-demo-store.ts · player-access demo store",
+   role:"localStorage adapter + seed fixtures; reads window at build time and falls back to seed.",
+   stats:"1,024 lines · 4 test files",
+   note:"Over budget and unaddressed by plan §4. transaction() is a no-op pass-through here, real in the player store."},
+  {id:"offline", layer:"seam", gen:"shared", states:"BA", x:7.5, w:1.1,
+   name:"offline engine", path:"src/runtime/game-offline-sync.ts · §4.2 adds runtime/offline/ (4 new)",
+   role:"IndexedDB queue (v3, 5 stores), idempotent request registry, sync engine, conflict detection.",
+   stats:"1,222 · 665 untested",
+   note:"Dead in demo mode but shipped: gated only in game-host callers, zero mode references inside the engine."},
+  {id:"genA_svc", layer:"seam", gen:"A", states:"B", x:8.7, w:1.3,
+   name:"Gen A services", path:"portal-view-service · access-link-service · prisma-access-link-store · authorization-service · service-container · security/tokens",
+   role:"Legacy service + Prisma store layer, including hardcoded mock fixtures inside the production path.",
+   stats:"6 files · 1,940 lines",
+   note:"portal-view-service is the only dangling import in the whole purge (status-badge.tsx:1)."},
+
+  /* ---- application ---- */
+  {id:"adult_svc", layer:"app", gen:"shared", states:"BA", x:0, w:2.3,
+   name:"adult-portal", path:"src/application/adult-portal/{service,ports}.ts",
+   role:"17 methods: org 4 · team 5 · class 6 · shell 2. Both runtimes share this service.",
+   stats:"616 → ~465 lines",
+   note:"Splitting into 3 services refused as over-fragmentation; navigation ownership moved instead."},
+  {id:"shell_vm", layer:"app", gen:"new", states:"A", x:2.4, w:1.5,
+   name:"shell-view-model.ts", path:"src/application/adult-portal/shell-view-model.ts",
+   role:"Nav + shell shaping as a pure application-layer view-model.",
+   note:"plan §4.4 said src/components/portal/ — that would add an application→UI edge that does not exist today."},
+  {id:"player_svc", layer:"app", gen:"shared", states:"BA", x:4.0, w:1.7,
+   name:"player-access", path:"src/application/player-access/{service,ports}.ts",
+   role:"Slots, rotatable credentials, class sessions.",
+   note:"authorizationActor is a 13-line byte-identical clone of the adult-portal one — deduped."},
+  {id:"game_svc", layer:"app", gen:"shared", states:"BA", x:5.8, w:1.8,
+   name:"game-state · game-events", path:"src/application/{game-state,game-events} · src/server/authorization/v1-policy.ts",
+   role:"Revisioned state saves, result/active-time ingestion, role policy.",
+   note:"v1-policy is role-based only: it never reads the Capability enum the purge drops."},
+  {id:"ports", layer:"app", gen:"shared", states:"BA", x:7.7, w:1.9, socket:"impl",
+   name:"ports (extension point)", path:"application/*/ports.ts — AdultPortalStore, PlayerAccessStore, transaction<T>",
+   role:"The seam's second half: the domain names these interfaces and never imports an adapter.",
+   note:"Extensible: implement the port + register it in the seam entry. 5 files do import src/server/** directly (v1-policy, launch-token) — an unbudgeted boundary leak."},
+
+  /* ---- infra ---- */
+  {id:"prisma_ad", layer:"infra", gen:"B", states:"BA", x:0, w:2.2, adapter:true,
+   name:"Prisma adapters", path:"src/server/db/prisma-{adult-portal,player-access,game-state,game-event}-store.ts",
+   role:"Production adapters implementing the ports over Postgres/Neon."},
+  {id:"demo_ad", layer:"infra", gen:"C", states:"BA", x:2.3, w:1.9, adapter:true,
+   name:"demo adapters", path:"src/runtime/*-demo.ts wrappers",
+   role:"Same ports, localStorage-backed. This is the only duplication — not domain logic."},
+  {id:"auth", layer:"infra", gen:"shared", states:"BA", x:4.3, w:1.9,
+   name:"auth + security", path:"src/server/{auth,security}/**",
+   role:"Neon auth gateway, session, dev bypass, player credential + launch tokens."},
+  {id:"http", layer:"infra", gen:"shared", states:"BA", x:6.3, w:1.5,
+   name:"http + config + logs", path:"src/server/{http,config,observability}/**",
+   role:"Error envelope, route helpers, env validation, pino logger.",
+   note:"logger redacts activityToken/attemptToken (dead after the purge) but not cred — the only token-in-URL flow left."},
+  {id:"proxy", layer:"infra", gen:"shared", states:"BA", x:7.9, w:1.6,
+   name:"src/proxy.ts", path:"src/proxy.ts",
+   role:"CSP, referrer policy, correlation id, cache headers.",
+   note:"Inert in the static export. Referrer protection for /jogar is load-bearing — see error 3."},
+
+  /* ---- contracts & persistence ---- */
+  {id:"wire", layer:"store", gen:"shared", states:"BA", x:0, w:2.0,
+   name:"wire contracts", path:"src/contracts/v1 · contracts/schemas/v1/**",
+   role:"Versioned GameMaker protocol: state, result, bootstrap schemas.",
+   note:"api-error.v1.schema.json is loaded by no test; 11 of its 19 codes have no emitter today and 13 have none once the purge lands."},
+  {id:"schema", layer:"store", gen:"shared", states:"BA", x:2.1, w:2.2, debt:true,
+   name:"prisma/schema.prisma", path:"prisma/schema.prisma · prisma/migrations/0..5",
+   role:"16 models, 6 enums, 6 migrations — none ever applied to a real database.",
+   stats:"310 → 251 lines",
+   note:"R1 open: after this sprint, 'the server target works' is still unproven."},
+  {id:"mig6", layer:"store", gen:"new", states:"A", x:4.4, w:1.7,
+   name:"6_drop_generation_a", path:"prisma/migrations/6_drop_generation_a/migration.sql",
+   role:"8 statements: 4 DROP CONSTRAINT, 3 DROP TABLE, DROP TYPE capability.",
+   note:"4 relation removals incl. schema.prisma:97 — the plan lists 3."},
+  {id:"idb", layer:"store", gen:"shared", states:"BA", x:6.2, w:1.6,
+   name:"IndexedDB + localStorage", path:"missoes-caramelito-game-v1 (v3) · missoes-caramelito:adult-portal:v2",
+   role:"Client-side persistence for the offline queue and the demo store."},
+
+  /* ---- verification lane (after only) ---- */
+  {id:"ci", layer:"verify", gen:"new", states:"A", x:0, w:3.4,
+   name:"ci.yml", path:".github/workflows/ci.yml",
+   role:"format:check → lint → compile → tsc (+typecheck:demo) → vitest → prisma validate → migrate diff --exit-code → build:demo → artifact asserts → build:server.",
+   note:"deploy.yml publishes Pages on every push to main with zero checks today."},
+  {id:"gates", layer:"verify", gen:"new", states:"A", x:3.5, w:2.1,
+   name:"discriminating gates", path:"manifest 0-action-ids · 26 export docs · selector-integrity oracle",
+   role:"Replaces two gates that can never fail ('no api/ in out/')."},
+  {id:"seamtest", layer:"verify", gen:"new", states:"A", x:5.7, w:2.1,
+   name:"seam reachable from tests", path:"vitest resolve.alias / generated entry",
+   role:"First time any test can import the runtime seam at all.",
+   note:"Only if the fence is not server-only: vitest cannot resolve it (no Next per-layer alias)."},
+];
+
+const E = [
+  /* routing → presentation: pages render screens inside the shell */
+  {f:"portal_routes",t:"screens", k:"calls", s:"BA", l:"each page renders its screen"},
+  {f:"portal_routes",t:"shell",   k:"calls", s:"BA", l:"portal/layout.tsx mounts PortalShell"},
+  {f:"jogar",t:"mode",            k:"calls", s:"BA", l:"page.tsx:2 getRuntimeMode(); entrar/page.tsx:6 likewise"},
+  {f:"api_routes",t:"http",       k:"calls", s:"BA", l:"withHttpContext(); also imports @/contracts/v1 and the game containers"},
+  /* UI → seam */
+  {f:"portal_routes",t:"alias", k:"seam", s:"B", l:"15 readers + 17 mutations, through 3 of the 9 aliases"},
+  {f:"portal_routes",t:"target",k:"seam", s:"A", l:"17 mutations via the generated entry"},
+  {f:"portal_routes",t:"readers",k:"seam", s:"A", l:"15 readers, Server Components only"},
+  {f:"screens",t:"alias",  k:"seam", s:"B", l:"adult-portal-actions only — no screen imports a reader"},
+  {f:"screens",t:"target", k:"seam", s:"A"},
+  {f:"shell",t:"alias",    k:"seam", s:"B"},
+  {f:"shell",t:"target",   k:"seam", s:"A"},
+  {f:"game_host",t:"alias",k:"seam", s:"B", l:"player-entry action + game events"},
+  {f:"game_host",t:"target",k:"seam", s:"A"},
+  {f:"entrar",t:"alias",   k:"seam", s:"B", l:"page.tsx:8 @runtime/sign-in-action"},
+  {f:"entrar",t:"target",  k:"seam", s:"A"},
+  /* the purge's one dangling edge, drawn on the file that actually carries it */
+  {f:"status_badge",t:"genA_svc", k:"bad", s:"B", v:1, l:"import type { ActivityStatus } — the only surviving→deleted edge"},
+  {f:"screens",t:"status_badge", k:"calls", s:"A", l:"10 call sites across 6 screens, all recordStatusLabel(...)"},
+  {f:"genA_routes",t:"genA_svc", k:"bad", s:"B", l:"legacy screens → legacy services"},
+  {f:"genA_comp",t:"genA_svc",   k:"bad", s:"B"},
+  /* seam → app */
+  {f:"alias",t:"adult_svc", k:"seam", s:"B"},
+  {f:"alias",t:"player_svc",k:"seam", s:"B"},
+  {f:"alias",t:"game_svc",  k:"seam", s:"B"},
+  {f:"alias",t:"auth",      k:"seam", s:"B", l:"every server variant imports the auth gateway"},
+  {f:"alias",t:"demo_store",k:"seam", s:"B", l:"demo variant swapped in at build time"},
+  {f:"target",t:"adult_svc", k:"seam", s:"A"},
+  {f:"target",t:"player_svc",k:"seam", s:"A"},
+  {f:"target",t:"auth",      k:"seam", s:"A", l:"server variant only"},
+  {f:"readers",t:"adult_svc", k:"seam", s:"A"},
+  {f:"readers",t:"player_svc", k:"seam", s:"A"},
+  {f:"readers",t:"game_svc",   k:"seam", s:"A"},
+  {f:"target",t:"contracts",  k:"port", s:"A", l:"must satisfy the interface"},
+  {f:"readers",t:"contracts", k:"port", s:"A", l:"must satisfy the interface"},
+  {f:"seamtest",t:"readers",  k:"calls", s:"A", l:"only if the fence resolves under vitest"},
+  /* the domain names the port; the adapters are what depend on it */
+  {f:"adult_svc",t:"ports", k:"port", s:"BA"},
+  {f:"player_svc",t:"ports",k:"port", s:"BA"},
+  {f:"game_svc",t:"ports",  k:"port", s:"BA"},
+  {f:"shell_vm",t:"ports",  k:"port", s:"A"},
+  {f:"prisma_ad",t:"ports", k:"port", s:"BA", l:"implements AdultPortalStore et al."},
+  {f:"demo_ad",t:"ports",   k:"port", s:"BA", l:"same port, localStorage"},
+  /* misc */
+  {f:"adult_svc",t:"shell", k:"mode", s:"B", l:"navigation built in the domain service", v:5},
+  {f:"screens",t:"mode",    k:"mode", s:"BA", l:"branch sites read the mode here"},
+  {f:"screens",t:"shell",   k:"mode", s:"B", l:"43 of the 95 runtimeMode lines sit in these two boxes", v:4},
+  {f:"screens",t:"shell",   k:"mode", s:"A", v:4},
+  {f:"shell",t:"css",       k:"calls", s:"BA", l:"portal.module.css; the screens import results + team-screen"},
+  {f:"game_host",t:"offline",k:"calls", s:"BA"},
+  {f:"game_host",t:"api_routes",k:"absent", s:"BA", l:"POST /api/v1/player/* — absent from the static export"},
+  {f:"offline",t:"idb", k:"calls", s:"BA", l:"queue + request registry"},
+  {f:"offline",t:"wire", k:"calls", s:"BA", l:"imports @/contracts/v1"},
+  {f:"demo_store",t:"idb", k:"calls", s:"BA", l:"localStorage"},
+  {f:"prisma_ad",t:"schema", k:"calls", s:"BA"},
+  {f:"demo_ad",t:"demo_store", k:"calls", s:"BA"},
+  {f:"auth",t:"http", k:"calls", s:"BA", l:"via src/server/config/env"},
+  {f:"proxy",t:"http", k:"calls", s:"BA", l:"proxy.ts:4-7 imports http/correlation"},
+  {f:"http",t:"wire", k:"calls", s:"BA"},
+  {f:"http",t:"game_svc", k:"calls", s:"BA", l:"game-state-route, game-event-route"},
+  {f:"ci",t:"gates", k:"calls", s:"A"},
+  {f:"mig6",t:"schema", k:"calls", s:"A", l:"applied by 6_drop_generation_a"},
+];
+
+/* Architecture errors. sel = module ids to highlight. */
+const V = [
+  {id:1, t:"One dangling import blocks the whole purge",
+   d:"status-badge.tsx:1 imports ActivityStatus from portal-view-service, which §2.3 deletes. §2.1.1 prunes only 3 of the union's <b>4</b> members, so the import survives and the tree stays red.",
+   c:"§5.3", s:["status_badge","genA_svc"]},
+  {id:2, t:"§2.5 schema purge fails validation",
+   d:"It removes 3 of the 4 inverse relations: OrganizationMembership.capabilityAssignments (schema.prisma:97) is unlisted, giving P1012. Reproduced by 4 agents.",
+   c:"§6.1", s:["schema","mig6"]},
+  {id:3, t:"Cutting proxy.ts:109-116 deletes live security",
+   d:"Only line 113 is dead. The range also removes the const and the live /jogar arms, stripping no-referrer protection while the credential rides ?cred=. No test covers this.",
+   c:"§5.4", s:["proxy","jogar"]},
+  {id:4, t:"95 runtimeMode lines, and the seam removes none",
+   d:"Mode branching is not module resolution. The count is lines mentioning runtimeMode across 23 files — only 34 hold a comparison — and the two boxes this edge joins hold just 43 of them. ~30 are genuine defects (a prop would do) but out of plan scope; projection is 95 → 95 + 2 assertions.",
+   c:"§7.6", s:["screens","shell"]},
+  {id:5, t:"The domain service owns navigation",
+   d:"adult-portal/service.ts:616 lines, 17 methods; the shell shape is built in 4 places; getShell has zero test coverage.",
+   c:"§8.4", s:["adult_svc","shell"]},
+  {id:6, t:"Offline engine: 665 untested lines, and dead in the demo yet shipped",
+   d:"54% of the engine is storage with no coverage (fake-indexeddb absent). Every gate lives in game-host callers — the engine has zero mode references, so any new importer ships it again.",
+   c:"§8.1", s:["offline","game_host"]},
+  {id:7, t:"Stylesheet split can silently blank QR printing",
+   d:"CSS-module class names hash per file. @media print pairs a classless :global(body) rule with .printSheet/.credentialPrintCard; splitting them leaves everything hidden. All gates stay green.",
+   c:"§11 R-01", s:["css"]},
+  {id:8, t:"Typecheck has never seen the demo wiring",
+   d:"tsconfig.json:24-42 pins all 9 aliases to server variants, so drift is invisible; vitest has no @runtime alias, so no test can import the seam. E625 is not failing today — the purge buys no safety here.",
+   c:"§7.1", s:["alias","contracts","target","readers"]},
+  {id:9, t:"Server target has never run against a database (R1)",
+   d:"6 migrations exist, none applied. prisma validate cannot see that. Still unproven after the sprint; migrate deploy also resolves DIRECT_URL, so the proof step can hit a real branch.",
+   c:"§6.5", s:["schema","prisma_ad"]},
+  {id:10,t:"A referenced CSS class exists in no stylesheet",
+   d:".mobileNavItem is used by portal-navigation.tsx:37 and defined nowhere; mobile:true on all 14 items, so 45 shipped documents render class=\"… undefined\" and the desktop class never applies. Pre-existing.",
+   c:"§8.3", s:["shell","css"]},
+  {id:11,t:"Tables and tokens with no reader, and one with no protection",
+   d:"Once the purge lands AuditEvent has no writer and no reader — today both exist, inside deleted files. RateLimitBucket is tracked since the initial migration but no first-party code ever called prisma.rateLimitBucket. And the logger redacts activityToken/attemptToken (dead after the purge) but not cred, the only token still riding a URL.",
+   c:"§6.2 / R-07", s:["schema","http","auth"]},
+];
+/* ============================ LAYOUT + RENDER ============================ */
+const U = 116;            // horizontal module unit
+const BAND_L = 78, BAND_PADT = 40, BAND_PADB = 12, MOD_GAP = 12;
+const CORR_L = 34, CORR_R_OFF = 26, CORR_PITCH = 10;   // corridors, outside every band
+const MIN_GUT = 26, LANE = 7;
+
+function has(o, st){ return o.states.includes(st); }
+function mods(st){ return M.filter(m => has(m, st)); }
+
+function build(st){
+  const mods_ = mods(st), byId = {};
+  mods_.forEach(m => byId[m.id] = m);
+  const layers = LAYERS.filter(L => !L.only || L.only === st);
+  const li = {}; layers.forEach((L, i) => li[L.id] = i);
+
+  const edges = E.filter(e => e.s.includes(st) && byId[e.f] && byId[e.t])
+                 .map(e => ({...e, dl: li[byId[e.t].layer] - li[byId[e.f].layer]}));
+
+  /* pass 1: provisional band positions */
+  let y = BAND_PADT; const band = {};
+
+  /* assign each edge to the channel leaving its source band, count lanes */
+  const lanes = {};   // "below:<layer>" | "above:<layer>" | "same:<layer>" -> count
+  edges.forEach(e => {
+    const src = byId[e.f].layer;
+    let key = e.dl > 0 ? "below:"+src : e.dl < 0 ? "above:"+src : "same:"+src;
+    e.ch = key; lanes[key] = (lanes[key] || 0) + 1;
+  });
+  /* Each gutter (the strip under band i) is a shared resource. It hosts three
+     stacks that must never land on the same y: `same:i` and `below:i` descend
+     from the top of the strip, `above:i+1` ascends from the bottom. */
+  const last = layers.length - 1;
+  const gn = layers.map((L, i) => ({
+    sm: lanes["same:"+L.id]  || 0,
+    dn: lanes["below:"+L.id] || 0,
+    up: i < last ? (lanes["above:"+layers[i+1].id] || 0) : 0,
+  }));
+  y = BAND_PADT;
+  layers.forEach((L, i) => {
+    const inBand = mods_.filter(m => m.layer === L.id);
+    const ph = inBand.length ? Math.max(...inBand.map(boxH)) : 48;
+    const g = Math.max(MIN_GUT, 14 + LANE * (gn[i].sm + gn[i].dn + gn[i].up + 1));
+    band[L.id] = {y, ph, h: BAND_PADT + ph + BAND_PADB, gut: g};
+    y += band[L.id].h + g;
+  });
+
+  const maxU = Math.max(...mods_.map(m => m.x + m.w));
+  const W = BAND_L + Math.max(maxU, 10) * U + BAND_L;
+  const H = y + 6;
+
+  /* module rects */
+  mods_.forEach(m => {
+    const b = band[m.layer];
+    m.px = BAND_L + m.x * U;
+    m.py = b.y + BAND_PADT;
+    m.pw = m.w * U - MOD_GAP;
+    m.ph = b.ph;
+  });
+
+  /* channel anchors, with the direction each stack grows */
+  const chY = {}, chDir = {};
+  layers.forEach((L, i) => {
+    const bot = band[L.id].y + band[L.id].h;
+    chY["same:"+L.id]  = bot + 6;
+    chY["below:"+L.id] = bot + 6 + gn[i].sm * LANE;
+    chDir["same:"+L.id] = chDir["below:"+L.id] = 1;
+    if (i < last) {
+      const N = layers[i+1];
+      chY["above:"+N.id] = band[N.id].y - 6;
+      chDir["above:"+N.id] = -1;
+    }
+  });
+
+  /* Every edge gets its own attach point, grouped per (module, side). In-edges and
+     out-edges of the same module must not share a point, or a chain such as
+     ports → adapter → store draws one line where there are really two. */
+  const cx = id => byId[id].px + byId[id].pw / 2;
+  const side = (e, k) => k === "f" ? (e.dl >= 0 ? "b" : "t") : (e.dl > 0 ? "t" : "b");
+  const grp = {};
+  edges.forEach(e => {
+    [["f", "sx", "t"], ["t", "tx", "f"]].forEach(([k, sink, other]) => {
+      const key = e[k] + "|" + side(e, k);
+      (grp[key] = grp[key] || []).push({e, sink, other});
+    });
+  });
+  Object.keys(grp).forEach(key => {
+    const m = byId[key.split("|")[0]], list = grp[key], n = list.length;
+    list.sort((a, b) => cx(a.e[a.other]) - cx(b.e[b.other]));
+    const span = Math.min(m.pw * .62, (n - 1) * 30);
+    list.forEach((o, i) => { o.e[o.sink] = m.px + m.pw/2 - span/2 + (n > 1 ? span*i/(n-1) : 0); });
+  });
+
+  /* lanes: the ordering inside a channel decides how many times wires cross, so
+     four candidate orderings are laid out, counted, and the tidiest is kept. */
+  edges.forEach(e => { e.long = Math.abs(e.dl) > 1; e.mid = (e.sx + e.tx) / 2; });
+  const byCh = {};
+  edges.forEach(e => (byCh[e.ch] = byCh[e.ch] || []).push(e));
+  const corrR = W - BAND_L + CORR_R_OFF;
+  const CMP = {
+    mid: (a, b) => a.mid - b.mid,
+    far: (a, b) => Math.abs(b.sx - b.tx) - Math.abs(a.sx - a.tx),
+    src: (a, b) => a.sx - b.sx,
+    dst: (a, b) => a.tx - b.tx,
+  };
+  function arrange(key){
+    Object.keys(byCh).forEach(ch => {
+      byCh[ch].slice().sort(CMP[key]).forEach((e, i) => {
+        e.lane = i; e.y = chY[ch] + chDir[ch] * i * LANE;
+      });
+    });
+    let lc = 0, rc = 0; const enter = {};
+    edges.filter(e => e.long).sort(CMP[key]).forEach(e => {
+      const up = e.dl < 0, t = byId[e.t];
+      e.side = up ? CORR_L - lc++ * CORR_PITCH : corrR + rc++ * CORR_PITCH;
+      const k = (up ? "u" : "d") + t.layer, n = enter[k] || 0;
+      enter[k] = n + 1;
+      e.backY = up ? t.py + t.ph + 6 + n * 5 : t.py - 6 - n * 6;
+    });
+  }
+  let best = null;
+  Object.keys(CMP).forEach(key => {
+    arrange(key);
+    const c = crossCount(edges, byId);
+    if (!best || c < best.c) best = {c, key};
+  });
+  arrange(best.key);
+
+  const badge = {};
+  mods_.forEach(m => badge[m.id] = 0);
+  const placeBadge = (n, m) => {
+    const per = Math.max(1, Math.floor((m.pw - 26) / 20));
+    const k = badge[m.id]++;
+    return marker(n, m.px + m.pw - 16 - (k % per) * 20, m.py - 4 - Math.floor(k / per) * 20);
+  };
+  return {layers, mods: mods_, byId, edges, band, W, H, st, li, placeBadge, lanes: best};
+}
+
+function pathOf(byId, e){
+  const a = byId[e.f], b = byId[e.t];
+  const sx = e.sx, tx = e.tx;
+  const outY = e.dl >= 0 ? a.py + a.ph : a.py;
+  const inY  = e.dl >  0 ? b.py : b.py + b.ph;
+  if (!e.long) return `M${sx},${outY} V${e.y} H${tx} V${inY}`;
+  /* long: leave through a channel, run a reserved corridor outside every band, re-enter */
+  return `M${sx},${outY} V${e.y} H${e.side} V${e.backY} H${tx} V${inY}`;
+}
+/* Crossings are cheap to count and expensive to look at, so they drive the choice
+   of lane ordering. A collinear pair is scored as a breach, not a crossing. */
+function crossCount(edges, byId){
+  const hs = [], vs = [];
+  edges.forEach((e, i) => {
+    const d = pathOf(byId, e);
+    const f = /M([-\d.]+),([-\d.]+)/.exec(d);
+    let cx = +f[1], cy = +f[2];
+    (d.match(/[HV][-\d.]+/g) || []).forEach(tok => {
+      const c = tok[0], nv = +tok.slice(1);
+      if (c === "H") { if (Math.abs(nv - cx) > 8) hs.push({i, y: cy, x0: Math.min(cx, nv), x1: Math.max(cx, nv)}); cx = nv; }
+      else { if (Math.abs(nv - cy) > 8) vs.push({i, x: cx, y0: Math.min(cy, nv), y1: Math.max(cy, nv)}); cy = nv; }
+    });
+  });
+  let n = 0;
+  hs.forEach(a => vs.forEach(b => {
+    if (a.i !== b.i && b.x > a.x0 && b.x < a.x1 && a.y > b.y0 && a.y < b.y1) n++;
+  }));
+  for (let i = 0; i < hs.length; i++) for (let j = i + 1; j < hs.length; j++){
+    const a = hs[i], b = hs[j];
+    if (a.i !== b.i && Math.abs(a.y - b.y) < 2 && a.x0 < b.x1 && b.x0 < a.x1) n += 40;
+  }
+  for (let i = 0; i < vs.length; i++) for (let j = i + 1; j < vs.length; j++){
+    const a = vs[i], b = vs[j];
+    if (a.i !== b.i && Math.abs(a.x - b.x) < 2 && a.y0 < b.y1 && b.y0 < a.y1) n += 40;
+  }
+  return n;
+}
+
+function node(g, m){
+  const t = [];
+  t.push(`<g class="mod gen-${m.gen} ${m.debt?'debt':''}" data-mod="${m.id}" transform="translate(${m.px},${m.py})">`);
+  t.push(`<rect width="${m.pw}" height="${m.ph}" rx="9"></rect>`);
+  if (m.gen === "A") t.push(`<rect class="genbar" x="2" y="7" width="3.5" height="${m.ph-14}" rx="1.75"></rect>`);
+  rows(m).forEach((r, i) => t.push(`<text class="${r.c}" x="12" y="${20+i*15}">${esc(r.s)}</text>`));
+  if (m.socket) t.push(
+    `<circle class="socket" cx="${m.pw-16}" cy="${m.ph/2}" r="8"></circle>`+
+    `<rect x="${m.pw-19}" y="${m.ph/2-1.6}" width="14" height="3.2" rx="1.6" fill="var(--port)"></rect>`);
+  t.push(`</g>`);
+  return t.join("");
+}
+/* The path is the ownership statement ("src/runtime/**" *is* the seam), so it is
+   drawn in the box when the box is wide enough to print it legibly — otherwise a
+   truncated path is worse than no path. */
+function rows(m){
+  const r = [{c:"nm", s:m.name}];
+  if (m.w * U - MOD_GAP >= 150) r.push({c:"pa", s:m.path});
+  if (m.stats) r.push({c:"ln", s:m.stats});
+  return r;
+}
+const boxH = m => 8 + 15 * rows(m).length + 11;
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+
+function renderState(st){
+  const g = build(st);
+  const o = [];
+  /* bands */
+  g.layers.forEach(L => {
+    const b = g.band[L.id];
+    o.push(`<g class="band"><rect x="${BAND_L-16}" y="${b.y}" width="${g.W-2*(BAND_L-16)}" height="${b.h}" rx="12"></rect>
+      <text class="t" x="${BAND_L-6}" y="${b.y+18}">${L.code} ${L.name}<tspan class="s" dx="9">${L.sub}</tspan></text>
+      <text class="s" x="${g.W-BAND_L-2}" y="${b.y+18}" text-anchor="end">${L.code} ${L.name}</text></g>`);
+  });
+  /* where the purge deleted a Generation A module, keep its outline — the hole is
+     the finding. Limited to Gen A so a ghost can never land on top of a live box. */
+  if (st === "A") M.filter(m => m.states === "B" && m.gen === "A" && g.band[m.layer]).forEach(m => {
+    const b = g.band[m.layer];
+    o.push(`<g class="gone"><rect x="${BAND_L+m.x*U}" y="${b.y+BAND_PADT}" width="${m.w*U-MOD_GAP}" height="${b.ph}" rx="9"></rect>
+      <text class="ln" x="${BAND_L+m.x*U+12}" y="${b.y+BAND_PADT+20}">removed — ${esc(m.name)}</text></g>`);
+  });
+  /* corridor guides */
+  o.push(`<text class="s" x="${g.W-BAND_L+CORR_R_OFF-6}" y="${g.H-6}" text-anchor="end">long-distance lane</text>`);
+  /* edges — short ones first, then the cross-layer ones with a white casing so a
+     long run reads as passing over the stubs it must cross rather than merging */
+  g.edges.map((e, i) => [e, i]).sort((A, B) => (A[0].long ? 1 : 0) - (B[0].long ? 1 : 0)).forEach(([e, i]) => {
+    const d = pathOf(g.byId, e);
+    o.push(`<g class="edge" data-i="${i}">${e.long ? `<path class="case" d="${d}"></path>` : ""}<path class="e ${e.k}" d="${d}" marker-end="url(#ah-${e.k})"></path>
+      <path class="ehit" d="${d}"><title>${esc(e.f+" → "+e.t)}${e.l?": "+e.l:""}</title></path></g>`);
+  });
+  /* nodes */
+  g.mods.forEach(m => o.push(node(g, m)));
+  /* violation markers */
+  if (SHOWV){
+    const placed = new Set();
+    g.edges.filter(e => e.v).forEach(e => {
+      if (placed.has(e.v)) return; placed.add(e.v);
+      o.push(g.placeBadge(e.v, g.byId[e.t]));
+    });
+    V.filter(v => !placed.has(v.id) && v.s && v.s.some(id => g.byId[id]))
+     .forEach(v => { placed.add(v.id);
+       o.push(g.placeBadge(v.id, g.byId[v.s.find(id => g.byId[id])])); });
+  }
+  /* ghost: the audited-alternative seam (D-1 = b) */
+  if (GHOST && st === "A"){
+    const t1 = g.byId.target, t2 = g.byId.readers;
+    o.push(`<g class="ghost"><rect x="${t1.px-8}" y="${t1.py-8}" width="${t2.px+t2.pw-t1.px+16}" height="${t1.ph+16}" rx="11"></rect>
+      <text class="nm" x="${t1.px-2}" y="${t1.py-16}">D-1 = b — same guarantees, 4 files, ~5-6h:</text>
+      <text class="s" x="${t1.px+4}" y="${t1.py+t1.ph+16}">tsconfig.demo.json + typecheck:demo + vitest alias + named contracts. No generated file, no stale-pointer hazard.</text></g>`);
+  }
+  /* debt labels */
+  if (DEBT && st === "A"){
+    const lines = [
+      "Outstanding debt: the 5 over-budget files no §4 step touches (1,024 · 1,017 · 688 · 540 · 411 lines) · CSS extraction deferred behind the selector oracle.",
+      "~30 mode-branch defects stay (the seam removes none of them) · R1: the server target has never run against a real database."];
+    lines.forEach((s, i) => o.push(`<text class="s" x="${BAND_L-4}" y="${g.H-10+i*14}">${s}</text>`));
+    g.H += (lines.length - 1) * 14;
+  }
+  return {g, svg: o.join("")};
+}
+function marker(n, x, y){
+  return `<g class="vm" data-v="${n}" transform="translate(${x},${y})">
+    <circle class="marker" r="9.5"></circle><text class="mlabel" text-anchor="middle" dy="3.4">${n}</text></g>`;
+}
+/* Direction is the whole argument of a dependency graph, so every wire needs its
+   own arrowhead; markerUnits keeps the head the same size across stroke widths. */
+const KIND_C = {calls:"#8a97a8", port:"#0d9488", seam:"#7c3aed", mode:"#b45309", absent:"#cbd5e1", bad:"#dc2626"};
+const DEFS = `<defs>${Object.keys(KIND_C).map(k =>
+  `<marker id="ah-${k}" markerUnits="userSpaceOnUse" viewBox="0 0 9 9" refX="8.5" refY="4.5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0,.8 L8.5,4.5 L0,8.2 z" fill="${KIND_C[k]}"></path></marker>`
+).join("")}
+  <pattern id="hatch" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(45)"><rect width="7" height="7" fill="#fff"></rect><line x1="0" y1="0" x2="0" y2="7" stroke="#e7ebf1" stroke-width="3"></line></pattern></defs>`;
+
+/* ============================ SHELL / UI ============================ */
+let STATE = "B", SHOWV = true, GHOST = false, DEBT = true;
+const svg = document.getElementById("map");
+const DEFAULT_DETAIL = document.getElementById("detail-body").innerHTML;
+
+function draw(){
+  const states = STATE === "both" ? ["B","A"] : [STATE === "A" ? "A" : "B"];
+  const parts = states.map(s => renderState(s));
+  const TS = "font:600 13px system-ui;fill:var(--ink-soft)";
+  const title = i => states[i] === "B" ? "BEFORE — three generations coexist"
+                                      : "AFTER — purge, typed seam, decomposition";
+  let out, W, H;
+  if (parts.length === 1) {
+    W = parts[0].g.W; H = parts[0].g.H + 34;
+    out = `<text x="8" y="18" style="${TS}">${title(0)}</text><g transform="translate(0,30)">${parts[0].svg}</g>`;
+  } else {
+    /* stacked, never scaled down: shrinking to fit two columns puts labels under 8px */
+    const gap = 34, y0 = 30, y1 = y0 + parts[0].g.H + gap;
+    W = Math.max(parts[0].g.W, parts[1].g.W); H = y1 + parts[1].g.H + 8;
+    out = `<text x="8" y="18" style="${TS}">${title(0)}</text><g transform="translate(0,${y0})">${parts[0].svg}</g>
+           <text x="8" y="${y1-10}" style="${TS}">${title(1)}</text><g transform="translate(0,${y1})">${parts[1].svg}</g>`;
+  }
+  svg.setAttribute("width", Math.ceil(W)); svg.setAttribute("height", Math.ceil(H));
+  svg.setAttribute("viewBox", `0 0 ${Math.ceil(W)} ${Math.ceil(H)}`);
+  svg.innerHTML = DEFS + out;
+  /* A squeezed string is worse than a shortened one: compress glyphs only when the
+     distortion is small, otherwise cut the text and mark the cut. */
+  svg.querySelectorAll("g.mod").forEach(g => {
+    const pw = +g.querySelector("rect").getAttribute("width");
+    const right = (g.querySelector(".nm") ? 26 : 22) + (g.querySelector(".socket") ? 15 : 0);
+    g.querySelectorAll("text").forEach(t => {
+      const max = pw - right;
+      let len = t.getComputedTextLength();
+      if (len <= max || max < 20) return;
+      if (len / max < 1.2) { t.setAttribute("textLength", max); t.setAttribute("lengthAdjust", "spacing"); return; }
+      let s = t.textContent;
+      while (s.length > 5 && len > max) {
+        s = s.slice(0, Math.max(4, Math.floor(s.length * max / len) - 1)) + "…";
+        t.textContent = s; len = t.getComputedTextLength();
+      }
+    });
+  });
+  bind();
+  window.__parts = parts;
+  renderViolations();
+  buildLegend();
+  paintSelection();
+  syncControls();
+  if (SEL) isolate(SEL);
+}
+
+let SEL = null;
+function bind(){
+  svg.querySelectorAll("[data-mod]").forEach(el => {
+    el.addEventListener("click", ev => {
+      ev.stopPropagation();
+      svg.querySelectorAll(".mod.sel").forEach(n => n.classList.remove("sel"));
+      el.classList.add("sel");
+      VSEL = null;
+      showMod(el.dataset.mod);
+      paintSelection();
+    });
+  });
+  svg.querySelectorAll(".vm").forEach(el => el.addEventListener("click", ev => {
+    ev.stopPropagation(); selectViolation(+el.dataset.v, true);
+  }));
+}
+
+/* Clicking a box must isolate its own wires: with 45 lanes on the canvas, a list of
+   its dependencies in the side panel is not enough to find them. */
+function isolate(id){
+  svg.querySelectorAll(".edge.dim").forEach(el => el.classList.remove("dim"));
+  const panels = [...svg.querySelectorAll(":scope > g")];
+  (window.__parts || []).forEach((p, i) => {
+    const root = panels[i] || svg;
+    p.g.edges.forEach((e, j) => {
+      if (e.f === id || e.t === id) return;
+      const el = root.querySelector(`.edge[data-i="${j}"]`);
+      if (el) el.classList.add("dim");
+    });
+  });
+}
+
+const NM = i => (M.find(x => x.id === i) || {name:i}).name;
+function showMod(id){
+  const m = M.find(x => x.id === id); if (!m) return;
+  SEL = id;
+  const tags = {A:'<span class="tag tA">Gen A — purge target</span>',B:'<span class="tag tB">Gen B — V1 platform</span>',
+                C:'<span class="tag tC">Gen C — static demo twin</span>',shared:'<span class="tag" style="background:#f1f5f9;border:1px solid #cbd5e1">shared</span>',
+                new:'<span class="tag" style="background:#fff7ed;border:1px solid #fdba74">created by the refactor</span>'};
+  const row = e => `<li><span class="mono">${esc(NM(e.f))} → ${esc(NM(e.t))}</span>${e.l?` <span class="cite">${esc(e.l)}</span>`:""}</li>`;
+  const ins = E.filter(e => e.t === id).map(row).join("");
+  const outs= E.filter(e => e.f === id).map(row).join("");
+  document.getElementById("detail-body").innerHTML =
+    `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">${tags[m.gen]||""}${m.socket?'<span class="tag" style="background:#ccfbf1;border:1px solid #5eead6;color:#0f766e">extension point</span>':""}${m.adapter?'<span class="tag" style="background:#ccfbf1;border:1px solid #5eead6;color:#0f766e">adapter implementing a port</span>':""}</div>
+     <div class="kv"><b>name</b><span class="mono">${esc(m.name)}</span></div>
+     <div class="kv"><b>path</b><span class="mono" style="word-break:break-all">${esc(m.path)}</span></div>
+     ${m.stats?`<div class="kv"><b>size</b><span class="mono">${esc(m.stats)}</span></div>`:""}
+     <div class="kv"><b>owns</b><span>${esc(m.role)}</span></div>
+     ${m.note?`<div class="kv"><b>note</b><span style="color:var(--ink-soft)">${m.note}</span></div>`:""}
+     ${(ins||outs)?`<div style="margin-top:10px"><b style="font-size:12px;color:var(--ink-soft)">INBOUND</b><ul class="mono" style="font-size:11.5px;margin:4px 0 0;padding-left:16px">${ins||"<li>none</li>"}</ul>
+       <b style="font-size:12px;color:var(--ink-soft)">OUTBOUND</b><ul class="mono" style="font-size:11.5px;margin:4px 0 0;padding-left:16px">${outs||"<li>none</li>"}</ul></div>`:""}`;
+  isolate(id);
+}
+
+let VSEL = null;
+function renderViolations(){
+  const list = document.getElementById("vlist");
+  const inView = v => (window.__parts || []).some(p => (v.s || []).some(id => p.g.byId[id]) ||
+                                                       p.g.edges.some(e => e.v === v.id));
+  const shown = V.filter(inView).length;
+  document.getElementById("vcount").textContent = shown === V.length ? `${V.length}` : `${shown} of ${V.length} in view`;
+  list.innerHTML = V.map(v =>
+    `<button data-v="${v.id}" aria-pressed="${VSEL===v.id}" ${inView(v)?"":"data-off=1"}><span class="n">${v.id}</span><span>${v.t}
+      <span class="cite">dossier ${v.c}</span></span></button>`).join("");
+  list.querySelectorAll("button").forEach(b => b.addEventListener("click", () => selectViolation(+b.dataset.v)));
+}
+function paintSelection(){
+  svg.querySelectorAll(".edge.hi, .mod.vsel").forEach(n => n.classList.remove("hi", "vsel"));
+  svg.querySelectorAll(".vm.act").forEach(n => n.classList.remove("act"));
+  document.querySelectorAll("#vlist button").forEach(b => b.setAttribute("aria-pressed", +b.dataset.v === VSEL));
+  if (!VSEL) return;
+  const v = V.find(x => x.id === VSEL); if (!v) return;
+  const panels = [...svg.querySelectorAll(":scope > g")];
+  (window.__parts || []).forEach((p, i) => {
+    const root = panels[i] || svg;
+    p.g.edges.forEach((e, j) => {
+      if (e.v !== VSEL) return;
+      const el = root.querySelector(`.edge[data-i="${j}"]`); if (el) el.classList.add("hi");
+    });
+  });
+  (v.s || []).forEach(id => {
+    svg.querySelectorAll(`.mod[data-mod="${id}"]`).forEach(el => el.classList.add("vsel"));
+  });
+  svg.querySelectorAll(`.vm[data-v="${VSEL}"]`).forEach(el => el.classList.add("act"));
+}
+function selectViolation(n, fromMap){
+  VSEL = VSEL === n ? null : n;
+  const v = VSEL && V.find(x => x.id === VSEL);
+  if (!v) { SEL = null; document.getElementById("detail-body").innerHTML = DEFAULT_DETAIL;
+            svg.querySelectorAll(".mod.sel").forEach(n => n.classList.remove("sel"));
+            isolate(null); paintSelection(); return; }
+  showMod((v.s || [])[0]);
+  paintSelection();
+  document.getElementById("detail-body").insertAdjacentHTML("afterbegin",
+    `<div style="display:flex;gap:8px;align-items:baseline;margin-bottom:8px"><span class="n">${v.id}</span><b>${v.t}</b></div>
+     <div style="color:var(--ink-soft);margin-bottom:10px">${v.d}</div>
+     <div class="cite">dossier ${v.c}</div><hr style="border:0;border-top:1px solid var(--line);margin:10px 0">`);
+}
+
+document.getElementById("b-before").onclick = () => set("B");
+document.getElementById("b-after").onclick  = () => set("A");
+document.getElementById("b-both").onclick   = () => set("both");
+function set(s){ STATE = s;
+  const on = {before:"B", after:"A", both:"both"};
+  Object.keys(on).forEach(k =>
+    document.getElementById("b-"+k).setAttribute("aria-pressed", String(s === on[k])));
+  draw();
+}
+document.getElementById("c-viol").onchange  = e => { SHOWV = e.target.checked; draw(); };
+document.getElementById("c-ghost").onchange = e => { GHOST = e.target.checked; draw(); };
+document.getElementById("c-debt").onchange  = e => { DEBT = e.target.checked; draw(); };
+svg.addEventListener("click", () => {                /* empty canvas clears the selection */
+  VSEL = null; SEL = null;
+  svg.querySelectorAll(".mod.sel").forEach(n => n.classList.remove("sel"));
+  document.getElementById("detail-body").innerHTML = DEFAULT_DETAIL;
+  isolate(null); paintSelection();
+});
+function syncControls(){
+  const after = STATE !== "B";
+  document.querySelectorAll(".chk[data-after]").forEach(l => {
+    l.querySelector("input").disabled = !after;
+    l.classList.toggle("off", !after);
+  });
+}
+/* Rebuilt per draw so it can never advertise a line style or fill the view does not
+   contain — a legend item with no referent teaches the reader to distrust it. */
+function buildLegend(){
+  const parts = window.__parts || [];
+  const kinds = {}, gens = {}; let socket = false;
+  parts.forEach(p => {
+    p.g.edges.forEach(e => kinds[e.k] = 1);
+    p.g.mods.forEach(m => { gens[m.gen] = 1; if (m.socket) socket = true; });
+  });
+  const seen = st => parts.some(p => p.g.st === st);
+  const debt = M.some(m => m.debt && m.states.includes(STATE === "A" ? "A" : "B"));
+  const line = (k, label) => sw(`<path class="e ${k}" d="M2,10 H48"></path><path d="M48,6.2 L57,10 L48,13.8 z" fill="${KIND_C[k]}"></path>`, label);
+  const box = (attrs, label) => sw(`<rect x="2" y="3" width="26" height="15" rx="4" ${attrs}></rect>`, label);
+  const L = [];
+  if (kinds.calls)  L.push(line("calls",  "direct import / call — no abstraction"));
+  if (kinds.port)   L.push(line("port",   "depends on a port, never on an adapter"));
+  if (kinds.seam)   L.push(line("seam",   "build-target selection (the seam)"));
+  if (kinds.mode)   L.push(line("mode",   "runtime-mode branch inside one build"));
+  if (kinds.absent) L.push(line("absent", "absent from the static export"));
+  if (kinds.bad)    L.push(line("bad",    "edge that breaks under the purge"));
+  if (socket) L.push(sw(`<circle class="socket" cx="15" cy="10" r="7"></circle><rect x="12" y="8.6" width="12" height="2.8" rx="1.4" fill="var(--port)"></rect>`,
+                        "open socket = extension point"));
+  if (gens.A) L.push(sw(`<rect x="2" y="3" width="26" height="15" rx="4" fill="var(--genA)" stroke="var(--genA-b)"></rect><rect x="4" y="6" width="2.6" height="9" rx="1.3" fill="var(--genA-b)"></rect>`,
+                        "Gen A — legacy CMS, deleted by §2"));
+  if (gens.B)      L.push(box(`fill="var(--genB)" stroke="var(--genB-b)"`, "Gen B — V1 platform"));
+  if (gens.C)      L.push(box(`fill="var(--genC)" stroke="var(--genC-b)"`, "Gen C — static demo twin"));
+  if (gens.shared) L.push(box(`fill="var(--shared)" stroke="var(--shared-b)"`, "shared by both generations"));
+  if (gens.new)    L.push(box(`fill="#fff7ed" stroke="#fdba74" stroke-dasharray="4 3"`, "created by the refactor"));
+  if (seen("A"))   L.push(box(`fill="none" stroke="var(--genA-b)" stroke-dasharray="5 4"`, "where the purge removed a module"));
+  if (debt)        L.push(box(`fill="#f1f5f9" stroke="var(--debt)" stroke-dasharray="2 3"`, "debt this sprint leaves in place"));
+  L.push(sw(`<g class="vm"><circle class="marker" cx="15" cy="10" r="9"></circle><text class="mlabel" x="15" y="10" text-anchor="middle" dy="3.3">7</text></g>`,
+            "numbered architecture error"));
+  document.getElementById("legend").innerHTML = L.join("");
+}
+function sw(inner, label){
+  return `<div><svg class="sw" width="60" height="20" viewBox="0 0 60 20">${inner}</svg><span>${label}</span></div>`;
+}
+draw();
+
+</script>
+</body>
+</html>
