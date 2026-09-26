@@ -1,5 +1,7 @@
 # Phase 00 — Prerequisites and CI lockdown
 
+> Historical evidence. Execute [P00](../IMPLEMENTATION-READY.md#p00-prerequisites-and-baseline-ci), not the superseded work orders, decisions, or gates below.
+
 **Goal.** Make the repo's four gates falsifiable and put them in CI *before* any refactor commit exists, so that every later phase's "check green" exit criterion actually means something.
 
 **Depends on.** Nothing — this is the first phase. It does require dossier §3 decision **D-7 = (a)** (fix `format:check` → land `ci.yml` → then branch protection, in that order) and the compatibility policy decision; three steps below are tagged `COMPAT` for it.

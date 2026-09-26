@@ -1,5 +1,7 @@
 # Phase 20 — schema purge and migration
 
+> Historical evidence. Execute [P20](../IMPLEMENTATION-READY.md#p20-schema-and-reviewed-migration), not the superseded work orders, decisions, or gates below.
+
 **Goal.** Cut `prisma/schema.prisma` (310 lines at HEAD `e5aaf1e`) down to the Generation-B data model — four dead models, one dead enum, five dead relation fields — and add the one migration that takes a database from the old shape to the new one. The migration-history question that `REFACTOR-DOSSIER.md` §6.3 answered is settled **in the plan's own favour**: `REFACTOR_PLAN.md:86` (§2.5.6) names the file to write, `COMPAT-POLICY.md` §4.1 recommended replacing it, and the owner **rejected** that recommendation on 2026-09-23 (`COMPAT-POLICY.md:67`, §6 row 1). The edits §4.2-§4.3 recommended — deleting the shadow-DB drift machinery — **were** adopted, so this phase keeps the history and loses the gate that would have checked it.
 
 **Depends on.**

@@ -1,5 +1,7 @@
 # Phase 30 — the composition seam
 
+> Historical evidence. Execute [P30](../IMPLEMENTATION-READY.md#p30-generated-runtime-composition), not the superseded work orders, decisions, or gates below.
+
 **Goal.** Replace the 9 build-time `@runtime/*` module-resolution aliases with an on-disk, contract-annotated seam
 so that (i) the demo *and* server wirings are both typechecked, (ii) the seam is importable **as the seam** by a
 test — 6 test files already reach into `src/runtime/`, all 9 of those imports name concrete *demo* files and none

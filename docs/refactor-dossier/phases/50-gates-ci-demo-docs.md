@@ -1,5 +1,7 @@
 # Phase 50 — gates, CI, demo and docs
 
+> Historical evidence. Execute [P50](../IMPLEMENTATION-READY.md#p50-final-gates-security-hygiene-demo-and-documentation), not the superseded work orders, decisions, or gates below.
+
 **Goal.** Make the other four phases trustworthy by turning the plan's §7 success criteria into assertions
 that can actually go red, ordering them so no gate reads an artifact another build overwrote, settling the
 three demo-behaviour questions in advance, and making the documentation state what the code does. This phase

@@ -1,5 +1,7 @@
 # Phase 40 — Decomposition of the oversized modules
 
+> Historical evidence. Execute [P40](../IMPLEMENTATION-READY.md#p40-characterization-before-decomposition), not the superseded work orders, decisions, or gates below.
+
 **Goal.** Cut the four remaining god files to the sizes the evidence supports, ship the dead-CSS purge,
 and refuse — with the measurement that decides each — the splits the plan asks for that this tree
 cannot pay for. The refusals are deliverables: each carries its number and its re-open condition.

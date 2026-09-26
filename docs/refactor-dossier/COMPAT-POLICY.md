@@ -1,5 +1,7 @@
 # Compat Policy — auditing the dossier for unnecessary conservatism
 
+> Historical evidence. Execute [current runbook](IMPLEMENTATION-READY.md), not the superseded work orders, decisions, or gates below. The runbook supersedes section 6's migration-history ruling under the current no-compatibility scope.
+
 **Repo:** `SMS_Portal` @ `e5aaf1e` · **Audits:** `docs/refactor-dossier/REFACTOR-DOSSIER.md` (661 ln), `CRITIQUE-governing-conflicts.md`, `architecture-map.html`
 **Fixed input:** `REFACTOR_PLAN.md`. Nothing below proposes editing it. Two recommendations (§4.1, §4.4) *deviate* from it and are labelled as deviations, which is the dossier's own established device (`REFACTOR-DOSSIER.md:392` "a deliberate, recorded deviation if D-1 = (b)").
 

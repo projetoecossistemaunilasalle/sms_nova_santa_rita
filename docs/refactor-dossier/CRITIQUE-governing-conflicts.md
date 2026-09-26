@@ -1,5 +1,7 @@
 # Implementation Critique: `REFACTOR_PLAN.md` v2.1 vs the Governing Audit vs the Code
 
+> Historical evidence. Execute [current runbook](IMPLEMENTATION-READY.md), not the superseded work orders, decisions, or gates below.
+
 **Date:** 23 September 2026
 **Role:** input to the implementation dossier in `docs/refactor-dossier/`
 **Method:** measurements taken directly in this repo during this pass, reconciled against `REFACTOR_PLAN.md` v2.1 and the governing architecture document `docs/architecture-audit-2026-09-23.md`.

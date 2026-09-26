@@ -1,5 +1,7 @@
 # V1 Refactor — Implementation Dossier
 
+> Historical evidence. Execute [current runbook](IMPLEMENTATION-READY.md), not the superseded work orders, decisions, or gates below.
+
 **Repo:** `SMS_Portal` (`missoes-caramelito-platform`) · **Branch/state at measurement:** `main` @ `e5aaf1e`, clean tree
 **Target document:** `REFACTOR_PLAN.md` v2.1 — treated as **fixed input / intended direction**. Nothing here proposes editing it.
 **Purpose:** everything an implementer needs to execute the refactor without rediscovering the architecture. Every claim is either measured in this repo or attributed to a report in `reports/`.
