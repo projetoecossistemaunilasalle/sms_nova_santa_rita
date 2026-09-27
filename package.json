@@ -9,6 +9,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "sync:bundles": "node scripts/sync-bundles.mjs",
+    "verify:dist": "node scripts/verify-dist.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },

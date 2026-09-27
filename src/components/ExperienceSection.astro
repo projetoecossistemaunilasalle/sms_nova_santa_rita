@@ -1,5 +1,5 @@
 ---
-import { ASSETS, PREVISTO, TRILHA } from "../config/site";
+import { APPS, ASSETS, PREVISTO, TRILHA, withBase } from "../config/site";
 import Icon from "./Icon.astro";
 ---
 
@@ -65,9 +65,20 @@ import Icon from "./Icon.astro";
             }
           </ul>
           <p class="previsto-nota">
-            Nenhuma funcionalidade está disponível ainda: esta página será atualizada quando a
-            experiência estiver pronta para as escolas.
+            Uma primeira demonstração já pode ser experimentada no navegador; a experiência completa
+            será publicada aqui quando estiver pronta para as escolas.
           </p>
+        </div>
+
+        <div class="experiencia-acao">
+          <a class="botao primario" href={withBase(APPS.jogo)}>
+            <Icon name="patinha" size={18} />
+            Jogar a demonstração
+          </a>
+          <a class="botao contorno" href={withBase(APPS.portal)}>
+            <Icon name="professores" size={18} />
+            Área do professor
+          </a>
         </div>
       </div>
     </div>
@@ -243,6 +254,12 @@ import Icon from "./Icon.astro";
     color: var(--azul-escuro);
     border-top: 1.5px dashed rgb(46 111 183 / 0.35);
     padding-top: 0.9rem;
+  }
+
+  .experiencia-acao {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
   }
 
   @media (max-width: 56rem) {

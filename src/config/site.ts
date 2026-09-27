@@ -10,25 +10,59 @@
  */
 
 /* ------------------------------------------------------------------ */
+/* Base path do GitHub Pages                                           */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Caminho base do site de projeto no GitHub Pages (ex.:
+ * "/sms_nova_santa_rita"). O Astro define BASE_URL a partir de
+ * `base` em astro.config.mjs; todo caminho absoluto do site precisa
+ * passar por withBase() para funcionar sob o prefixo do Pages.
+ */
+export const BASE_PATH = (import.meta.env.BASE_URL ?? "").replace(/\/+$/, "");
+
+/** Prefixa um caminho absoluto com o base path do GitHub Pages. */
+export function withBase(path: string): string {
+  return `${BASE_PATH}${path}`;
+}
+
+/* ------------------------------------------------------------------ */
+/* Apps integrados (gerados a partir dos projetos irmaos)               */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Entradas dos apps publicados junto com a landing page pelo mesmo
+ * deploy do GitHub Pages. As pastas sao montadas por
+ * scripts/sync-bundles.mjs a partir dos builds de cada projeto:
+ *   - /portal/: export estatico do SMS_Portal (npm run build:demo,
+ *     DEMO_BASE_PATH=sms_nova_santa_rita/portal);
+ *   - /jogo/: export web do Heroes_Trial (tools/export_web.ps1).
+ */
+export const APPS = {
+  jogo: "/jogo/",
+  portal: "/portal/",
+} as const;
+
+/* ------------------------------------------------------------------ */
 /* Assets                                                              */
 /* ------------------------------------------------------------------ */
 
 export const ASSETS = {
   mascot: {
     /** Pose principal de apresentacao (acenando). */
-    classico: "/assets/mascot/caramelinho-classico.webp",
+    classico: withBase("/assets/mascot/caramelinho-classico.webp"),
     /** Pose de deslocamento/caminhada. */
-    movimento: "/assets/mascot/caramelinho-movimento.webp",
+    movimento: withBase("/assets/mascot/caramelinho-movimento.webp"),
     /** Quadro A da cena "observando uma folha". */
-    papelA: "/assets/mascot/caramelinho-papel-a.webp",
+    papelA: withBase("/assets/mascot/caramelinho-papel-a.webp"),
     /** Quadro B da cena "observando uma folha" (rabo abanando). */
-    papelB: "/assets/mascot/caramelinho-papel-b.webp",
+    papelB: withBase("/assets/mascot/caramelinho-papel-b.webp"),
     /** Largura/altura naturais dos sprites (quadrados, com margem interna). */
     width: 640,
     height: 640,
   },
   /** Arte conceitual do jogo de tabuleiro (fornecida pelo projeto). */
-  arteConceitual: "/assets/conceito/jogo-tabuleiro-conceito.webp",
+  arteConceitual: withBase("/assets/conceito/jogo-tabuleiro-conceito.webp"),
   /**
    * [PLACEHOLDER] Logotipo oficial do PSE e brasao da Prefeitura.
    * Quando os arquivos oficiais estiverem disponiveis, coloque-os em

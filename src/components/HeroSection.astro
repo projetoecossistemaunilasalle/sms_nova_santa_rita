@@ -1,5 +1,5 @@
 ---
-import { FALA_CARAMELINHO, JUNTOS_POR, SITE } from "../config/site";
+import { APPS, FALA_CARAMELINHO, JUNTOS_POR, SITE, withBase } from "../config/site";
 import Icon from "./Icon.astro";
 import MascotGuide from "./solid/MascotGuide";
 ---
@@ -35,11 +35,18 @@ import MascotGuide from "./solid/MascotGuide";
       </ul>
 
       <div class="heroi-acoes">
-        <a class="botao primario" href="#projeto">
-          Conhecer o projeto
-          <Icon name="seta" size={18} />
+        <a class="botao primario" href={withBase(APPS.jogo)}>
+          <Icon name="patinha" size={18} />
+          Jogar
         </a>
-        <a class="botao contorno" href="#missoes">Ver as missões</a>
+        <a class="botao contorno" href={withBase(APPS.portal)}>
+          <Icon name="professores" size={18} />
+          Área do professor
+        </a>
+        <a class="acao-ancora" href="#projeto">
+          Conhecer o projeto
+          <Icon name="seta" size={16} />
+        </a>
       </div>
 
       <p class="juntos-por">
@@ -207,8 +214,26 @@ import MascotGuide from "./solid/MascotGuide";
   .heroi-acoes {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 0.8rem;
     margin-top: 1.8rem;
+  }
+
+  .acao-ancora {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.5rem;
+    border-radius: var(--raio-pilula);
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--tinta-suave);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .acao-ancora:hover {
+    color: var(--verde-escuro);
   }
 
   .juntos-por {

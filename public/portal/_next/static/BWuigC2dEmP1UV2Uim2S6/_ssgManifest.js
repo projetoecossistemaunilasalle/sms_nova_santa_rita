@@ -1,0 +1,1 @@
+self.__SSG_MANIFEST=new Set(["\u002Fportal\u002Fadmin\u002Forganizacoes\u002F[id]","\u002Fportal\u002Fresultados\u002F[classGroupId]","\u002Fportal\u002Fresultados\u002F[classGroupId]\u002Fplayers\u002F[playerSlotId]","\u002Fportal\u002Fturmas\u002F[id]"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()

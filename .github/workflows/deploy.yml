@@ -1,8 +1,15 @@
 name: Deploy to GitHub Pages
 
+# O site completo (landing + /portal/ + /jogo/) e montado a partir deste
+# repositorio: a landing e buildada pelo Astro e os bundles dos apps irmaos
+# ficam versionados em public/portal/ e public/jogo/ (os repositorios
+# SMS_Portal e Heroes_Trial sao privados e nao podem ser acessados daqui).
+# Para atualizar um bundle, rebuild o projeto de origem e rode
+# `node scripts/sync-bundles.mjs`.
+
 on:
   push:
-    branches: [master]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -30,8 +37,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run tests
+        run: npm test
+
       - name: Build
         run: npm run build
+
+      - name: Verify assembled site
+        run: node scripts/verify-dist.mjs
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
