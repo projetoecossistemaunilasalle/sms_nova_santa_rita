@@ -1,9 +1,12 @@
 # Current product architecture
 
 Status: Current source of truth for product boundaries and web surfaces.  
-Last aligned: 22 September 2026.
+Last aligned: 26 September 2026.
 
-For detailed V1 requirements and implementation direction, see [v1-game-integration-dossier.md](v1-game-integration-dossier.md).
+For the implementation-ready plan, see
+[refactor-dossier/IMPLEMENTATION-READY.md](refactor-dossier/IMPLEMENTATION-READY.md).
+The [v1-game-integration-dossier.md](v1-game-integration-dossier.md) is retained as a
+historical planning record.
 
 ## Product boundary
 
@@ -116,10 +119,11 @@ Active-play time should track meaningful gameplay rather than simply elapsed tim
 
 Temporary offline operation is expected after an initial synchronized load.
 
-Recommended client persistence:
+Client persistence:
 
-- `localStorage` for small simple values where useful;
-- IndexedDB for structured cached state, queued events, pending metrics, and larger offline data.
+- `localStorage` for small simple values where useful (for example the demo
+  portal state key `missoes-caramelito:adult-portal:v2`);
+- IndexedDB for structured cached state, queued events, pending metrics, and larger offline data (implemented in `src/runtime/offline/`).
 
 Conceptual flow:
 
@@ -135,9 +139,13 @@ The integration must define a conflict strategy for game state updated from mult
 
 ## Conceptual data model
 
-The current Prisma schema predates the player-slot direction and must be reconciled before production implementation.
+The implemented Prisma schema matches these concepts. The exact tables, columns,
+indexes, and database rules are documented in
+[schemas/database-model.md](schemas/database-model.md). The migration history is a
+single post-refactor baseline: `prisma/migrations/0_init` creates the entire
+surviving schema in one step and replaced the earlier incremental migrations.
 
-Target concepts:
+Concepts:
 
 ```text
 Organization
@@ -165,29 +173,34 @@ Important invariants:
 
 ## Route boundary
 
-The existing route tree still represents the current demo implementation, not the final V1 player-entry design.
-
-| Route | Audience | Current / target behavior |
+| Route | Audience | Current behavior |
 | --- | --- | --- |
 | `/` | Anyone | Redirects to `/entrar`; no marketing landing page |
-| `/entrar` | Adults | Professional/admin sign-in |
-| `/portal/**` | Authenticated adults | Operational portal, authorized by role and organization |
-| existing `/atividade/[token]` routes | Players | Legacy/demo session-link entry surface to be reconciled with player QR + session context |
-| `/health/live`, `/health/ready` | Operations | Liveness and readiness |
+| `/entrar`, `/entrar/recuperar` | Adults | Professional/admin sign-in (Neon Auth in server mode, demonstration entry in demo mode) and a recovery placeholder |
+| `/portal` | Authenticated adults | Overview plus layout, loading, and state screens (`ajuda`, `sem-acesso`, `sessao-expirada`) |
+| `/portal/admin/organizacoes`, `/portal/admin/organizacoes/[id]` | Platform and organization administrators | Organizations and their structure |
+| `/portal/admin/equipe` | Administrators | Adult profiles and memberships |
+| `/portal/turmas`, `/portal/turmas/[id]` | Organization admins and teachers | Classes; the class detail page hosts the session control, numbered players, and QR credentials |
+| `/portal/resultados`, `/portal/resultados/[classGroupId]`, `/portal/resultados/[classGroupId]/players/[playerSlotId]` | Authorized adults | Class and per-player reports |
+| `/jogar` | Players | Credential entry through the `?cred=` parameter carried by the printed QR, then handoff to the GameMaker client |
+| `/api/v1/player/{bootstrap,state,results,active-time}` | Browser game host | Versioned transport contract endpoints |
 
-Do not treat the current `/atividade/[token]` route shape as the final V1 identity model. The final public/player route may change when player credentials and session context are implemented.
+There is no `/health` route; the former liveness and readiness handlers were
+removed and have not been reintroduced.
 
 ## Materials
 
 Materials is explicitly deferred beyond V1.
 
-The production V1 experience should remove or hide the Materials navigation entry.
-
-Existing demo or research code may remain temporarily if it does not block delivery, but no V1 backend, authorization, or acceptance criterion should depend on Materials.
+The Materials navigation entry has been removed from the portal, and no V1
+backend, authorization, or acceptance criterion depends on Materials.
 
 ## GameMaker contract
 
-The versioned contract should cover at least:
+The frozen V1 transport contract (JSON Schemas in
+[`../contracts/schemas/v1`](../contracts/schemas/v1) with runtime Zod authority and
+parity fixtures; protocol rules in
+[`../contracts/schemas/README.md`](../contracts/schemas/README.md)) covers at least:
 
 ### Backend to GameMaker
 
@@ -229,20 +242,48 @@ V1 must not build:
 
 The data model should avoid blocking a future migration feature, but the migration workflow is intentionally deferred.
 
+## Runtime targets and entries
+
+One route tree builds two runtime targets:
+
+- **Server target** (`npm run build:server`, started by `npm run start` through
+  `scripts/start.mjs`): a standalone Next.js build persisting to Neon Postgres
+  through Prisma, with adult authentication behind Neon Auth.
+- **Demo target** (`npm run build:demo`): a static export to `out/` with the
+  `/SMS_Portal` base path, published to GitHub Pages from CI on pushes to
+  `main`. The same portal workflow is seeded into browser state and the game
+  host operates offline through the IndexedDB queue.
+
+Consumers never import demo or server implementations directly. Before every
+`dev`, `build`, `test`, and `typecheck` invocation, `scripts/next-target.mjs gen
+<target>` generates `src/runtime/actions.ts`, `src/runtime/readers.ts`, and
+`src/runtime/client.ts`, which re-export the selected concrete tracked variants
+(`actions.server.ts` / `actions.demo.ts`, and so on). Only one target can be
+generated at a time in a checkout. The generated server actions entry
+deliberately carries no `"use server"` header — the directive lives on the five
+implementation files — because the installed Turbopack transform rejects
+re-exports in a `"use server"` file (adding it fails the server build with
+"Only async functions are allowed to be exported in a "use server" file.");
+this constraint is documented in `scripts/next-target.mjs`.
+
+Application services are assembled by the four surviving containers under
+`src/server/services/` (`adult-portal-container.ts`, `game-state-container.ts`,
+`game-event-container.ts`, `player-access-container.ts`); the service
+implementations live under `src/application/` (`adult-portal`, `player-access`,
+`game-state`, `game-events`, plus the shared `authorization` actor). The former
+`service-container.ts` was deleted with the access-link generation.
+
 ## Runtime configuration
 
-Existing runtime variables remain relevant where their implementation survives the static demo transition.
-
-Production configuration will need to cover:
-
-- GameMaker deployment URL/origin;
-- database connectivity;
-- adult authentication;
-- application signing/secrets;
-- player credential signing/token security where applicable;
-- integration/synchronization configuration.
-
-Exact variable names should be finalized during implementation rather than inferred from the demo deployment.
+The server target validates `DATABASE_URL`, `NEON_AUTH_BASE_URL`,
+`NEON_AUTH_COOKIE_SECRET`, and `APPLICATION_SECRET` at configuration load.
+Additional variables cover `DIRECT_URL` (Prisma CLI migrations),
+`ALLOWED_ORIGINS` (browser origins accepted by cookie-authenticated routes),
+`GAME_CLIENT_URL` (the browser GameMaker build URL), and the opt-in
+`AUTH_DEV_BYPASS` development flag, which is rejected in a production server
+runtime. `.env.example` documents example values; final production values are
+set at deployment, and integration origins remain allowlisted rather than
+free-form.
 
 ## Implementation status
 
@@ -253,12 +294,11 @@ class/player reports. The static demo preserves the same entry workflow with a
 clearly synthetic game adapter. The browser host uses a versioned bridge and an
 IndexedDB queue; the server remains the authoritative state source.
 
-These implementations are not yet a production-verified V1. The new migrations
-have not been applied to a real Neon environment; the checked-in `.env` contains
-example hosts. The real GameMaker HTML5 build, two-device state continuity,
-reconnection, and school-tablet QR flow still need end-to-end validation. Legacy
-activity and Materials routes remain in the route tree but are not V1 navigation
-destinations. See the implementation roadmap for slice-level status.
+These implementations are not yet a production-verified V1. The single baseline
+migration (`prisma/migrations/0_init`) has not been applied to a real Neon
+environment; `.env.example` ships example hosts. The real GameMaker HTML5 build,
+two-device state continuity, reconnection, and school-tablet QR flow still need
+end-to-end validation. See the implementation roadmap for slice-level status.
 
 Older Prisma models, JSON contracts, and implementation plans written for previous
 product assumptions remain migration research unless explicitly aligned with the

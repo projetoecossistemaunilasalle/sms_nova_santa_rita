@@ -2,10 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import {
-  changeDemoProfile,
-  resetDemoPortal,
-} from "@runtime/adult-portal-client";
+import { changeDemoProfile, resetDemoPortal } from "@/runtime/client";
 import { RecordStatus } from "@/generated/prisma/enums";
 import type { DemoAdultPortalState } from "@/runtime/adult-portal-demo-store";
 

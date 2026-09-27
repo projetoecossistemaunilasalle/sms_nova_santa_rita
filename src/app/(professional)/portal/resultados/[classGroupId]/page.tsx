@@ -5,7 +5,7 @@ import { ClassResultsScreen } from "@/components/portal/results-screen";
 import {
   getClassResultsPageData,
   listStaticResultClassIds,
-} from "@runtime/game-events";
+} from "@/runtime/readers";
 
 export const metadata = { title: "Resultados da turma" };
 

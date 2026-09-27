@@ -5,7 +5,7 @@ import { SignInError } from "@/components/auth/sign-in-error";
 import styles from "@/components/marketing/marketing.module.css";
 import { getRuntimeMode } from "@/runtime/mode";
 
-import { signInAction } from "@runtime/sign-in-action";
+import { signInAction } from "@/runtime/actions";
 
 export default function SignInPage() {
   const mode = getRuntimeMode();

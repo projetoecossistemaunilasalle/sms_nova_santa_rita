@@ -143,47 +143,98 @@ describe("getAuthGateway", () => {
 describe("isProtectedPathname", () => {
   it("matches the portal root and nested portal routes", () => {
     expect(isProtectedPathname("/portal")).toBe(true);
-    expect(isProtectedPathname("/portal/atividades")).toBe(true);
-    expect(isProtectedPathname("/portal/atividades/nova")).toBe(true);
+    expect(isProtectedPathname("/portal/turmas")).toBe(true);
+    expect(isProtectedPathname("/portal/turmas/turma-1")).toBe(true);
   });
 
   it("does not match other routes or lookalike prefixes", () => {
     expect(isProtectedPathname("/")).toBe(false);
     expect(isProtectedPathname("/entrar")).toBe(false);
     expect(isProtectedPathname("/portal-backup")).toBe(false);
-    expect(isProtectedPathname("/atividade/token/jogar")).toBe(false);
+    expect(isProtectedPathname("/jogar")).toBe(false);
   });
 });
 
 describe("isAuthDevBypassEnabled", () => {
   const flagKey = "AUTH_DEV_BYPASS";
+  const mutatedKeys = [flagKey, "APP_RUNTIME_MODE", "NODE_ENV"] as const;
 
-  afterEach(() => {
-    delete process.env[flagKey];
-    delete process.env.APP_RUNTIME_MODE;
-    delete (process.env as Record<string, string | undefined>).NODE_ENV;
-  });
+  // Captures the prior value of every environment variable this suite mutates,
+  // runs the callback, and restores exactly the captured values afterwards
+  // (deleting only the keys that were unset before) so nothing leaks between
+  // tests.
+  function withMutatedEnv<T>(run: () => T): T {
+    const previous = new Map<string, string | undefined>();
+    for (const key of mutatedKeys) {
+      previous.set(key, process.env[key]);
+    }
+
+    try {
+      return run();
+    } finally {
+      for (const [key, value] of previous) {
+        if (value === undefined) {
+          delete process.env[key];
+        } else {
+          process.env[key] = value;
+        }
+      }
+    }
+  }
 
   it("is disabled by default", () => {
     expect(isAuthDevBypassEnabled()).toBe(false);
   });
 
   it("follows the flag value", () => {
-    process.env.APP_RUNTIME_MODE = "server";
-    (process.env as Record<string, string | undefined>).NODE_ENV =
-      "development";
-    process.env[flagKey] = "true";
-    expect(isAuthDevBypassEnabled()).toBe(true);
+    withMutatedEnv(() => {
+      process.env.APP_RUNTIME_MODE = "server";
+      (process.env as Record<string, string | undefined>).NODE_ENV =
+        "development";
+      process.env[flagKey] = "true";
+      expect(isAuthDevBypassEnabled()).toBe(true);
 
-    process.env[flagKey] = "false";
-    expect(isAuthDevBypassEnabled()).toBe(false);
+      process.env[flagKey] = "false";
+      expect(isAuthDevBypassEnabled()).toBe(false);
+    });
   });
 
   it("fails closed on unparseable values", () => {
-    process.env.APP_RUNTIME_MODE = "server";
-    (process.env as Record<string, string | undefined>).NODE_ENV =
-      "development";
-    process.env[flagKey] = "maybe";
-    expect(isAuthDevBypassEnabled()).toBe(false);
+    withMutatedEnv(() => {
+      process.env.APP_RUNTIME_MODE = "server";
+      (process.env as Record<string, string | undefined>).NODE_ENV =
+        "development";
+      process.env[flagKey] = "maybe";
+      expect(isAuthDevBypassEnabled()).toBe(false);
+    });
+  });
+
+  it("restores the captured prior environment after a mutation cycle", () => {
+    const priorFlagValue = "preexisting-sentinel";
+    const priorRuntimeMode = process.env.APP_RUNTIME_MODE;
+    const priorNodeEnv = process.env.NODE_ENV;
+    const originalFlagValue = process.env[flagKey];
+    process.env[flagKey] = priorFlagValue;
+
+    try {
+      const enabled = withMutatedEnv(() => {
+        process.env.APP_RUNTIME_MODE = "server";
+        (process.env as Record<string, string | undefined>).NODE_ENV =
+          "development";
+        process.env[flagKey] = "true";
+        return isAuthDevBypassEnabled();
+      });
+
+      expect(enabled).toBe(true);
+      expect(process.env[flagKey]).toBe(priorFlagValue);
+      expect(process.env.APP_RUNTIME_MODE).toBe(priorRuntimeMode);
+      expect(process.env.NODE_ENV).toBe(priorNodeEnv);
+    } finally {
+      if (originalFlagValue === undefined) {
+        delete process.env[flagKey];
+      } else {
+        process.env[flagKey] = originalFlagValue;
+      }
+    }
   });
 });

@@ -1,11 +1,25 @@
 # V1 portal and GameMaker contracts
 
-This directory is the transport contract shared by future `/api/v1` Route Handlers,
+This directory is the transport contract shared by `/api/v1` Route Handlers,
 the browser host, the GitHub Pages demo adapter, and GameMaker fixtures. Zod schemas in
 `src/contracts/v1` are the runtime authority. These JSON Schemas are generated from the
 same Zod shapes and parity-tested with every committed fixture. All message objects are
 closed with `additionalProperties: false`; only mission-owned `data`, presence sets,
 and the documented activity parameters remain open at their stated boundary.
+
+## Contract index
+
+- [`v1/`](v1) — the JSON Schemas generated from the Zod shapes in
+  [`src/contracts/v1`](../../src/contracts/v1): player bootstrap
+  (`player-bootstrap`, `new-player-bootstrap`, `bootstrap-applied`), game host
+  session (`game-ready`, `game-state`, `host-visibility`), state synchronization
+  (`state-save-request`, `state-save-success`, `state-save-conflict`), results
+  (`result-submission`, `result-event`, `result-acknowledgement`), active time
+  (`active-time-submission`, `active-time-batch`,
+  `active-time-acknowledgement`), and the `local-durability-acknowledgement` and
+  `protocol-error` envelopes.
+- [`../fixtures/v1`](../fixtures/v1) — the `valid/` and `invalid/` fixture sets
+  parity-tested against those schemas.
 
 ## Version and ownership boundaries
 

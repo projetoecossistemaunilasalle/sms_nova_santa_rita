@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
 import { PortalShell } from "@/components/portal/portal-shell";
 import { getRuntimeMode } from "@/runtime/mode";
 import { getAuthGateway } from "@/server/auth/gateway";
-import { getPortalShellData } from "@runtime/adult-portal";
+import { getPortalShellData } from "@/runtime/readers";
 
 export const metadata: Metadata = {
   title: "Portal",

@@ -105,12 +105,10 @@ export function proxy(request: NextRequest): NextResponse {
 
   response.headers.set(CORRELATION_HEADER, correlationId);
   response.headers.set("Content-Security-Policy", csp);
-  // Public activity links are opaque tokens in the URL path and are forwarded
-  // to GameMaker via ?activity_token. Use 'no-referrer' for those routes so
-  // the token never leaks via Referer, even same-origin. Other routes keep a
-  // stricter default.
+  // /jogar is the public play surface handed off to the GameMaker client.
+  // Keep 'no-referrer' so nothing about the player context leaks via Referer
+  // to third origins. Other routes keep a stricter default.
   const referrerPolicy =
-    request.nextUrl.pathname.startsWith("/atividade/") ||
     request.nextUrl.pathname === "/jogar" ||
     request.nextUrl.pathname.startsWith("/jogar/")
       ? "no-referrer"

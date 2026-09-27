@@ -5,7 +5,7 @@ import { PlayerResultsScreen } from "@/components/portal/results-screen";
 import {
   getPlayerResultsPageData,
   listStaticResultPlayerParams,
-} from "@runtime/game-events";
+} from "@/runtime/readers";
 
 export const metadata = { title: "Resultados do jogador" };
 

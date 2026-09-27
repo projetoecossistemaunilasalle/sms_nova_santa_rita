@@ -9,7 +9,7 @@ import type {
 } from "@/application/adult-portal/types";
 import type { RuntimeMode } from "@/runtime/mode";
 import { RecordStatus } from "@/generated/prisma/enums";
-import { createClassAction } from "@runtime/adult-portal-actions";
+import { createClassAction } from "@/runtime/actions";
 import { Icon } from "@/components/shared/icon";
 
 import { AdultPortalForm } from "./adult-portal-form";
@@ -83,8 +83,8 @@ export function ClassesScreen({
           <div>
             <h2>Nova turma</h2>
             <p>
-              O acesso numerado de jogadores será configurado em um próximo
-              slice.
+              Depois de criar a turma, adicione jogadores numerados e gere as
+              credenciais na página da turma.
             </p>
           </div>
           <AdultPortalForm action={createClassAction} submitLabel="Criar turma">

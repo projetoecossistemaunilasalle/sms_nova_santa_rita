@@ -25,3 +25,9 @@ Thumbs.db
 
 # Prisma generated client
 /src/generated/prisma
+
+# Generated runtime target entries (node scripts/next-target.mjs gen <target>)
+/src/runtime/actions.ts
+/src/runtime/readers.ts
+/src/runtime/client.ts
+/src/runtime/*.tmp

@@ -20,26 +20,7 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@runtime/sign-in-action": ["./src/app/(professional)/entrar/actions.ts"],
-      "@runtime/sign-out-action": [
-        "./src/app/(professional)/portal/sign-out-action.ts"
-      ],
-      "@runtime/adult-portal": ["./src/runtime/adult-portal-server.ts"],
-      "@runtime/adult-portal-actions": [
-        "./src/app/(professional)/portal/adult-portal-actions.ts"
-      ],
-      "@runtime/adult-portal-client": [
-        "./src/runtime/adult-portal-server-client.ts"
-      ],
-      "@runtime/player-access-actions": [
-        "./src/app/(professional)/portal/player-access-actions.ts"
-      ],
-      "@runtime/player-entry-action": [
-        "./src/app/(public-play)/jogar/actions.ts"
-      ],
-      "@runtime/player-access": ["./src/runtime/player-access-server.ts"],
-      "@runtime/game-events": ["./src/runtime/game-events-server.ts"]
+      "@/*": ["./src/*"]
     }
   },
   "include": [

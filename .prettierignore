@@ -6,3 +6,7 @@ contracts
 docs
 portal-v1-specification.md
 prisma/schema.prisma
+REFACTOR_PLAN.md
+src/runtime/actions.ts
+src/runtime/readers.ts
+src/runtime/client.ts

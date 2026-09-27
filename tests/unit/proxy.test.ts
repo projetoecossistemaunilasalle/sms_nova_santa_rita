@@ -23,4 +23,27 @@ describe("Proxy & Content Security Policy", () => {
     expect(response.headers.get("x-correlation-id")).toMatch(/^[0-9a-f-]{36}$/);
     expect(response.headers.get("X-Content-Type-Options")).toBe("nosniff");
   });
+
+  it("sets Referrer-Policy to no-referrer for /jogar", () => {
+    const request = new NextRequest("http://localhost:3000/jogar");
+    const response = proxy(request);
+
+    expect(response.headers.get("Referrer-Policy")).toBe("no-referrer");
+  });
+
+  it("sets Referrer-Policy to no-referrer for /jogar subpaths", () => {
+    const request = new NextRequest("http://localhost:3000/jogar/some-slug");
+    const response = proxy(request);
+
+    expect(response.headers.get("Referrer-Policy")).toBe("no-referrer");
+  });
+
+  it("keeps strict-origin-when-cross-origin for other routes", () => {
+    const request = new NextRequest("http://localhost:3000/entrar");
+    const response = proxy(request);
+
+    expect(response.headers.get("Referrer-Policy")).toBe(
+      "strict-origin-when-cross-origin",
+    );
+  });
 });

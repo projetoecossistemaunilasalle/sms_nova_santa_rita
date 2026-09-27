@@ -3,17 +3,28 @@ import { resolve } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
+import { IDBFactory } from "fake-indexeddb";
+
 import {
-  GameOfflineStore,
   OfflineRequestReuseError,
   OfflineSessionMismatchError,
-  type EventRequestIdentity,
-  type GameOfflinePersistence,
-  type QueuedActiveTime,
-  type QueuedEvent,
-  type QueuedResult,
-  type QueuedStateSave,
-} from "@/runtime/game-offline-sync";
+} from "@/runtime/offline/errors";
+import {
+  IndexedDbGameOfflinePersistence,
+  openDatabase,
+} from "@/runtime/offline/indexed-db";
+import {
+  GameOfflineStore,
+  openGameOfflineStore,
+} from "@/runtime/offline/sync-engine";
+import type {
+  EventRequestIdentity,
+  GameOfflinePersistence,
+  QueuedActiveTime,
+  QueuedEvent,
+  QueuedResult,
+  QueuedStateSave,
+} from "@/runtime/offline/types";
 import type {
   ActiveTimeSubmissionV1,
   PlayerBootstrapV1,
@@ -724,5 +735,61 @@ describe("GameOfflineStore", () => {
     expect(
       (await offline.getSyncStatus(bootstrap.player_id)).queuedStates,
     ).toBe(1);
+  });
+});
+
+describe("offline persistence lifecycle (IndexedDB)", () => {
+  it("persists a queued state save across close and reopen through the production store", async () => {
+    const bootstrap = fixture<PlayerBootstrapV1>(
+      "returning-player-bootstrap.json",
+    );
+    const request = fixture<StateSaveRequestV1>("state-save-request.json");
+    const factory = new IDBFactory();
+
+    const store = await openGameOfflineStore({ indexedDB: factory });
+    await store.cacheBootstrap(bootstrap);
+    const acknowledgement = await store.enqueueState(
+      bootstrap.player_id,
+      request,
+    );
+    expect(acknowledgement).toEqual({
+      type: "portal.local_durable.v1",
+      record_type: "state",
+      request_id: request.request_id,
+    });
+    store.close();
+
+    const reopened = await openGameOfflineStore({ indexedDB: factory });
+    try {
+      expect(await reopened.getSyncStatus(bootstrap.player_id)).toEqual({
+        queuedStates: 1,
+        queuedResults: 0,
+        queuedActiveTime: 0,
+        stateBlocked: false,
+      });
+      expect(await reopened.getNextExpectedRevision(bootstrap.player_id)).toBe(
+        bootstrap.revision + 1,
+      );
+    } finally {
+      reopened.close();
+    }
+
+    const database = await openDatabase(factory);
+    try {
+      const persistence = new IndexedDbGameOfflinePersistence(database);
+      const states = await persistence.listStates(bootstrap.player_id);
+      expect(states).toHaveLength(1);
+      const [queued] = states;
+      expect(queued?.id).toBe(1);
+      expect(queued?.playerId).toBe(bootstrap.player_id);
+      expect(queued?.requestId).toBe(request.request_id);
+      expect(queued?.request).toEqual({
+        ...request,
+        expected_revision: bootstrap.revision,
+      });
+      expect(typeof queued?.queuedAt).toBe("number");
+    } finally {
+      database.close();
+    }
   });
 });

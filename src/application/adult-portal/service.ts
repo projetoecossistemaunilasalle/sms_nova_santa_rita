@@ -10,8 +10,11 @@ import {
   canManageOrganizationStaff,
 } from "@/server/authorization/v1-policy";
 
+import { toAuthorizationActor } from "@/application/authorization/authorization-actor";
+
 import { AdultPortalError } from "./errors";
 import type { AdultPortalReader, AdultPortalStore } from "./ports";
+import { buildPortalShell } from "./shell-view-model";
 import type {
   AssignMembershipInput,
   AssignTeacherInput,
@@ -45,20 +48,6 @@ import type {
   TeamMemberDto,
   TeacherAssignmentDto,
 } from "./types";
-
-function authorizationActor(actor: ActorSnapshot) {
-  return {
-    profileStatus: actor.profileStatus,
-    platformRole: actor.platformRole,
-    memberships: actor.memberships.map((membership) => ({
-      organizationId: membership.organizationId,
-      organizationStatus: membership.organizationStatus,
-      role: membership.role,
-      status: membership.status,
-      teacherAssignments: membership.teacherAssignments,
-    })),
-  };
-}
 
 function activeOrganizationIds(actor: ActorSnapshot): string[] {
   if (actor.profileStatus !== RecordStatus.ACTIVE) return [];
@@ -120,90 +109,7 @@ export class AdultPortalService {
 
   async getShell(profileId: string): Promise<PortalShellDto> {
     const actor = await this.actor(profileId);
-    const role = effectiveRole(actor);
-    const activeMemberships = actor.memberships.filter(
-      (membership) =>
-        membership.status === RecordStatus.ACTIVE &&
-        membership.organizationStatus === RecordStatus.ACTIVE,
-    );
-    const names = [
-      ...new Set(activeMemberships.map((item) => item.organizationName)),
-    ];
-    const scopeLabel =
-      role === "platform_admin"
-        ? "Escopo de toda a plataforma"
-        : names.length === 0
-          ? "Sem organização ativa"
-          : names.length === 1
-            ? names[0]!
-            : `${names.length} organizações acessíveis`;
-    const navigation: PortalShellDto["navigation"] = [
-      {
-        href: "/portal",
-        label: "Visão geral",
-        icon: "home",
-        exact: true,
-        mobile: true,
-      },
-    ];
-    if (role !== "platform_admin") {
-      navigation.push(
-        {
-          href: "/portal/turmas",
-          label: "Turmas",
-          icon: "school",
-          mobile: true,
-        },
-        {
-          href: "/portal/resultados",
-          label: "Resultados",
-          icon: "chart",
-          mobile: true,
-        },
-      );
-    }
-    if (role === "platform_admin") {
-      navigation.push(
-        {
-          href: "/portal/admin/organizacoes",
-          label: "Organizações",
-          icon: "building",
-          mobile: true,
-        },
-        {
-          href: "/portal/admin/equipe",
-          label: "Equipe",
-          icon: "users",
-          mobile: true,
-        },
-      );
-    } else if (role === "organization_admin") {
-      navigation.push(
-        {
-          href: "/portal/admin/equipe",
-          label: "Equipe",
-          icon: "users",
-          mobile: true,
-        },
-        {
-          href: `/portal/admin/organizacoes/${activeMemberships[0]?.organizationId ?? ""}`,
-          label: "Minha organização",
-          icon: "building",
-          mobile: true,
-        },
-      );
-    }
-    return {
-      effectiveRole: role,
-      roleLabel:
-        role === "platform_admin"
-          ? "Administrador da plataforma"
-          : role === "organization_admin"
-            ? "Administrador da organização"
-            : "Professor",
-      scopeLabel,
-      navigation,
-    };
+    return buildPortalShell(actor, effectiveRole(actor));
   }
 
   async getOverview(profileId: string): Promise<PortalOverviewDto> {
@@ -236,7 +142,7 @@ export class AdultPortalService {
     profileId: string,
   ): Promise<OrganizationSummaryDto[]> {
     const actor = await this.actor(profileId);
-    if (canManageOrganizations(authorizationActor(actor))) {
+    if (canManageOrganizations(toAuthorizationActor(actor))) {
       return this.store.listOrganizations();
     }
     const adminOrganizationIds = actor.memberships
@@ -260,9 +166,9 @@ export class AdultPortalService {
     const actor = await this.actor(profileId);
     const organization = await this.store.getOrganization(organizationId);
     if (!organization) return notFound("Organização");
-    const platformAdmin = canManageOrganizations(authorizationActor(actor));
+    const platformAdmin = canManageOrganizations(toAuthorizationActor(actor));
     const organizationAdmin = canManageOrganizationStaff(
-      authorizationActor(actor),
+      toAuthorizationActor(actor),
       organizationId,
     );
     if (!platformAdmin && !organizationAdmin) forbidden();
@@ -283,7 +189,7 @@ export class AdultPortalService {
     const data = createOrganizationSchema.parse(input);
     return this.store.transaction(async (transaction) => {
       const actor = await this.actor(profileId, transaction);
-      if (!canManageOrganizations(authorizationActor(actor))) forbidden();
+      if (!canManageOrganizations(toAuthorizationActor(actor))) forbidden();
       return transaction.createOrganization(data);
     });
   }
@@ -295,7 +201,7 @@ export class AdultPortalService {
     const data = changeOrganizationStatusSchema.parse(input);
     return this.store.transaction(async (transaction) => {
       const actor = await this.actor(profileId, transaction);
-      if (!canManageOrganizations(authorizationActor(actor))) forbidden();
+      if (!canManageOrganizations(toAuthorizationActor(actor))) forbidden();
       if (!(await transaction.getOrganization(data.organizationId))) {
         return notFound("Organização");
       }
@@ -308,11 +214,11 @@ export class AdultPortalService {
 
   async listTeam(profileId: string): Promise<TeamMemberDto[]> {
     const actor = await this.actor(profileId);
-    if (canManageOrganizations(authorizationActor(actor))) {
+    if (canManageOrganizations(toAuthorizationActor(actor))) {
       return this.store.listMemberships();
     }
     const organizationIds = activeOrganizationIds(actor).filter((id) =>
-      canManageOrganizationStaff(authorizationActor(actor), id),
+      canManageOrganizationStaff(toAuthorizationActor(actor), id),
     );
     if (organizationIds.length === 0) forbidden();
     return this.store.listMemberships(organizationIds);
@@ -323,10 +229,10 @@ export class AdultPortalService {
   ): Promise<ProfessionalOptionDto[]> {
     const actor = await this.actor(profileId);
     const canManageAnyStaff = activeOrganizationIds(actor).some((id) =>
-      canManageOrganizationStaff(authorizationActor(actor), id),
+      canManageOrganizationStaff(toAuthorizationActor(actor), id),
     );
     if (
-      !canManageOrganizations(authorizationActor(actor)) &&
+      !canManageOrganizations(toAuthorizationActor(actor)) &&
       !canManageAnyStaff
     ) {
       forbidden();
@@ -341,7 +247,7 @@ export class AdultPortalService {
     const data = assignMembershipSchema.parse(input);
     return this.store.transaction(async (transaction) => {
       const actor = await this.actor(profileId, transaction);
-      if (!canManageOrganizations(authorizationActor(actor))) forbidden();
+      if (!canManageOrganizations(toAuthorizationActor(actor))) forbidden();
       await this.assertActiveOrganization(transaction, data.organizationId);
       await this.assertActiveProfile(transaction, data.profileId);
       const existing = await transaction.findMembership(
@@ -376,7 +282,7 @@ export class AdultPortalService {
       const actor = await this.actor(profileId, transaction);
       if (
         !canManageOrganizationStaff(
-          authorizationActor(actor),
+          toAuthorizationActor(actor),
           data.organizationId,
         )
       ) {
@@ -406,7 +312,7 @@ export class AdultPortalService {
       const actor = await this.actor(profileId, transaction);
       const membership = await transaction.getMembership(data.membershipId);
       if (!membership) return notFound("Vínculo");
-      const platformAdmin = canManageOrganizations(authorizationActor(actor));
+      const platformAdmin = canManageOrganizations(toAuthorizationActor(actor));
       if (platformAdmin) {
         const roleChanged = membership.role !== data.role;
         if (data.status === RecordStatus.ACTIVE || roleChanged) {
@@ -422,7 +328,7 @@ export class AdultPortalService {
       } else {
         if (
           !canManageOrganizationStaff(
-            authorizationActor(actor),
+            toAuthorizationActor(actor),
             membership.organizationId,
           ) ||
           membership.role !== OrganizationRole.TEACHER ||
@@ -446,7 +352,7 @@ export class AdultPortalService {
 
   async listClasses(profileId: string): Promise<ClassSummaryDto[]> {
     const actor = await this.actor(profileId);
-    const auth = authorizationActor(actor);
+    const auth = toAuthorizationActor(actor);
     const adminOrganizationIds = activeOrganizationIds(actor).filter((id) =>
       canManageClasses(auth, id),
     );
@@ -486,7 +392,7 @@ export class AdultPortalService {
     const actor = await this.actor(profileId);
     const classGroup = await this.store.getClass(classGroupId);
     if (!classGroup) return notFound("Turma");
-    const auth = authorizationActor(actor);
+    const auth = toAuthorizationActor(actor);
     const canManage = canManageClasses(auth, classGroup.organizationId);
     if (!canManage && !canAccessClass(auth, classGroup)) forbidden();
     return { ...classGroup, canManage };
@@ -496,7 +402,7 @@ export class AdultPortalService {
     const data = createClassSchema.parse(input);
     return this.store.transaction(async (transaction) => {
       const actor = await this.actor(profileId, transaction);
-      if (!canManageClasses(authorizationActor(actor), data.organizationId))
+      if (!canManageClasses(toAuthorizationActor(actor), data.organizationId))
         forbidden();
       await this.assertActiveOrganization(transaction, data.organizationId);
       return transaction.createClass(data);
@@ -510,7 +416,10 @@ export class AdultPortalService {
       const classGroup = await transaction.getClass(data.classGroupId);
       if (!classGroup) return notFound("Turma");
       if (
-        !canManageClasses(authorizationActor(actor), classGroup.organizationId)
+        !canManageClasses(
+          toAuthorizationActor(actor),
+          classGroup.organizationId,
+        )
       )
         forbidden();
       return transaction.updateClassStatus(data.classGroupId, data.status);
@@ -524,7 +433,10 @@ export class AdultPortalService {
       const classGroup = await transaction.getClass(data.classGroupId);
       if (!classGroup) return notFound("Turma");
       if (
-        !canManageClasses(authorizationActor(actor), classGroup.organizationId)
+        !canManageClasses(
+          toAuthorizationActor(actor),
+          classGroup.organizationId,
+        )
       )
         forbidden();
       if (classGroup.status !== RecordStatus.ACTIVE) {
@@ -576,7 +488,10 @@ export class AdultPortalService {
       const assignment = await transaction.getAssignment(data.assignmentId);
       if (!assignment) return notFound("Atribuição");
       if (
-        !canManageClasses(authorizationActor(actor), assignment.organizationId)
+        !canManageClasses(
+          toAuthorizationActor(actor),
+          assignment.organizationId,
+        )
       )
         forbidden();
       return transaction.updateAssignmentStatus(

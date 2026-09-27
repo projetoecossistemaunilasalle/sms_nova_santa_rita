@@ -11,6 +11,12 @@ import {
   readDemoGameSnapshot,
   saveDemoGameState,
 } from "@/components/public/demo-game-state";
+import {
+  applyProgressToBootstrap,
+  errorMessageForEntry,
+  newBootstrap,
+  readResponseJson,
+} from "@/components/public/game-host-model";
 
 describe("GameMaker host bridge", () => {
   it("accepts only contract-valid inbound messages", () => {
@@ -98,5 +104,68 @@ describe("deterministic demo game adapter state", () => {
       snapshot: first.snapshot,
     });
     expect(readDemoGameSnapshot("not-json")).toEqual({ status: "invalid" });
+  });
+});
+
+describe("player host model", () => {
+  it("derives a bootstrap from the saved snapshot or as a new player", () => {
+    const fresh = newBootstrap("player-1", "session-1", { status: "empty" });
+    expect(fresh).toMatchObject({
+      type: "portal.bootstrap.v1",
+      revision: 0,
+      new_player: true,
+      state: null,
+      player_id: "player-1",
+      class_session_id: "session-1",
+    });
+
+    const state = advanceDemoGameState(initialDemoGameState());
+    const returning = newBootstrap("player-1", "session-1", {
+      status: "valid",
+      snapshot: { revision: 3, state },
+    });
+    expect(returning).toMatchObject({
+      revision: 3,
+      new_player: false,
+      state,
+    });
+  });
+
+  it("applies authoritative progress onto the bootstrap as a returning player", () => {
+    const base = newBootstrap("player-1", "session-1", { status: "empty" });
+    const updated = applyProgressToBootstrap(
+      base,
+      7,
+      advanceDemoGameState(initialDemoGameState()),
+    );
+
+    expect(updated).toMatchObject({ revision: 7, new_player: false });
+    expect(updated.request_id).toBe(base.request_id);
+    expect(updated.player_id).toBe("player-1");
+  });
+
+  it("maps entry failures to orientation copy and reads response JSON defensively", async () => {
+    expect(errorMessageForEntry({ state: "ended" })).toContain("encerrada");
+    expect(errorMessageForEntry({ state: "expired" })).toContain(
+      "Escaneie o QR novamente",
+    );
+    expect(
+      errorMessageForEntry({
+        state: "waiting",
+        classGroupId: "class-1",
+        playerSlotId: "slot-1",
+        playerNumber: 1,
+      }),
+    ).toContain("não está jogando");
+    expect(errorMessageForEntry({ state: "revoked" })).toContain(
+      "não está mais disponível",
+    );
+
+    await expect(
+      readResponseJson(Response.json({ ok: true })),
+    ).resolves.toEqual({ ok: true });
+    await expect(
+      readResponseJson(new Response("not-json")),
+    ).resolves.toBeNull();
   });
 });

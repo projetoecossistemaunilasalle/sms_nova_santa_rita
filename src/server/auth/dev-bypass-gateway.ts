@@ -6,7 +6,7 @@ import type { ActorSession, PortalActor } from "./session";
  * deliberately non-real so synthetic data can never be confused with, or leak
  * into, production accounts or logs.
  */
-export const DEV_BYPASS_ACTOR: PortalActor = {
+const DEV_BYPASS_ACTOR: PortalActor = {
   profileId: "00000000-0000-4000-8000-000000000001",
   authUserId: "dev-bypass-local",
   displayName: "Adriana Martins",

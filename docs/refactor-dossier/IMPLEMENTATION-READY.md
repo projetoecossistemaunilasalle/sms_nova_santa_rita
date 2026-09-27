@@ -1,7 +1,8 @@
 # Refactor Implementation Runbook
 
-Revision: 2026-09-26. Inspected checkout: `780b0a8`. This is the only
-implementation work order for the refactor. `REFACTOR_PLAN.md`, the older
+Revision: 2026-09-26, amended 2026-09-27 (P30 server `actions.ts` wording).
+Inspected checkout: `780b0a8`. This is the only implementation
+work order for the refactor. `REFACTOR_PLAN.md`, the older
 `phases/*.md`, dossier reports, root `implementation_plan.md`, and
 `docs/implementation/*` are requirement or historical evidence, not parallel
 instructions. When they conflict with this runbook, this runbook wins.
@@ -268,9 +269,11 @@ Create concrete entries that re-export existing implementations:
 | Browser demo bridge/no-op bridge | `client.server.ts`  | `client.demo.ts`  | `client.ts`              |
 
 The generated files contain a directive header where required, followed only by
-literal named re-exports for the selected target. Server `actions.ts` starts with
-`"use server"`; demo `actions.ts` remains directive-free so its functions are
-ordinary browser-callable async functions. `readers.ts` imports `server-only`;
+literal named re-exports for the selected target. Server `actions.ts` is a
+bare re-export barrel — the installed Turbopack rejects re-exports in a
+`"use server"` file, so the directive lives on the implementation files; demo
+`actions.ts` remains directive-free so its functions are ordinary
+browser-callable async functions. `readers.ts` imports `server-only`;
 `client.ts` starts with `"use client"`. Action implementations remain in their
 dedicated files with module-level `"use server"` where applicable. Convert
 `src/app/(professional)/entrar/actions.ts` from a function-level directive to a
@@ -508,6 +511,6 @@ revert is not database recovery.
 
 Three independent GPT-5.6 Luna/max reviews inspected the dossier, current code,
 and test scope. The implementation choices above also reflect the installed
-Next.js 16.3.2 guides and the September 25 audit set. The older dossier remains
+Next.js 16.3.6 guides and the September 25 audit set. The older dossier remains
 useful evidence for the closed deletion manifest and discovered edge cases, but
 none of its superseded gates or compatibility rulings are additional work.

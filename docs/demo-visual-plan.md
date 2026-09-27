@@ -1,8 +1,11 @@
 # Plano de demonstração visual do portal
 
-Status: plano de curto prazo para uma demonstração navegável e visual do `SMS_Portal`.
+> **Status: documento histórico.** Este plano descreve a geração anterior do portal
+> (rotas de atividades/materiais, links de acesso e serviços como `portal-view-service.ts`)
+> que foi removida do produto. Não é orientação de implementação atual; consulte
+> `docs/current-architecture.md` e `docs/refactor-dossier/IMPLEMENTATION-READY.md`.
 
-Este documento **não substitui** `PRODUCT.md` nem `docs/current-architecture.md`. O objetivo aqui é organizar uma camada de demonstração rápida, reaproveitável e coerente com o portal profissional atual, priorizando navegação, telas e percepção do produto antes da implementação completa de persistência e regras de produção.
+Este documento **não substitui** `PRODUCT.md` nem `docs/current-architecture.md`. O objetivo aqui era organizar uma camada de demonstração rápida, reaproveitável e coerente com o portal profissional da época, priorizando navegação, telas e percepção do produto antes da implementação completa de persistência e regras de produção.
 
 ## Objetivo
 

@@ -9,9 +9,3 @@ export function getRuntimeMode(
 ): RuntimeMode {
   return runtimeModeSchema.parse(environment.APP_RUNTIME_MODE);
 }
-
-export function isDemoRuntime(
-  environment: Record<string, string | undefined> = process.env,
-): boolean {
-  return getRuntimeMode(environment) === "demo";
-}

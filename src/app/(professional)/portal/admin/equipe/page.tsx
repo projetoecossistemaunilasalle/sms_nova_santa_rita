@@ -1,6 +1,6 @@
 import { TeamScreen } from "@/components/portal/team-screen";
 import { getRuntimeMode } from "@/runtime/mode";
-import { getTeamPageData } from "@runtime/adult-portal";
+import { getTeamPageData } from "@/runtime/readers";
 
 export const metadata = { title: "Equipe" };
 

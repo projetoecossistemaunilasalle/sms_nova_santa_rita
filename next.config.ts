@@ -39,46 +39,6 @@ const nextConfig = (phase: string): NextConfig => ({
         ? "/SMS_Portal"
         : "",
   },
-  turbopack: {
-    resolveAlias: {
-      "@runtime/sign-in-action":
-        runtimeMode === "demo"
-          ? "./src/runtime/demo-auth-actions.ts"
-          : "./src/app/(professional)/entrar/actions.ts",
-      "@runtime/sign-out-action":
-        runtimeMode === "demo"
-          ? "./src/runtime/demo-auth-actions.ts"
-          : "./src/app/(professional)/portal/sign-out-action.ts",
-      "@runtime/adult-portal":
-        runtimeMode === "demo"
-          ? "./src/runtime/adult-portal-demo.ts"
-          : "./src/runtime/adult-portal-server.ts",
-      "@runtime/adult-portal-actions":
-        runtimeMode === "demo"
-          ? "./src/runtime/adult-portal-demo-actions.ts"
-          : "./src/app/(professional)/portal/adult-portal-actions.ts",
-      "@runtime/adult-portal-client":
-        runtimeMode === "demo"
-          ? "./src/runtime/adult-portal-demo-client.ts"
-          : "./src/runtime/adult-portal-server-client.ts",
-      "@runtime/player-access-actions":
-        runtimeMode === "demo"
-          ? "./src/runtime/player-access-demo-actions.ts"
-          : "./src/app/(professional)/portal/player-access-actions.ts",
-      "@runtime/player-entry-action":
-        runtimeMode === "demo"
-          ? "./src/runtime/player-entry-demo-actions.ts"
-          : "./src/app/(public-play)/jogar/actions.ts",
-      "@runtime/player-access":
-        runtimeMode === "demo"
-          ? "./src/runtime/player-access-demo.ts"
-          : "./src/runtime/player-access-server.ts",
-      "@runtime/game-events":
-        runtimeMode === "demo"
-          ? "./src/runtime/game-events-demo.ts"
-          : "./src/runtime/game-events-server.ts",
-    },
-  },
 });
 
 export default nextConfig;

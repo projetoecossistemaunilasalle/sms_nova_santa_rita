@@ -1,5 +1,12 @@
 # V1 Game Integration Dossier
 
+> **Status: historical planning record.** This dossier recorded the V1 product
+> and integration direction when it was written. It has been superseded by
+> [`refactor-dossier/IMPLEMENTATION-READY.md`](refactor-dossier/IMPLEMENTATION-READY.md)
+> and [`current-architecture.md`](current-architecture.md); the body below is
+> kept unedited for historical research and must not be followed as current
+> guidance.
+
 Status: V1 product and implementation direction  
 Last aligned: 22 September 2026  
 Scope: first production-capable version of the portal working end to end with the existing GameMaker game

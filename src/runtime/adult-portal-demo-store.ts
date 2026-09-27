@@ -343,13 +343,65 @@ export function createDemoProfileId(): string {
   return demoId("profile");
 }
 
+type DemoStateCollections = Omit<
+  DemoAdultPortalState,
+  "version" | "activeProfileId"
+>;
+
+const DEMO_STATE_COLLECTION_FIELDS: {
+  [K in keyof DemoStateCollections]: readonly string[];
+} = {
+  profiles: ["id", "displayName", "status", "platformRole"],
+  organizations: ["id", "name", "type", "status"],
+  memberships: ["id", "profileId", "organizationId", "role", "status"],
+  classes: ["id", "organizationId", "name", "status", "nextPlayerNumber"],
+  assignments: ["id", "membershipId", "classGroupId", "status"],
+  playerSlots: ["id", "classGroupId", "playerNumber", "status", "createdAt"],
+  playerCredentials: [
+    "id",
+    "playerSlotId",
+    "token",
+    "tokenHash",
+    "status",
+    "createdAt",
+    "revokedAt",
+  ],
+  gameSessions: ["id", "classGroupId", "status", "startedAt", "endedAt"],
+  participations: ["id", "gameSessionId", "playerSlotId", "joinedAt"],
+};
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isValidDemoAdultPortalState(
+  value: unknown,
+): value is DemoAdultPortalState {
+  if (!isPlainObject(value)) return false;
+  if (value.version !== 2) return false;
+  if (typeof value.activeProfileId !== "string") return false;
+  return (
+    Object.keys(DEMO_STATE_COLLECTION_FIELDS) as (keyof DemoStateCollections)[]
+  ).every((key) => {
+    const entries: unknown = value[key];
+    if (!Array.isArray(entries)) return false;
+    return entries.every(
+      (entry) =>
+        isPlainObject(entry) &&
+        DEMO_STATE_COLLECTION_FIELDS[key].every((field) =>
+          Object.hasOwn(entry, field),
+        ),
+    );
+  });
+}
+
 export function readDemoAdultPortalState(): DemoAdultPortalState {
   if (typeof window === "undefined") return cloneSeed();
   const stored = window.localStorage.getItem(DEMO_ADULT_PORTAL_STORAGE_KEY);
   if (!stored) return cloneSeed();
   try {
-    const value = JSON.parse(stored) as DemoAdultPortalState;
-    return value.version === 2 ? value : cloneSeed();
+    const value: unknown = JSON.parse(stored);
+    return isValidDemoAdultPortalState(value) ? value : cloneSeed();
   } catch {
     return cloneSeed();
   }
@@ -389,10 +441,16 @@ export class DemoAdultPortalStore
 {
   constructor(readonly state: DemoAdultPortalState = cloneSeed()) {}
 
-  transaction<T>(
+  async transaction<T>(
     work: (transaction: AdultPortalTransaction) => Promise<T>,
   ): Promise<T> {
-    return work(this);
+    const before = structuredClone(this.state);
+    try {
+      return await work(this);
+    } catch (error) {
+      Object.assign(this.state, before);
+      throw error;
+    }
   }
 
   async getActor(profileId: string): Promise<ActorSnapshot | null> {

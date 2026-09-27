@@ -19,7 +19,7 @@ import {
   endClassSessionAction,
   rotatePlayerCredentialAction,
   startClassSessionAction,
-} from "@runtime/player-access-actions";
+} from "@/runtime/actions";
 import { Icon } from "@/components/shared/icon";
 import { printablePlayerCredentials } from "./player-credential-printing";
 

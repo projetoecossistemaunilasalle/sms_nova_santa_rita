@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import type { ActorSession } from "@/server/auth/session";
 import type { RuntimeMode } from "@/runtime/mode";
 import type { PortalShellDto } from "@/application/adult-portal/types";
-import { signOutAction } from "@runtime/sign-out-action";
+import { signOutAction } from "@/runtime/actions";
 import { Icon } from "@/components/shared/icon";
 import { PortalNavigation } from "./portal-navigation";
 import { DemoRoleControls } from "./demo-role-controls";

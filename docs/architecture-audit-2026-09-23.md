@@ -1,5 +1,13 @@
 # Architecture audit and remediation plan
 
+> **Status: historical document.** This audit describes the pre-refactor
+> architecture at commit `d4af23c`, including the retired Generation-A product
+> (access links, activities/materials/modules, capability authorization). It is
+> retained as historical evidence and is not current implementation guidance;
+> see
+> [docs/refactor-dossier/IMPLEMENTATION-READY.md](refactor-dossier/IMPLEMENTATION-READY.md)
+> and [docs/current-architecture.md](current-architecture.md) instead.
+
 Status: Findings verified against commit `d4af23c` plus the uncommitted working tree of 23 September 2026.
 Audit date: 23 September 2026.
 Scope: portal (`src/app`), application services, persistence, runtime composition, player host, contracts, tests, CI.

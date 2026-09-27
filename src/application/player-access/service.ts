@@ -1,7 +1,7 @@
 import { PlayerCredentialStatus, RecordStatus } from "@/generated/prisma/enums";
 import { canAccessClass } from "@/server/authorization/v1-policy";
 import { AdultPortalError } from "@/application/adult-portal/errors";
-import type { ActorSnapshot } from "@/application/adult-portal/types";
+import { toAuthorizationActor } from "@/application/authorization/authorization-actor";
 
 import type {
   PlayerAccessReader,
@@ -10,20 +10,6 @@ import type {
   PlayerCredentialIssuer,
 } from "./ports";
 import type { ClassScope, IssuedPlayerSlotDto } from "./types";
-
-function authorizationActor(actor: ActorSnapshot) {
-  return {
-    profileStatus: actor.profileStatus,
-    platformRole: actor.platformRole,
-    memberships: actor.memberships.map((membership) => ({
-      organizationId: membership.organizationId,
-      organizationStatus: membership.organizationStatus,
-      role: membership.role,
-      status: membership.status,
-      teacherAssignments: membership.teacherAssignments,
-    })),
-  };
-}
 
 function fail(
   code: "FORBIDDEN" | "NOT_FOUND" | "CONFLICT",
@@ -54,7 +40,7 @@ export class PlayerAccessService {
     if (!classGroup) return fail("NOT_FOUND", "Turma não encontrada.");
     if (
       classGroup.organizationStatus !== RecordStatus.ACTIVE ||
-      !canAccessClass(authorizationActor(actor), classGroup)
+      !canAccessClass(toAuthorizationActor(actor), classGroup)
     ) {
       return fail("FORBIDDEN", "Você não pode operar esta turma.");
     }

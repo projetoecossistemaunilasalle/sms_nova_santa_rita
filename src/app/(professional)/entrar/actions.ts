@@ -1,3 +1,5 @@
+"use server";
+
 import { redirect } from "next/navigation";
 
 import { getRuntimeMode } from "@/runtime/mode";
@@ -13,8 +15,6 @@ import { isAuthDevBypassEnabled } from "@/server/config/env";
  * inside the official Neon Auth server adapter.
  */
 export async function signInAction(formData: FormData): Promise<void> {
-  "use server";
-
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   if (getRuntimeMode() !== "server") {

@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import type { PlayerEntryActionResult } from "@/application/player-access/types";
 import { Icon, type IconName } from "@/components/shared/icon";
 import type { RuntimeMode } from "@/runtime/mode";
-import { resolvePlayerEntryAction } from "@runtime/player-entry-action";
+import { resolvePlayerEntryAction } from "@/runtime/actions";
 import { GameHost } from "./game-host";
 import { readPlayerEntryCredential } from "./player-entry-credential";
 

@@ -13,7 +13,7 @@ import {
   assignTeacherMembershipAction,
   changeMembershipAction,
   createDemoProfessionalAction,
-} from "@runtime/adult-portal-actions";
+} from "@/runtime/actions";
 
 import { AdultPortalForm } from "./adult-portal-form";
 import {

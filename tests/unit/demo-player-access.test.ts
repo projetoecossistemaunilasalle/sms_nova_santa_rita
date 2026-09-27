@@ -9,6 +9,7 @@ import {
   DEMO_ORGANIZATION_IDS,
   DEMO_PLAYER_TOKENS,
   DEMO_PROFILE_IDS,
+  DemoAdultPortalStore,
   DemoPlayerAccessStore,
   demoAdultPortalSeed,
   readDemoAdultPortalState,
@@ -74,6 +75,74 @@ describe("demo player access", () => {
       ),
     ).toBe(true);
     expect(DEMO_ADULT_PORTAL_STORAGE_KEY).toContain(":v2");
+  });
+
+  it("rolls back a rejected nested transaction in place, preserving state identity", async () => {
+    const store = new DemoAdultPortalStore(
+      structuredClone(demoAdultPortalSeed),
+    );
+    const before = store.state;
+
+    await expect(
+      store.transaction(async (outer) => {
+        await outer.createOrganization({
+          name: "Organização externa",
+          type: "Escola municipal",
+        });
+        await store.transaction(async (inner) => {
+          await inner.createClass({
+            organizationId: DEMO_ORGANIZATION_IDS.VICTOR_AGGENS,
+            name: "Turma interna",
+          });
+          throw new Error("falha aninhada");
+        });
+      }),
+    ).rejects.toThrow("falha aninhada");
+
+    expect(store.state).toBe(before);
+    expect(store.state.organizations).toHaveLength(
+      demoAdultPortalSeed.organizations.length,
+    );
+    expect(store.state.classes).toHaveLength(
+      demoAdultPortalSeed.classes.length,
+    );
+  });
+
+  it("commits a successful transaction in place without replacing state identity", async () => {
+    const store = new DemoAdultPortalStore(
+      structuredClone(demoAdultPortalSeed),
+    );
+    const before = store.state;
+
+    const created = await store.transaction((transaction) =>
+      transaction.createOrganization({
+        name: "Organização confirmada",
+        type: "Escola municipal",
+      }),
+    );
+
+    expect(store.state).toBe(before);
+    expect(created.id).toMatch(/^demo-organization-/);
+    expect(
+      store.state.organizations.some(
+        (organization) => organization.id === created.id,
+      ),
+    ).toBe(true);
+  });
+
+  it("falls back to the seed when persisted state is current-version but malformed", () => {
+    storage.set(
+      DEMO_ADULT_PORTAL_STORAGE_KEY,
+      JSON.stringify({
+        ...structuredClone(demoAdultPortalSeed),
+        activeProfileId: DEMO_PROFILE_IDS.SECOND_TEACHER,
+        organizations: null,
+      }),
+    );
+
+    const fallback = readDemoAdultPortalState();
+    expect(fallback).toEqual(demoAdultPortalSeed);
+    expect(fallback).not.toBe(demoAdultPortalSeed);
   });
 
   it("allocates monotonically after a previously used number disappears", async () => {

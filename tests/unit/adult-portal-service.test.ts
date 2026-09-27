@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 
 import { AdultPortalService } from "@/application/adult-portal/service";
+import type { AdultRole } from "@/application/adult-portal/types";
 import { OrganizationRole, RecordStatus } from "@/generated/prisma/enums";
+import type { DemoAdultPortalState } from "@/runtime/adult-portal-demo-store";
 import {
   DEMO_CLASS_IDS,
   DEMO_ORGANIZATION_IDS,
@@ -260,5 +262,95 @@ describe("AdultPortalService", () => {
         profileId: DEMO_PROFILE_IDS.ORGANIZATION_ADMIN,
       }),
     ).rejects.toMatchObject({ code: "CONFLICT" });
+  });
+});
+
+type ShellScopeCase = {
+  name: string;
+  profileId: string;
+  prepare?: (state: DemoAdultPortalState) => void;
+  effectiveRole: AdultRole;
+  roleLabel: string;
+  scopeLabel: string;
+  navigation: string[];
+};
+
+const shellScopeCases: ShellScopeCase[] = [
+  {
+    name: "platform admin",
+    profileId: DEMO_PROFILE_IDS.PLATFORM_ADMIN,
+    effectiveRole: "platform_admin",
+    roleLabel: "Administrador da plataforma",
+    scopeLabel: "Escopo de toda a plataforma",
+    navigation: [
+      "/portal",
+      "/portal/admin/organizacoes",
+      "/portal/admin/equipe",
+    ],
+  },
+  {
+    name: "organization admin",
+    profileId: DEMO_PROFILE_IDS.ORGANIZATION_ADMIN,
+    effectiveRole: "organization_admin",
+    roleLabel: "Administrador da organização",
+    scopeLabel: "EMEF Victor Aggens",
+    navigation: [
+      "/portal",
+      "/portal/turmas",
+      "/portal/resultados",
+      "/portal/admin/equipe",
+      `/portal/admin/organizacoes/${DEMO_ORGANIZATION_IDS.VICTOR_AGGENS}`,
+    ],
+  },
+  {
+    name: "teacher",
+    profileId: DEMO_PROFILE_IDS.TEACHER,
+    effectiveRole: "teacher",
+    roleLabel: "Professor",
+    scopeLabel: "EMEF Victor Aggens",
+    navigation: ["/portal", "/portal/turmas", "/portal/resultados"],
+  },
+  {
+    name: "inactive membership",
+    profileId: DEMO_PROFILE_IDS.TEACHER,
+    prepare: (state) => {
+      state.memberships.find(
+        (item) => item.id === "demo-membership-teacher",
+      )!.status = RecordStatus.INACTIVE;
+    },
+    effectiveRole: "teacher",
+    roleLabel: "Professor",
+    scopeLabel: "Sem organização ativa",
+    navigation: ["/portal", "/portal/turmas", "/portal/resultados"],
+  },
+  {
+    name: "no membership",
+    profileId: "demo-profile-no-membership",
+    prepare: (state) => {
+      state.profiles.push({
+        id: "demo-profile-no-membership",
+        displayName: "Perfil Sem Vínculo",
+        status: RecordStatus.ACTIVE,
+        platformRole: null,
+      });
+    },
+    effectiveRole: "teacher",
+    roleLabel: "Professor",
+    scopeLabel: "Sem organização ativa",
+    navigation: ["/portal", "/portal/turmas", "/portal/resultados"],
+  },
+];
+
+describe("AdultPortalService getShell", () => {
+  it.each(shellScopeCases)("$name shell", async (scope) => {
+    const { service, state } = setup();
+    scope.prepare?.(state);
+
+    const shell = await service.getShell(scope.profileId);
+
+    expect(shell.effectiveRole).toBe(scope.effectiveRole);
+    expect(shell.roleLabel).toBe(scope.roleLabel);
+    expect(shell.scopeLabel).toBe(scope.scopeLabel);
+    expect(shell.navigation.map((item) => item.href)).toEqual(scope.navigation);
   });
 });

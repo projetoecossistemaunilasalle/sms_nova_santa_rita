@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import type { DemoAdultPortalState } from "@/runtime/adult-portal-demo-store";
-import { loadClientPortalState } from "@runtime/adult-portal-client";
+import { loadClientPortalState } from "@/runtime/client";
 
 export function useDemoPortalState(): DemoAdultPortalState | null {
   const [state, setState] = useState<DemoAdultPortalState | null>(null);

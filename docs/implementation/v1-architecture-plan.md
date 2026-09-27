@@ -1,5 +1,13 @@
 # V1 architecture implementation plan
 
+> **Status: historical planning record.** This plan recorded the transition from
+> the earlier access-link generation to the numbered-player V1 direction. It has
+> been superseded by
+> [`../refactor-dossier/IMPLEMENTATION-READY.md`](../refactor-dossier/IMPLEMENTATION-READY.md)
+> and [`../current-architecture.md`](../current-architecture.md); the body below
+> is kept unedited for historical research and must not be followed as current
+> guidance.
+
 Status: Ready for portal implementation; live GameMaker validation requires the
 companion HTML5 bridge and state import/export work.
 Source of truth: [`../current-architecture.md`](../current-architecture.md) and

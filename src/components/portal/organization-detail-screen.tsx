@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { OrganizationDetailDto } from "@/application/adult-portal/types";
 import type { RuntimeMode } from "@/runtime/mode";
 import { OrganizationRole, RecordStatus } from "@/generated/prisma/enums";
-import { changeOrganizationStatusAction } from "@runtime/adult-portal-actions";
+import { changeOrganizationStatusAction } from "@/runtime/actions";
 import { Icon } from "@/components/shared/icon";
 
 import { AdultPortalForm } from "./adult-portal-form";

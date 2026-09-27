@@ -5,7 +5,6 @@ export type IconName =
   | "archive"
   | "arrow"
   | "building"
-  | "book"
   | "calendar"
   | "chart"
   | "check"
@@ -14,7 +13,6 @@ export type IconName =
   | "close"
   | "copy"
   | "download"
-  | "edit"
   | "external"
   | "filter"
   | "flag"
@@ -22,13 +20,11 @@ export type IconName =
   | "grid"
   | "history"
   | "home"
-  | "link"
   | "lock"
   | "logout"
   | "menu"
   | "module"
   | "more"
-  | "paperclip"
   | "pause"
   | "play"
   | "plus"
@@ -86,12 +82,6 @@ export function Icon({ name, ...props }: IconProps) {
           <path d="M7 13v5c3 2 7 2 10 0v-5M21 10v6" />
         </>
       )}
-      {name === "book" && (
-        <>
-          <path d="M4 5.5A3.5 3.5 0 0 1 7.5 2H11v17H7.5A3.5 3.5 0 0 0 4 22Z" />
-          <path d="M20 5.5A3.5 3.5 0 0 0 16.5 2H13v17h3.5A3.5 3.5 0 0 1 20 22Z" />
-        </>
-      )}
       {name === "chevron" && <path d="m9 18 6-6-6-6" />}
       {name === "more" && (
         <>
@@ -109,12 +99,6 @@ export function Icon({ name, ...props }: IconProps) {
         </>
       )}
       {name === "download" && <path d="M12 3v12m-5-5 5 5 5-5M5 21h14" />}
-      {name === "link" && (
-        <>
-          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-        </>
-      )}
       {name === "shield" && (
         <>
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
@@ -152,9 +136,6 @@ export function Icon({ name, ...props }: IconProps) {
           <path d="M4 15v5h16v-5" />
         </>
       )}
-      {name === "paperclip" && (
-        <path d="m21.4 11.6-8.9 8.9a6 6 0 0 1-8.5-8.5l9.6-9.6a4 4 0 0 1 5.7 5.7l-9.7 9.6a2 2 0 0 1-2.8-2.8l8.9-8.9" />
-      )}
       {name === "settings" && (
         <>
           <circle cx="12" cy="12" r="3" />
@@ -179,9 +160,6 @@ export function Icon({ name, ...props }: IconProps) {
           <rect x="3" y="5" width="18" height="16" rx="2" />
           <path d="M16 3v4M8 3v4M3 10h18" />
         </>
-      )}
-      {name === "edit" && (
-        <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z" />
       )}
       {name === "external" && <path d="M14 3h7v7m0-7-9 9M19 13v7H4V5h7" />}
       {name === "menu" && <path d="M4 6h16M4 12h16M4 18h16" />}

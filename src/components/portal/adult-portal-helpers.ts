@@ -133,9 +133,6 @@ export function isPortalNavigationItemCurrent(
   const itemPath = item.href.replace(/\/+$/, "") || "/";
 
   if (item.exact) return routePath === itemPath;
-  if (item.label === "Links de acesso") {
-    return routePath.startsWith(itemPath) && !routePath.endsWith("/resultados");
-  }
   if (item.label === "Resultados") {
     return routePath.endsWith("/resultados");
   }

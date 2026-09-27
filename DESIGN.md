@@ -228,7 +228,7 @@ A paleta combina natureza, escola e sinalização: bases quentes e calmas recebe
 
 ### Hierarchy
 
-- **Display:** peso forte, escala fluida ampla, linha compacta e tracking negativo; reservado a entradas e estados públicos de atividade.
+- **Display:** peso forte, escala fluida ampla, linha compacta e tracking negativo; reservado a entradas e estados públicos da entrada do jogador.
 - **Headline:** peso forte, escala fluida média e linha fechada; usado em títulos de página, detalhes e chamadas principais.
 - **Title:** arredondado e compacto; usado em cartões, painéis e seções.
 - **Body:** peso regular, linha confortável; descrições devem permanecer curtas e, quando longas, limitar-se aproximadamente a 65–75 caracteres por linha.
@@ -244,19 +244,22 @@ A paleta combina natureza, escola e sinalização: bases quentes e calmas recebe
 Nao existe landing page ou homepage de marketing. O portal profissional/admin usa
 sidebar fixa de 248px, topbar aderente de 76px e conteudo com padding fluido ate 52px.
 As grades privilegiam a tarefa principal e mantem paineis de resumo mais estreitos;
-listas operacionais podem usar uma linha por link de acesso sem se tornarem um catalogo de
+listas operacionais podem usar uma linha por jogador numerado sem se tornarem um catalogo de
 jogos ou uma entrada para participantes.
 
-A superficie publica comeca somente na rota alcancada pelo link personalizado e opaco.
+A superficie publica comeca somente na rota /jogar, alcancada pela credencial do
+jogador: o QR do cartao impresso aponta para essa rota com o codigo de acesso.
 Ela usa um contenedor central de ate 760px, margens laterais de 20px e uma composicao
-que prioriza o titulo da atividade, o estado e o proximo passo para o jogo GameMaker.
-Nao ha navegacao publica para descobrir atividades e o portal nao deve iniciar o jogo.
+que prioriza o reconhecimento do cartao, o estado da sessao e o proximo passo para o
+jogo GameMaker. Nao ha navegacao publica para descobrir atividades e o portal nao
+inicia o jogo: ele entrega o contexto ao cliente GameMaker.
 
 Em ate 1120px, grades do portal simplificam colunas secundarias. Em ate 900px, a
-sidebar vira navegacao inferior com cinco destinos e o conteudo passa a uma coluna. Em
-ate 760px, a entrada publica permanece em uma coluna; em ate 680px, cabecalhos
-empilham e metadados secundarios podem ser ocultados. A ausencia de landing page nao
-deve ser substituida por uma lista publica de atividades.
+sidebar vira navegacao inferior em uma grade de quatro colunas — quando o papel
+tem cinco destinos, o quinto item quebra para uma segunda linha — e o conteudo
+passa a uma coluna. Em ate 760px, a entrada publica permanece em uma coluna; em
+ate 680px, cabecalhos empilham e metadados secundarios podem ser ocultados. A
+ausencia de landing page nao deve ser substituida por uma lista publica de atividades.
 
 **The Tarefa Primeiro Rule.** Quando a largura diminui, preserve ação, título, estado e próximo passo; remova métricas e contexto secundário antes de reduzir a legibilidade.
 
@@ -269,8 +272,8 @@ O sistema é híbrido: ações são táteis e superfícies são leves. Botões p
 - **Pressão verde** (`0 5px 0 var(--green-dark)`): botões principais e controles de maior compromisso.
 - **Pressão amarela** (`0 4px 0 #9f7b10`): navegação ativa do portal e seleções locais que funcionam como marcos físicos.
 - **Elevação discreta** (`0 10px 24px rgb(35 64 46 / 7%)`): resposta de hover em linhas e cartões operacionais.
-- **Elevação de catálogo** (`0 14px 35px rgb(35 64 46 / 9%)`): nao usada para listas ou descoberta de atividades; fica reservada a destaques da entrada quando necessario.
-- **Elevação de missão** (`0 28px 65px rgb(35 64 46 / 16%)`): arte ou cartao de entrada da atividade e estados publicos excepcionais.
+- **Elevação de catálogo** (`0 14px 35px rgb(35 64 46 / 9%)`): nao usada para listas operacionais; fica reservada a destaques da entrada quando necessario.
+- **Elevação de missão** (`0 28px 65px rgb(35 64 46 / 16%)`): arte ou cartao de entrada do jogador e estados publicos excepcionais.
 
 **The Leve em Repouso Rule.** Cartões de trabalho permanecem planos por padrão. Sombras amplas indicam destaque, interação ou uma experiência pública, nunca apenas separação básica.
 
@@ -322,17 +325,18 @@ publica usa a mesma linguagem sem se tornar um atalho para outras atividades.
 
 No portal, a navegacao desktop usa Tinta Floresta como painel, links claros e uma
 trilha vertical pontilhada. O destino ativo vira uma aba Amarelo Marco com sombra curta.
-No mobile, a navegacao desce para uma barra fixa de cinco destinos. Essa navegacao e
+No mobile, a navegacao desce para uma barra fixa em grade de quatro colunas; papeis
+com cinco destinos tem o quinto item quebrado para uma segunda linha. Essa navegacao e
 exclusiva do trabalho profissional/admin e nao deve abrir o jogo para participantes.
 
-Na superficie publica nao ha navegacao persistente. A atividade e alcancada pelo link
-personalizado e opaco; controles locais devem limitar-se ao estado atual e ao handoff
-para o cliente GameMaker. Nao criar links para homepage, catalogo publico ou outras
-atividades.
+Na superficie publica nao ha navegacao persistente. A entrada acontece pela credencial
+do jogador: o QR do cartao impresso aponta para /jogar com o codigo de acesso; os
+controles locais devem limitar-se ao estado atual e ao handoff para o cliente
+GameMaker. Nao criar links para homepage, catalogo publico ou outras atividades.
 
 ### Mission Card
 
-O cartao de entrada da atividade e a expressao mais ampla do sistema: composicao em
+O cartao de entrada do jogador e a expressao mais ampla do sistema: composicao em
 duas colunas, arte tonal, borda branca espessa, canto marcado e titulo de grande escala.
 Em telas estreitas, arte e conteudo empilham sem perder o primeiro proximo passo para o
 jogo GameMaker.
@@ -347,7 +351,7 @@ jogo GameMaker.
 - **Do** usar um único canto marcado para dar assinatura a cartões e marcos de missão.
 - **Do** manter transições operacionais entre 150–170ms e desativar movimento não essencial quando `prefers-reduced-motion` estiver ativo.
 - **Do** preservar tarefa, estado e proximo passo antes de qualquer metadado secundario.
-- **Do** manter a navegacao do portal separada da entrada publica por link.
+- **Do** manter a navegacao do portal separada da entrada publica por credencial.
 
 ### Don't:
 

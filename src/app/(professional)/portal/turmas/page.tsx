@@ -1,6 +1,6 @@
 import { ClassesScreen } from "@/components/portal/classes-screen";
 import { getRuntimeMode } from "@/runtime/mode";
-import { getClassesPageData } from "@runtime/adult-portal";
+import { getClassesPageData } from "@/runtime/readers";
 
 export const metadata = { title: "Turmas" };
 

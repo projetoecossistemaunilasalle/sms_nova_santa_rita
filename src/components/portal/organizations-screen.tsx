@@ -11,7 +11,7 @@ import { RecordStatus } from "@/generated/prisma/enums";
 import {
   changeOrganizationStatusAction,
   createOrganizationAction,
-} from "@runtime/adult-portal-actions";
+} from "@/runtime/actions";
 import { Icon } from "@/components/shared/icon";
 
 import { AdultPortalForm } from "./adult-portal-form";

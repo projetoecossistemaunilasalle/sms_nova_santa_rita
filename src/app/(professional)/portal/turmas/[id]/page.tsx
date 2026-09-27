@@ -3,8 +3,11 @@ import { notFound, redirect } from "next/navigation";
 import { AdultPortalError } from "@/application/adult-portal/errors";
 import { ClassDetailScreen } from "@/components/portal/class-detail-screen";
 import { getRuntimeMode } from "@/runtime/mode";
-import { getClassPageData, listStaticClassIds } from "@runtime/adult-portal";
-import { getPlayerAccessPageData } from "@runtime/player-access";
+import {
+  getClassPageData,
+  getPlayerAccessPageData,
+  listStaticClassIds,
+} from "@/runtime/readers";
 
 export const metadata = { title: "Detalhe da turma" };
 

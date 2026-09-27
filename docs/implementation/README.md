@@ -4,8 +4,10 @@ This roadmap implements the product boundary in
 [`../current-architecture.md`](../current-architecture.md) and the detailed direction in
 [`../v1-game-integration-dossier.md`](../v1-game-integration-dossier.md).
 
-The executable plan is [`v1-architecture-plan.md`](v1-architecture-plan.md). It reviews
-the gap between the current demo and the target architecture, records the working
+The historical plan is [`v1-architecture-plan.md`](v1-architecture-plan.md); it is
+superseded by [`../refactor-dossier/IMPLEMENTATION-READY.md`](../refactor-dossier/IMPLEMENTATION-READY.md).
+It reviewed
+the gap between the current demo and the target architecture, recorded the working
 technical decisions, and divides delivery into end-to-end slices.
 
 ## Delivery order
@@ -47,8 +49,9 @@ The newer portal integration and verification boundary is recorded in
 
 The structural debt accumulated by the three coexisting generations (demo CMS, V1 platform, static mock) and the
 phased plan to remove it are recorded in the
-[23 September 2026 architecture audit](../architecture-audit-2026-09-23.md). Treat its phases 0-3 as the precondition
-for further slice work.
+[23 September 2026 architecture audit](../architecture-audit-2026-09-23.md). That audit is historical evidence of the
+pre-refactor state; the debt it describes has since been addressed by the refactor recorded in
+[`../refactor-dossier/IMPLEMENTATION-READY.md`](../refactor-dossier/IMPLEMENTATION-READY.md).
 
 Each slice ends with a demonstrable workflow. Broad hardening, large test matrices, and
 secondary administration features should not delay the first complete portal-to-game

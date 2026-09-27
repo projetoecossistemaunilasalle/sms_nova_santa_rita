@@ -1,5 +1,5 @@
 import { ResultsScreen } from "@/components/portal/results-screen";
-import { getResultReportsPageData } from "@runtime/game-events";
+import { getResultReportsPageData } from "@/runtime/readers";
 
 export const metadata = { title: "Resultados" };
 

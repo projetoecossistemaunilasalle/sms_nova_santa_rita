@@ -1,6 +1,6 @@
 import { OrganizationsScreen } from "@/components/portal/organizations-screen";
 import { getRuntimeMode } from "@/runtime/mode";
-import { getOrganizationsPageData } from "@runtime/adult-portal";
+import { getOrganizationsPageData } from "@/runtime/readers";
 
 export const metadata = { title: "Organizações" };
 

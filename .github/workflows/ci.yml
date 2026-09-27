@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    # The values below are non-secret placeholders, not real credentials: they
+    # only satisfy environment validation in server-only steps (the builds and
+    # anything else that needs server env). No database or auth service is
+    # contacted during CI.
+    env:
+      DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci?sslmode=disable
+      NEON_AUTH_BASE_URL: http://127.0.0.1:8080/
+      NEON_AUTH_COOKIE_SECRET: ci-placeholder-cookie-secret-0123456789abcdef0123456789abcdef
+      APPLICATION_SECRET: ci-placeholder-application-secret-0123456789abcdef0123456789abcdef
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24.19.0"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Clean build artifacts
+        run: npm run clean:build
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Validate Prisma schema
+        run: npm run prisma:validate
+
+      - name: Typecheck server
+        run: npm run typecheck:server
+
+      - name: Build server
+        run: npm run build:server
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Typecheck demo
+        run: npm run typecheck:demo
+
+      - name: Build demo
+        run: npm run build:demo
+
+      # Pages publication is folded into CI: the demo exported to ./out above is
+      # uploaded only on a successful push to main and then deployed by the job
+      # below. On pull requests both steps are skipped.
+      - name: Upload Pages artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./out
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: gate
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    concurrency:
+      group: "pages"
+      cancel-in-progress: false
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -6,11 +6,10 @@ import {
   PROTOCOL_VERSION,
   STATE_SCHEMA_VERSION,
   hostVisibilityV1Schema,
-  playerBootstrapV1Schema,
   protocolErrorV1Schema,
   activeTimeAcknowledgementV1Schema,
-  safeParsePlayerBootstrapV1,
   resultAcknowledgementV1Schema,
+  safeParsePlayerBootstrapV1,
   stateSaveConflictV1Schema,
   stateSaveSuccessV1Schema,
   type ActiveTimeBatchV1,
@@ -21,15 +20,14 @@ import {
   type StateSaveRequestV1,
 } from "@/contracts/v1";
 import type { PlayerEntryActionResult } from "@/application/player-access/types";
-import { resolvePlayerEntryAction } from "@runtime/player-entry-action";
+import { resolvePlayerEntryAction } from "@/runtime/actions";
 import type { RuntimeMode } from "@/runtime/mode";
+import { OfflineSessionMismatchError } from "@/runtime/offline/errors";
 import {
   openGameOfflineStore,
-  OfflineSessionMismatchError,
   type GameOfflineStore,
-  type GameOfflineTransport,
-} from "@/runtime/game-offline-sync";
-import { DemoGameAdapter } from "./demo-game-adapter";
+} from "@/runtime/offline/sync-engine";
+import type { GameOfflineTransport } from "@/runtime/offline/types";
 import {
   createBridgeRequestId,
   expectedGameOrigin,
@@ -42,63 +40,26 @@ import {
   retryAfterUnauthorized,
 } from "./game-host-token";
 import { readDemoGameSnapshot, saveDemoGameState } from "./demo-game-state";
+import {
+  applyProgressToBootstrap,
+  demoStorageKey,
+  errorMessageForEntry,
+  newBootstrap,
+  readResponseJson,
+  type HostAlert,
+  type HostPhase,
+  type HostSyncState,
+} from "./game-host-model";
+import {
+  GameHostAlert,
+  GameHostFooter,
+  GameHostFrame,
+  GameHostHeader,
+} from "./game-host-chrome";
 
 import styles from "./public.module.css";
 
 type ReadyEntry = Extract<PlayerEntryActionResult, { state: "ready" }>;
-type HostPhase =
-  | "connecting"
-  | "waiting"
-  | "bootstrapping"
-  | "applying"
-  | "playing"
-  | "saving"
-  | "conflict"
-  | "error";
-type HostAlert = { tone: "warning" | "error"; message: string } | null;
-
-function demoStorageKey(playerId: string): string {
-  return `caramelito.demo.game-state.v1:${playerId}`;
-}
-
-function newBootstrap(
-  playerId: string,
-  sessionId: string,
-  snapshot: ReturnType<typeof readDemoGameSnapshot>,
-): PlayerBootstrapV1 {
-  const saved = snapshot.status === "valid" ? snapshot.snapshot : null;
-  return playerBootstrapV1Schema.parse({
-    type: "portal.bootstrap.v1",
-    request_id: createBridgeRequestId(),
-    protocol_version: PROTOCOL_VERSION,
-    player_id: playerId,
-    class_session_id: sessionId,
-    revision: saved?.revision ?? 0,
-    new_player: saved === null,
-    state: saved?.state ?? null,
-  });
-}
-
-async function readResponseJson(response: Response): Promise<unknown> {
-  try {
-    return await response.json();
-  } catch {
-    return null;
-  }
-}
-
-function errorMessageForEntry(result: PlayerEntryActionResult): string {
-  switch (result.state) {
-    case "ended":
-      return "A sessão da turma foi encerrada. Peça ao professor para iniciar uma nova sessão.";
-    case "expired":
-      return "O acesso temporário terminou. Escaneie o QR novamente com a orientação do professor.";
-    case "waiting":
-      return "A turma ainda não está jogando. Aguarde a orientação do professor.";
-    default:
-      return "Este acesso não está mais disponível. Peça ao professor um QR atualizado.";
-  }
-}
 
 export function GameHost({
   credential,
@@ -131,9 +92,7 @@ export function GameHost({
   const [alert, setAlert] = useState<HostAlert>(null);
   const [bootstrap, setBootstrap] = useState<PlayerBootstrapV1 | null>(null);
   const [lastHostMessage, setLastHostMessage] = useState<unknown>(null);
-  const [syncState, setSyncState] = useState<"synced" | "pending" | "blocked">(
-    "pending",
-  );
+  const [syncState, setSyncState] = useState<HostSyncState>("pending");
   const [queuedCount, setQueuedCount] = useState(0);
 
   const gameOrigin = gameClientUrl ? expectedGameOrigin(gameClientUrl) : null;
@@ -238,12 +197,7 @@ export function GameHost({
     const current = bootstrapRef.current;
     if (current && conflict.state) {
       updateCurrentBootstrap(
-        playerBootstrapV1Schema.parse({
-          ...current,
-          revision: conflict.revision,
-          new_player: false,
-          state: conflict.state,
-        }),
+        applyProgressToBootstrap(current, conflict.revision, conflict.state),
       );
     }
     replyToRequest(conflict.request_id, conflict);
@@ -539,12 +493,11 @@ export function GameHost({
         const currentBootstrap = bootstrapRef.current;
         if (currentBootstrap) {
           updateCurrentBootstrap(
-            playerBootstrapV1Schema.parse({
-              ...currentBootstrap,
-              revision: result.snapshot.revision,
-              new_player: false,
-              state: result.snapshot.state,
-            }),
+            applyProgressToBootstrap(
+              currentBootstrap,
+              result.snapshot.revision,
+              result.snapshot.state,
+            ),
           );
         }
         replyToRequest(request.request_id, reply);
@@ -559,16 +512,15 @@ export function GameHost({
         state: result.snapshot.state,
       });
       updateCurrentBootstrap(
-        playerBootstrapV1Schema.parse({
-          ...(bootstrapRef.current ??
+        applyProgressToBootstrap(
+          bootstrapRef.current ??
             newBootstrap(entry.playerSlotId, entry.gameSessionId, {
               status: "valid",
               snapshot: result.snapshot,
-            })),
-          revision: result.snapshot.revision,
-          new_player: false,
-          state: result.snapshot.state,
-        }),
+            }),
+          result.snapshot.revision,
+          result.snapshot.state,
+        ),
       );
       replyToRequest(request.request_id, reply);
       setPhase("conflict");
@@ -822,111 +774,31 @@ export function GameHost({
     setAlert(null);
   }
 
-  const phaseCopy: Record<HostPhase, string> = {
-    connecting: "Preparando o jogo",
-    waiting: "Aguardando o jogo",
-    bootstrapping: "Carregando o progresso",
-    applying: "Preparando sua jornada",
-    playing: "Jogo pronto",
-    saving: "Guardando progresso",
-    conflict: "Recuperação necessária",
-    error: "Verifique com o professor",
-  };
-  const formattedPlayerNumber = String(entry.playerNumber).padStart(2, "0");
-
   return (
     <section className={styles.gameHost} aria-label="Entrada do jogo">
-      <header className={styles.gameHostHeader}>
-        <div>
-          <span className={styles.entryStatus}>
-            Jogador {formattedPlayerNumber}
-          </span>
-          <h1>Missões do Caramelito</h1>
-          <p>
-            {runtimeMode === "demo"
-              ? "Neste exemplo, os passos ficam neste navegador. No jogo conectado, o progresso fica ligado ao jogador."
-              : "Seu progresso fica ligado a este jogador e pode continuar em outro dispositivo."}
-          </p>
-        </div>
-        <span
-          className={styles.gameConnection}
-          data-state={phase}
-          role="status"
-        >
-          <span aria-hidden="true" />
-          {phaseCopy[phase]}
-        </span>
-      </header>
-
-      {alert && (
-        <p
-          className={`${styles.gameHostAlert} ${alert.tone === "error" ? styles.gameHostAlertError : ""}`}
-          role="status"
-        >
-          {alert.message}
-        </p>
-      )}
-
-      <div className={styles.gameHostFrame}>
-        {runtimeMode === "demo" ? (
-          <DemoGameAdapter
-            bootstrap={bootstrap}
-            isSaving={phase === "saving"}
-            lastHostMessage={lastHostMessage}
-            onMessage={receiveGameMessage}
-          />
-        ) : gameClientUrl && gameOrigin ? (
-          <iframe
-            key={gameClientUrl}
-            allow="autoplay; fullscreen; gamepad"
-            allowFullScreen
-            className={styles.gameHostIframe}
-            onLoad={handleFrameLoad}
-            ref={frameRef}
-            referrerPolicy="no-referrer"
-            src={gameClientUrl}
-            title="Jogo Missões do Caramelito"
-          />
-        ) : (
-          <div className={styles.gameHostUnavailable}>
-            <span aria-hidden="true" className={styles.gameUnavailableMark}>
-              !
-            </span>
-            <h2>O jogo ainda não está conectado</h2>
-            <p>
-              Seu acesso está pronto. Peça ao professor para verificar a
-              configuração do jogo antes de continuar.
-            </p>
-          </div>
-        )}
-      </div>
-
-      <footer className={styles.gameHostFooter}>
-        {runtimeMode === "demo" ? (
-          <span className={styles.gameDemoLabel}>
-            Demonstração local · dados sintéticos
-          </span>
-        ) : (
-          <span>
-            {syncState === "synced"
-              ? "Progresso sincronizado"
-              : syncState === "blocked"
-                ? "Sincronização pausada para recuperar o progresso"
-                : queuedCount > 0
-                  ? `${queuedCount} registro(s) aguardando conexão`
-                  : "Preparando a sincronização"}
-          </span>
-        )}
-        {runtimeMode === "server" && (
-          <span>Conexão protegida · nenhum QR é enviado ao jogo</span>
-        )}
-        {bootstrap && (
-          <span className={styles.gameRevision}>
-            Progresso{" "}
-            {bootstrap.revision === 0 ? "novo" : `v${bootstrap.revision}`}
-          </span>
-        )}
-      </footer>
+      <GameHostHeader
+        phase={phase}
+        playerNumber={entry.playerNumber}
+        runtimeMode={runtimeMode}
+      />
+      {alert && <GameHostAlert alert={alert} />}
+      <GameHostFrame
+        bootstrap={bootstrap}
+        frameRef={frameRef}
+        gameClientUrl={gameClientUrl}
+        gameOrigin={gameOrigin}
+        isSaving={phase === "saving"}
+        lastHostMessage={lastHostMessage}
+        onFrameLoad={handleFrameLoad}
+        onMessage={receiveGameMessage}
+        runtimeMode={runtimeMode}
+      />
+      <GameHostFooter
+        bootstrap={bootstrap}
+        queuedCount={queuedCount}
+        runtimeMode={runtimeMode}
+        syncState={syncState}
+      />
     </section>
   );
 }

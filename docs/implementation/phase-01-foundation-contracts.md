@@ -3,7 +3,9 @@
 > **Legacy detailed plan.** Authentication, authorization, observability, and contract
 > testing remain relevant. Catalogue/module/game-version work belongs to the superseded
 > multi-activity model and must not be implemented as written. Follow
-> [`../current-architecture.md`](../current-architecture.md).
+> [`../current-architecture.md`](../current-architecture.md). The container/Docker
+> build steps in this file are obsolete: Docker is not a supported build or
+> deployment target for the current version.
 
 ## Objective
 
@@ -15,8 +17,8 @@ public child runtime is exposed in this phase.
 ## Inputs
 
 - [`prisma/schema.prisma`](../../prisma/schema.prisma)
-- [`docs/schemas/domain-rules.md`](../schemas/domain-rules.md)
-- [`docs/schemas/api-contracts.md`](../schemas/api-contracts.md)
+- The former `docs/schemas/domain-rules.md` and `docs/schemas/api-contracts.md`
+  (both documents were removed with the retired contract set)
 - [`contracts/schemas`](../../contracts/schemas)
 
 ## Work packages

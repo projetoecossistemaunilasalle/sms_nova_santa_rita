@@ -2,13 +2,15 @@
 
 Status: current description of the reconciled persistence model. It follows
 [`../current-architecture.md`](../current-architecture.md): one existing GameMaker
-experience, portal-managed access links, no portal-composed activities.
+experience, numbered player access through rotatable QR credentials, and no
+portal-composed activities.
 
 The executable application schema is [`prisma/schema.prisma`](../../prisma/schema.prisma)
 and the baseline migration is
 [`prisma/migrations/0_init/migration.sql`](../../prisma/migrations/0_init/migration.sql).
-Nothing is deployed yet, so the baseline replaces the earlier multi-activity model
-without keeping legacy tables.
+Migration history is a single post-refactor baseline: `0_init` creates the entire
+surviving schema in one step, and the earlier incremental migrations were replaced
+rather than kept.
 
 ## Schema ownership
 
@@ -34,154 +36,154 @@ authentication uses the official `@neondatabase/auth` Next.js SDK.
 erDiagram
     PROFESSIONAL_PROFILES ||--o{ ORGANIZATION_MEMBERSHIPS : has
     ORGANIZATIONS ||--o{ ORGANIZATION_MEMBERSHIPS : contains
-    ORGANIZATION_MEMBERSHIPS ||--o{ CAPABILITY_ASSIGNMENTS : grants
-    ORGANIZATIONS o|--o{ CAPABILITY_ASSIGNMENTS : scopes
-    ORGANIZATIONS ||--o{ ACCESS_LINKS : owns
-    PROFESSIONAL_PROFILES ||--o{ ACCESS_LINKS : creates
-    PROFESSIONAL_PROFILES ||--o{ AUDIT_EVENTS : acts
+    ORGANIZATION_MEMBERSHIPS ||--o{ TEACHER_ASSIGNMENTS : holds
+    ORGANIZATIONS ||--o{ CLASS_GROUPS : groups
+    CLASS_GROUPS ||--o{ TEACHER_ASSIGNMENTS : assigns
+    CLASS_GROUPS ||--o{ PLAYER_SLOTS : numbers
+    CLASS_GROUPS ||--o{ GAME_SESSIONS : hosts
+    PLAYER_SLOTS ||--o{ PLAYER_CREDENTIALS : carries
+    PLAYER_SLOTS ||--o| GAME_STATES : saves
+    GAME_SESSIONS ||--o{ PARTICIPATIONS : records
+    PLAYER_SLOTS ||--o{ PARTICIPATIONS : joins
+    PARTICIPATIONS ||--o{ RESULT_EVENTS : receives
+    PARTICIPATIONS ||--o{ ACTIVE_TIME_EVENTS : receives
 ```
 
 | Table | Purpose and key constraints |
 | --- | --- |
-| `professional_profiles` | Portal state keyed to unique external `auth_user_id`; no email column. Deactivation (`status = inactive`) preserves owned links and audit history. |
+| `professional_profiles` | Portal identity keyed to unique external `auth_user_id`; no email column. Optional `platform_role` marks platform administrators. Deactivation (`status = inactive`) preserves owned memberships and history. |
 | `organizations` | Minimal school/municipal scope without assuming a hierarchy; `type` remains controlled application data. Indexed by `status`. |
-| `organization_memberships` | One membership per professional/organization pair (unique). A grant requires an active profile and an active membership. Both foreign keys restrict deletes. |
-| `capability_assignments` | Capability grant through a membership. Nullable `scope_organization_id` means platform-wide and is limited to administrators. |
-| `access_links` | One customized opaque link per row, scoped to an organization and attributed to a creator. Only the SHA-256 token digest is stored. |
-| `audit_events` | Append-only administrative history with controlled before/after state, reason, actor, and correlation ID. |
-| `rate_limit_buckets` | Expiring cross-instance fixed-window counts keyed by an HMAC of actor/credential and route scope; contains no raw credential or device identity. |
+| `organization_memberships` | One membership per professional/organization pair (unique). Role is `organization_admin` or `teacher`. Both foreign keys restrict deletes; indexed by `(organization_id, status)`. |
+| `class_groups` | Class scope inside an organization, without a nominal student roster; `next_player_number` supports sequential slot numbering. Indexed by `(organization_id, status)`. |
+| `player_slots` | Numbered players within a class: `(class_group_id, player_number)` is unique, and no child name, email, or password is stored. Indexed by `(class_group_id, status)`. |
+| `player_credentials` | Rotatable bearer credential for a slot; only the SHA-256 `token_hash` is stored. At most one `active` credential per slot (partial unique index). |
+| `game_sessions` | Class session lifecycle (`active`/`ended`, `started_at`, `ended_at`); at most one active session per class group (partial unique index). |
+| `participations` | Idempotent join between a session and a player slot: unique `(game_session_id, player_slot_id)`; indexed by `(player_slot_id, joined_at)`. |
+| `game_states` | One versioned state document per slot (the primary key is `player_slot_id`): `protocol_version`, `schema_version`, `content_version`, JSONB `payload`, monotonic `revision`. |
+| `result_events` | Ingested results keyed to a participation and deduplicated by unique `client_event_id`; carries request/activity/mission/attempt identifiers, `result_state`, `duration_ms`, and JSONB `metrics`/`payload`. Indexed by participation and activity timelines. |
+| `active_time_events` | Ingested active-play time keyed to a participation and deduplicated by unique `client_event_id`; carries `active_ms` and `mode`. Indexed by the participation timeline. |
+| `teacher_assignments` | Ties a membership to a class group it works with; unique per membership/class pair. Indexed by `(class_group_id, status)`. |
 
-## Access and organization
+## Enums
 
-Authorization uses the `capability` enum with the six current values:
+| Enum | Values | Used by |
+| --- | --- | --- |
+| `record_status` | `active`, `inactive`, `archived` | Shared lifecycle status on most tables. |
+| `platform_role` | `platform_admin` | `professional_profiles.platform_role` (nullable). |
+| `organization_role` | `organization_admin`, `teacher` | `organization_memberships.role`. |
+| `player_credential_status` | `active`, `revoked` | `player_credentials.status`. |
+| `game_session_status` | `active`, `ended` | `game_sessions.status`. |
 
-| Capability | Meaning |
-| --- | --- |
-| `link:view` | See access links within the authorized scope. |
-| `link:manage` | Create, revoke, and rotate access links within the authorized scope. |
-| `results:view_organization` | See aggregate results for the scoped organization. |
-| `organization:manage` | Manage organization records. |
-| `user:manage` | Invite, activate, deactivate members and change memberships/capabilities. |
-| `audit:view` | Read the audit history. |
+## Roles and organization
 
-A non-null `scope_organization_id` grants access only within that organization. A null
-scope means platform-wide and is reserved for platform administrators. V1 does not
-infer parent/child organization access.
+Authorization is role-based. `professional_profiles.platform_role` marks platform
+administrators, and `organization_memberships.role` distinguishes
+`organization_admin` from `teacher` within one organization. `teacher_assignments`
+binds a membership to the individual class groups it works with, so class-level
+responsibility is explicit data rather than an inference from role. The
+responsibilities of the three adult levels are defined in
+[`../current-architecture.md`](../current-architecture.md).
 
-Because standard PostgreSQL uniqueness treats null values as distinct, the
-`@@unique([membershipId, capability, scopeOrganizationId])` that Prisma would
-generate cannot express the intended invariant (two platform-wide grants for the
-same membership and capability would not collide). Prisma 7.9 has no
-`NULLS NOT DISTINCT` option for `@@unique`, so the schema omits the attribute and
-the baseline migration adds the unique index as raw SQL:
+## Classes, players, and credentials
 
-```sql
-CREATE UNIQUE INDEX "capability_assignments_membership_capability_scope_key"
-ON "capability_assignments"("membership_id", "capability", "scope_organization_id")
-NULLS NOT DISTINCT;
-```
+A class group is an organization-scoped class without a nominal student roster.
+`player_slots` records the numbered players themselves: the visible number is unique
+per class and is never a global student identity. A slot is an anonymous numbered
+seat — no child name, email, or password is stored — and it owns rotatable
+credentials plus the accumulated participations, game state, and events.
 
-## Access links
+### Player credentials
 
-`access_links` is the core new table. It records every customized link that can
-carry a participant into the single GameMaker experience.
+`player_credentials` stores the rotatable bearer credentials a slot can enter with:
 
 | Column | Type | Rules |
 | --- | --- | --- |
 | `id` | `uuid` pk | |
-| `organization_id` | `uuid` → `organizations` | `ON DELETE RESTRICT`; the owning scope of the link. |
-| `created_by_id` | `uuid` → `professional_profiles` | `ON DELETE RESTRICT`; attribution is preserved even after the creator is deactivated. |
-| `label` | `varchar(200)` | Management label shown in the portal, for example "Turma 5B". |
-| `audience` | `varchar(200)` | Distribution context description, for example "Turma 5B · EMEF Victor Agens". |
+| `player_slot_id` | `uuid` → `player_slots` | `ON DELETE RESTRICT`. |
 | `token_hash` | `char(64)` unique | Lowercase hex SHA-256 digest of the raw opaque token. |
-| `expires_at` | `timestamptz(3)` null | Null means no expiry (the default). Must be after `created_at`. |
-| `revoked_at` | `timestamptz(3)` null | Null means not revoked. Must not predate `created_at`. |
-| `created_at` / `updated_at` | `timestamptz(3)` | Standard timestamps. |
+| `status` | `player_credential_status` | `active` or `revoked`. |
+| `created_at` | `timestamptz(3)` | Standard timestamp. |
+| `revoked_at` | `timestamptz(3)` null | Null means not revoked. |
 
-Indexes: unique on `token_hash`; `(organization_id, revoked_at)` for per-organization
-listings split by revocation state; `(expires_at)` for expiry sweeps.
+Indexes: unique on `token_hash`; `(player_slot_id, status)` for per-slot lookups;
+and a partial unique index on `player_slot_id` where `status = 'active'` (listed
+among the rules below), which allows at most one active credential per slot.
 
 ### Token-hash storage rule
 
-The raw token exists only in the one-time create/rotate response and in the URL the
-professional shares. The database stores only the 64-character lowercase hex SHA-256
-digest; a regex CHECK enforces that shape at the storage boundary. Raw tokens are
-never logged. Public link validation looks the row up by hashing the presented token,
-never by storing or comparing plaintext.
+The raw token exists only in the one-time issue/rotate response and in the QR code
+the teacher distributes. The database stores only the 64-character lowercase hex
+SHA-256 digest. Raw tokens are never logged. Player entry validates by hashing the
+presented token and looking the digest up, never by storing or comparing plaintext.
 
 ### Lifecycle
 
-- Creation stores a new high-entropy token digest; the raw token is returned exactly
-  once.
-- Revocation sets `revoked_at`; it never deletes the row, so history and audit remain
-  reproducible.
-- Rotation creates a new row and revokes the old row in one transaction. There is
-  deliberately no `replaces_id` column; if lineage reporting is needed later, it can
-  be derived from audit events rather than widening the table now.
-- Both `expires_at` and `revoked_at` may be set, and a link may be revoked after it
-  has expired. Only the relationship of each timestamp to `created_at` is an
-  invariant; the order between `revoked_at` and `expires_at` is not constrained.
+- Issuing a credential stores a new high-entropy token digest; the raw token is
+  returned exactly once.
+- Revocation sets `status = revoked` and `revoked_at`; it never deletes the row.
+- Rotation issues a new credential row and revokes the previous one; the partial
+  unique index guarantees at most one active credential per slot at any time.
 
-## Audit events
+## Sessions, participation, and game events
 
-`audit_events` is append-only. `correlation_id` is `varchar(64)` because correlation
-IDs are lowercase UUID strings (36 characters) produced or accepted by the request
-correlation middleware, not UUID columns. Actor is nullable for system-initiated
-events; when present it references `professional_profiles` with `ON DELETE
-RESTRICT` so audit history never loses attribution.
+`game_sessions` records class sessions: at most one `active` session exists per
+class group, and ending a session sets `status = ended` and `ended_at`.
+`participations` is the idempotent join between a session and a slot — unique
+`(game_session_id, player_slot_id)` — so re-entering the same session resolves to
+the existing participation instead of a duplicate.
 
-Indexes `(entity_type, entity_id, occurred_at)`, `(actor_id, occurred_at)`, and
-`(occurred_at)` support the entity timeline, actor timeline, and chronological
-queries.
+`game_states` holds one versioned state document per slot. The primary key is the
+`player_slot_id` itself, and each row carries `protocol_version`, `schema_version`,
+`content_version`, a JSONB `payload`, and a monotonic `revision`.
 
-## Rate limiting
-
-`rate_limit_buckets` keeps application rate limits correct across instances without
-Redis. `bucket_key` is the primary key: a 64-character hex HMAC of an actor or scoped
-credential plus route scope. Raw tokens, IP addresses, and device identity are never
-stored. Buckets are operational data; expired rows are removed by a bounded cleanup
-job.
+`result_events` and `active_time_events` are the ingested game-event streams. Both
+key to a participation and deduplicate on a unique `client_event_id`, so retried
+submissions cannot double-count. Result rows carry request, activity, mission, and
+attempt identifiers plus `result_state`, `duration_ms`, and JSONB `metrics` and
+`payload`; active-time rows carry `active_ms` and `mode`. The domains for
+`result_state`, `duration_ms`, `active_ms`, and `mode` are enforced by the database
+rules below. Both tables index `(participation_id, received_at)`, and results
+additionally index `(activity_id, received_at)` for per-activity reporting.
 
 ## Invariants and SQL checks
 
-The baseline migration appends raw CHECK constraints Prisma cannot express:
+The baseline migration appends ten named database rules that the Prisma schema
+language cannot express:
 
-| Constraint | Table | Rule |
+| Rule | Table | Predicate |
 | --- | --- | --- |
-| `capability_assignments_membership_capability_scope_key` | `capability_assignments` | Unique `(membership_id, capability, scope_organization_id)` with `NULLS NOT DISTINCT`. |
-| `access_links_token_hash_format_check` | `access_links` | `token_hash ~ '^[0-9a-f]{64}$'`. |
-| `access_links_expires_at_after_created_at_check` | `access_links` | `expires_at IS NULL OR expires_at > created_at`. |
-| `access_links_revoked_at_not_before_created_at_check` | `access_links` | `revoked_at IS NULL OR revoked_at >= created_at`. |
-| `rate_limit_buckets_request_count_nonnegative_check` | `rate_limit_buckets` | `request_count >= 0`. |
-| `rate_limit_buckets_expires_at_after_window_start_check` | `rate_limit_buckets` | `expires_at > window_started_at`. |
+| `player_slots_player_number_positive` | `player_slots` | `player_number > 0`. |
+| `game_states_revision_check` | `game_states` | `revision > 0`. |
+| `game_states_protocol_version_check` | `game_states` | `protocol_version = 1`. |
+| `game_states_schema_version_check` | `game_states` | `schema_version = 1`. |
+| `result_events_duration_ms_check` | `result_events` | `duration_ms >= 0`. |
+| `result_events_result_state_check` | `result_events` | `result_state IN ('sucesso', 'falha', 'cancelado', 'tempo_esgotado', 'erro_inicializacao')`. |
+| `active_time_events_active_ms_check` | `active_time_events` | `active_ms BETWEEN 1 AND 30000`. |
+| `active_time_events_mode_check` | `active_time_events` | `mode IN ('exploration', 'dialogue', 'activity')`. |
+| `player_credentials_one_active_per_slot` | `player_credentials` | Unique index on `player_slot_id` where `status = 'active'`. |
+| `game_sessions_one_active_per_class` | `game_sessions` | Unique index on `class_group_id` where `status = 'active'`. |
 
-A cross-check between `revoked_at` and `expires_at` was deliberately not added:
-revoking a link before its expiry and recording revocation of an already-expired
-link are both coherent states, so their relative order is not an invariant.
-
-## Deferred models
-
-Play sessions, attempts, and results are intentionally deferred to the
-game-integration workstream. The exact GameMaker result contract is an open
-production decision (see the open decisions in
-[`../implementation/README.md`](../implementation/README.md)), so modeling those
-tables now would guess at the integration payload. When that workstream starts,
-session and result tables are added as new migrations against this baseline.
+Structural uniqueness invariants — one membership per professional/organization
+pair, one player number per class, one participation per session/slot pair, one
+teacher assignment per membership/class pair, and the unique `auth_user_id` and
+`token_hash` values — are ordinary Prisma `@@unique` indexes, so they need no
+hand-written SQL.
 
 ## Deletion policy
 
-Profiles, organizations, access links, and audit events use restrictive foreign
-keys, so nothing referenced by history can be deleted accidentally. Deactivation
-(`status = inactive`, `revoked_at`) is the operational path; production retention
-uses an ordered, batched job after policy approval and never relies on cascade
-deletion. Expired rate-limit buckets are the only routinely deleted rows.
+Every foreign key is `ON DELETE RESTRICT`, so nothing referenced by another row can
+be deleted accidentally. Deactivation is the operational path: profiles,
+organizations, memberships, class groups, player slots, and teacher assignments use
+`status = inactive`; credentials use `status = revoked` with `revoked_at`; and
+sessions use `status = ended` with `ended_at`. Production retention uses an
+ordered, batched job after policy approval and never relies on cascade deletion.
 
 ## Legacy model (superseded)
 
 The earlier model modeled portal-composed modules, games, activities, drafts,
 versions, play sessions, attempts, and results. It was replaced wholesale by the
-baseline migration; no legacy tables were carried over. For historical research
-only, the old design is described in:
+post-refactor baseline migration; no legacy tables were carried over. For
+historical research only, the old design is described in:
 
 - [`portal-v1-specification.md`](../../portal-v1-specification.md) — the historical
   product specification.
@@ -191,6 +193,6 @@ only, the old design is described in:
   and [`phase-04-reporting-hardening.md`](../implementation/phase-04-reporting-hardening.md)
   — the earlier detailed phase plans.
 
-Their token-security, authorization, audit, and idempotency principles were carried
-into this model; their catalogue, activity-composition, and versioning tables were
-not. Do not treat them as current requirements.
+Their token-security and idempotency principles were carried into this model; their
+catalogue, activity-composition, and versioning tables were not. Do not treat them
+as current requirements.

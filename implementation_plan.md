@@ -1,5 +1,12 @@
 # Plano de Implementação: Mock Visual Estático & Deploy no GitHub Pages
 
+> **Status: documento histórico.** Este plano registrou a adaptação original do
+> repositório para um mock estático no GitHub Pages. Ele foi superado por
+> [docs/refactor-dossier/IMPLEMENTATION-READY.md](docs/refactor-dossier/IMPLEMENTATION-READY.md)
+> e [docs/current-architecture.md](docs/current-architecture.md); o conteúdo
+> abaixo permanece apenas como registro histórico dessa fase e não deve ser
+> seguido como orientação atual.
+
 Este plano adapta o **SMS_Portal** para funcionar como um **mock 100% visual e estático** no **GitHub Pages**, desvinculando todas as dependências de banco de dados (Prisma/Neon), removendo travas de autenticação, adicionando suporte a exportação estática (`output: 'export'`) e realizando o deploy direto no repositório `niciniV/SMS_Portal`.
 
 ---

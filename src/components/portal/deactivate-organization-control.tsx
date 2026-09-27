@@ -4,7 +4,7 @@ import { useActionState, useId, useRef, useState } from "react";
 
 import type { ActionResult } from "@/application/adult-portal/types";
 import { RecordStatus } from "@/generated/prisma/enums";
-import { changeOrganizationStatusAction } from "@runtime/adult-portal-actions";
+import { changeOrganizationStatusAction } from "@/runtime/actions";
 
 import styles from "./portal.module.css";
 

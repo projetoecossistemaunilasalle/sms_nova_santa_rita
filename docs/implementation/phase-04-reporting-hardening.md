@@ -131,8 +131,9 @@ approved before report behavior is frozen.
 | --- | --- |
 | `GET /activities/{activityId}/results` | P4-01 |
 
-Any CSV export approved in P4-02 must be added to `api-contracts.md` before its Route
-Handler is implemented; otherwise no export endpoint is part of V1.
+Any CSV export approved in P4-02 must be added to the contract documentation (the
+former `api-contracts.md` document, removed since this plan was written) before its
+Route Handler is implemented; otherwise no export endpoint is part of V1.
 
 ## Required tests
 

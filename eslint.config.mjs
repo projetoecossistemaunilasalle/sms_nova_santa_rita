@@ -13,5 +13,8 @@ export default defineConfig([
     "out/**",
     "coverage/**",
     "src/generated/**",
+    "src/runtime/actions.ts",
+    "src/runtime/readers.ts",
+    "src/runtime/client.ts",
   ]),
 ]);

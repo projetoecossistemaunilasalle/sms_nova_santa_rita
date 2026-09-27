@@ -10,7 +10,7 @@ import {
   assignTeacherToClassAction,
   changeClassStatusAction,
   deactivateTeacherAssignmentAction,
-} from "@runtime/adult-portal-actions";
+} from "@/runtime/actions";
 import { AdultPortalForm } from "./adult-portal-form";
 import { demoClassDetail, recordStatusLabel } from "./adult-portal-helpers";
 import {

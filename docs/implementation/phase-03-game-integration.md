@@ -72,7 +72,8 @@ result submission with bounded offline retry.
 
 - Validate attempt token scope, wrapper schema, game/result schema version, supported
   outcome, duration, and game-specific metrics.
-- Lock the attempt and implement the idempotency table from `api-contracts.md` in one
+- Lock the attempt and implement the idempotency table from the former
+  `api-contracts.md` document (removed since this plan was written) in one
   transaction.
 - Persist a canonical request digest so reuse of a `client_event_id` with altered
   content is detected rather than treated as a successful retry.

@@ -6,7 +6,7 @@ import { getRuntimeMode } from "@/runtime/mode";
 import {
   getOrganizationPageData,
   listStaticOrganizationIds,
-} from "@runtime/adult-portal";
+} from "@/runtime/readers";
 
 export const metadata = { title: "Detalhe da organização" };
 

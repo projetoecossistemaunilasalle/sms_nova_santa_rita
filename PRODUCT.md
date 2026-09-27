@@ -12,7 +12,11 @@ Missões do Caramelito combines an authenticated professional/admin portal with 
 
 V1 is focused on making the full portal-to-game workflow work in production conditions. The portal prepares organizations, classes, adult permissions, player access, game context, persistence, and reporting. The existing GameMaker project remains the single gameplay runtime and source of truth for gameplay content and behavior.
 
-The detailed V1 direction is defined in [docs/v1-game-integration-dossier.md](docs/v1-game-integration-dossier.md). Where older repository documents conflict with that dossier, the dossier wins for V1.
+The current implementation reference is
+[docs/refactor-dossier/IMPLEMENTATION-READY.md](docs/refactor-dossier/IMPLEMENTATION-READY.md),
+and the technical boundary is described in
+[docs/current-architecture.md](docs/current-architecture.md). Older repository
+documents that conflict with these are historical records, not guidance.
 
 ## Users
 
@@ -114,7 +118,8 @@ The V1 data model should avoid blocking future migration, but no longitudinal st
 
 Materials/content management is not part of V1.
 
-The Materials area should be removed or hidden from the production V1 navigation and must not be a dependency of the portal-to-game workflow.
+The Materials area has been removed from the portal navigation, and no V1
+backend, authorization, or acceptance criterion depends on it.
 
 Material authoring, approval, publishing, attachments, and related CMS behavior are deferred to a later product version.
 
@@ -137,8 +142,7 @@ V1 has three connected surfaces:
 - session/context management;
 - player-state persistence services;
 - result ingestion and reporting;
-- active-play metrics;
-- administrative traceability where required.
+- active-play metrics.
 
 ### GameMaker owns
 
@@ -185,8 +189,7 @@ The production-oriented portal should concentrate on:
 - Results;
 - Classes;
 - Team and permissions;
-- Organizations;
-- Audit or administrative traceability where required.
+- Organizations.
 
 Materials is excluded.
 
@@ -200,8 +203,8 @@ Materials is excluded.
 ## Evidence and legacy documents
 
 - The existing GameMaker project is the reference for gameplay behavior and game-owned state.
-- `contracts/schemas/` contains versioned JSON contracts that must be aligned with the real integration before production.
-- [docs/v1-game-integration-dossier.md](docs/v1-game-integration-dossier.md) is the current detailed V1 product direction.
+- `contracts/schemas/` contains the versioned, fixture-tested V1 transport contracts shared by the route handlers, the browser host, and GameMaker; see `contracts/schemas/README.md`.
+- [docs/v1-game-integration-dossier.md](docs/v1-game-integration-dossier.md) is retained as a historical planning record; the current references are [docs/refactor-dossier/IMPLEMENTATION-READY.md](docs/refactor-dossier/IMPLEMENTATION-READY.md) and [docs/current-architecture.md](docs/current-architecture.md).
 - [docs/current-architecture.md](docs/current-architecture.md) describes the current web/technical boundary.
 - `portal-v1-specification.md`, older phase plans, and earlier aggregate-only/link-only assumptions are retained as historical research where they conflict with the current V1 direction.
 - This repository contains no real-world outcome evidence, clinical validation, or formal compliance certification. Future work must not fabricate such evidence.
