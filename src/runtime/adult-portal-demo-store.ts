@@ -146,7 +146,10 @@ export const DEMO_PLAYER_TOKENS = {
 
 export const demoAdultPortalSeed: DemoAdultPortalState = {
   version: 2,
-  activeProfileId: DEMO_PROFILE_IDS.PLATFORM_ADMIN,
+  // The walkthrough starts from the teacher role so the default presentation
+  // path shows only Visão geral, Turmas, and Resultados; admin views stay
+  // reachable through the "Perfil demonstrado" selector.
+  activeProfileId: DEMO_PROFILE_IDS.TEACHER,
   profiles: [
     {
       id: DEMO_PROFILE_IDS.PLATFORM_ADMIN,

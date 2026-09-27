@@ -249,9 +249,9 @@ One route tree builds two runtime targets:
 - **Server target** (`npm run build:server`, started by `npm run start` through
   `scripts/start.mjs`): a standalone Next.js build persisting to Neon Postgres
   through Prisma, with adult authentication behind Neon Auth.
-- **Demo target** (`npm run build:demo`): a static export to `out/` with the
-  `/SMS_Portal` base path, published to GitHub Pages from CI on pushes to
-  `main`. The same portal workflow is seeded into browser state and the game
+- **Demo target** (`npm run build:demo`): a static export to `out/` with a
+  configurable base path (`DEMO_BASE_PATH`, defaulting to `/SMS_Portal`),
+  published to GitHub Pages from CI on pushes to `main`. The same portal workflow is seeded into browser state and the game
   host operates offline through the IndexedDB queue.
 
 Consumers never import demo or server implementations directly. Before every

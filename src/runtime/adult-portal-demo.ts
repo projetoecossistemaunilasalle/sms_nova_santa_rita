@@ -12,12 +12,18 @@ function service() {
 
 const profileId = DEMO_PROFILE_IDS.PLATFORM_ADMIN;
 
+// Shell and overview prerender as the demo seed's default active profile (the
+// teacher), so the static export opens on the teacher presentation path before
+// client demo state takes over. The remaining page readers keep the platform
+// admin actor because those admin screens must still prerender statically.
+const presentationProfileId = DEMO_PROFILE_IDS.TEACHER;
+
 export function getPortalShellData() {
-  return service().getShell(profileId);
+  return service().getShell(presentationProfileId);
 }
 
 export function getPortalOverviewData() {
-  return service().getOverview(profileId);
+  return service().getOverview(presentationProfileId);
 }
 
 export async function getOrganizationsPageData() {

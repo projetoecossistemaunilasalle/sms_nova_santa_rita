@@ -105,7 +105,12 @@ generated at a time in a checkout.
 ## Runtime targets
 
 - `npm run build:demo` creates the production-optimized GitHub Pages export in
-  `out/`. It uses the `/SMS_Portal` base path and requires no server secrets.
+  `out/`. The base path defaults to `/SMS_Portal` (this repository's Pages
+  deployment) and is configurable via `DEMO_BASE_PATH` — for example,
+  `DEMO_BASE_PATH=portal npm run build:demo` exports for a mount under
+  `/portal/`. The leading slash is optional (Git Bash rewrites
+  `DEMO_BASE_PATH=/portal` into a Windows drive path when spawning Node).
+  The demo build requires no server secrets.
 - `npm run build:server` creates the standalone, server-capable Next.js build
   in `.next/`. It requires `DATABASE_URL`, `NEON_AUTH_BASE_URL`,
   `NEON_AUTH_COOKIE_SECRET`, and `APPLICATION_SECRET`. `npm run start` rebuilds
