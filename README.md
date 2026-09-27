@@ -42,7 +42,7 @@ apenas o **output** de cada um:
    ```
 3. **Jogo** — no repositório `Heroes_Trial`:
    ```powershell
-   tools/export_web.ps1       # exporta HTML5/GX.games para output/web/
+   tools/export_web.ps1       # exporta o pacote HTML5 para output/web/
    ```
    Depois, aqui na landing:
    ```bash
