@@ -1,5 +1,6 @@
 ---
-import { NAV, SITE } from "../config/site";
+import { APPS, NAV, SITE, withBase } from "../config/site";
+import Icon from "./Icon.astro";
 ---
 
 <header class="site-header">
@@ -28,6 +29,20 @@ import { NAV, SITE } from "../config/site";
         }
       </ul>
     </nav>
+
+    <div class="header-acoes">
+      <a
+        class="acao-app professor"
+        href={withBase(APPS.portal)}
+      >
+        <Icon name="professores" size={15} />
+        Área do professor
+      </a>
+      <a class="acao-app jogar" href={withBase(APPS.jogo)}>
+        <Icon name="patinha" size={15} />
+        Jogar
+      </a>
+    </div>
   </div>
 </header>
 
@@ -127,6 +142,53 @@ import { NAV, SITE } from "../config/site";
     color: var(--verde-escuro);
   }
 
+  .header-acoes {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .acao-app {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.95rem;
+    border-radius: var(--raio-pilula);
+    border: 2px solid transparent;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 0.88rem;
+    white-space: nowrap;
+    transition:
+      transform 0.15s ease,
+      background-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .acao-app.jogar {
+    background: var(--verde);
+    color: #fff;
+    box-shadow: 0 3px 0 var(--verde-escuro);
+  }
+
+  .acao-app.jogar:hover {
+    background: var(--verde-escuro);
+    transform: translateY(-1px);
+  }
+
+  .acao-app.professor {
+    background: var(--nuvem);
+    color: var(--azul-escuro);
+    border-color: var(--azul);
+    box-shadow: 0 3px 0 rgb(46 111 183 / 0.25);
+  }
+
+  .acao-app.professor:hover {
+    background: var(--azul-claro);
+    transform: translateY(-1px);
+  }
+
   @media (max-width: 56rem) {
     .site-header {
       position: static;
@@ -142,6 +204,9 @@ import { NAV, SITE } from "../config/site";
     .nav-principal a {
       padding: 0.5rem 0.65rem;
       font-size: 0.86rem;
+    }
+    .header-acoes {
+      width: 100%;
     }
   }
 </style>

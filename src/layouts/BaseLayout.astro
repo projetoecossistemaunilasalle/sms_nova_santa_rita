@@ -1,5 +1,5 @@
 ---
-import { ASSETS, SITE } from "../config/site";
+import { ASSETS, SITE, withBase } from "../config/site";
 
 interface Props {
   titulo?: string;
@@ -8,6 +8,10 @@ interface Props {
 
 const { titulo = SITE.nome, descricao = SITE.descricao } = Astro.props;
 const tituloCompleto = `${titulo} · ${SITE.programa}`;
+// og:image exige URL absoluta; Astro.site + base path apontam para o Pages.
+const ogImagem = Astro.site
+  ? new URL(ASSETS.mascot.classico, Astro.site).href
+  : ASSETS.mascot.classico;
 ---
 
 <!doctype html>
@@ -28,9 +32,9 @@ const tituloCompleto = `${titulo} · ${SITE.programa}`;
     <meta property="og:title" content={tituloCompleto} />
     <meta property="og:description" content={descricao} />
     <meta property="og:locale" content="pt_BR" />
-    <meta property="og:image" content={ASSETS.mascot.classico} />
+    <meta property="og:image" content={ogImagem} />
 
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href={withBase("/favicon.svg")} type="image/svg+xml" />
 
     <!-- Preload apenas do sprite inicial; os demais carregam progressivamente -->
     <link
