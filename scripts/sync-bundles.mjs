@@ -2,7 +2,7 @@
 /**
  * Monta as pastas `public/portal/` e `public/jogo/` a partir dos builds
  * gerados pelos projetos irmaos (que permanecem com build e repositorio
- * independentes — nada de codigo-fonte e copiado, apenas o output):
+ * independentes; nada de codigo-fonte e copiado, apenas o output):
  *
  *   portal -> SMS_Portal/out            (npm run build:demo com
  *                                        DEMO_BASE_PATH=sms_nova_santa_rita/portal)
@@ -24,6 +24,7 @@
 import path from "node:path";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
+import { aplicarPaginaJogo } from "./jogo-pagina.mjs";
 
 const repoRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -92,6 +93,28 @@ for (const name of selected) {
   fs.rmSync(bundle.target, { recursive: true, force: true });
   fs.mkdirSync(path.dirname(bundle.target), { recursive: true });
   fs.cpSync(bundle.source, bundle.target, { recursive: true });
+
+  // A pagina do jogo recebe o chrome institucional do PSE a cada sync,
+  // sempre sobre o export fresco. Recompilar o jogo e sincronizar basta
+  // para manter o visual, sem tocar no repositorio do jogo.
+  if (name === "jogo") {
+    const indice = path.join(bundle.target, "index.html");
+    try {
+      const html = fs.readFileSync(indice, "utf8");
+      const { html: transformado, aplicado, motivo } = aplicarPaginaJogo(html);
+      fs.writeFileSync(indice, transformado);
+      console.log(
+        aplicado
+          ? 'Pagina do jogo: chrome institucional aplicado a public/jogo/index.html.'
+          : `Pagina do jogo: chrome nao aplicado (${motivo}).`,
+      );
+    } catch (erro) {
+      console.warn(
+        `[aviso] Nao foi possivel aplicar a pagina institucional do jogo: ${erro.message}`,
+      );
+    }
+  }
+
   const files = countFiles(bundle.target);
   console.log(
     `Bundle "${bundle.label}" sincronizado: ${files} arquivo(s) de ${bundle.source} -> public/${bundle.label}/`,

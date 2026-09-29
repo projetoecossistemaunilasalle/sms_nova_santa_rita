@@ -1,85 +1,34 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+// @ts-check
 
-    <!-- Custom PreHead code is injected here -->
-    
+/**
+ * Pagina institucional do jogo (/jogo/).
+ *
+ * O export HTML5 do Heroes_Trial sai do GameMaker como uma pagina crua
+ * (apenas o canvas sobre um fundo branco). Este modulo transforma o
+ * `index.html` do bundle durante `scripts/sync-bundles.mjs`, envolvendo o
+ * canvas com o chrome institucional do PSE: cabecalho com volta ao site,
+ * titulo, moldura do jogo, atalhos de controle e rodape.
+ *
+ * A transformacao e idempotente (marcador `data-jogo-pagina-pse`) e roda
+ * sobre o export fresco a cada sincronizacao: basta recompilar o jogo e
+ * rodar o sync para o visual novo valer para a versao nova do jogo.
+ * O repositorio do jogo nunca e alterado.
+ */
 
-    <head>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name ="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta charset="utf-8"/>
+/**Marcador que identifica um index.html ja transformado. */
+const MARCADOR = "data-jogo-pagina-pse";
 
-        <!-- Builtin injector for disabling cache -->
-        <meta http-equiv="pragma" content="no-cache"/>
+/** Pontos de injecao do template HTML5 do GameMaker (estaveis entre exports). */
+const MARCA_POSTSTYLE = "<!-- Custom PostStyle code is injected here -->";
+const MARCA_POSTHEAD = "<!-- Custom PostHead code is injected here -->";
+const MARCA_BODYSTART = "<!-- Custom BodyStart code is injected here -->";
+const MARCA_BODYEND = "<!-- Custom BodyEnd code is injected here -->";
 
-        <!-- Set the title bar of the page -->
-        <title>Missões do Caramelito | Jogo do PSE Nova Santa Rita</title>
+/* ------------------------------------------------------------------ */
+/* CSS: tokens espelhados de src/styles/global.css (pagina autonoma)   */
+/* ------------------------------------------------------------------ */
 
-        <!-- Custom PreStyle code is injected here -->
-        
-
-        <!-- Set the background colour of the document -->
-        <style>
-            body {
-                background: #0;
-                color: #cccccc;
-                margin: 0px;
-                padding: 0px;
-                border: 0px;
-            }
-
-            canvas {
-                image-rendering: optimizeSpeed;
-                -webkit-interpolation-mode: nearest-neighbor;
-                -ms-touch-action: none;
-                touch-action: none;
-                margin: 0px;
-                padding: 0px;
-                border: 0px;
-            }
-            :-webkit-full-screen #canvas {
-                width: 100%;
-                height: 100%;
-            }
-            :-webkit-full-screen {
-                width: 100%;
-                height: 100%;
-            }
-            
-            /* Custom Runner Styles */
-            div.gm4html5_div_class {
-                margin: 0px;
-                padding: 0px;
-                border: 0px;
-            }
-            div.gm4html5_login {
-                padding: 20px;
-                position: absolute;
-                border: solid 2px #000000;
-                background-color: #404040;
-                color:#00ff00;
-                border-radius: 15px;
-                box-shadow: #101010 20px 20px 40px;
-            }
-            div.gm4html5_cancel_button {
-                float: right;
-            }
-            div.gm4html5_login_button {
-                float: left;
-            }
-            div.gm4html5_login_header {
-                text-align: center;
-            }
-            /* END - Custom Runner Styles */
-            
-        </style>
-
-        <!-- Custom PostStyle code is injected here -->
-
-        <style data-jogo-pagina-pse>
-
+const ESTILOS = /* css */ `
 :root {
   --jp-verde: #3d9b4e;
   --jp-verde-escuro: #26713a;
@@ -513,41 +462,42 @@ button:focus-visible {
     transition: none;
   }
 }
+`;
 
-        </style>
-        
+/* ------------------------------------------------------------------ */
+/* HTML: pedacos injetados ao redor do canvas do GameMaker             */
+/* ------------------------------------------------------------------ */
 
-        <!-- Builtin injector for injecting flurry analytics code -->
-        
-    </head>
+const SVG_PATINHA =
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="{TAM}" height="{TAM}" fill="currentColor" aria-hidden="true"><ellipse cx="12" cy="15.2" rx="5.4" ry="4.4"/><circle cx="5.4" cy="9.6" r="1.9"/><circle cx="9.3" cy="6.7" r="1.9"/><circle cx="14.7" cy="6.7" r="1.9"/><circle cx="18.6" cy="9.6" r="1.9"/></svg>';
 
-    <!-- Custom PostHead code is injected here -->
-    <meta name="description" content="Jogue Missões do Caramelito, o jogo do PSE Nova Santa Rita: explore a escola, ajude os colegas e complete as seis missões direto no navegador."/>
-    
+const SVG_NUVEM =
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 92" aria-hidden="true"><g fill="#ffffff"><circle cx="60" cy="55" r="30"/><circle cx="108" cy="40" r="38"/><circle cx="152" cy="56" r="28"/><rect x="30" y="52" width="152" height="34" rx="17"/></g></svg>';
 
-    <!-- Custom PreBody code is injected here -->
-    
+const SVG_SETA_ESQUERDA =
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg>';
 
-    <body>
-        <!-- Custom BodyStart code is injected here -->
+const SVG_TELA_CHEIA =
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg>';
 
+const ABRE_CORPO = `
 <a class="jp-pular" href="#jp-palco">Pular para o jogo</a>
 
 <header class="jp-topo">
   <div class="jp-topo-inner">
     <a class="jp-marca" href="../" aria-label="PSE Nova Santa Rita, voltar ao início do site">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true"><ellipse cx="12" cy="15.2" rx="5.4" ry="4.4"/><circle cx="5.4" cy="9.6" r="1.9"/><circle cx="9.3" cy="6.7" r="1.9"/><circle cx="14.7" cy="6.7" r="1.9"/><circle cx="18.6" cy="9.6" r="1.9"/></svg>
+      ${SVG_PATINHA.replaceAll("{TAM}", "26")}
       <span>PSE <strong>Nova Santa Rita</strong><small>Programa Saúde na Escola</small></span>
     </a>
-    <a class="jp-voltar" href="../"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg> Voltar ao site</a>
+    <a class="jp-voltar" href="../">${SVG_SETA_ESQUERDA} Voltar ao site</a>
   </div>
 </header>
 
 <main class="jp-conteudo">
   <div class="jp-hero">
-    <svg class="jp-nuvem jp-nuvem-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 92" aria-hidden="true"><g fill="#ffffff"><circle cx="60" cy="55" r="30"/><circle cx="108" cy="40" r="38"/><circle cx="152" cy="56" r="28"/><rect x="30" y="52" width="152" height="34" rx="17"/></g></svg>
-    <svg class="jp-nuvem jp-nuvem-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 92" aria-hidden="true"><g fill="#ffffff"><circle cx="60" cy="55" r="30"/><circle cx="108" cy="40" r="38"/><circle cx="152" cy="56" r="28"/><rect x="30" y="52" width="152" height="34" rx="17"/></g></svg>
-    <span class="jp-kicker"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><ellipse cx="12" cy="15.2" rx="5.4" ry="4.4"/><circle cx="5.4" cy="9.6" r="1.9"/><circle cx="9.3" cy="6.7" r="1.9"/><circle cx="14.7" cy="6.7" r="1.9"/><circle cx="18.6" cy="9.6" r="1.9"/></svg> O jogo</span>
+    ${SVG_NUVEM.replace('<svg ', '<svg class="jp-nuvem jp-nuvem-1" ')}
+    ${SVG_NUVEM.replace('<svg ', '<svg class="jp-nuvem jp-nuvem-2" ')}
+    <span class="jp-kicker">${SVG_PATINHA.replaceAll("{TAM}", "15")} O jogo</span>
     <h1 class="jp-titulo">Missões do Caramelito</h1>
     <p>Explore a Escola Amizade com o Caramelito, ajude os colegas nas seis missões e divirta-se, direto no navegador, sem instalar nada.</p>
   </div>
@@ -555,46 +505,15 @@ button:focus-visible {
   <div class="jp-palco" id="jp-palco">
     <div class="jp-moldura">
       <div class="jp-barra">
-        <span class="jp-barra-titulo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><ellipse cx="12" cy="15.2" rx="5.4" ry="4.4"/><circle cx="5.4" cy="9.6" r="1.9"/><circle cx="9.3" cy="6.7" r="1.9"/><circle cx="14.7" cy="6.7" r="1.9"/><circle cx="18.6" cy="9.6" r="1.9"/></svg> Missões do Caramelito</span>
-        <button class="jp-tela-cheia" type="button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><span class="jp-barra-btn-texto">Tela cheia</span></button>
+        <span class="jp-barra-titulo">${SVG_PATINHA.replaceAll("{TAM}", "14")} Missões do Caramelito</span>
+        <button class="jp-tela-cheia" type="button">${SVG_TELA_CHEIA}<span class="jp-barra-btn-texto">Tela cheia</span></button>
       </div>
       <noscript>
         <p class="jp-aviso">Para jogar, ative o JavaScript no navegador.</p>
       </noscript>
+`;
 
-        
-
-        <div class="gm4html5_div_class" id="gm4html5_div_id">
-            
-            <!-- Builtin injector for splash screen -->
-            
-
-            <!-- Custom PreCanvas code is injected here -->
-            
-
-            <!-- Create the canvas element the game draws to -->
-            <canvas id="canvas" width="1280" height="720" >
-                
-                <p>Your browser doesn't support HTML5 canvas.</p>
-            </canvas>
-            
-            <!-- Custom PostCanvas code is injected here -->
-            
-        </div>
-
-        <!-- Run the game code -->
-        <script type="text/javascript" src="html5game/Hero's Trail Base - GML Visual.js?cachebust=137936416"></script>
-
-        <!-- Builtin injector for injecting runner path -->
-        
-
-        <script>window.onload = GameMaker_Init;</script>
-
-        <!-- Builtin injector for injecting google analytics code -->
-        
-
-        <!-- Custom BodyEnd code is injected here -->
-
+const FECHA_CORPO = `
     </div>
   </div>
 
@@ -638,10 +557,73 @@ button:focus-visible {
     botao.addEventListener("click", alternarTelaCheia);
   })();
 </script>
+`;
 
-        
-    </body>
+/**
+ * Aplica o chrome institucional ao index.html do export do jogo.
+ * @param {string} html conteudo original do index.html do export
+ * @returns {{ html: string, aplicado: boolean, motivo?: string }}
+ */
+export function aplicarPaginaJogo(html) {
+  if (html.includes(MARCADOR)) {
+    return { html, aplicado: false, motivo: "chrome já presente" };
+  }
 
-    <!-- Custom PostBody code is injected here -->
-    
-</html>
+  let resultado = html;
+  let salvo = true;
+
+  resultado = resultado.replace(
+    /<html lang="en">/,
+    '<html lang="pt-BR">',
+  );
+  resultado = resultado.replace(
+    /<title>[\s\S]*?<\/title>/,
+    "<title>Missões do Caramelito | Jogo do PSE Nova Santa Rita</title>",
+  );
+
+  if (resultado.includes(MARCA_POSTHEAD)) {
+    resultado = resultado.replace(
+      MARCA_POSTHEAD,
+      `${MARCA_POSTHEAD}
+    <meta name="description" content="Jogue Missões do Caramelito, o jogo do PSE Nova Santa Rita: explore a escola, ajude os colegas e complete as seis missões direto no navegador."/>`,
+    );
+  }
+
+  if (resultado.includes(MARCA_POSTSTYLE)) {
+    resultado = resultado.replace(
+      MARCA_POSTSTYLE,
+      `${MARCA_POSTSTYLE}
+
+        <style ${MARCADOR}>
+${ESTILOS}
+        </style>`,
+    );
+  } else {
+    salvo = false;
+  }
+
+  if (resultado.includes(MARCA_BODYSTART)) {
+    resultado = resultado.replace(MARCA_BODYSTART, `${MARCA_BODYSTART}
+${ABRE_CORPO}`);
+  } else {
+    salvo = false;
+  }
+
+  if (resultado.includes(MARCA_BODYEND)) {
+    resultado = resultado.replace(MARCA_BODYEND, `${MARCA_BODYEND}
+${FECHA_CORPO}`);
+  } else {
+    salvo = false;
+  }
+
+  if (!salvo) {
+    return {
+      html,
+      aplicado: false,
+      motivo:
+        "pontos de injecao do template HTML5 nao encontrados; index.html copiado sem alteracoes",
+    };
+  }
+
+  return { html: resultado, aplicado: true };
+}
