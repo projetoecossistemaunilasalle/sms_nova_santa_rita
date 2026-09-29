@@ -1,12 +1,12 @@
-# Caramelinho: animação de scroll ancorada na interface
+# Caramelito: animação de scroll ancorada na interface
 
 ## Objetivo
 
-Revisar exclusivamente a jornada animada do Caramelinho, preservando a landing page, os textos, as seções e a identidade visual existentes. O sprite clássico deve nascer no hero e participar do primeiro deslocamento. Toda troca de pose deve estar visualmente associada a um card ou bloco real da página.
+Revisar exclusivamente a jornada animada do Caramelito, preservando a landing page, os textos, as seções e a identidade visual existentes. O sprite clássico deve nascer no hero e participar do primeiro deslocamento. Toda troca de pose deve estar visualmente associada a um card ou bloco real da página.
 
 ## Diagnóstico atual
 
-A página renderiza um Caramelinho estático em `HeroSection.astro` e um segundo Caramelinho fixo em `MascotGuide.tsx`. O guia só aparece depois que a seção “O projeto” entra na rota e seleciona imediatamente o sprite de movimento. Por isso, o clássico não participa da jornada.
+A página renderiza um Caramelito estático em `HeroSection.astro` e um segundo Caramelito fixo em `MascotGuide.tsx`. O guia só aparece depois que a seção “O projeto” entra na rota e seleciona imediatamente o sprite de movimento. Por isso, o clássico não participa da jornada.
 
 A rota atual usa progresso global da página, posições horizontais em porcentagem e uma faixa vertical fixa. A visibilidade é definida pelo destino de cada trecho. Como consequência, o mascote começa a desaparecer durante todo o deslocamento até a seção-cortina, em vez de ser ocultado pela geometria do card. As seções inteiras com `z-index` superior escondem o guia, mesmo quando ele ainda não alcançou um card.
 
@@ -14,7 +14,7 @@ A rota atual usa progresso global da página, posições horizontais em porcenta
 
 ### Componente único
 
-`MascotGuide` será o único Caramelinho visual. No HTML inicial ele ocupará o espaço atual do mascote no hero, preservando imagem, texto alternativo, balão e layout. Após a hidratação, quando movimento reduzido não estiver ativo, o mesmo componente passará para a camada fixa e iniciará a jornada a partir do retângulo exato ocupado no hero.
+`MascotGuide` será o único Caramelito visual. No HTML inicial ele ocupará o espaço atual do mascote no hero, preservando imagem, texto alternativo, balão e layout. Após a hidratação, quando movimento reduzido não estiver ativo, o mesmo componente passará para a camada fixa e iniciará a jornada a partir do retângulo exato ocupado no hero.
 
 O componente será hidratado no carregamento, não em idle, para que a passagem do estado estático ao estado controlado por scroll esteja pronta antes da primeira rolagem. Sem JavaScript ou com `prefers-reduced-motion`, ele permanece estático no hero.
 
@@ -46,7 +46,7 @@ Os cards-cortina terão camada opaca acima do mascote. A seção inteira não se
 
 ## Sequência de movimento
 
-1. O Caramelinho clássico começa no hero com respiração discreta.
+1. O Caramelito clássico começa no hero com respiração discreta.
 2. Ao rolar, o clássico percorre uma curva longa durante “O projeto”, com deslocamento lateral e vertical suave.
 3. Ele entra atrás do bloco verde da seção. A troca para movimento ocorre dentro da área de oclusão, e o novo sprite sai pela outra borda.
 4. O sprite de movimento acompanha Missões e o início da Experiência por curvas lentas.
@@ -89,7 +89,7 @@ As medições serão refeitas após carregamento, mudança de viewport, mudança
 
 ## Movimento reduzido e falhas seguras
 
-Com `prefers-reduced-motion: reduce`, o Caramelinho permanece estático no hero. Não haverá grandes travessias, bounce, alternância contínua ou troca dupla.
+Com `prefers-reduced-motion: reduce`, o Caramelito permanece estático no hero. Não haverá grandes travessias, bounce, alternância contínua ou troca dupla.
 
 Se um marcador obrigatório estiver ausente, tiver geometria inválida ou a página não tiver scroll suficiente, o componente mantém o estado estático do hero. A animação não deve tentar construir uma rota parcial que produza saltos.
 
