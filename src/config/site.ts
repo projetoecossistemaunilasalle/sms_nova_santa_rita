@@ -2,7 +2,7 @@
  * Configuracao central do site PSE Nova Santa Rita.
  *
  * TODOS os caminhos de assets e textos institucionais ficam aqui.
- * Para substituir textos, links, logotipos ou imagens, edite este arquivo —
+ * Para substituir textos, links, logotipos ou imagens, edite este arquivo;
  * nao e necessario procurar strings espalhadas pelos componentes.
  *
  * Itens marcados com [PLACEHOLDER] ainda nao possuem informacao oficial
@@ -39,7 +39,10 @@ export function withBase(path: string): string {
  *   - /jogo/: export web do Heroes_Trial (tools/export_web.ps1).
  */
 export const APPS = {
-  jogo: "/jogo/",
+  // "index.html" explicito: o servidor de dev do Astro nao resolve a barra
+  // final de pastas em public/ (so o Pages resolve). Assim o link funciona
+  // tanto no dev quanto no deploy.
+  jogo: "/jogo/index.html",
   portal: "/portal/",
 } as const;
 
@@ -50,19 +53,31 @@ export const APPS = {
 export const ASSETS = {
   mascot: {
     /** Pose principal de apresentacao (acenando). */
-    classico: withBase("/assets/mascot/caramelinho-classico.webp"),
+    classico: withBase("/assets/mascot/caramelito-classico.webp"),
     /** Pose de deslocamento/caminhada. */
-    movimento: withBase("/assets/mascot/caramelinho-movimento.webp"),
+    movimento: withBase("/assets/mascot/caramelito-movimento.webp"),
     /** Quadro A da cena "observando uma folha". */
-    papelA: withBase("/assets/mascot/caramelinho-papel-a.webp"),
+    papelA: withBase("/assets/mascot/caramelito-papel-a.webp"),
     /** Quadro B da cena "observando uma folha" (rabo abanando). */
-    papelB: withBase("/assets/mascot/caramelinho-papel-b.webp"),
+    papelB: withBase("/assets/mascot/caramelito-papel-b.webp"),
     /** Largura/altura naturais dos sprites (quadrados, com margem interna). */
     width: 640,
     height: 640,
   },
-  /** Arte conceitual do jogo de tabuleiro (fornecida pelo projeto). */
-  arteConceitual: withBase("/assets/conceito/jogo-tabuleiro-conceito.webp"),
+  /**
+   * Capturas reais do jogo (Heroes_Trial), tiradas do proprio jogo rodando
+   * no navegador. As dimensoes correspondem ao recorte do canvas.
+   */
+  jogo: {
+    /** Mundo: explorando o patio da escola com o Caramelito. */
+    patio: withBase("/assets/jogo/explorando-patio.webp"),
+    /** Tela de escolha da missao "Futebol no patio". */
+    escolha: withBase("/assets/jogo/escolha-acolher.webp"),
+    /** Cutscene ilustrada da missao "Futebol no patio". */
+    cutscene: withBase("/assets/jogo/historia-patio.webp"),
+    /** Minigame de defesas (vertical). */
+    minigame: withBase("/assets/jogo/minigame-defesas.webp"),
+  },
   /**
    * [PLACEHOLDER] Logotipo oficial do PSE e brasao da Prefeitura.
    * Quando os arquivos oficiais estiverem disponiveis, coloque-os em
@@ -85,7 +100,7 @@ export const SITE = {
   municipio: "Nova Santa Rita",
   slogan: "Aprender, cuidar e crescer juntos!",
   descricao:
-    "Uma iniciativa do Programa Saúde na Escola de Nova Santa Rita que une educação e saúde para cuidar das nossas crianças — na escola, em casa e em todos os caminhos.",
+    "Uma iniciativa do Programa Saúde na Escola de Nova Santa Rita que une educação e saúde para cuidar das nossas crianças, na escola, em casa e em todos os caminhos.",
   /** Frase institucional do rodape do material oficial. */
   frasePrefeitura: "Cuidando de pessoas, construindo o futuro.",
   /** Selo do material oficial. */
@@ -93,11 +108,11 @@ export const SITE = {
 } as const;
 
 /** Fala do mascote no material oficial. */
-export const FALA_CARAMELINHO =
-  "Sou o Caramelinho, seu amigo na missão por uma vida mais saudável!";
+export const FALA_CARAMELITO =
+  "Sou o Caramelito, seu amigo na missão por uma vida mais saudável!";
 
 /* ------------------------------------------------------------------ */
-/* Contato — [PLACEHOLDER]                                             */
+/* Contato [PLACEHOLDER]                                               */
 /* ------------------------------------------------------------------ */
 
 /**
@@ -120,7 +135,7 @@ export const CONTATO = {
 export const NAV = [
   { href: "#projeto", label: "O projeto" },
   { href: "#missoes", label: "Missões" },
-  { href: "#experiencia", label: "A experiência" },
+  { href: "#jogo", label: "O jogo" },
   { href: "#para-quem", label: "Para quem" },
   { href: "#seguranca", label: "Segurança" },
   { href: "#contato", label: "Contato" },
@@ -133,6 +148,8 @@ export const NAV = [
 export interface Missao {
   titulo: string;
   texto: string;
+  /** Onde a missao acontece no jogo. */
+  lugar: string;
   /** Chave de cor definida em global.css (--missao-*). */
   cor:
     | "verde"
@@ -144,100 +161,96 @@ export interface Missao {
     | "laranja";
   /** Chave do icone em components/Icon.astro. */
   icone:
-    | "alimentacao"
     | "sorriso"
+    | "maos"
     | "mente"
-    | "vacina"
-    | "dengue"
     | "respeito"
-    | "paz";
+    | "alunos"
+    | "coracao";
 }
 
+/** Missoes reais do jogo Heroes_Trial (conteudo ja implementado). */
 export const MISSOES: Missao[] = [
   {
-    titulo: "Alimentação Saudável",
-    texto: "Escolhas gostosas e coloridas que dão energia para brincar e aprender.",
-    cor: "verde",
-    icone: "alimentacao",
-  },
-  {
-    titulo: "Sorriso Saudável",
-    texto: "Cuidados diários com os dentes para sorrir com confiança.",
+    titulo: "Escovando com Nico",
+    texto: "O Nico está aprendendo a cuidar dos dentes: ajude-o a escovar direitinho, arrastando a escova sobre cada manchinha.",
+    lugar: "Enfermaria",
     cor: "azul",
     icone: "sorriso",
   },
   {
-    titulo: "Saúde Emocional",
-    texto: "Reconhecer sentimentos, pedir ajuda e cuidar de si e dos amigos.",
+    titulo: "Kit do Sorriso",
+    texto: "Monte com o Cauã o Kit do Sorriso escolhendo os três objetos que cuidam dos dentes todos os dias.",
+    lugar: "Cantina",
+    cor: "agua",
+    icone: "maos",
+  },
+  {
+    titulo: "Quando a brincadeira deixa de ser brincadeira?",
+    texto: "Perceba quando uma brincadeira magoa, ouça quem esteve ali e ajude a procurar um adulto de confiança.",
+    lugar: "Pátio",
     cor: "roxo",
     icone: "mente",
   },
   {
-    titulo: "Vacina em Dia",
-    texto: "Proteção que cuida de cada criança e de toda a comunidade escolar.",
-    cor: "amarelo",
-    icone: "vacina",
-  },
-  {
-    titulo: "Sem Dengue",
-    texto: "Pequenas atitudes que afastam o mosquito e protegem a turma.",
-    cor: "coral",
-    icone: "dengue",
-  },
-  {
-    titulo: "Respeito e Convivência",
-    texto: "Amizade, cooperação e acolhimento das diferenças todos os dias.",
-    cor: "agua",
+    titulo: "Atitudes positivas",
+    texto: "Com a Lia, lembre as atitudes que acolhem, que são ouvir, incluir e respeitar, e encontre os pares no jogo da memória.",
+    lugar: "Pátio",
+    cor: "verde",
     icone: "respeito",
   },
   {
-    titulo: "Cultura de Paz",
-    texto: "Prevenção das violências com diálogo, empatia e adultos de confiança.",
-    cor: "laranja",
-    icone: "paz",
+    titulo: "Futebol no pátio",
+    texto: "Um colega ficou de fora da partida: escolha como acolhê-lo e depois defenda o treino de chutes e bolas na quadra.",
+    lugar: "Pátio",
+    cor: "amarelo",
+    icone: "alunos",
+  },
+  {
+    titulo: "Respeitar também é cuidar",
+    texto: "Com Caio, Leo e Bia, perceba o que cada um sente e respeite os limites no desafio do Semáforo do Conforto.",
+    lugar: "Corredor",
+    cor: "coral",
+    icone: "coracao",
   },
 ];
 
 /* ------------------------------------------------------------------ */
-/* A experiencia educativa (em desenvolvimento)                        */
+/* Como o jogo funciona (fluxo real das missoes)                        */
 /* ------------------------------------------------------------------ */
 
-/** Trechos do percurso do jogo em preparacao, conforme o documento de concepcao. */
-export const TRILHA = [
+/** Passos do fluxo de jogo, conforme as missoes implementadas. */
+export const COMO_FUNCIONA = [
   {
-    titulo: "Saída de casa",
-    texto: "Organizar a rotina da manhã e se despedir da família com carinho.",
+    titulo: "Explore a escola",
+    texto: "Caminhe pelo pátio, corredor, cantina, sala de aula e enfermaria. O ponto de exclamação mostra quem precisa de ajuda.",
   },
   {
-    titulo: "Ônibus escolar",
-    texto: "Convivência e segurança no transporte: respeito ao motorista e aos colegas.",
+    titulo: "Converse e escute",
+    texto: "Cada missão começa com uma história em cenas ilustradas e diálogos com os colegas, cada um com o seu jeito de falar e sentir.",
   },
   {
-    titulo: "Travessia da rua",
-    texto: "Atravessar com atenção, observando sinais, faixas e a orientação dos adultos.",
+    titulo: "Escolha com atenção",
+    texto: "Nas decisões não existe resposta errada: cada escolha vem com uma reflexão guiada, sempre com tom positivo.",
   },
   {
-    titulo: "Chegada à escola",
-    texto: "Respeito aos colegas e profissionais, cuidado com os espaços e os materiais.",
+    titulo: "Jogue minigames",
+    texto: "Defenda chutes na quadra, encontre pares no jogo da memória, escove os dentinhos e monte o Kit do Sorriso.",
   },
   {
-    titulo: "Hora do recreio",
-    texto: "Partilha, brincadeiras coletivas e resolução pacífica dos pequenos conflitos.",
-  },
-  {
-    titulo: "Volta para casa",
-    texto: "Fim de um dia de aprendizados, com o coração cheio de boas escolhas.",
+    titulo: "Comemore",
+    texto: "Ao concluir cada missão, o Caramelito ganha ossinhos e biscoitos, e a escola fica um lugar melhor para todos.",
   },
 ] as const;
 
-/** Caracteristicas previstas da experiencia digital (nunca afirmar que ja existem). */
-export const PREVISTO = [
-  "Jogo de tabuleiro digital para jogar no navegador, sem instalação",
-  "Para jogar em grupo no mesmo dispositivo ou individualmente",
+/** O que a demonstracao disponivel no navegador ja oferece. */
+export const DESTAQUES = [
+  "Jogue direto no navegador, sem instalar nada",
+  "Seis missões com histórias, escolhas e minigames",
+  "Ossinhos e biscoitos ao concluir cada desafio",
   "Personagens diversos, como são de verdade as nossas salas de aula",
-  "Roleta, estrelinhas de incentivo e desafios do dia a dia",
   "Conteúdo alinhado às competências socioemocionais da BNCC",
-  "Roteiros revisados por pedagogos e psicólogos infantis",
+  "Sem anúncios e sem coleta de dados das crianças",
 ] as const;
 
 /* ------------------------------------------------------------------ */
@@ -247,7 +260,7 @@ export const PREVISTO = [
 export const PUBLICO = [
   {
     titulo: "Alunos",
-    texto: "Crianças de 6 a 10 anos aprendendo brincando — e cuidando da saúde e das amizades.",
+    texto: "Crianças de 6 a 10 anos aprendendo brincando e cuidando da saúde e das amizades.",
     icone: "alunos" as const,
     cor: "verde" as const,
   },

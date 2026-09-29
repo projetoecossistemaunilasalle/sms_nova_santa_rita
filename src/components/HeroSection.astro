@@ -1,5 +1,5 @@
 ---
-import { APPS, FALA_CARAMELINHO, JUNTOS_POR, SITE, withBase } from "../config/site";
+import { APPS, FALA_CARAMELITO, JUNTOS_POR, SITE, withBase } from "../config/site";
 import Icon from "./Icon.astro";
 import MascotGuide from "./solid/MascotGuide";
 ---
@@ -18,7 +18,7 @@ import MascotGuide from "./solid/MascotGuide";
     <div class="heroi-texto">
       <span class="selo-dev">
         <Icon name="brilho" size={15} />
-        Projeto em desenvolvimento
+        Demonstração disponível. Jogue no navegador
       </span>
 
       <h1 id="titulo-heroi">
@@ -62,7 +62,7 @@ import MascotGuide from "./solid/MascotGuide";
     </div>
 
     <figure class="heroi-mascote" data-mascot-origin>
-      <figcaption class="balao" aria-hidden="true">{FALA_CARAMELINHO}</figcaption>
+      <figcaption class="balao" aria-hidden="true">{FALA_CARAMELITO}</figcaption>
       <MascotGuide client:load />
     </figure>
   </div>

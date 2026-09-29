@@ -10,11 +10,11 @@ import Icon from "./Icon.astro";
 <section class="secao missoes" id="missoes" aria-labelledby="titulo-missoes">
   <div class="container">
     <div class="cabecalho-secao centrado">
-      <span class="kicker azul"><Icon name="estrela" size={15} /> Nossas missões</span>
-      <h2 class="titulo-secao" id="titulo-missoes">Sete missões para crescer saudável e feliz</h2>
+      <span class="kicker azul"><Icon name="estrela" size={15} /> Missões do jogo</span>
+      <h2 class="titulo-secao" id="titulo-missoes">Seis missões pela escola</h2>
       <p class="subtitulo-secao">
-        Cada missão é um convite para cuidar do corpo, das emoções e das amizades — em casa, na
-        escola e no caminho entre os dois.
+        Cada missão do jogo é uma história do dia a dia escolar: cuidar do corpo, das emoções e das
+        amizades, conversando, escolhendo e jogando junto.
       </p>
     </div>
 
@@ -25,6 +25,7 @@ import Icon from "./Icon.astro";
             <span class="missao-icone">
               <Icon name={m.icone} size={30} />
             </span>
+            <span class="missao-lugar">{m.lugar}</span>
             <h3>{m.titulo}</h3>
             <p>{m.texto}</p>
           </li>
@@ -34,7 +35,7 @@ import Icon from "./Icon.astro";
       <li class="missao cor-extra">
         <span class="missao-icone"><Icon name="patinha" size={28} /></span>
         <h3>E muito mais</h3>
-        <p>Novos conteúdos e materiais estão sendo preparados com carinho.</p>
+        <p>Novas missões e conteúdos estão sendo preparados com carinho.</p>
       </li>
     </ul>
   </div>
@@ -88,6 +89,16 @@ import Icon from "./Icon.astro";
     width: 3.3rem;
     height: 3.3rem;
     border-radius: 50%;
+  }
+
+  .missao-lugar {
+    display: inline-block;
+    margin-top: 0.7rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--tinta-suave);
   }
 
   .cor-verde .missao-icone {

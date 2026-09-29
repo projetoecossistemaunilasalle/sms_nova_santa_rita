@@ -688,7 +688,7 @@ export default function MascotGuide() {
               ref={(element) => (primary.images.classico = element)}
               class="ativa"
               src={ASSETS.mascot.classico}
-              alt="Caramelinho, o cachorrinho mascote do PSE Nova Santa Rita, acenando com mochila e escova de dentes"
+              alt="Caramelito, o cachorrinho mascote do PSE Nova Santa Rita, acenando com mochila e escova de dentes"
               width={ASSETS.mascot.width}
               height={ASSETS.mascot.height}
               draggable="false"

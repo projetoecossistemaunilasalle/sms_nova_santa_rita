@@ -1,5 +1,5 @@
 /* ============================================================
-   PSE Nova Santa Rita — estilos globais e design tokens
+   PSE Nova Santa Rita: estilos globais e design tokens
    Paleta inspirada no material oficial do Programa Saúde na Escola.
    ============================================================ */
 
@@ -52,7 +52,7 @@
   --missao-laranja-bg: var(--laranja-claro);
   --missao-laranja-fg: var(--laranja-escuro);
 
-  /* Tipografia — pilha do sistema, sem fontes externas */
+  /* Tipografia: pilha do sistema, sem fontes externas */
   --fonte: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
 
   /* Raios e sombras */
@@ -159,8 +159,9 @@ a {
   position: relative;
 }
 
-/* O conteudo permanece acima do guia; areas transparentes deixam a rota visivel. */
-.secao > .container {
+/* Filosofia da pagina: o guia nunca cobre conteudo. Qualquer container,
+   direto ou aninhado, fica acima da camada do mascote (30). */
+.secao .container {
   position: relative;
   z-index: 40;
 }

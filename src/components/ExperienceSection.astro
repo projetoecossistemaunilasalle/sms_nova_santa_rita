@@ -1,33 +1,82 @@
 ---
-import { APPS, ASSETS, PREVISTO, TRILHA, withBase } from "../config/site";
+import { APPS, ASSETS, COMO_FUNCIONA, DESTAQUES, withBase } from "../config/site";
 import Icon from "./Icon.astro";
 ---
 
-<section class="secao experiencia" id="experiencia" aria-labelledby="titulo-experiencia">
-  <div class="container">
+<section class="secao experiencia" id="jogo" aria-labelledby="titulo-experiencia">
+  <!-- Ceu do mundo do jogo: sol e nuvens -->
+  <div class="ceu-decor" aria-hidden="true">
+    <svg class="sol" viewBox="0 0 104 104" width="86" height="86">
+      <g stroke="#f2b90d" stroke-width="5.5" stroke-linecap="round">
+        <path d="M52 16V4M52 88v12M88 52h12M16 52H4M77.5 26.5l8.4-8.4M26.5 26.5l-8.4-8.4M77.5 77.5l8.4 8.4M26.5 77.5l-8.4 8.4"></path>
+      </g>
+      <circle cx="52" cy="52" r="23" fill="#f7c948"></circle>
+    </svg>
+    <svg class="nuvem nuvem-1" viewBox="0 0 220 92">
+      <g fill="#ffffff">
+        <circle cx="60" cy="55" r="30"></circle>
+        <circle cx="108" cy="40" r="38"></circle>
+        <circle cx="152" cy="56" r="28"></circle>
+        <rect x="30" y="52" width="152" height="34" rx="17"></rect>
+      </g>
+    </svg>
+    <svg class="nuvem nuvem-2" viewBox="0 0 220 92">
+      <g fill="#ffffff">
+        <circle cx="60" cy="55" r="30"></circle>
+        <circle cx="108" cy="40" r="38"></circle>
+        <circle cx="152" cy="56" r="28"></circle>
+        <rect x="30" y="52" width="152" height="34" rx="17"></rect>
+      </g>
+    </svg>
+    <svg class="nuvem nuvem-3" viewBox="0 0 220 92">
+      <g fill="#ffffff">
+        <circle cx="60" cy="55" r="30"></circle>
+        <circle cx="108" cy="40" r="38"></circle>
+        <circle cx="152" cy="56" r="28"></circle>
+        <rect x="30" y="52" width="152" height="34" rx="17"></rect>
+      </g>
+    </svg>
+  </div>
+
+  <div class="container experiencia-ceu">
     <div class="cabecalho-secao">
-      <span class="kicker laranja"><Icon name="patinha" size={15} /> A experiência</span>
+      <span class="kicker laranja"><Icon name="patinha" size={15} /> O jogo</span>
       <h2 class="titulo-secao" id="titulo-experiencia">
-        Um dia inteiro de aprendizado, casa por casa
+        Uma escola para explorar, histórias para viver
       </h2>
       <p class="subtitulo-secao">
-        A experiência educativa digital do {`PSE Nova Santa Rita`} está sendo preparada no formato de
-        um jogo de tabuleiro: o percurso acompanha um dia na vida escolar, da saída de casa até o retorno
-        — com desafios, escolhas e estrelinhas de incentivo pelo caminho.
+        No jogo do {`PSE Nova Santa Rita`}, o Caramelito percorre a escola e ajuda os colegas em
+        seis missões. Cada uma começa com uma história, passa por escolhas do dia a dia e termina
+        em um minigame divertido.
       </p>
     </div>
 
     <div class="experiencia-grade">
-      <!-- Trilha do tabuleiro -->
-      <ol class="trilha" aria-label="Trechos do percurso previsto">
+      <!-- Trilha das missoes, como um caminho no mapa da escola -->
+      <ol class="trilha" aria-label="Como funciona o jogo">
         {
-          TRILHA.map((passo, i) => (
-            <li class="casa" style={`--i:${i}`}>
+          COMO_FUNCIONA.map((passo, i) => (
+            <li class="casa" style={`--n:${i}`}>
               <span class="casa-numero" aria-hidden="true">
                 {i + 1}
               </span>
-              <div>
-                <h3>{passo.titulo}</h3>
+              {i < COMO_FUNCIONA.length - 1 && (
+                <svg
+                  class="trilho"
+                  viewBox="0 0 100 100"
+                  preserveAspectRatio="none"
+                  aria-hidden="true"
+                >
+                  <path d="M2 0 C 2 58, 98 42, 98 100"></path>
+                </svg>
+              )}
+              <div class="casa-texto">
+                <h3>
+                  {passo.titulo}
+                  {i === COMO_FUNCIONA.length - 1 && (
+                    <Icon name="estrela" size={15} class="estrela-fim" />
+                  )}
+                </h3>
                 <p>{passo.texto}</p>
               </div>
             </li>
@@ -35,45 +84,29 @@ import Icon from "./Icon.astro";
         }
       </ol>
 
-      <!-- Arte conceitual + previsto -->
+      <!-- Tela do jogo + acoes -->
       <div class="experiencia-lado">
-        <figure class="arte-conceitual" data-mascot-curtain="paper-in">
-          <img
-            src={ASSETS.arteConceitual}
-            alt="Arte conceitual do jogo de tabuleiro em desenvolvimento: um caminho de casas numeradas entre a casa e a escola, com o Caramelinho no início do percurso"
-            width="900"
-            height="1014"
-            loading="lazy"
-            decoding="async"
-          />
+        <figure class="minigame" data-mascot-curtain="paper-in">
+          <div class="minigame-tela">
+            <img
+              src={ASSETS.jogo.minigame}
+              alt="Captura do jogo: no minigame da quadra, as crianças chutam bolas de futebol e o jogador arrasta um tênis gigante para defendê-las"
+              width="448"
+              height="798"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
           <figcaption>
             <Icon name="brilho" size={14} />
-            Arte conceitual — o jogo está em desenvolvimento.
+            Minigame da quadra: defenda as bolas!
           </figcaption>
         </figure>
-
-        <div class="previsto" data-mascot-curtain="paper-out">
-          <h3>O que está previsto</h3>
-          <ul>
-            {
-              PREVISTO.map((item) => (
-                <li>
-                  <Icon name="check" size={17} />
-                  <span>{item}</span>
-                </li>
-              ))
-            }
-          </ul>
-          <p class="previsto-nota">
-            Uma primeira demonstração já pode ser experimentada no navegador; a experiência completa
-            será publicada aqui quando estiver pronta para as escolas.
-          </p>
-        </div>
 
         <div class="experiencia-acao">
           <a class="botao primario" href={withBase(APPS.jogo)}>
             <Icon name="patinha" size={18} />
-            Jogar a demonstração
+            Jogar agora
           </a>
           <a class="botao contorno" href={withBase(APPS.portal)}>
             <Icon name="professores" size={18} />
@@ -82,158 +115,384 @@ import Icon from "./Icon.astro";
         </div>
       </div>
     </div>
+
+    <!-- O que a demonstracao ja tem -->
+    <div class="destaques">
+      <h3>O que a demonstração já tem</h3>
+      <ul>
+        {
+          DESTAQUES.map((item) => (
+            <li>
+              <Icon name="check" size={17} />
+              <span>{item}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+
+  <!-- Colinas: a grama da escola comeca aqui -->
+  <div class="colinas" aria-hidden="true">
+    <svg viewBox="0 0 1440 110" preserveAspectRatio="none">
+      <path
+        class="colina-traseira"
+        d="M0,64 C240,18 480,96 720,58 C960,22 1200,84 1440,44 L1440,110 L0,110 Z"></path>
+      <path
+        class="colina-frente"
+        d="M0,88 C260,46 520,108 780,74 C1040,44 1240,104 1440,66 L1440,110 L0,110 Z"></path>
+    </svg>
+  </div>
+
+  <!-- Gramado: galeria com capturas reais do jogo -->
+  <div class="gramado">
+    <div class="patinhas" aria-hidden="true">
+      <svg class="pata pata-1" viewBox="0 0 24 24">
+        <ellipse cx="12" cy="15.2" rx="5.4" ry="4.4"></ellipse>
+        <circle cx="5.4" cy="9.6" r="1.9"></circle>
+        <circle cx="9.3" cy="6.7" r="1.9"></circle>
+        <circle cx="14.7" cy="6.7" r="1.9"></circle>
+        <circle cx="18.6" cy="9.6" r="1.9"></circle>
+      </svg>
+      <svg class="pata pata-2" viewBox="0 0 24 24">
+        <ellipse cx="12" cy="15.2" rx="5.4" ry="4.4"></ellipse>
+        <circle cx="5.4" cy="9.6" r="1.9"></circle>
+        <circle cx="9.3" cy="6.7" r="1.9"></circle>
+        <circle cx="14.7" cy="6.7" r="1.9"></circle>
+        <circle cx="18.6" cy="9.6" r="1.9"></circle>
+      </svg>
+      <svg class="pata pata-3" viewBox="0 0 24 24">
+        <ellipse cx="12" cy="15.2" rx="5.4" ry="4.4"></ellipse>
+        <circle cx="5.4" cy="9.6" r="1.9"></circle>
+        <circle cx="9.3" cy="6.7" r="1.9"></circle>
+        <circle cx="14.7" cy="6.7" r="1.9"></circle>
+        <circle cx="18.6" cy="9.6" r="1.9"></circle>
+      </svg>
+    </div>
+
+    <div class="container gramado-conteudo">
+      <div class="galeria-cabecalho">
+        <h3>Direto do jogo</h3>
+        <p>Capturas reais da demonstração que já pode ser jogada no navegador.</p>
+      </div>
+      <div class="galeria">
+        <figure>
+          <img
+            src={ASSETS.jogo.patio}
+            alt="Captura do jogo: o Caramelito no pátio da escola, cercado por colegas com pontos de exclamação, em vista de cima"
+            width="1278"
+            height="718"
+            loading="lazy"
+            decoding="async"
+          />
+          <figcaption>Explorando o pátio da escola</figcaption>
+        </figure>
+        <figure data-mascot-curtain="paper-out">
+          <img
+            src={ASSETS.jogo.cutscene}
+            alt="Captura do jogo: cena ilustrada do pátio com o Caramelito diante da Escola Amizade durante a história de abertura da missão"
+            width="1278"
+            height="718"
+            loading="lazy"
+            decoding="async"
+          />
+          <figcaption>Cenas ilustradas contam cada história</figcaption>
+        </figure>
+        <figure>
+          <img
+            src={ASSETS.jogo.escolha}
+            alt="Captura do jogo: tela de escolha da missão Futebol no Pátio, com quatro opções de como acolher o colega"
+            width="1278"
+            height="718"
+            loading="lazy"
+            decoding="async"
+          />
+          <figcaption>Escolhas que convidam à reflexão</figcaption>
+        </figure>
+      </div>
+    </div>
   </div>
 </section>
 
 <style>
+  /* O mundo do jogo: ceu, sol, nuvens, colinas e gramado. */
   .experiencia {
-    background: var(--papel);
+    --ceu-topo: #a9d9f4;
+    --ceu-base: #e7f5fc;
+    --grama-media: #bfe3a4;
+    --grama-forte: #9ed47e;
+    --tela-navy: #1d3d5f;
+    --tinta-jogo-suave: #3d5747;
+
+    position: relative;
     overflow: clip;
+    padding-block: 0;
+    background: linear-gradient(
+      180deg,
+      var(--ceu-topo) 0%,
+      var(--ceu) 24%,
+      var(--ceu-base) 58%,
+      var(--grama) 100%
+    );
   }
 
+  .experiencia-ceu {
+    padding-block: clamp(3.5rem, 8vw, 6rem) clamp(2rem, 4.5vw, 3.5rem);
+  }
+
+  .experiencia .subtitulo-secao {
+    color: var(--tinta-jogo-suave);
+  }
+
+  /* --- Decoracao do ceu --- */
+  .ceu-decor {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .sol {
+    position: absolute;
+    top: 1.8rem;
+    right: clamp(1.25rem, 6vw, 7rem);
+  }
+
+  .nuvem {
+    position: absolute;
+  }
+
+  .nuvem-1 {
+    top: 3.2rem;
+    left: 1.5%;
+    width: clamp(90px, 11vw, 160px);
+    animation: nuvem-flutua 48s ease-in-out infinite alternate;
+  }
+
+  .nuvem-2 {
+    top: 8rem;
+    right: 15%;
+    width: clamp(120px, 15vw, 210px);
+    animation: nuvem-flutua 66s ease-in-out infinite alternate-reverse;
+  }
+
+  .nuvem-3 {
+    top: 1.6rem;
+    left: 44%;
+    width: clamp(70px, 8vw, 110px);
+    opacity: 0.9;
+    animation: nuvem-flutua 54s ease-in-out infinite alternate;
+  }
+
+  @keyframes nuvem-flutua {
+    to {
+      translate: 24px 0;
+    }
+  }
+
+  /* --- Grade principal: trilha + tela do jogo --- */
   .experiencia-grade {
     display: grid;
     grid-template-columns: 1.05fr 0.95fr;
     gap: clamp(2rem, 4vw, 3.5rem);
-    align-items: start;
+    align-items: center;
   }
 
-  /* --- Trilha --- */
+  /* --- Trilha das missoes --- */
   .trilha {
     list-style: none;
     padding: 0;
+    align-self: center;
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 1.1rem;
-  }
-
-  /* Caminho pontilhado ligando as casas */
-  .trilha::before {
-    content: "";
-    position: absolute;
-    left: 1.55rem;
-    top: 1.4rem;
-    bottom: 1.4rem;
-    border-left: 3px dashed rgb(61 155 78 / 0.45);
+    gap: 1.15rem;
+    --zig: clamp(0px, 4vw, 44px);
   }
 
   .casa {
     position: relative;
-    display: flex;
-    gap: 1rem;
-    align-items: flex-start;
-    background: var(--nuvem);
-    border: 1.5px solid var(--linha);
-    border-radius: var(--raio-m);
-    padding: 1.1rem 1.2rem 1.1rem 0.9rem;
-    box-shadow: var(--sombra-card);
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    column-gap: 1.05rem;
+    align-items: start;
+    padding-block: 0.2rem;
   }
 
-  /* Zig-zag suave, como as casas de um tabuleiro */
   .casa:nth-child(even) {
-    margin-left: clamp(0rem, 4vw, 2.6rem);
+    margin-left: var(--zig);
+  }
+
+  /* Caminho tracejado e curvo entre um passo e o proximo */
+  .trilho {
+    position: absolute;
+    top: 3.35rem;
+    bottom: -1.5rem;
+    width: var(--zig);
+    height: auto;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .casa:nth-child(odd) .trilho {
+    left: 1.5rem;
+  }
+
+  .casa:nth-child(even) .trilho {
+    left: calc(1.5rem - var(--zig));
+    transform: scaleX(-1);
+  }
+
+  .trilho path {
+    fill: none;
+    stroke: rgb(61 155 78 / 0.55);
+    stroke-width: 4;
+    stroke-dasharray: 1 13;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
   }
 
   .casa-numero {
-    flex: none;
+    grid-column: 1;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2.4rem;
-    height: 2.4rem;
+    width: 3rem;
+    height: 3rem;
     border-radius: 50%;
     font-weight: 900;
     font-size: 1.05rem;
     color: #fff;
-    box-shadow: inset 0 -3px 0 rgb(0 0 0 / 0.18);
+    box-shadow:
+      0 0 0 3px rgb(255 255 255 / 0.75),
+      inset 0 -3px 0 rgb(0 0 0 / 0.18);
   }
 
-  .casa:nth-child(6n + 1) .casa-numero {
+  .casa:nth-child(5n + 1) .casa-numero {
     background: var(--verde);
   }
-  .casa:nth-child(6n + 2) .casa-numero {
+  .casa:nth-child(5n + 2) .casa-numero {
     background: var(--laranja);
   }
-  .casa:nth-child(6n + 3) .casa-numero {
+  .casa:nth-child(5n + 3) .casa-numero {
     background: var(--azul);
   }
-  .casa:nth-child(6n + 4) .casa-numero {
+  .casa:nth-child(5n + 4) .casa-numero {
     background: var(--amarelo);
     color: var(--tinta);
   }
-  .casa:nth-child(6n + 5) .casa-numero {
-    background: var(--agua);
-  }
-  .casa:nth-child(6n + 6) .casa-numero {
+  .casa:nth-child(5n + 5) .casa-numero {
     background: var(--roxo);
   }
 
-  .casa h3 {
-    font-size: 1.08rem;
+  .casa-texto h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 1.12rem;
+    color: var(--tinta);
   }
 
-  .casa p {
+  .estrela-fim {
+    color: var(--amarelo-escuro);
+    flex: none;
+  }
+
+  .casa-texto p {
     margin-top: 0.25rem;
     font-size: 0.92rem;
-    color: var(--tinta-suave);
+    color: var(--tinta-jogo-suave);
   }
 
-  /* --- Lado direito --- */
+  /* Momento autoral: cada passo surge, em sequencia, ao entrar na tela.
+     Sem JavaScript (ou com movimento reduzido) os passos ficam visiveis. */
+  .casa-espera {
+    opacity: 0;
+    translate: 0 22px;
+  }
+
+  .casa-visivel {
+    opacity: 1;
+    translate: 0 0;
+    transition:
+      opacity 0.55s ease-out,
+      translate 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(var(--n, 0) * 70ms);
+  }
+
+  /* --- Tela do jogo, com aro como nos paineis do proprio jogo --- */
   .experiencia-lado {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 1.5rem;
   }
 
-  .arte-conceitual {
-    border-radius: var(--raio-l);
+  .minigame {
+    width: 100%;
+    max-width: 24rem;
+    background: var(--tela-navy);
+    border-radius: 26px;
+    padding: 10px;
+    box-shadow: 0 18px 44px rgb(23 52 82 / 0.38);
+  }
+
+  .minigame-tela {
+    border-radius: 17px;
     overflow: hidden;
-    border: 1.5px solid var(--linha);
+  }
+
+  .minigame img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 9 / 16;
+    object-fit: cover;
+    object-position: top;
+  }
+
+  .minigame figcaption {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.85rem 0.75rem 0.45rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--amarelo);
+  }
+
+  .experiencia-acao {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.8rem;
+  }
+
+  /* --- Faixa de destaques, sobre o ceu --- */
+  .destaques {
+    margin-top: clamp(2.25rem, 4.5vw, 3.25rem);
     background: var(--nuvem);
+    border-radius: var(--raio-l);
+    padding: 1.6rem clamp(1.4rem, 3vw, 2rem) 1.5rem;
     box-shadow: var(--sombra-card);
   }
 
-  .arte-conceitual img {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 900 / 1014;
-    object-fit: cover;
-  }
-
-  .arte-conceitual figcaption {
-    display: flex;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.75rem 1.1rem;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--amarelo-escuro);
-    background: var(--amarelo-claro);
-  }
-
-  .previsto {
-    background: var(--azul-claro);
-    border: 1.5px solid rgb(46 111 183 / 0.25);
-    border-radius: var(--raio-l);
-    padding: 1.5rem 1.5rem 1.3rem;
-  }
-
-  .previsto h3 {
+  .destaques h3 {
     font-size: 1.2rem;
-    color: var(--azul-escuro);
+    color: var(--verde-escuro);
   }
 
-  .previsto ul {
+  .destaques ul {
     list-style: none;
     padding: 0;
-    margin-top: 0.9rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.55rem;
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.85rem 1.75rem;
   }
 
-  .previsto li {
+  .destaques li {
     display: flex;
     gap: 0.6rem;
     align-items: flex-start;
@@ -241,34 +500,223 @@ import Icon from "./Icon.astro";
     color: var(--tinta);
   }
 
-  .previsto li svg {
+  .destaques li svg {
     flex: none;
     margin-top: 0.2rem;
     color: var(--verde);
   }
 
-  .previsto-nota {
-    margin-top: 1rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--azul-escuro);
-    border-top: 1.5px dashed rgb(46 111 183 / 0.35);
-    padding-top: 0.9rem;
+  /* --- Colinas entre o ceu e o gramado --- */
+  .colinas {
+    line-height: 0;
   }
 
-  .experiencia-acao {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.8rem;
+  .colinas svg {
+    display: block;
+    width: 100%;
+    height: clamp(70px, 9vw, 120px);
   }
 
+  .colina-traseira {
+    fill: var(--grama-forte);
+  }
+
+  .colina-frente {
+    fill: var(--grama-media);
+  }
+
+  /* --- Gramado com a galeria --- */
+  .gramado {
+    position: relative;
+    padding-block: clamp(1rem, 2.5vw, 2rem) clamp(3rem, 6vw, 4.5rem);
+    background: linear-gradient(
+      180deg,
+      var(--grama-media) 0%,
+      #b2dd92 46%,
+      #d5e9b8 76%,
+      var(--papel) 100%
+    );
+  }
+
+  .patinhas {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    color: #4e7d3a;
+  }
+
+  .pata {
+    position: absolute;
+    fill: currentColor;
+  }
+
+  .pata-1 {
+    width: 30px;
+    left: 5%;
+    top: 14%;
+    transform: rotate(-24deg);
+    opacity: 0.5;
+  }
+
+  .pata-2 {
+    width: 24px;
+    left: 10%;
+    top: 34%;
+    transform: rotate(8deg);
+    opacity: 0.4;
+  }
+
+  .pata-3 {
+    width: 30px;
+    right: 5.5%;
+    bottom: 24%;
+    transform: rotate(18deg);
+    opacity: 0.5;
+  }
+
+  .gramado-conteudo {
+    position: relative;
+  }
+
+  .galeria-cabecalho h3 {
+    font-size: 1.5rem;
+    color: var(--tinta);
+  }
+
+  .galeria-cabecalho p {
+    margin-top: 0.2rem;
+    font-size: 0.95rem;
+    color: #2f4a3a;
+  }
+
+  /* Capturas como fotos pregadas no gramado */
+  .galeria {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.4rem;
+    margin-top: 1.4rem;
+  }
+
+  .galeria figure {
+    background: var(--nuvem);
+    border-radius: 18px;
+    padding: 10px 10px 0;
+    box-shadow: var(--sombra-card);
+    rotate: -1.6deg;
+    transition:
+      rotate 0.28s ease,
+      translate 0.28s ease,
+      box-shadow 0.28s ease;
+  }
+
+  .galeria figure:nth-child(2) {
+    rotate: 1.1deg;
+  }
+
+  .galeria figure:nth-child(3) {
+    rotate: -0.7deg;
+  }
+
+  .galeria figure:hover {
+    rotate: 0deg;
+    translate: 0 -5px;
+    box-shadow: var(--sombra-levantada);
+  }
+
+  .galeria img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2 / 1;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+
+  .galeria figcaption {
+    padding: 0.8rem 0.5rem 0.95rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--tinta);
+    text-align: center;
+  }
+
+  /* --- Responsivo --- */
   @media (max-width: 56rem) {
     .experiencia-grade {
       grid-template-columns: 1fr;
     }
-    .arte-conceitual {
-      max-width: 26rem;
-      margin-inline: auto;
+
+    .minigame {
+      max-width: 20rem;
+    }
+
+    .destaques ul {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .galeria {
+      grid-template-columns: 1fr;
+    }
+
+    .patinhas {
+      display: none;
+    }
+  }
+
+  @media (min-width: 40rem) and (max-width: 56rem) {
+    .galeria {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .galeria figcaption {
+      font-size: 0.82rem;
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .trilha {
+      --zig: 0px;
+    }
+
+    .trilho {
+      display: none;
+    }
+
+    .casa:not(:last-child)::before {
+      content: "";
+      position: absolute;
+      left: 1.32rem;
+      top: 3.4rem;
+      bottom: -1.55rem;
+      border-left: 4px dashed rgb(61 155 78 / 0.5);
+    }
+
+    .destaques ul {
+      grid-template-columns: 1fr;
     }
   }
 </style>
+
+<script>
+  // Revela os passos da trilha conforme entram na tela, com um leve atraso
+  // em cascata. Sem observador (ou sem JS), os passos seguem visiveis.
+  const passos = document.querySelectorAll<HTMLElement>("#jogo .casa");
+  if ("IntersectionObserver" in window) {
+    const observador = new IntersectionObserver(
+      (entradas) => {
+        for (const entrada of entradas) {
+          if (entrada.isIntersecting) {
+            entrada.target.classList.add("casa-visivel");
+            observador.unobserve(entrada.target);
+          }
+        }
+      },
+      { threshold: 0.3 },
+    );
+    passos.forEach((passo) => {
+      passo.classList.add("casa-espera");
+      observador.observe(passo);
+    });
+  }
+</script>
