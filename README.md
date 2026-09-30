@@ -54,6 +54,12 @@ Os bundles sincronizados ficam versionados em `public/portal/` e
 de deploy não consegue acessá-los para buildar em CI. Rebuildar o projeto
 de origem + `sync:bundles` + commit mantém tudo atualizado.
 
+Durante o sync do jogo, `scripts/jogo-input.mjs` corrige a conversão de
+coordenadas GUI do runner HTML5 para respeitar a escala CSS do canvas.
+Isso mantém mouse e toque alinhados em tela cheia e na página normal,
+sem modificar o projeto GameMaker. Se um novo export alterar o formato
+dessas funções, o sync falha para que o patch seja revisado.
+
 Enquanto o export web do jogo não for publicado, `public/jogo/` contém uma
 página provisória ("em preparação") que é substituída pelo export real.
 

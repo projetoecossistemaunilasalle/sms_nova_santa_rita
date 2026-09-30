@@ -47,6 +47,8 @@ const ESTILOS = /* css */ `
   --jp-linha: #dce8d8;
   --jp-navy: #1d3d5f;
   --jp-navy-escuro: #16324f;
+  --jp-jogo-largura: {JP_LARGURA};
+  --jp-jogo-altura: {JP_ALTURA};
   --jp-fonte: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
 }
 
@@ -295,20 +297,43 @@ button:focus-visible {
   margin: 0 0 0.8rem;
 }
 
-/* Tela cheia: jogo centrado, sem distorcer o aspecto */
+/* O runtime do GameMaker insere um canvas irmao (#loading_screen) com
+   position:absolute e left/top em coordenadas de viewport. Dentro de um
+   ancestral posicionado esse offset conta duas vezes e a tela de
+   carregamento sai la pelo canto inferior direito. Os dois canvases passam a
+   ocupar a mesma celula de grid, entao o retangulo de carregamento coincide
+   exatamente com o do jogo em qualquer modo. */
+#gm4html5_div_id {
+  display: grid;
+  grid-template: 1fr / 1fr;
+}
+
+#gm4html5_div_id > canvas {
+  grid-area: 1 / 1;
+}
+
+#loading_screen {
+  position: static !important;
+  left: auto !important;
+  top: auto !important;
+}
+
+/* Tela cheia: o palco ocupa a janela inteira e o jogo e ampliado ate la,
+   mantendo a proporcao nativa e ficando centralizado na area abaixo da barra.
+   O retangulo do elemento canvas tem que coincidir com o do bitmap, porque o
+   runtime converte coordenadas de mouse por clientWidth / canvas.width; dai a
+   largura explicita em vez de object-fit (que carteia o bitmap dentro de um
+   elemento maior e desloca o clique). max-width/max-height so encolhem, nao
+   ampliam, entao a conta de "conter" usa as unidades de container da area. */
 .jp-palco:fullscreen {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background: var(--jp-navy-escuro);
-  padding: 0;
 }
 
 .jp-palco:fullscreen .jp-moldura {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   border-radius: 0;
   box-shadow: none;
   padding: 0;
@@ -316,26 +341,30 @@ button:focus-visible {
 }
 
 .jp-palco:fullscreen .jp-barra {
+  flex: none;
   padding: 0.5rem 0.9rem;
 }
 
-.jp-palco:fullscreen .jp-moldura canvas {
-  flex: 1;
-  width: auto !important;
-  height: auto !important;
-  max-width: 100%;
-  max-height: 100%;
-  margin: auto;
-  border-radius: 0;
+/* container-type: size so vale em tela cheia, onde a altura do palco ja vem
+   do flex pai; fora daqui a altura viria dos proprios canvases. */
+.jp-palco:fullscreen #gm4html5_div_id {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  place-items: center;
+  container-type: size;
 }
 
-:fullscreen #canvas,
-:-webkit-full-screen #canvas {
+.jp-palco:fullscreen #gm4html5_div_id > canvas {
+  width: min(
+      100cqw,
+      calc(100cqh * var(--jp-jogo-largura) / var(--jp-jogo-altura))
+    )
+    !important;
   height: auto !important;
-  width: auto !important;
-  max-width: 100%;
-  max-height: 100%;
-  margin: auto;
+  max-width: none;
+  max-height: none;
+  border-radius: 0;
 }
 
 /* --- Como jogar --- */
@@ -495,8 +524,8 @@ const ABRE_CORPO = `
 
 <main class="jp-conteudo">
   <div class="jp-hero">
-    ${SVG_NUVEM.replace('<svg ', '<svg class="jp-nuvem jp-nuvem-1" ')}
-    ${SVG_NUVEM.replace('<svg ', '<svg class="jp-nuvem jp-nuvem-2" ')}
+    ${SVG_NUVEM.replace("<svg ", '<svg class="jp-nuvem jp-nuvem-1" ')}
+    ${SVG_NUVEM.replace("<svg ", '<svg class="jp-nuvem jp-nuvem-2" ')}
     <span class="jp-kicker">${SVG_PATINHA.replaceAll("{TAM}", "15")} O jogo</span>
     <h1 class="jp-titulo">Missões do Caramelito</h1>
     <p>Explore a Escola Amizade com o Caramelito, ajude os colegas nas seis missões e divirta-se, direto no navegador, sem instalar nada.</p>
@@ -572,9 +601,21 @@ export function aplicarPaginaJogo(html) {
   let resultado = html;
   let salvo = true;
 
+  // A proporcao nativa do jogo vem dos proprios atributos do canvas do export,
+  // assim a conta de tela cheia continua certa se o tamanho da janela mudar.
+  const canvas = /<canvas[^>]*\bid="canvas"[^>]*>/.exec(resultado);
+  const largura = canvas && /width="(\d+)"/.exec(canvas[0])?.[1];
+  const altura = canvas && /height="(\d+)"/.exec(canvas[0])?.[1];
+  const estilos = ESTILOS.replaceAll("{JP_LARGURA}", largura || "1280").replaceAll(
+    "{JP_ALTURA}",
+    altura || "720",
+  );
+
+  resultado = resultado.replace(/<html lang="en">/, '<html lang="pt-BR">');
   resultado = resultado.replace(
-    /<html lang="en">/,
-    '<html lang="pt-BR">',
+    /(<script[^>]*\bsrc=")(html5game\/[^"?]+\.js(?:\?[^"]*)?)(")/,
+    (_, inicio, src, fim) =>
+      `${inicio}${src}${src.includes("?") ? "&amp;" : "?"}pse-input=1${fim}`,
   );
   resultado = resultado.replace(
     /<title>[\s\S]*?<\/title>/,
@@ -595,7 +636,7 @@ export function aplicarPaginaJogo(html) {
       `${MARCA_POSTSTYLE}
 
         <style ${MARCADOR}>
-${ESTILOS}
+${estilos}
         </style>`,
     );
   } else {
@@ -603,15 +644,21 @@ ${ESTILOS}
   }
 
   if (resultado.includes(MARCA_BODYSTART)) {
-    resultado = resultado.replace(MARCA_BODYSTART, `${MARCA_BODYSTART}
-${ABRE_CORPO}`);
+    resultado = resultado.replace(
+      MARCA_BODYSTART,
+      `${MARCA_BODYSTART}
+${ABRE_CORPO}`,
+    );
   } else {
     salvo = false;
   }
 
   if (resultado.includes(MARCA_BODYEND)) {
-    resultado = resultado.replace(MARCA_BODYEND, `${MARCA_BODYEND}
-${FECHA_CORPO}`);
+    resultado = resultado.replace(
+      MARCA_BODYEND,
+      `${MARCA_BODYEND}
+${FECHA_CORPO}`,
+    );
   } else {
     salvo = false;
   }

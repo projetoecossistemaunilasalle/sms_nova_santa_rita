@@ -25,6 +25,7 @@ import path from "node:path";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import { aplicarPaginaJogo } from "./jogo-pagina.mjs";
+import { corrigirEscalaGui } from "./jogo-input.mjs";
 
 const repoRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -101,16 +102,24 @@ for (const name of selected) {
     const indice = path.join(bundle.target, "index.html");
     try {
       const html = fs.readFileSync(indice, "utf8");
+      const runtimeSrc = /<script[^>]*\bsrc="(html5game\/[^"?]+\.js)(?:\?[^"]*)?"/.exec(html)?.[1];
+      if (!runtimeSrc) throw new Error("Script do runner HTML5 nao encontrado no index.html.");
+      const runtimePath = path.resolve(bundle.target, runtimeSrc);
+      if (!runtimePath.startsWith(`${path.resolve(bundle.target)}${path.sep}`)) {
+        throw new Error("Caminho do runner HTML5 fora do bundle do jogo.");
+      }
+      fs.writeFileSync(runtimePath, corrigirEscalaGui(fs.readFileSync(runtimePath, "utf8")));
       const { html: transformado, aplicado, motivo } = aplicarPaginaJogo(html);
       fs.writeFileSync(indice, transformado);
       console.log(
         aplicado
-          ? 'Pagina do jogo: chrome institucional aplicado a public/jogo/index.html.'
+          ? "Pagina do jogo: chrome institucional aplicado a public/jogo/index.html."
           : `Pagina do jogo: chrome nao aplicado (${motivo}).`,
       );
     } catch (erro) {
-      console.warn(
-        `[aviso] Nao foi possivel aplicar a pagina institucional do jogo: ${erro.message}`,
+      missingRequired = true;
+      console.error(
+        `Nao foi possivel preparar a pagina do jogo: ${erro.message}`,
       );
     }
   }
