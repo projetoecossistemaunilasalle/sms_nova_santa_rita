@@ -15,17 +15,29 @@
 import path from "node:path";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
+import { validarBundlePhaser } from "./jogo-bundle.mjs";
 
-const repoRoot = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "..",
-);
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const distDir = path.join(repoRoot, "dist");
-const basePath = `/${
-  (process.env.PAGES_BASE_PATH ?? "sms_nova_santa_rita").replace(/^\/+|\/+$/g, "")
-}`;
+const basePath = `/${(process.env.PAGES_BASE_PATH ?? "sms_nova_santa_rita").replace(
+  /^\/+|\/+$/g,
+  "",
+)}`;
 
 const problems = [];
+
+try {
+  validarBundlePhaser(path.join(distDir, "jogo", "runtime"));
+  const gameHtml = fs.readFileSync(path.join(distDir, "jogo", "index.html"), "utf8");
+  if (!gameHtml.includes("./runtime/index.html?integration=catalog-local-v3")) {
+    problems.push("dist/jogo/index.html nao monta o jogo standalone atual.");
+  }
+  if (fs.existsSync(path.join(distDir, "jogo", "html5game"))) {
+    problems.push("dist/jogo/ ainda contem o runner GameMaker antigo.");
+  }
+} catch (error) {
+  problems.push(`Bundle Phaser invalido: ${error.message}`);
+}
 
 // 1. Entradas obrigatorias.
 for (const required of [
@@ -62,11 +74,7 @@ if (landingHtml) {
   );
   for (const ref of refs) {
     if (!ref.startsWith(basePath)) continue;
-    const relative = ref
-      .slice(basePath.length)
-      .split("#")[0]
-      .split("?")[0]
-      .replace(/\/+$/, "");
+    const relative = ref.slice(basePath.length).split("#")[0].split("?")[0].replace(/\/+$/, "");
     if (relative === "") continue; // raiz do proprio site
     const candidate = path.join(distDir, relative);
     const candidateDirIndex = path.join(distDir, relative, "index.html");

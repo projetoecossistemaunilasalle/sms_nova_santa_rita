@@ -8,7 +8,7 @@ do ecossistema:
 | ---------- | --------------------------------------------------------------- |
 | `/`        | Landing page institucional (Astro + ilhas SolidJS)              |
 | `/portal/` | Demonstração estática do portal do professor (SMS_Portal, Next) |
-| `/jogo/`   | Versão web do jogo (Heroes_Trial, GameMaker)                    |
+| `/jogo/`   | Jogo mantido em Phaser (Heroes_Trial/web-poc)                   |
 
 URL pública: `https://projetoecossistemaunilasalle.github.io/sms_nova_santa_rita/`
 
@@ -42,11 +42,18 @@ apenas o **output** de cada um:
    ```
 3. **Jogo**: no repositório `Heroes_Trial`:
    ```powershell
-   tools/export_web.ps1       # exporta o pacote HTML5 para output/web/
+   git pull --ff-only
+   cd web-poc
+   npm ci
    ```
-   Depois, aqui na landing:
+   Depois, aqui na landing (build com base relativa para hospedagem aninhada):
    ```bash
+   npm run build:jogo
    node scripts/sync-bundles.mjs --jogo
+   npm test
+   npm run build
+   npm run verify:dist
+   npm run test:jogo:browser
    ```
 
 Os bundles sincronizados ficam versionados em `public/portal/` e
@@ -54,14 +61,20 @@ Os bundles sincronizados ficam versionados em `public/portal/` e
 de deploy não consegue acessá-los para buildar em CI. Rebuildar o projeto
 de origem + `sync:bundles` + commit mantém tudo atualizado.
 
-Durante o sync do jogo, `scripts/jogo-input.mjs` corrige a conversão de
-coordenadas GUI do runner HTML5 para respeitar a escala CSS do canvas.
-Isso mantém mouse e toque alinhados em tela cheia e na página normal,
-sem modificar o projeto GameMaker. Se um novo export alterar o formato
-dessas funções, o sync falha para que o patch seja revisado.
+O sync valida os hashes do build antes de substituir o bundle anterior.
+`public/jogo/index.html` mantém a página institucional; `public/jogo/runtime/`
+recebe o build intacto do Phaser. Um iframe em modo explícito
+`catalog-local-v3` mantém as seis missões e o progresso local, sem assumir um
+novo contrato de portal. O CSS/input do jogo fica isolado da rolagem da página.
+A tela cheia dimensiona o iframe pela área disponível abaixo da barra,
+incluindo telas verticais, mudanças de orientação e áreas seguras.
 
-Enquanto o export web do jogo não for publicado, `public/jogo/` contém uma
-página provisória ("em preparação") que é substituída pelo export real.
+`test:jogo:browser` usa o Playwright instalado em `Heroes_Trial/web-poc` e
+o Edge, testa o artefato montado no base path do Pages e registra capturas
+locais em `../.preview/game-page/`. O GameMaker permanece no repositório de
+origem como referência, mas seu runner antigo não é mais publicado no site.
+O harness legado de testes e seu código também não são publicados; a validação
+do bundle recusa builds que ainda os incluam.
 
 ## Deploy
 
@@ -69,6 +82,6 @@ página provisória ("em preparação") que é substituída pelo export real.
 `scripts/verify-dist.mjs` e publica `dist/` via GitHub Actions
 (`actions/deploy-pages`).
 
-> **Requisito de configuração (uma vez):** em *Settings → Pages → Build and
-> deployment*, a fonte precisa estar em **GitHub Actions** (em vez do build
+> **Requisito de configuração (uma vez):** em _Settings → Pages → Build and
+> deployment_, a fonte precisa estar em **GitHub Actions** (em vez do build
 > clássico por branch). Sem isso, o job de deploy falha.

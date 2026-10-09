@@ -36,7 +36,7 @@ export function withBase(path: string): string {
  * scripts/sync-bundles.mjs a partir dos builds de cada projeto:
  *   - /portal/: export estatico do SMS_Portal (npm run build:demo,
  *     DEMO_BASE_PATH=sms_nova_santa_rita/portal);
- *   - /jogo/: export web do Heroes_Trial (tools/export_web.ps1).
+ *   - /jogo/: build Phaser do Heroes_Trial/web-poc (scripts/build-jogo.ps1).
  */
 export const APPS = {
   // "index.html" explicito: o servidor de dev do Astro nao resolve a barra
@@ -108,8 +108,7 @@ export const SITE = {
 } as const;
 
 /** Fala do mascote no material oficial. */
-export const FALA_CARAMELITO =
-  "Sou o Caramelito, seu amigo na missão por uma vida mais saudável!";
+export const FALA_CARAMELITO = "Sou o Caramelito, seu amigo na missão por uma vida mais saudável!";
 
 /* ------------------------------------------------------------------ */
 /* Contato [PLACEHOLDER]                                               */
@@ -151,64 +150,57 @@ export interface Missao {
   /** Onde a missao acontece no jogo. */
   lugar: string;
   /** Chave de cor definida em global.css (--missao-*). */
-  cor:
-    | "verde"
-    | "azul"
-    | "roxo"
-    | "amarelo"
-    | "coral"
-    | "agua"
-    | "laranja";
+  cor: "verde" | "azul" | "roxo" | "amarelo" | "coral" | "agua" | "laranja";
   /** Chave do icone em components/Icon.astro. */
-  icone:
-    | "sorriso"
-    | "maos"
-    | "mente"
-    | "respeito"
-    | "alunos"
-    | "coracao";
+  icone: "sorriso" | "maos" | "mente" | "respeito" | "alunos" | "coracao";
 }
 
 /** Missoes reais do jogo Heroes_Trial (conteudo ja implementado). */
 export const MISSOES: Missao[] = [
   {
     titulo: "Escovando com Nico",
-    texto: "O Nico está aprendendo a cuidar dos dentes: ajude-o a escovar direitinho, arrastando a escova sobre cada manchinha.",
+    texto:
+      "O Nico está aprendendo a cuidar dos dentes: ajude-o a escovar direitinho, arrastando a escova sobre cada manchinha.",
     lugar: "Enfermaria",
     cor: "azul",
     icone: "sorriso",
   },
   {
     titulo: "Kit do Sorriso",
-    texto: "Monte com o Cauã o Kit do Sorriso escolhendo os três objetos que cuidam dos dentes todos os dias.",
+    texto:
+      "Monte com o Cauã o Kit do Sorriso escolhendo os três objetos que cuidam dos dentes todos os dias.",
     lugar: "Cantina",
     cor: "agua",
     icone: "maos",
   },
   {
     titulo: "Quando a brincadeira deixa de ser brincadeira?",
-    texto: "Perceba quando uma brincadeira magoa, ouça quem esteve ali e ajude a procurar um adulto de confiança.",
+    texto:
+      "Perceba quando uma brincadeira magoa, ouça quem esteve ali e ajude a procurar um adulto de confiança.",
     lugar: "Pátio",
     cor: "roxo",
     icone: "mente",
   },
   {
     titulo: "Atitudes positivas",
-    texto: "Com a Lia, lembre as atitudes que acolhem, que são ouvir, incluir e respeitar, e encontre os pares no jogo da memória.",
+    texto:
+      "Com a Lia, lembre as atitudes que acolhem, que são ouvir, incluir e respeitar, e encontre os pares no jogo da memória.",
     lugar: "Pátio",
     cor: "verde",
     icone: "respeito",
   },
   {
     titulo: "Futebol no pátio",
-    texto: "Um colega ficou de fora da partida: escolha como acolhê-lo e depois defenda o treino de chutes e bolas na quadra.",
+    texto:
+      "Um colega ficou de fora da partida: escolha como acolhê-lo e depois defenda o treino de chutes e bolas na quadra.",
     lugar: "Pátio",
     cor: "amarelo",
     icone: "alunos",
   },
   {
     titulo: "Respeitar também é cuidar",
-    texto: "Com Caio, Leo e Bia, perceba o que cada um sente e respeite os limites no desafio do Semáforo do Conforto.",
+    texto:
+      "Com Caio, Leo e Bia, perceba o que cada um sente e respeite os limites no desafio do Semáforo do Conforto.",
     lugar: "Corredor",
     cor: "coral",
     icone: "coracao",
@@ -223,23 +215,28 @@ export const MISSOES: Missao[] = [
 export const COMO_FUNCIONA = [
   {
     titulo: "Explore a escola",
-    texto: "Caminhe pelo pátio, corredor, cantina, sala de aula e enfermaria. O ponto de exclamação mostra quem precisa de ajuda.",
+    texto:
+      "Caminhe pelo pátio, corredor, cantina, sala de aula e enfermaria. O ponto de exclamação mostra quem precisa de ajuda.",
   },
   {
     titulo: "Converse e escute",
-    texto: "Cada missão começa com uma história em cenas ilustradas e diálogos com os colegas, cada um com o seu jeito de falar e sentir.",
+    texto:
+      "Cada missão começa com uma história em cenas ilustradas e diálogos com os colegas, cada um com o seu jeito de falar e sentir.",
   },
   {
     titulo: "Escolha com atenção",
-    texto: "Nas decisões não existe resposta errada: cada escolha vem com uma reflexão guiada, sempre com tom positivo.",
+    texto:
+      "Nas decisões não existe resposta errada: cada escolha vem com uma reflexão guiada, sempre com tom positivo.",
   },
   {
     titulo: "Jogue minigames",
-    texto: "Defenda chutes na quadra, encontre pares no jogo da memória, escove os dentinhos e monte o Kit do Sorriso.",
+    texto:
+      "Defenda chutes na quadra, encontre pares no jogo da memória, escove os dentinhos e monte o Kit do Sorriso.",
   },
   {
     titulo: "Comemore",
-    texto: "Ao concluir cada missão, o Caramelito ganha ossinhos e biscoitos, e a escola fica um lugar melhor para todos.",
+    texto:
+      "Ao concluir cada missão, o Caramelito ganha ossinhos e biscoitos, e a escola fica um lugar melhor para todos.",
   },
 ] as const;
 
@@ -290,27 +287,32 @@ export const SEGURANCA = [
   },
   {
     titulo: "Dados protegidos",
-    texto: "Nenhum dado pessoal é solicitado às crianças. Qualquer cadastro é exclusivo do adulto responsável, conforme a LGPD.",
+    texto:
+      "Nenhum dado pessoal é solicitado às crianças. Qualquer cadastro é exclusivo do adulto responsável, conforme a LGPD.",
     icone: "cadeado" as const,
   },
   {
     titulo: "Mediação de adultos",
-    texto: "O uso acontece com professores ou familiares por perto, transformando o jogo em conversa e aprendizado.",
+    texto:
+      "O uso acontece com professores ou familiares por perto, transformando o jogo em conversa e aprendizado.",
     icone: "maos" as const,
   },
   {
     titulo: "Conteúdo revisado",
-    texto: "Temas sensíveis validados por pedagogos e psicólogos infantis, com tom positivo e acolhedor.",
+    texto:
+      "Temas sensíveis validados por pedagogos e psicólogos infantis, com tom positivo e acolhedor.",
     icone: "coracao" as const,
   },
   {
     titulo: "Acessível",
-    texto: "Narração em áudio, botões grandes e navegação simples, pensados para quem ainda está aprendendo a ler.",
+    texto:
+      "Narração em áudio, botões grandes e navegação simples, pensados para quem ainda está aprendendo a ler.",
     icone: "acesso" as const,
   },
   {
     titulo: "Educação e saúde juntas",
-    texto: "Uma iniciativa pública que integra escola, família e os profissionais de saúde do município.",
+    texto:
+      "Uma iniciativa pública que integra escola, família e os profissionais de saúde do município.",
     icone: "ponte" as const,
   },
 ];

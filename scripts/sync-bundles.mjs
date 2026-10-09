@@ -6,7 +6,7 @@
  *
  *   portal -> SMS_Portal/out            (npm run build:demo com
  *                                        DEMO_BASE_PATH=sms_nova_santa_rita/portal)
- *   jogo   -> Heroes_Trial/output/web   (tools/export_web.ps1)
+ *   jogo   -> Heroes_Trial/web-poc/dist (scripts/build-jogo.ps1)
  *
  * Os bundles ficam versionados neste repositorio porque os repositorios
  * irmaos sao privados e o workflow de deploy do Pages nao consegue
@@ -24,13 +24,10 @@
 import path from "node:path";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
-import { aplicarPaginaJogo } from "./jogo-pagina.mjs";
-import { corrigirEscalaGui } from "./jogo-input.mjs";
+import { criarPaginaJogoPhaser } from "./jogo-pagina.mjs";
+import { validarBundlePhaser } from "./jogo-bundle.mjs";
 
-const repoRoot = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "..",
-);
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const BUNDLES = {
   portal: {
@@ -42,8 +39,8 @@ const BUNDLES = {
   jogo: {
     label: "jogo",
     target: path.join(repoRoot, "public", "jogo"),
-    source: path.join(repoRoot, "..", "Heroes_Trial", "output", "web"),
-    origin: "Heroes_Trial (tools/export_web.ps1)",
+    source: path.join(repoRoot, "..", "Heroes_Trial", "web-poc", "dist"),
+    origin: "Heroes_Trial/web-poc (scripts/build-jogo.ps1)",
   },
 };
 
@@ -79,49 +76,41 @@ for (const name of selected) {
       continue;
     }
     if (fs.existsSync(bundle.target)) {
-      console.warn(
-        `[aviso] ${message}\n  Mantendo o bundle atual em public/${bundle.label}/.`,
-      );
+      console.warn(`[aviso] ${message}\n  Mantendo o bundle atual em public/${bundle.label}/.`);
     } else {
-      console.error(
-        `${message}\n  E nenhuma versao anterior existe em public/${bundle.label}/.`,
-      );
+      console.error(`${message}\n  E nenhuma versao anterior existe em public/${bundle.label}/.`);
       missingRequired = true;
     }
     continue;
   }
 
-  fs.rmSync(bundle.target, { recursive: true, force: true });
-  fs.mkdirSync(path.dirname(bundle.target), { recursive: true });
-  fs.cpSync(bundle.source, bundle.target, { recursive: true });
-
-  // A pagina do jogo recebe o chrome institucional do PSE a cada sync,
-  // sempre sobre o export fresco. Recompilar o jogo e sincronizar basta
-  // para manter o visual, sem tocar no repositorio do jogo.
-  if (name === "jogo") {
-    const indice = path.join(bundle.target, "index.html");
-    try {
-      const html = fs.readFileSync(indice, "utf8");
-      const runtimeSrc = /<script[^>]*\bsrc="(html5game\/[^"?]+\.js)(?:\?[^"]*)?"/.exec(html)?.[1];
-      if (!runtimeSrc) throw new Error("Script do runner HTML5 nao encontrado no index.html.");
-      const runtimePath = path.resolve(bundle.target, runtimeSrc);
-      if (!runtimePath.startsWith(`${path.resolve(bundle.target)}${path.sep}`)) {
-        throw new Error("Caminho do runner HTML5 fora do bundle do jogo.");
-      }
-      fs.writeFileSync(runtimePath, corrigirEscalaGui(fs.readFileSync(runtimePath, "utf8")));
-      const { html: transformado, aplicado, motivo } = aplicarPaginaJogo(html);
-      fs.writeFileSync(indice, transformado);
-      console.log(
-        aplicado
-          ? "Pagina do jogo: chrome institucional aplicado a public/jogo/index.html."
-          : `Pagina do jogo: chrome nao aplicado (${motivo}).`,
-      );
-    } catch (erro) {
-      missingRequired = true;
-      console.error(
-        `Nao foi possivel preparar a pagina do jogo: ${erro.message}`,
-      );
+  // Validate and prepare before replacing the published bundle.
+  const staged = fs.mkdtempSync(path.join(repoRoot, ".bundle-stage-"));
+  const previous = path.join(staged, "previous");
+  const prepared = path.join(staged, "prepared");
+  try {
+    if (name === "jogo") {
+      validarBundlePhaser(bundle.source);
+      fs.mkdirSync(prepared);
+      fs.cpSync(bundle.source, path.join(prepared, "runtime"), { recursive: true });
+      fs.writeFileSync(path.join(prepared, "index.html"), criarPaginaJogoPhaser());
+    } else {
+      fs.cpSync(bundle.source, prepared, { recursive: true });
     }
+    fs.mkdirSync(path.dirname(bundle.target), { recursive: true });
+    if (fs.existsSync(bundle.target)) fs.renameSync(bundle.target, previous);
+    try {
+      fs.renameSync(prepared, bundle.target);
+    } catch (error) {
+      if (fs.existsSync(previous)) fs.renameSync(previous, bundle.target);
+      throw error;
+    }
+  } catch (error) {
+    missingRequired = true;
+    console.error(`Bundle "${name}" nao sincronizado: ${error.message}`);
+    continue;
+  } finally {
+    fs.rmSync(staged, { recursive: true, force: true });
   }
 
   const files = countFiles(bundle.target);
@@ -135,9 +124,7 @@ if (missingRequired) process.exit(1);
 function countFiles(dir) {
   let total = 0;
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    total += entry.isDirectory()
-      ? countFiles(path.join(dir, entry.name))
-      : 1;
+    total += entry.isDirectory() ? countFiles(path.join(dir, entry.name)) : 1;
   }
   return total;
 }

@@ -1,85 +1,11 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-
-    <!-- Custom PreHead code is injected here -->
-    
-
-    <head>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name ="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta charset="utf-8"/>
-
-        <!-- Builtin injector for disabling cache -->
-        <meta http-equiv="pragma" content="no-cache"/>
-
-        <!-- Set the title bar of the page -->
-        <title>Missões do Caramelito | Jogo do PSE Nova Santa Rita</title>
-
-        <!-- Custom PreStyle code is injected here -->
-        
-
-        <!-- Set the background colour of the document -->
-        <style>
-            body {
-                background: #0;
-                color: #cccccc;
-                margin: 0px;
-                padding: 0px;
-                border: 0px;
-            }
-
-            canvas {
-                image-rendering: optimizeSpeed;
-                -webkit-interpolation-mode: nearest-neighbor;
-                -ms-touch-action: none;
-                touch-action: none;
-                margin: 0px;
-                padding: 0px;
-                border: 0px;
-            }
-            :-webkit-full-screen #canvas {
-                width: 100%;
-                height: 100%;
-            }
-            :-webkit-full-screen {
-                width: 100%;
-                height: 100%;
-            }
-            
-            /* Custom Runner Styles */
-            div.gm4html5_div_class {
-                margin: 0px;
-                padding: 0px;
-                border: 0px;
-            }
-            div.gm4html5_login {
-                padding: 20px;
-                position: absolute;
-                border: solid 2px #000000;
-                background-color: #404040;
-                color:#00ff00;
-                border-radius: 15px;
-                box-shadow: #101010 20px 20px 40px;
-            }
-            div.gm4html5_cancel_button {
-                float: right;
-            }
-            div.gm4html5_login_button {
-                float: left;
-            }
-            div.gm4html5_login_header {
-                text-align: center;
-            }
-            /* END - Custom Runner Styles */
-            
-        </style>
-
-        <!-- Custom PostStyle code is injected here -->
-
-        <style data-jogo-pagina-pse>
-
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Explore a escola com o Caramelito e ajude os colegas nas seis missões do PSE Nova Santa Rita.">
+  <title>Missões do Caramelito | Jogo do PSE Nova Santa Rita</title>
+  <style data-jogo-pagina-pse>
 :root {
   --jp-verde: #3d9b4e;
   --jp-verde-escuro: #26713a;
@@ -105,6 +31,14 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
 }
 
 body {
@@ -144,8 +78,7 @@ button:focus-visible {
 
 /* --- Cabecalho --- */
 .jp-topo {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 60;
   background: var(--jp-papel);
   border-bottom: 1.5px solid var(--jp-linha);
@@ -155,6 +88,7 @@ button:focus-visible {
   width: min(100% - 2.5rem, 76rem);
   margin-inline: auto;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
@@ -283,9 +217,14 @@ button:focus-visible {
 .jp-palco {
   position: relative;
   margin-inline: auto;
+  scroll-margin-top: 6rem;
+  min-width: 0;
 }
 
 .jp-moldura {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
   background: var(--jp-navy);
   border-radius: 24px;
   padding: 10px;
@@ -307,6 +246,7 @@ button:focus-visible {
   color: var(--jp-amarelo);
   font-weight: 800;
   font-size: 0.95rem;
+  min-width: 0;
 }
 
 .jp-tela-cheia {
@@ -322,11 +262,35 @@ button:focus-visible {
   padding: 0.32rem 0.85rem;
   border-radius: 999px;
   cursor: pointer;
+  flex: none;
+  min-width: 44px;
+  min-height: 44px;
   transition: background 0.18s ease;
 }
 
 .jp-tela-cheia:hover {
   background: rgb(247 201 72 / 0.14);
+}
+
+.jp-area {
+  height: clamp(22rem, 70vh, 45rem);
+  height: clamp(22rem, 70dvh, 45rem);
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 15px;
+  background: var(--jp-navy-escuro);
+}
+
+.jp-area iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.jp-estado {
+  color: var(--jp-laranja-escuro);
+  text-align: center;
 }
 
 .jp-moldura canvas {
@@ -376,29 +340,39 @@ button:focus-visible {
    largura explicita em vez de object-fit (que carteia o bitmap dentro de um
    elemento maior e desloca o clique). max-width/max-height so encolhem, nao
    ampliam, entao a conta de "conter" usa as unidades de container da area. */
-.jp-palco:fullscreen {
+.jp-palco:is(:fullscreen, .jp-em-tela-cheia) {
   background: var(--jp-navy-escuro);
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
-.jp-palco:fullscreen .jp-moldura {
+.jp-palco:is(:fullscreen, .jp-em-tela-cheia) .jp-moldura {
   display: flex;
   flex-direction: column;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   border-radius: 0;
   box-shadow: none;
-  padding: 0;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   background: var(--jp-navy-escuro);
 }
 
-.jp-palco:fullscreen .jp-barra {
+.jp-palco:is(:fullscreen, .jp-em-tela-cheia) .jp-barra {
   flex: none;
   padding: 0.5rem 0.9rem;
 }
 
+.jp-palco:is(:fullscreen, .jp-em-tela-cheia) .jp-area {
+  flex: 1 1 0;
+  min-height: 0;
+  height: auto;
+  border-radius: 0;
+}
+
 /* container-type: size so vale em tela cheia, onde a altura do palco ja vem
    do flex pai; fora daqui a altura viria dos proprios canvases. */
-.jp-palco:fullscreen #gm4html5_div_id {
+.jp-palco:is(:fullscreen, .jp-em-tela-cheia) #gm4html5_div_id {
   flex: 1 1 auto;
   min-height: 0;
   width: 100%;
@@ -406,7 +380,7 @@ button:focus-visible {
   container-type: size;
 }
 
-.jp-palco:fullscreen #gm4html5_div_id > canvas {
+.jp-palco:is(:fullscreen, .jp-em-tela-cheia) #gm4html5_div_id > canvas {
   width: min(
       100cqw,
       calc(100cqh * var(--jp-jogo-largura) / var(--jp-jogo-altura))
@@ -542,23 +516,9 @@ button:focus-visible {
     transition: none;
   }
 }
-
-        </style>
-        
-
-        <!-- Builtin injector for injecting flurry analytics code -->
-        
-    </head>
-
-    <!-- Custom PostHead code is injected here -->
-    <meta name="description" content="Jogue Missões do Caramelito, o jogo do PSE Nova Santa Rita: explore a escola, ajude os colegas e complete as seis missões direto no navegador."/>
-    
-
-    <!-- Custom PreBody code is injected here -->
-    
-
-    <body>
-        <!-- Custom BodyStart code is injected here -->
+</style>
+</head>
+<body>
 
 <a class="jp-pular" href="#jp-palco">Pular para o jogo</a>
 
@@ -585,44 +545,15 @@ button:focus-visible {
     <div class="jp-moldura">
       <div class="jp-barra">
         <span class="jp-barra-titulo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><ellipse cx="12" cy="15.2" rx="5.4" ry="4.4"/><circle cx="5.4" cy="9.6" r="1.9"/><circle cx="9.3" cy="6.7" r="1.9"/><circle cx="14.7" cy="6.7" r="1.9"/><circle cx="18.6" cy="9.6" r="1.9"/></svg> Missões do Caramelito</span>
-        <button class="jp-tela-cheia" type="button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><span class="jp-barra-btn-texto">Tela cheia</span></button>
+        <button class="jp-tela-cheia" type="button" aria-label="Tela cheia" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><span class="jp-barra-btn-texto">Tela cheia</span></button>
       </div>
       <noscript>
         <p class="jp-aviso">Para jogar, ative o JavaScript no navegador.</p>
       </noscript>
 
-        
-
-        <div class="gm4html5_div_class" id="gm4html5_div_id">
-            
-            <!-- Builtin injector for splash screen -->
-            
-
-            <!-- Custom PreCanvas code is injected here -->
-            
-
-            <!-- Create the canvas element the game draws to -->
-            <canvas id="canvas" width="1280" height="720" >
-                
-                <p>Your browser doesn't support HTML5 canvas.</p>
-            </canvas>
-            
-            <!-- Custom PostCanvas code is injected here -->
-            
-        </div>
-
-        <!-- Run the game code -->
-        <script type="text/javascript" src="html5game/Hero's Trail Base - GML Visual.js?cachebust=1373478673&amp;pse-input=1"></script>
-
-        <!-- Builtin injector for injecting runner path -->
-        
-
-        <script>window.onload = GameMaker_Init;</script>
-
-        <!-- Builtin injector for injecting google analytics code -->
-        
-
-        <!-- Custom BodyEnd code is injected here -->
+      <div class="jp-area">
+        <iframe src="./runtime/index.html?integration=catalog-local-v3" title="Jogo Missões do Caramelito" allow="autoplay; fullscreen" allowfullscreen></iframe>
+      </div>
 
     </div>
   </div>
@@ -643,10 +574,14 @@ button:focus-visible {
   <p><a href="../">Conheça o projeto no site</a></p>
 </footer>
 
+<p class="jp-estado" role="status" hidden></p>
+
 <script>
   (function () {
     var botao = document.querySelector(".jp-tela-cheia");
     var palco = document.querySelector(".jp-palco");
+    var frame = document.querySelector(".jp-area iframe");
+    var estado = document.querySelector(".jp-estado");
     if (!botao || !palco) return;
     var pedidoTelaCheia =
       palco.requestFullscreen || palco.webkitRequestFullscreen || null;
@@ -654,23 +589,34 @@ button:focus-visible {
       botao.hidden = true;
       return;
     }
-    function alternarTelaCheia() {
-      if (document.fullscreenElement || document.webkitFullscreenElement) {
-        (document.exitFullscreen || document.webkitExitFullscreen).call(document);
-        return;
-      }
-      var pedido = palco.requestFullscreen
-        ? palco.requestFullscreen()
-        : palco.webkitRequestFullscreen();
-      if (pedido && pedido.catch) pedido.catch(function () {});
+    function atualizarTelaCheia() {
+      var ativo = (document.fullscreenElement || document.webkitFullscreenElement) === palco;
+      palco.classList.toggle("jp-em-tela-cheia", ativo);
+      botao.setAttribute("aria-pressed", String(ativo));
+      botao.setAttribute("aria-label", ativo ? "Sair da tela cheia" : "Tela cheia");
+      botao.querySelector(".jp-barra-btn-texto").textContent = ativo ? "Sair da tela cheia" : "Tela cheia";
+      if (frame) frame.focus({ preventScroll: true });
     }
+    async function alternarTelaCheia() {
+      try {
+        if (estado) estado.hidden = true;
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
+          await (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+        } else {
+          await pedidoTelaCheia.call(palco);
+        }
+      } catch (erro) {
+        if (estado) {
+          estado.textContent = "O navegador não permitiu a tela cheia. Você pode continuar jogando nesta página.";
+          estado.hidden = false;
+        }
+      }
+    }
+    document.addEventListener("fullscreenchange", atualizarTelaCheia);
+    document.addEventListener("webkitfullscreenchange", atualizarTelaCheia);
     botao.addEventListener("click", alternarTelaCheia);
   })();
 </script>
 
-        
-    </body>
-
-    <!-- Custom PostBody code is injected here -->
-    
+</body>
 </html>

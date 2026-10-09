@@ -1,0 +1,2 @@
+# Offline metadata hashes require the generated runtime's exact bytes.
+public/jogo/runtime/** binary

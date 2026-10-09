@@ -56,6 +56,14 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
 body {
   margin: 0;
   background: linear-gradient(180deg, #a9d9f4 0%, #d9eff9 30%, #e7f5fc 58%, var(--jp-papel) 100%);
@@ -93,8 +101,7 @@ button:focus-visible {
 
 /* --- Cabecalho --- */
 .jp-topo {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 60;
   background: var(--jp-papel);
   border-bottom: 1.5px solid var(--jp-linha);
@@ -104,6 +111,7 @@ button:focus-visible {
   width: min(100% - 2.5rem, 76rem);
   margin-inline: auto;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
@@ -232,9 +240,14 @@ button:focus-visible {
 .jp-palco {
   position: relative;
   margin-inline: auto;
+  scroll-margin-top: 6rem;
+  min-width: 0;
 }
 
 .jp-moldura {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
   background: var(--jp-navy);
   border-radius: 24px;
   padding: 10px;
@@ -256,6 +269,7 @@ button:focus-visible {
   color: var(--jp-amarelo);
   font-weight: 800;
   font-size: 0.95rem;
+  min-width: 0;
 }
 
 .jp-tela-cheia {
@@ -271,11 +285,35 @@ button:focus-visible {
   padding: 0.32rem 0.85rem;
   border-radius: 999px;
   cursor: pointer;
+  flex: none;
+  min-width: 44px;
+  min-height: 44px;
   transition: background 0.18s ease;
 }
 
 .jp-tela-cheia:hover {
   background: rgb(247 201 72 / 0.14);
+}
+
+.jp-area {
+  height: clamp(22rem, 70vh, 45rem);
+  height: clamp(22rem, 70dvh, 45rem);
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 15px;
+  background: var(--jp-navy-escuro);
+}
+
+.jp-area iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.jp-estado {
+  color: var(--jp-laranja-escuro);
+  text-align: center;
 }
 
 .jp-moldura canvas {
@@ -325,29 +363,39 @@ button:focus-visible {
    largura explicita em vez de object-fit (que carteia o bitmap dentro de um
    elemento maior e desloca o clique). max-width/max-height so encolhem, nao
    ampliam, entao a conta de "conter" usa as unidades de container da area. */
-.jp-palco:fullscreen {
+.jp-palco:is(:fullscreen, .jp-em-tela-cheia) {
   background: var(--jp-navy-escuro);
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
-.jp-palco:fullscreen .jp-moldura {
+.jp-palco:is(:fullscreen, .jp-em-tela-cheia) .jp-moldura {
   display: flex;
   flex-direction: column;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   border-radius: 0;
   box-shadow: none;
-  padding: 0;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   background: var(--jp-navy-escuro);
 }
 
-.jp-palco:fullscreen .jp-barra {
+.jp-palco:is(:fullscreen, .jp-em-tela-cheia) .jp-barra {
   flex: none;
   padding: 0.5rem 0.9rem;
 }
 
+.jp-palco:is(:fullscreen, .jp-em-tela-cheia) .jp-area {
+  flex: 1 1 0;
+  min-height: 0;
+  height: auto;
+  border-radius: 0;
+}
+
 /* container-type: size so vale em tela cheia, onde a altura do palco ja vem
    do flex pai; fora daqui a altura viria dos proprios canvases. */
-.jp-palco:fullscreen #gm4html5_div_id {
+.jp-palco:is(:fullscreen, .jp-em-tela-cheia) #gm4html5_div_id {
   flex: 1 1 auto;
   min-height: 0;
   width: 100%;
@@ -355,7 +403,7 @@ button:focus-visible {
   container-type: size;
 }
 
-.jp-palco:fullscreen #gm4html5_div_id > canvas {
+.jp-palco:is(:fullscreen, .jp-em-tela-cheia) #gm4html5_div_id > canvas {
   width: min(
       100cqw,
       calc(100cqh * var(--jp-jogo-largura) / var(--jp-jogo-altura))
@@ -535,7 +583,7 @@ const ABRE_CORPO = `
     <div class="jp-moldura">
       <div class="jp-barra">
         <span class="jp-barra-titulo">${SVG_PATINHA.replaceAll("{TAM}", "14")} Missões do Caramelito</span>
-        <button class="jp-tela-cheia" type="button">${SVG_TELA_CHEIA}<span class="jp-barra-btn-texto">Tela cheia</span></button>
+        <button class="jp-tela-cheia" type="button" aria-label="Tela cheia" aria-pressed="false">${SVG_TELA_CHEIA}<span class="jp-barra-btn-texto">Tela cheia</span></button>
       </div>
       <noscript>
         <p class="jp-aviso">Para jogar, ative o JavaScript no navegador.</p>
@@ -562,10 +610,14 @@ const FECHA_CORPO = `
   <p><a href="../">Conheça o projeto no site</a></p>
 </footer>
 
+<p class="jp-estado" role="status" hidden></p>
+
 <script>
   (function () {
     var botao = document.querySelector(".jp-tela-cheia");
     var palco = document.querySelector(".jp-palco");
+    var frame = document.querySelector(".jp-area iframe");
+    var estado = document.querySelector(".jp-estado");
     if (!botao || !palco) return;
     var pedidoTelaCheia =
       palco.requestFullscreen || palco.webkitRequestFullscreen || null;
@@ -573,20 +625,58 @@ const FECHA_CORPO = `
       botao.hidden = true;
       return;
     }
-    function alternarTelaCheia() {
-      if (document.fullscreenElement || document.webkitFullscreenElement) {
-        (document.exitFullscreen || document.webkitExitFullscreen).call(document);
-        return;
-      }
-      var pedido = palco.requestFullscreen
-        ? palco.requestFullscreen()
-        : palco.webkitRequestFullscreen();
-      if (pedido && pedido.catch) pedido.catch(function () {});
+    function atualizarTelaCheia() {
+      var ativo = (document.fullscreenElement || document.webkitFullscreenElement) === palco;
+      palco.classList.toggle("jp-em-tela-cheia", ativo);
+      botao.setAttribute("aria-pressed", String(ativo));
+      botao.setAttribute("aria-label", ativo ? "Sair da tela cheia" : "Tela cheia");
+      botao.querySelector(".jp-barra-btn-texto").textContent = ativo ? "Sair da tela cheia" : "Tela cheia";
+      if (frame) frame.focus({ preventScroll: true });
     }
+    async function alternarTelaCheia() {
+      try {
+        if (estado) estado.hidden = true;
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
+          await (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+        } else {
+          await pedidoTelaCheia.call(palco);
+        }
+      } catch (erro) {
+        if (estado) {
+          estado.textContent = "O navegador não permitiu a tela cheia. Você pode continuar jogando nesta página.";
+          estado.hidden = false;
+        }
+      }
+    }
+    document.addEventListener("fullscreenchange", atualizarTelaCheia);
+    document.addEventListener("webkitfullscreenchange", atualizarTelaCheia);
     botao.addEventListener("click", alternarTelaCheia);
   })();
 </script>
 `;
+
+/** Isolate the game's viewport/input styles from the scrollable institutional page. */
+export function criarPaginaJogoPhaser() {
+  const estilos = ESTILOS.replaceAll("{JP_LARGURA}", "1280").replaceAll("{JP_ALTURA}", "720");
+  return `<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Explore a escola com o Caramelito e ajude os colegas nas seis missões do PSE Nova Santa Rita.">
+  <title>Missões do Caramelito | Jogo do PSE Nova Santa Rita</title>
+  <style ${MARCADOR}>${estilos}</style>
+</head>
+<body>
+${ABRE_CORPO}
+      <div class="jp-area">
+        <iframe src="./runtime/index.html?integration=catalog-local-v3" title="Jogo Missões do Caramelito" allow="autoplay; fullscreen" allowfullscreen></iframe>
+      </div>
+${FECHA_CORPO}
+</body>
+</html>
+`;
+}
 
 /**
  * Aplica o chrome institucional ao index.html do export do jogo.
@@ -614,8 +704,7 @@ export function aplicarPaginaJogo(html) {
   resultado = resultado.replace(/<html lang="en">/, '<html lang="pt-BR">');
   resultado = resultado.replace(
     /(<script[^>]*\bsrc=")(html5game\/[^"?]+\.js(?:\?[^"]*)?)(")/,
-    (_, inicio, src, fim) =>
-      `${inicio}${src}${src.includes("?") ? "&amp;" : "?"}pse-input=1${fim}`,
+    (_, inicio, src, fim) => `${inicio}${src}${src.includes("?") ? "&amp;" : "?"}pse-input=1${fim}`,
   );
   resultado = resultado.replace(
     /<title>[\s\S]*?<\/title>/,

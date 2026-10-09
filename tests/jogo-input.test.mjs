@@ -1,6 +1,5 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import fs from "node:fs";
 import vm from "node:vm";
 import { corrigirEscalaGui } from "../scripts/jogo-input.mjs";
 import { aplicarPaginaJogo } from "../scripts/jogo-pagina.mjs";
@@ -60,20 +59,6 @@ test("runtime patch is idempotent and follows renamed export aliases", () => {
 test("unsupported runner layouts fail instead of silently shipping broken input", () => {
   assert.throws(() => corrigirEscalaGui(""), /nao encontrada/);
   assert.throws(() => corrigirEscalaGui(runner.replace("x -= rect.left;", "")), /mudou/);
-});
-
-test("published runner includes exactly the reproducible mouse/touch scale patch", () => {
-  const published = fs.readFileSync(
-    new URL("../public/jogo/html5game/Hero's Trail Base - GML Visual.js", import.meta.url),
-    "utf8",
-  );
-  assert.equal((published.match(/pse-gui-css-scale/g) || []).length, 2);
-  const unpatched = published.replace(
-    /\/\* pse-gui-css-scale \*\/([xy])=\(\1-([\w$]+)\.(left|top)\)\/\2\.scale[XY];/g,
-    "$1-=$2.$3;",
-  );
-  assert.notEqual(unpatched, published);
-  assert.equal(corrigirEscalaGui(unpatched), published);
 });
 
 test("game page generator retains native aspect ratio and loader alignment", () => {
