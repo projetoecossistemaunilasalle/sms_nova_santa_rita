@@ -98,8 +98,8 @@ export type DemoPlayerSlot = {
 export type DemoPlayerCredential = {
   id: string;
   playerSlotId: string;
-  token: string;
   tokenHash: string;
+  encryptedToken?: string | null;
   status: PlayerCredentialStatus;
   createdAt: string;
   revokedAt: string | null;
@@ -133,9 +133,6 @@ export type DemoAdultPortalState = {
   gameSessions: DemoGameSession[];
   participations: DemoParticipation[];
 };
-
-export const DEMO_ADULT_PORTAL_STORAGE_KEY =
-  "missoes-caramelito:adult-portal:v2";
 
 export const DEMO_PLAYER_TOKENS = {
   THIRD_A_PLAYER_01: "demo_player_seed_third_a_01_active",
@@ -277,7 +274,6 @@ export const demoAdultPortalSeed: DemoAdultPortalState = {
     {
       id: "demo-credential-third-a-01",
       playerSlotId: "demo-player-third-a-01",
-      token: DEMO_PLAYER_TOKENS.THIRD_A_PLAYER_01,
       tokenHash: DEMO_PLAYER_TOKENS.THIRD_A_PLAYER_01,
       status: PlayerCredentialStatus.ACTIVE,
       createdAt: "2026-09-15T13:00:00.000Z",
@@ -286,7 +282,6 @@ export const demoAdultPortalSeed: DemoAdultPortalState = {
     {
       id: "demo-credential-third-a-02-old",
       playerSlotId: "demo-player-third-a-02",
-      token: DEMO_PLAYER_TOKENS.THIRD_A_PLAYER_02_REVOKED,
       tokenHash: DEMO_PLAYER_TOKENS.THIRD_A_PLAYER_02_REVOKED,
       status: PlayerCredentialStatus.REVOKED,
       createdAt: "2026-09-15T13:00:00.000Z",
@@ -295,7 +290,6 @@ export const demoAdultPortalSeed: DemoAdultPortalState = {
     {
       id: "demo-credential-third-a-02",
       playerSlotId: "demo-player-third-a-02",
-      token: DEMO_PLAYER_TOKENS.THIRD_A_PLAYER_02,
       tokenHash: DEMO_PLAYER_TOKENS.THIRD_A_PLAYER_02,
       status: PlayerCredentialStatus.ACTIVE,
       createdAt: "2026-09-18T14:30:00.000Z",
@@ -304,7 +298,6 @@ export const demoAdultPortalSeed: DemoAdultPortalState = {
     {
       id: "demo-credential-third-a-03",
       playerSlotId: "demo-player-third-a-03",
-      token: DEMO_PLAYER_TOKENS.THIRD_A_PLAYER_03,
       tokenHash: DEMO_PLAYER_TOKENS.THIRD_A_PLAYER_03,
       status: PlayerCredentialStatus.ACTIVE,
       createdAt: "2026-09-15T13:00:00.000Z",
@@ -340,103 +333,6 @@ function demoId(kind: string): string {
       ? crypto.randomUUID()
       : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
   return `demo-${kind}-${suffix}`;
-}
-
-export function createDemoProfileId(): string {
-  return demoId("profile");
-}
-
-type DemoStateCollections = Omit<
-  DemoAdultPortalState,
-  "version" | "activeProfileId"
->;
-
-const DEMO_STATE_COLLECTION_FIELDS: {
-  [K in keyof DemoStateCollections]: readonly string[];
-} = {
-  profiles: ["id", "displayName", "status", "platformRole"],
-  organizations: ["id", "name", "type", "status"],
-  memberships: ["id", "profileId", "organizationId", "role", "status"],
-  classes: ["id", "organizationId", "name", "status", "nextPlayerNumber"],
-  assignments: ["id", "membershipId", "classGroupId", "status"],
-  playerSlots: ["id", "classGroupId", "playerNumber", "status", "createdAt"],
-  playerCredentials: [
-    "id",
-    "playerSlotId",
-    "token",
-    "tokenHash",
-    "status",
-    "createdAt",
-    "revokedAt",
-  ],
-  gameSessions: ["id", "classGroupId", "status", "startedAt", "endedAt"],
-  participations: ["id", "gameSessionId", "playerSlotId", "joinedAt"],
-};
-
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function isValidDemoAdultPortalState(
-  value: unknown,
-): value is DemoAdultPortalState {
-  if (!isPlainObject(value)) return false;
-  if (value.version !== 2) return false;
-  if (typeof value.activeProfileId !== "string") return false;
-  return (
-    Object.keys(DEMO_STATE_COLLECTION_FIELDS) as (keyof DemoStateCollections)[]
-  ).every((key) => {
-    const entries: unknown = value[key];
-    if (!Array.isArray(entries)) return false;
-    return entries.every(
-      (entry) =>
-        isPlainObject(entry) &&
-        DEMO_STATE_COLLECTION_FIELDS[key].every((field) =>
-          Object.hasOwn(entry, field),
-        ),
-    );
-  });
-}
-
-export function readDemoAdultPortalState(): DemoAdultPortalState {
-  if (typeof window === "undefined") return cloneSeed();
-  const stored = window.localStorage.getItem(DEMO_ADULT_PORTAL_STORAGE_KEY);
-  if (!stored) return cloneSeed();
-  try {
-    const value: unknown = JSON.parse(stored);
-    return isValidDemoAdultPortalState(value) ? value : cloneSeed();
-  } catch {
-    return cloneSeed();
-  }
-}
-
-export function writeDemoAdultPortalState(state: DemoAdultPortalState): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(
-    DEMO_ADULT_PORTAL_STORAGE_KEY,
-    JSON.stringify(state),
-  );
-  window.dispatchEvent(new CustomEvent("adult-portal-demo-change"));
-}
-
-export function resetDemoAdultPortalState(): DemoAdultPortalState {
-  const state = cloneSeed();
-  writeDemoAdultPortalState(state);
-  return state;
-}
-
-export function setDemoActiveProfile(profileId: string): DemoAdultPortalState {
-  const state = readDemoAdultPortalState();
-  if (
-    state.profiles.some(
-      (profile) =>
-        profile.id === profileId && profile.status === RecordStatus.ACTIVE,
-    )
-  ) {
-    state.activeProfileId = profileId;
-    writeDemoAdultPortalState(state);
-  }
-  return state;
 }
 
 export class DemoAdultPortalStore
@@ -844,6 +740,29 @@ export class DemoPlayerAccessStore
       .map((slot) => this.slotDto(slot));
   }
 
+  async listStoredCredentials(classGroupId: string) {
+    const slotIds = new Set(
+      this.state.playerSlots
+        .filter(
+          (slot) =>
+            slot.classGroupId === classGroupId &&
+            slot.status === RecordStatus.ACTIVE,
+        )
+        .map((slot) => slot.id),
+    );
+    return this.state.playerCredentials
+      .filter(
+        (credential) =>
+          slotIds.has(credential.playerSlotId) &&
+          credential.status === PlayerCredentialStatus.ACTIVE,
+      )
+      .map(({ playerSlotId, tokenHash, encryptedToken }) => ({
+        playerSlotId,
+        tokenHash,
+        encryptedToken: encryptedToken ?? null,
+      }));
+  }
+
   async getActiveSession(classGroupId: string): Promise<GameSessionDto | null> {
     const session = this.state.gameSessions.find(
       (item) =>
@@ -890,7 +809,7 @@ export class DemoPlayerAccessStore
       throw new AdultPortalError("Turma não encontrada.", "NOT_FOUND");
     }
     const createdAt = new Date().toISOString();
-    return credentials.map(({ tokenHash }) => {
+    return credentials.map(({ tokenHash, encryptedToken }) => {
       if (
         this.state.playerCredentials.some(
           (credential) => credential.tokenHash === tokenHash,
@@ -910,8 +829,8 @@ export class DemoPlayerAccessStore
       const credential: DemoPlayerCredential = {
         id: demoId("player-credential"),
         playerSlotId: slot.id,
-        token: tokenHash,
         tokenHash,
+        encryptedToken: encryptedToken ?? null,
         status: PlayerCredentialStatus.ACTIVE,
         createdAt,
         revokedAt: null,
@@ -926,6 +845,7 @@ export class DemoPlayerAccessStore
     slotId: string,
     tokenHash: string,
     revokedAt: Date,
+    encryptedToken: string | null = null,
   ): Promise<PlayerSlotDto> {
     const slot = this.state.playerSlots.find((item) => item.id === slotId);
     if (!slot) {
@@ -946,13 +866,14 @@ export class DemoPlayerAccessStore
       ) {
         credential.status = PlayerCredentialStatus.REVOKED;
         credential.revokedAt = rotatedAt;
+        credential.encryptedToken = null;
       }
     }
     this.state.playerCredentials.push({
       id: demoId("player-credential"),
       playerSlotId: slotId,
-      token: tokenHash,
       tokenHash,
+      encryptedToken,
       status: PlayerCredentialStatus.ACTIVE,
       createdAt: rotatedAt,
       revokedAt: null,

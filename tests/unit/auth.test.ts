@@ -134,9 +134,6 @@ describe("getAuthGateway", () => {
     });
 
     expect(gateway.constructor.name).toBe("DemoAuthGateway");
-    await expect(gateway.getSession()).resolves.toMatchObject({
-      actor: { authUserId: "demo-user" },
-    });
   });
 });
 

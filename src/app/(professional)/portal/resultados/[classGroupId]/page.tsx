@@ -2,16 +2,9 @@ import { notFound, redirect } from "next/navigation";
 
 import { AdultPortalError } from "@/application/adult-portal/errors";
 import { ClassResultsScreen } from "@/components/portal/results-screen";
-import {
-  getClassResultsPageData,
-  listStaticResultClassIds,
-} from "@/runtime/readers";
+import { getClassResultsPageData } from "@/runtime/readers";
 
 export const metadata = { title: "Resultados da turma" };
-
-export function generateStaticParams() {
-  return listStaticResultClassIds().map((classGroupId) => ({ classGroupId }));
-}
 
 export default async function ClassResultsPage({
   params,

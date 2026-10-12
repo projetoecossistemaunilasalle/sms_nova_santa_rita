@@ -10,75 +10,28 @@ import { Icon } from "@/components/shared/icon";
 
 import { AdultPortalForm } from "./adult-portal-form";
 import { DeactivateOrganizationControl } from "./deactivate-organization-control";
-import {
-  demoAccessibleOrganizationIds,
-  demoRole,
-  demoTeamForOrganization,
-  initials,
-  recordStatusLabel,
-  roleLabel,
-} from "./adult-portal-helpers";
+import { initials, recordStatusLabel, roleLabel } from "./adult-portal-helpers";
 import { PageHeader } from "./page-header";
-import { PortalState } from "./portal-state";
 import { StatusBadge } from "./status-badge";
-import { useDemoPortalState } from "./use-demo-portal";
 import styles from "./portal.module.css";
 
 export function OrganizationDetailScreen({
   initialOrganization,
   runtimeMode,
+  canAccessClasses,
 }: {
   initialOrganization: OrganizationDetailDto;
   runtimeMode: RuntimeMode;
+  canAccessClasses: boolean;
 }) {
-  const demo = useDemoPortalState();
-  let organization = initialOrganization;
-  let canManage = initialOrganization.canManage;
-
-  if (demo) {
-    const record = demo.organizations.find(
-      (item) => item.id === initialOrganization.id,
-    );
-    const authorized =
-      demoRole(demo) === "platform_admin" ||
-      (demoRole(demo) === "organization_admin" &&
-        demoAccessibleOrganizationIds(demo).includes(initialOrganization.id) &&
-        record?.status === RecordStatus.ACTIVE);
-    if (!record || !authorized) {
-      return (
-        <PortalState
-          icon="lock"
-          title="Esta organização não está no seu escopo"
-          description="Use o seletor de perfil demo ou volte para uma área permitida."
-        />
-      );
-    }
-    const memberships = demoTeamForOrganization(demo, record.id);
-    const classes = demo.classes
-      .filter((item) => item.organizationId === record.id)
-      .map((item) => ({
-        ...item,
-        organizationName: record.name,
-        teacherCount: demo.assignments.filter(
-          (assignment) =>
-            assignment.classGroupId === item.id &&
-            assignment.status === RecordStatus.ACTIVE,
-        ).length,
-      }));
-    canManage = demoRole(demo) === "platform_admin";
-    organization = {
-      ...record,
-      memberCount: memberships.length,
-      classCount: classes.length,
-      memberships,
-      classes,
-      canManage,
-      canAssignAdministrator: canManage,
-    };
-  }
+  const organization = initialOrganization;
+  const canManage = organization.canManage;
 
   return (
     <>
+      <Link className={styles.backLink} href="/portal/admin/organizacoes">
+        Todas as organizações
+      </Link>
       <PageHeader
         eyebrow="Organização"
         title={organization.name}
@@ -113,8 +66,7 @@ export function OrganizationDetailScreen({
       />
       {runtimeMode === "demo" && (
         <p className={styles.demoScopeNotice}>
-          Contexto de organização demonstrativo, persistido apenas neste
-          navegador.
+          Dados fictícios da sessão local, usando as mesmas regras de acesso.
         </p>
       )}
       {organization.status !== RecordStatus.ACTIVE && (
@@ -154,10 +106,23 @@ export function OrganizationDetailScreen({
         <section className={styles.detailPanel}>
           <div className={styles.sectionHeader}>
             <h2>Turmas</h2>
-            <Link className={styles.textLink} href="/portal/turmas">
-              Ver turmas
-            </Link>
+            {canAccessClasses && (
+              <Link
+                className={styles.textLink}
+                href={{
+                  pathname: "/portal/turmas",
+                  query: { organization: organization.id },
+                }}
+              >
+                Gerenciar turmas
+              </Link>
+            )}
           </div>
+          {!canAccessClasses && (
+            <p className={styles.inlineEmpty}>
+              As turmas são gerenciadas pelos administradores desta organização.
+            </p>
+          )}
           {organization.classes.length === 0 ? (
             <p className={styles.inlineEmpty}>
               Nenhuma turma criada nesta organização.
@@ -165,7 +130,6 @@ export function OrganizationDetailScreen({
           ) : (
             <div className={styles.compactDirectory}>
               {organization.classes.map((classGroup) => {
-                const generated = classGroup.id.startsWith("demo-class-");
                 const content = (
                   <>
                     <span className={styles.directoryIcon}>
@@ -180,23 +144,18 @@ export function OrganizationDetailScreen({
                     <StatusBadge
                       status={recordStatusLabel(classGroup.status)}
                     />
-                    {!generated && <Icon name="chevron" />}
+                    {canAccessClasses && <Icon name="chevron" />}
                   </>
                 );
-                return generated ? (
-                  <article
-                    className={styles.compactDirectoryRow}
-                    key={classGroup.id}
-                  >
-                    {content}
-                  </article>
-                ) : (
+                return canAccessClasses ? (
                   <Link
                     href={`/portal/turmas/${classGroup.id}`}
                     key={classGroup.id}
                   >
                     {content}
                   </Link>
+                ) : (
+                  <article key={classGroup.id}>{content}</article>
                 );
               })}
             </div>
@@ -205,8 +164,14 @@ export function OrganizationDetailScreen({
         <section className={styles.detailPanel}>
           <div className={styles.sectionHeader}>
             <h2>Equipe vinculada</h2>
-            <Link className={styles.textLink} href="/portal/admin/equipe">
-              Gerenciar
+            <Link
+              className={styles.textLink}
+              href={{
+                pathname: "/portal/admin/equipe",
+                query: { organization: organization.id },
+              }}
+            >
+              Gerenciar equipe
             </Link>
           </div>
           {organization.memberships.length === 0 ? (
@@ -233,7 +198,19 @@ export function OrganizationDetailScreen({
               member.status === RecordStatus.ACTIVE,
           ) && (
             <p className={styles.inlineWarning}>
-              Esta organização ainda não possui administrador ativo.
+              Esta organização ainda não possui administrador ativo.{" "}
+              {organization.canAssignAdministrator && (
+                <Link
+                  className={styles.textLink}
+                  href={{
+                    pathname: "/portal/admin/equipe",
+                    query: { organization: organization.id, new: "1" },
+                    hash: "adicionar-equipe",
+                  }}
+                >
+                  Vincular administrador
+                </Link>
+              )}
             </p>
           )}
         </section>

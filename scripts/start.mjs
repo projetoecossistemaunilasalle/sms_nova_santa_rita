@@ -26,7 +26,11 @@ function run(command, args, options = {}) {
   return result.status ?? 1;
 }
 
-const buildStatus = run(npmCommand, ["run", "build"]);
+const demo = process.argv.includes("--demo");
+const buildStatus = run(npmCommand, [
+  "run",
+  demo ? "build:demo" : "build:server",
+]);
 if (buildStatus !== 0) process.exit(buildStatus);
 
 const standaloneDir = path.join(projectRoot, ".next", "standalone");
@@ -48,8 +52,25 @@ cpSync(path.join(projectRoot, "public"), path.join(standaloneDir, "public"), {
   recursive: true,
 });
 
-const args = process.argv.slice(2);
-const runtimeEnv = { ...process.env, APP_RUNTIME_MODE: "server" };
+const args = process.argv.slice(2).filter((arg) => arg !== "--demo");
+const runtimeEnv = {
+  ...process.env,
+  APP_RUNTIME_MODE: demo ? "demo" : "server",
+};
+
+if (demo) {
+  for (const name of [
+    "DATABASE_URL",
+    "DIRECT_URL",
+    "NEON_AUTH_BASE_URL",
+    "NEON_AUTH_COOKIE_SECRET",
+    "APPLICATION_SECRET",
+    "ALLOWED_ORIGINS",
+    "AUTH_DEV_BYPASS",
+  ]) {
+    runtimeEnv[name] = "";
+  }
+}
 
 for (let index = 0; index < args.length; index += 1) {
   if (args[index] === "--port" || args[index] === "-p") {
@@ -65,7 +86,7 @@ for (let index = 0; index < args.length; index += 1) {
 }
 
 runtimeEnv.PORT ??= "3000";
-runtimeEnv.HOSTNAME ??= "0.0.0.0";
+runtimeEnv.HOSTNAME ??= demo ? "127.0.0.1" : "0.0.0.0";
 
 process.exit(
   run(process.execPath, [serverFile], { cwd: standaloneDir, env: runtimeEnv }),

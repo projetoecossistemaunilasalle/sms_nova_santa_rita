@@ -2,16 +2,9 @@ import { notFound, redirect } from "next/navigation";
 
 import { AdultPortalError } from "@/application/adult-portal/errors";
 import { PlayerResultsScreen } from "@/components/portal/results-screen";
-import {
-  getPlayerResultsPageData,
-  listStaticResultPlayerParams,
-} from "@/runtime/readers";
+import { getPlayerResultsPageData } from "@/runtime/readers";
 
 export const metadata = { title: "Resultados do jogador" };
-
-export function generateStaticParams() {
-  return listStaticResultPlayerParams();
-}
 
 export default async function PlayerResultsPage({
   params,

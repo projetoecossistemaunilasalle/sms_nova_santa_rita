@@ -4,6 +4,7 @@ const mocks = vi.hoisted(() => ({
   getSession: vi.fn(),
   allocateSlots: vi.fn(),
   rotateCredential: vi.fn(),
+  getClassCredentials: vi.fn(),
   startSession: vi.fn(),
   endSession: vi.fn(),
   resolveEntry: vi.fn(),
@@ -18,6 +19,7 @@ vi.mock("@/server/services/player-access-container", () => ({
   getPlayerAccessService: () => ({
     allocateSlots: mocks.allocateSlots,
     rotateCredential: mocks.rotateCredential,
+    getClassCredentials: mocks.getClassCredentials,
     startSession: mocks.startSession,
     endSession: mocks.endSession,
     resolveEntry: mocks.resolveEntry,
@@ -32,6 +34,7 @@ vi.mock("@/server/config/env", () => ({
 import {
   allocatePlayerSlotsAction,
   startClassSessionAction,
+  showClassPlayerCredentialsAction,
 } from "@/app/(professional)/portal/player-access-actions";
 import { resolvePlayerEntryAction } from "@/app/(public-play)/jogar/actions";
 import { verifyLaunchToken } from "@/server/security/launch-token";
@@ -45,6 +48,7 @@ function form(values: Record<string, string>): FormData {
 const previous = { ok: false, message: "" };
 
 beforeEach(() => {
+  vi.stubEnv("APP_RUNTIME_MODE", "server");
   vi.clearAllMocks();
   mocks.getSession.mockResolvedValue({
     actor: { profileId: "profile-a" },
@@ -53,7 +57,43 @@ beforeEach(() => {
 });
 
 describe("player access adult actions", () => {
-  it("authenticates, validates, delegates, and returns one-time credentials", async () => {
+  it("reopens class credentials with authentication and does not revalidate or rotate", async () => {
+    const credentials = {
+      issuedCredentials: [
+        { playerSlotId: "slot-a", playerNumber: 1, token: "same-token" },
+      ],
+      unavailablePlayerNumbers: [2],
+    };
+    mocks.getClassCredentials.mockResolvedValue(credentials);
+    await expect(
+      showClassPlayerCredentialsAction(
+        previous,
+        form({ classGroupId: "class-a" }),
+      ),
+    ).resolves.toMatchObject({ ok: true, ...credentials });
+    expect(mocks.getClassCredentials).toHaveBeenCalledWith(
+      "profile-a",
+      "class-a",
+    );
+    expect(mocks.rotateCredential).not.toHaveBeenCalled();
+    expect(mocks.revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it("does not disclose credentials for invalid or unauthenticated input", async () => {
+    await expect(
+      showClassPlayerCredentialsAction(previous, form({ classGroupId: "" })),
+    ).resolves.toMatchObject({ ok: false, fieldErrors: expect.any(Object) });
+    mocks.getSession.mockResolvedValue(null);
+    await expect(
+      showClassPlayerCredentialsAction(
+        previous,
+        form({ classGroupId: "class-a" }),
+      ),
+    ).resolves.toMatchObject({ ok: false, message: "Sessão expirada." });
+    expect(mocks.getClassCredentials).not.toHaveBeenCalled();
+  });
+
+  it("authenticates, validates, delegates, and returns issued credentials", async () => {
     mocks.allocateSlots.mockResolvedValue([
       {
         id: "slot-a",

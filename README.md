@@ -56,16 +56,16 @@ src/
     portal/          professional/admin shell and workflow components
     public/          player entry and GameMaker game-host components
     shared/          cross-surface primitives
-  runtime/           generated target entries plus demo/server implementations and offline modules
+  runtime/           shared server entry points and offline modules
   server/
-    auth/ authorization/ config/ db/ http/ observability/ security/ services/
+    auth/ authorization/ config/ db/ http/ mock/ observability/ security/ services/
 ```
 
-Both runtime targets implement the same numbered-player workflow: the server
-target persists data in Neon Postgres behind authenticated portal routes, while
-the demo target seeds the same workflow into browser state (localStorage key
-`missoes-caramelito:adult-portal:v2`) and continues play offline through the
-IndexedDB queue under `src/runtime/offline/`.
+The portal has one route tree, one set of screens and server actions, and shared
+application services. The composition roots choose Prisma/Neon adapters for
+real infrastructure or session-isolated in-memory adapters under
+`src/server/mock/` for the local demo. No portal state or authorization is
+recomputed in browser localStorage.
 
 ## Local setup
 
@@ -77,11 +77,21 @@ cp .env.example .env.local
 npm run dev
 ```
 
-`npm run dev` starts the server runtime and validates the database and Neon Auth
-settings in `.env.local`. For the credential-free static demonstration, use
-`npm run dev:demo`. The demo stores organization, team, class, assignment, and
-selected demo-profile changes in browser `localStorage`; use **Restaurar demo**
-in the portal sidebar to return to the representative seed data.
+For a working local portal without database or auth credentials, run:
+
+```bash
+npm run dev:demo
+```
+
+Open [the local portal](http://127.0.0.1:3000/entrar) and choose **Entrar na
+demonstração**. The mock binds to loopback by default. Use **Perfil demonstrado**
+to switch between seeded professionals, and **Restaurar demo** to reset only
+your workspace. Changes survive navigation and reloads, but expire after eight
+hours or when you sign out or restart the server. Tabs in the same browser
+session share a workspace; separate browser sessions are isolated.
+
+`npm run dev` uses real infrastructure and validates database and Neon Auth
+settings in `.env.local`.
 
 ## Commands
 
@@ -89,28 +99,23 @@ in the portal sidebar to return to the representative seed data.
 | ----------------------------------------------------------- | --------------------------------------------------------------------------------- |
 | `npm run dev` / `npm run dev:demo`                          | Develop against the server or demo target                                         |
 | `npm run build` (`build:server`)                            | Standalone server build in `.next/`                                               |
-| `npm run build:demo`                                        | Static GitHub Pages export in `out/`                                              |
+| `npm run build:demo`                                        | Standalone local mock build in `.next/`                                           |
 | `npm run start`                                             | Build and start the standalone server via `scripts/start.mjs`                     |
 | `npm run typecheck` / `typecheck:server` / `typecheck:demo` | Generate runtime entries, then run `tsc` for the selected target                  |
 | `npm test`                                                  | Generate the demo runtime entries, then run Vitest                                |
 | `npm run clean:build`                                       | Remove build artifacts from a fixed allowlist                                     |
 | `npm run check`                                             | Format, lint, Prisma validation and generation, both typechecks, and one test run |
 
-Every dev/build/test/typecheck command first regenerates the runtime entries
-`src/runtime/actions.ts`, `src/runtime/readers.ts`, and `src/runtime/client.ts`
-for the selected target via `scripts/next-target.mjs`; the concrete
-`*.demo.ts` / `*.server.ts` variants are tracked in git. Only one target can be
-generated at a time in a checkout.
+Dev/build/test/typecheck commands generate `src/runtime/actions.ts` and
+`src/runtime/readers.ts` from the same tracked `*.shared.ts` barrels in both
+modes. Do not run concurrent builds/dev servers from one checkout: both use
+`.next/`.
 
 ## Runtime targets
 
-- `npm run build:demo` creates the production-optimized GitHub Pages export in
-  `out/`. The base path defaults to `/SMS_Portal` (this repository's Pages
-  deployment) and is configurable via `DEMO_BASE_PATH` — for example,
-  `DEMO_BASE_PATH=portal npm run build:demo` exports for a mount under
-  `/portal/`. The leading slash is optional (Git Bash rewrites
-  `DEMO_BASE_PATH=/portal` into a Windows drive path when spawning Node).
-  The demo build requires no server secrets.
+- `npm run build:demo` builds the same server application with mock adapters.
+  It needs no Neon credentials. `npm run start:demo` rebuilds and launches it
+  locally. This is no longer a static export and cannot run on GitHub Pages.
 - `npm run build:server` creates the standalone, server-capable Next.js build
   in `.next/`. It requires `DATABASE_URL`, `NEON_AUTH_BASE_URL`,
   `NEON_AUTH_COOKIE_SECRET`, and `APPLICATION_SECRET`. `npm run start` rebuilds
@@ -126,9 +131,9 @@ silently synthesize authentication identities.
 
 `.github/workflows/ci.yml` is the only workflow. Its gate job runs formatting,
 lint, Prisma validation, both typechecks, the server build, the demo build, and
-the unit tests on every pull request and every push to `main`. On pushes to
-`main`, the same workflow uploads the `build:demo` export from `out/` and
-deploys it to GitHub Pages; there is no separate deployment workflow.
+the unit tests on every pull request and every push to `main`. GitHub Pages
+publication has been removed because the mock now needs a Node.js server.
+Deployment to the planned physical Windows Server host is not configured yet.
 
 ## Verification
 
@@ -138,6 +143,10 @@ npm run build:demo
 npm run build:server
 ```
 
-The demo target exists for visual validation and stakeholder walkthroughs; it
-does not represent production persistence, authentication, player identity, or
-GameMaker synchronization.
+The local mock exercises portal authorization, organizations, memberships,
+classes, teacher assignments, numbered players, credential rotation, and class
+sessions through the production application code. Reports reflect the current
+mock roster and participation but do not invent game results. Neon authentication,
+durable database behavior, cross-device QR access, and GameMaker synchronization
+still require real integration testing. The mock is single-process development
+infrastructure, not a production or multi-instance persistence solution.

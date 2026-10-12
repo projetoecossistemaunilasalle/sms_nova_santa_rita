@@ -121,13 +121,14 @@ model PlayerSlot {
 }
 
 model PlayerCredential {
-  id           String                 @id @default(uuid()) @db.Uuid
-  playerSlotId String                 @map("player_slot_id") @db.Uuid
-  tokenHash    String                 @unique @map("token_hash") @db.Char(64)
-  status       PlayerCredentialStatus @default(ACTIVE)
-  createdAt    DateTime               @default(now()) @map("created_at") @db.Timestamptz(3)
-  revokedAt    DateTime?              @map("revoked_at") @db.Timestamptz(3)
-  playerSlot   PlayerSlot             @relation(fields: [playerSlotId], references: [id], onDelete: Restrict)
+  id             String                 @id @default(uuid()) @db.Uuid
+  playerSlotId   String                 @map("player_slot_id") @db.Uuid
+  tokenHash      String                 @unique @map("token_hash") @db.Char(64)
+  encryptedToken String?                @map("encrypted_token") @db.Text
+  status         PlayerCredentialStatus @default(ACTIVE)
+  createdAt      DateTime               @default(now()) @map("created_at") @db.Timestamptz(3)
+  revokedAt      DateTime?              @map("revoked_at") @db.Timestamptz(3)
+  playerSlot     PlayerSlot             @relation(fields: [playerSlotId], references: [id], onDelete: Restrict)
 
   @@index([playerSlotId, status])
   @@map("player_credentials")

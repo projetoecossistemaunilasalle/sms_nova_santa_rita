@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { AdultPortalError } from "@/application/adult-portal/errors";
+import type { AdultPortalService } from "@/application/adult-portal/service";
 import {
   assignMembershipSchema,
   assignTeacherSchema,
@@ -43,12 +44,15 @@ function formObject(formData: FormData): Record<string, FormDataEntryValue> {
 }
 
 async function runAction(
-  operation: (profileId: string) => Promise<unknown>,
+  operation: (
+    profileId: string,
+    service: AdultPortalService,
+  ) => Promise<unknown>,
   successMessage: string,
   paths: string[],
 ): Promise<ActionResult> {
   try {
-    await operation(await actorProfileId());
+    await operation(await actorProfileId(), await getAdultPortalService());
     paths.forEach((path) => revalidatePath(path));
     return { ok: true, message: successMessage };
   } catch (error) {
@@ -68,7 +72,7 @@ export async function createOrganizationAction(
   if (!parsed.success) return validationError(parsed.error);
   const input = parsed.data;
   return runAction(
-    (profileId) => getAdultPortalService().createOrganization(profileId, input),
+    (profileId, service) => service.createOrganization(profileId, input),
     "Organização criada.",
     ["/portal", "/portal/admin/organizacoes"],
   );
@@ -82,8 +86,7 @@ export async function changeOrganizationStatusAction(
   if (!parsed.success) return validationError(parsed.error);
   const input = parsed.data;
   return runAction(
-    (profileId) =>
-      getAdultPortalService().changeOrganizationStatus(profileId, input),
+    (profileId, service) => service.changeOrganizationStatus(profileId, input),
     input.status === "ACTIVE"
       ? "Organização ativada."
       : "Organização desativada.",
@@ -103,8 +106,8 @@ export async function assignOrganizationAdministratorAction(
   if (!parsed.success) return validationError(parsed.error);
   const input = parsed.data;
   return runAction(
-    (profileId) =>
-      getAdultPortalService().assignOrganizationAdministrator(profileId, input),
+    (profileId, service) =>
+      service.assignOrganizationAdministrator(profileId, input),
     "Administrador vinculado à organização.",
     [
       "/portal/admin/equipe",
@@ -121,26 +124,13 @@ export async function assignTeacherMembershipAction(
   if (!parsed.success) return validationError(parsed.error);
   const input = parsed.data;
   return runAction(
-    (profileId) => getAdultPortalService().assignTeacher(profileId, input),
+    (profileId, service) => service.assignTeacher(profileId, input),
     "Professor vinculado à organização.",
     [
       "/portal/admin/equipe",
       `/portal/admin/organizacoes/${input.organizationId}`,
     ],
   );
-}
-
-export async function createDemoProfessionalAction(
-  _previous: ActionResult,
-  _formData: FormData,
-): Promise<ActionResult> {
-  void _previous;
-  void _formData;
-  return {
-    ok: false,
-    message:
-      "O portal servidor ainda não cria identidades no Neon Auth. Peça ao administrador do acesso que provisione a conta e o perfil antes de vinculá-los aqui.",
-  };
 }
 
 export async function changeMembershipAction(
@@ -151,7 +141,7 @@ export async function changeMembershipAction(
   if (!parsed.success) return validationError(parsed.error);
   const input = parsed.data;
   return runAction(
-    (profileId) => getAdultPortalService().changeMembership(profileId, input),
+    (profileId, service) => service.changeMembership(profileId, input),
     input.status === "ACTIVE" ? "Acesso ativado." : "Acesso desativado.",
     ["/portal/admin/equipe", "/portal/turmas"],
   );
@@ -165,7 +155,7 @@ export async function createClassAction(
   if (!parsed.success) return validationError(parsed.error);
   const input = parsed.data;
   return runAction(
-    (profileId) => getAdultPortalService().createClass(profileId, input),
+    (profileId, service) => service.createClass(profileId, input),
     "Turma criada.",
     [
       "/portal",
@@ -183,7 +173,7 @@ export async function changeClassStatusAction(
   if (!parsed.success) return validationError(parsed.error);
   const input = parsed.data;
   return runAction(
-    (profileId) => getAdultPortalService().changeClassStatus(profileId, input),
+    (profileId, service) => service.changeClassStatus(profileId, input),
     input.status === "ACTIVE" ? "Turma ativada." : "Turma desativada.",
     ["/portal/turmas", `/portal/turmas/${input.classGroupId}`],
   );
@@ -197,8 +187,7 @@ export async function assignTeacherToClassAction(
   if (!parsed.success) return validationError(parsed.error);
   const input = parsed.data;
   return runAction(
-    (profileId) =>
-      getAdultPortalService().assignTeacherToClass(profileId, input),
+    (profileId, service) => service.assignTeacherToClass(profileId, input),
     "Professor atribuído à turma.",
     ["/portal/turmas", `/portal/turmas/${input.classGroupId}`],
   );
@@ -214,8 +203,8 @@ export async function deactivateTeacherAssignmentAction(
   if (!parsed.success) return validationError(parsed.error);
   const input = parsed.data;
   return runAction(
-    (profileId) =>
-      getAdultPortalService().deactivateTeacherAssignment(profileId, input),
+    (profileId, service) =>
+      service.deactivateTeacherAssignment(profileId, input),
     "Atribuição desativada.",
     ["/portal/turmas"],
   );

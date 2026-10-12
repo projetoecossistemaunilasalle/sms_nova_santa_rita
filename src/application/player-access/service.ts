@@ -1,5 +1,8 @@
 import { PlayerCredentialStatus, RecordStatus } from "@/generated/prisma/enums";
-import { canAccessClass } from "@/server/authorization/v1-policy";
+import {
+  canAccessClass,
+  canManageClasses,
+} from "@/server/authorization/v1-policy";
 import { AdultPortalError } from "@/application/adult-portal/errors";
 import { toAuthorizationActor } from "@/application/authorization/authorization-actor";
 
@@ -8,6 +11,7 @@ import type {
   PlayerAccessStore,
   PlayerAccessTransaction,
   PlayerCredentialIssuer,
+  PlayerCredentialCipher,
 } from "./ports";
 import type { ClassScope, IssuedPlayerSlotDto } from "./types";
 
@@ -22,6 +26,7 @@ export class PlayerAccessService {
   constructor(
     private readonly store: PlayerAccessStore,
     private readonly credentials: PlayerCredentialIssuer,
+    private readonly cipher: PlayerCredentialCipher,
     private readonly now: () => Date = () => new Date(),
   ) {}
 
@@ -29,6 +34,7 @@ export class PlayerAccessService {
     profileId: string,
     classGroupId: string,
     reader: PlayerAccessReader,
+    allowInactiveManagement = false,
   ): Promise<ClassScope> {
     const [actor, classGroup] = await Promise.all([
       reader.getActor(profileId),
@@ -40,7 +46,14 @@ export class PlayerAccessService {
     if (!classGroup) return fail("NOT_FOUND", "Turma não encontrada.");
     if (
       classGroup.organizationStatus !== RecordStatus.ACTIVE ||
-      !canAccessClass(toAuthorizationActor(actor), classGroup)
+      !(
+        canAccessClass(toAuthorizationActor(actor), classGroup) ||
+        (allowInactiveManagement &&
+          canManageClasses(
+            toAuthorizationActor(actor),
+            classGroup.organizationId,
+          ))
+      )
     ) {
       return fail("FORBIDDEN", "Você não pode operar esta turma.");
     }
@@ -48,7 +61,7 @@ export class PlayerAccessService {
   }
 
   async getClassWorkflow(profileId: string, classGroupId: string) {
-    await this.requireClassAccess(profileId, classGroupId, this.store);
+    await this.requireClassAccess(profileId, classGroupId, this.store, true);
     const [slots, activeSession] = await Promise.all([
       this.store.listSlots(classGroupId),
       this.store.getActiveSession(classGroupId),
@@ -71,7 +84,10 @@ export class PlayerAccessService {
       await this.requireClassAccess(profileId, classGroupId, transaction);
       const slots = await transaction.allocateSlots(
         classGroupId,
-        issued.map(({ tokenHash }) => ({ tokenHash })),
+        issued.map(({ token, tokenHash }) => ({
+          tokenHash,
+          encryptedToken: this.cipher.encrypt(token, tokenHash),
+        })),
       );
       return slots.map((slot, index) => ({
         ...slot,
@@ -97,9 +113,45 @@ export class PlayerAccessService {
           slotId,
           issued.tokenHash,
           this.now(),
+          this.cipher.encrypt(issued.token, issued.tokenHash),
         )),
         credential: issued.token,
       };
+    });
+  }
+
+  async getClassCredentials(profileId: string, classGroupId: string) {
+    return this.store.transaction(async (transaction) => {
+      await this.requireClassAccess(profileId, classGroupId, transaction);
+      const [slots, storedCredentials] = await Promise.all([
+        transaction.listSlots(classGroupId),
+        transaction.listStoredCredentials(classGroupId),
+      ]);
+      const storedBySlot = new Map(
+        storedCredentials.map((credential) => [
+          credential.playerSlotId,
+          credential,
+        ]),
+      );
+      const issuedCredentials = [];
+      const unavailablePlayerNumbers = [];
+      for (const slot of slots) {
+        if (slot.status !== RecordStatus.ACTIVE) continue;
+        const stored = storedBySlot.get(slot.id);
+        if (
+          slot.credentialStatus !== PlayerCredentialStatus.ACTIVE ||
+          !stored?.encryptedToken
+        ) {
+          unavailablePlayerNumbers.push(slot.playerNumber);
+          continue;
+        }
+        issuedCredentials.push({
+          playerSlotId: slot.id,
+          playerNumber: slot.playerNumber,
+          token: this.cipher.decrypt(stored.encryptedToken, stored.tokenHash),
+        });
+      }
+      return { issuedCredentials, unavailablePlayerNumbers };
     });
   }
 

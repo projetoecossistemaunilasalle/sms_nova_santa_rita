@@ -1,6 +1,4 @@
-// Concrete server variant for the generated actions entry. Grouped by
-// responsibility; the implementations stay in their dedicated "use server"
-// files. Only reachable from the server target's generated entry.
+// Shared server actions for real and mock persistence.
 export { signInAction } from "@/app/(professional)/entrar/actions";
 export { signOutAction } from "@/app/(professional)/portal/sign-out-action";
 export {
@@ -11,7 +9,6 @@ export {
   changeMembershipAction,
   changeOrganizationStatusAction,
   createClassAction,
-  createDemoProfessionalAction,
   createOrganizationAction,
   deactivateTeacherAssignmentAction,
 } from "@/app/(professional)/portal/adult-portal-actions";
@@ -19,6 +16,7 @@ export {
   allocatePlayerSlotsAction,
   endClassSessionAction,
   rotatePlayerCredentialAction,
+  showClassPlayerCredentialsAction,
   startClassSessionAction,
 } from "@/app/(professional)/portal/player-access-actions";
 export { resolvePlayerEntryAction } from "@/app/(public-play)/jogar/actions";

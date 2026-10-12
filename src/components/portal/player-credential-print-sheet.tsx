@@ -83,8 +83,8 @@ export function PlayerCredentialPrintSheet({
         <div>
           <h3>Credenciais prontas para imprimir</h3>
           <p>
-            Guarde ou imprima agora. Por segurança, estes códigos não serão
-            exibidos novamente depois que a página for recarregada.
+            Estes mesmos códigos podem ser consultados novamente em “Exibir QR
+            codes da turma”. Reimprimir não invalida os cartões anteriores.
           </p>
         </div>
         <button
@@ -125,8 +125,9 @@ export function PlayerCredentialPrintSheet({
         )}
         {qrError && (
           <p className={styles.formError} role="alert">
-            Não foi possível gerar os QR codes. Atualize a página e gere novas
-            credenciais antes de imprimir.
+            Não foi possível preparar os QR codes. Atualize a página e use
+            “Exibir QR codes da turma” para tentar novamente, sem trocar as
+            credenciais.
           </p>
         )}
         {printCards.map((credential) => (

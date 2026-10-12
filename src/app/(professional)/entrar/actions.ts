@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getRuntimeMode } from "@/runtime/mode";
 import { getNeonAuthServer } from "@/server/auth/neon-server";
 import { isAuthDevBypassEnabled } from "@/server/config/env";
+import { startMockSession } from "@/server/mock/session";
 
 /**
  * POST-only sign-in handler. Credentials are read from FormData (request body)
@@ -18,6 +19,7 @@ export async function signInAction(formData: FormData): Promise<void> {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   if (getRuntimeMode() !== "server") {
+    await startMockSession();
     redirect("/portal");
   }
 

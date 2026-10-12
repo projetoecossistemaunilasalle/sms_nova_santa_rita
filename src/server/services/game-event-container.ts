@@ -8,6 +8,9 @@ import { PrismaGameEventStore } from "@/server/db/prisma-game-event-store";
 import { getAdultPortalService } from "@/server/services/adult-portal-container";
 import { getServerRuntimeEnv } from "@/server/config/env";
 import { verifyLaunchToken } from "@/server/security/launch-token";
+import { getRuntimeMode } from "@/runtime/mode";
+import { getMockDatabase } from "@/server/mock/session";
+import { MockGameEventReportStore } from "@/server/mock/report-store";
 
 const globalForGameEvents = globalThis as unknown as {
   gameEventService?: GameEventService;
@@ -30,15 +33,25 @@ export function getGameEventService(): GameEventService {
   return service;
 }
 
-export function getGameEventReportService(): GameEventReportService {
+export async function getGameEventReportService(): Promise<GameEventReportService> {
+  const portal = await getAdultPortalService();
+  if (getRuntimeMode() === "demo") {
+    return new GameEventReportService(
+      new MockGameEventReportStore((await getMockDatabase()).state),
+      async (profileId, classGroupId) => {
+        await portal.getClass(profileId, classGroupId);
+      },
+      (profileId) => portal.listClasses(profileId),
+    );
+  }
   const service =
     globalForGameEvents.gameEventReportService ??
     new GameEventReportService(
       eventStore(),
       async (profileId, classGroupId) => {
-        await getAdultPortalService().getClass(profileId, classGroupId);
+        await portal.getClass(profileId, classGroupId);
       },
-      (profileId) => getAdultPortalService().listClasses(profileId),
+      (profileId) => portal.listClasses(profileId),
     );
   if (process.env.NODE_ENV !== "production") {
     globalForGameEvents.gameEventReportService = service;

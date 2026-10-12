@@ -1,7 +1,7 @@
 # Current product architecture
 
 Status: Current source of truth for product boundaries and web surfaces.  
-Last aligned: 26 September 2026.
+Last aligned: 10 October 2026.
 
 For the implementation-ready plan, see
 [refactor-dossier/IMPLEMENTATION-READY.md](refactor-dossier/IMPLEMENTATION-READY.md).
@@ -66,6 +66,21 @@ Required properties:
 
 Possession of a QR credential does not prove the physical identity of the user. V1 accepts this tradeoff to keep classroom access fast.
 
+Authorized adults can reopen and print the active QR codes for their class without
+rotating credentials or invalidating printed cards. Tokens are looked up by their
+SHA-256 digest and retained as authenticated AES-256-GCM ciphertext, using a
+domain-separated key derived from `APPLICATION_SECRET`. Keep this secret durable
+and backed up: changing or losing it makes stored QR codes unrecoverable. Revoked
+credentials have their ciphertext cleared. Raw tokens are returned only by
+authenticated, class-scoped issuance and display actions, never in workflow reads.
+
+Apply the `20261011000000_reprint_player_credentials` migration before deploying
+this feature. Existing hash-only credentials remain valid but cannot be recovered;
+the portal explicitly lists these players and never silently rotates their codes.
+An adult may choose an individual, confirmed replacement to make an old slot's
+new code recoverable. Mock workspaces use a private, session-lived encryption key
+and retain their seeded and newly issued codes across page reloads in that session.
+
 ## Class and session model
 
 Classes are created by organization administrators and assigned to teachers.
@@ -121,8 +136,7 @@ Temporary offline operation is expected after an initial synchronized load.
 
 Client persistence:
 
-- `localStorage` for small simple values where useful (for example the demo
-  portal state key `missoes-caramelito:adult-portal:v2`);
+- Portal mock state lives only in session-isolated server memory, not localStorage.
 - IndexedDB for structured cached state, queued events, pending metrics, and larger offline data (implemented in `src/runtime/offline/`).
 
 Conceptual flow:
@@ -244,27 +258,31 @@ The data model should avoid blocking a future migration feature, but the migrati
 
 ## Runtime targets and entries
 
-One route tree builds two runtime targets:
+One server application supports two infrastructure modes:
 
-- **Server target** (`npm run build:server`, started by `npm run start` through
-  `scripts/start.mjs`): a standalone Next.js build persisting to Neon Postgres
-  through Prisma, with adult authentication behind Neon Auth.
-- **Demo target** (`npm run build:demo`): a static export to `out/` with a
-  configurable base path (`DEMO_BASE_PATH`, defaulting to `/SMS_Portal`),
-  published to GitHub Pages from CI on pushes to `main`. The same portal workflow is seeded into browser state and the game
-  host operates offline through the IndexedDB queue.
+- **Real infrastructure** (`npm run dev`, `npm run build:server`, `npm run start`):
+  Prisma/Neon Postgres persistence and Neon Auth.
+- **Local mock** (`npm run dev:demo`, `npm run build:demo`, `npm run start:demo`):
+  the same server routes, readers, actions, screens, authorization and application
+  services, backed by adapters under `src/server/mock/`. Both builds are standalone;
+  GitHub Pages/static export is no longer supported.
 
-Consumers never import demo or server implementations directly. Before every
-`dev`, `build`, `test`, and `typecheck` invocation, `scripts/next-target.mjs gen
-<target>` generates `src/runtime/actions.ts`, `src/runtime/readers.ts`, and
-`src/runtime/client.ts`, which re-export the selected concrete tracked variants
-(`actions.server.ts` / `actions.demo.ts`, and so on). Only one target can be
-generated at a time in a checkout. The generated server actions entry
-deliberately carries no `"use server"` header — the directive lives on the five
-implementation files — because the installed Turbopack transform rejects
-re-exports in a `"use server"` file (adding it fails the server build with
-"Only async functions are allowed to be exported in a "use server" file.");
-this constraint is documented in `scripts/next-target.mjs`.
+Generated `src/runtime/actions.ts` and `src/runtime/readers.ts` re-export the same
+tracked `*.shared.ts` barrels in both modes. Infrastructure selection happens in
+`src/server/services/` and the auth gateway, not in portal components. Mock-only
+profile switching and reset controls are environment tooling, not product workflows.
+Adult identity creation is not simulated as a portal feature: fixture profiles are
+already provisioned, and the real membership actions grant their access.
+
+Each mock sign-in creates an opaque HttpOnly, SameSite=Lax cookie identifying a
+private in-memory workspace. It survives reloads but expires after eight hours;
+sign-out, explicit reset and process restart discard changes. The registry admits
+at most 128 sessions and prunes expired entries. All mock adapters share a per-workspace
+transaction queue with rollback and atomic snapshot publication. No real database or
+auth provider is contacted in mock mode. Defaults bind the mock to loopback; public
+staging deployment would require revisiting session storage, HTTPS and capacity.
+Mock reports use the live workspace and the production report authorization service;
+activity scores remain empty because game ingestion is outside this portal refactor.
 
 Application services are assembled by the four surviving containers under
 `src/server/services/` (`adult-portal-container.ts`, `game-state-container.ts`,

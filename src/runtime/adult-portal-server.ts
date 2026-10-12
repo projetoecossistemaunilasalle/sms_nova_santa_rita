@@ -1,6 +1,7 @@
 import "server-only";
 
 import { connection } from "next/server";
+import { redirect } from "next/navigation";
 
 import type { OrganizationDetailDto } from "@/application/adult-portal/types";
 import { getAuthGateway } from "@/server/auth/gateway";
@@ -9,21 +10,23 @@ import { getAdultPortalService } from "@/server/services/adult-portal-container"
 async function profileId(): Promise<string> {
   await connection();
   const session = await getAuthGateway().getSession();
-  if (!session) throw new Error("Authenticated portal session required.");
+  if (!session) redirect("/entrar");
   return session.actor.profileId;
 }
 
 export async function getPortalShellData() {
-  return getAdultPortalService().getShell(await profileId());
+  const id = await profileId();
+  return (await getAdultPortalService()).getShell(id);
 }
 
 export async function getPortalOverviewData() {
-  return getAdultPortalService().getOverview(await profileId());
+  const id = await profileId();
+  return (await getAdultPortalService()).getOverview(id);
 }
 
 export async function getOrganizationsPageData() {
   const id = await profileId();
-  const service = getAdultPortalService();
+  const service = await getAdultPortalService();
   const [organizations, shell] = await Promise.all([
     service.listOrganizations(id),
     service.getShell(id),
@@ -38,15 +41,13 @@ export async function getOrganizationsPageData() {
 export async function getOrganizationPageData(
   organizationId: string,
 ): Promise<OrganizationDetailDto> {
-  return getAdultPortalService().getOrganization(
-    await profileId(),
-    organizationId,
-  );
+  const id = await profileId();
+  return (await getAdultPortalService()).getOrganization(id, organizationId);
 }
 
 export async function getTeamPageData() {
   const id = await profileId();
-  const service = getAdultPortalService();
+  const service = await getAdultPortalService();
   const [members, organizations, profiles, shell] = await Promise.all([
     service.listTeam(id),
     service.listOrganizations(id),
@@ -58,7 +59,7 @@ export async function getTeamPageData() {
 
 export async function getClassesPageData() {
   const id = await profileId();
-  const service = getAdultPortalService();
+  const service = await getAdultPortalService();
   const [classes, organizations, shell] = await Promise.all([
     service.listClasses(id),
     service.listOrganizations(id),
@@ -68,13 +69,6 @@ export async function getClassesPageData() {
 }
 
 export async function getClassPageData(classGroupId: string) {
-  return getAdultPortalService().getClass(await profileId(), classGroupId);
-}
-
-export function listStaticOrganizationIds(): string[] {
-  return [];
-}
-
-export function listStaticClassIds(): string[] {
-  return [];
+  const id = await profileId();
+  return (await getAdultPortalService()).getClass(id, classGroupId);
 }

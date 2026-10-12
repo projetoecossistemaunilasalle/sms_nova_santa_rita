@@ -7,48 +7,40 @@ import type { RuntimeMode } from "@/runtime/mode";
 import { RecordStatus } from "@/generated/prisma/enums";
 import { Icon } from "@/components/shared/icon";
 
-import {
-  demoClasses,
-  demoOrganizations,
-  demoRole,
-  demoScopeLabel,
-  demoTeam,
-  recordStatusLabel,
-} from "./adult-portal-helpers";
+import { recordStatusLabel } from "./adult-portal-helpers";
 import { PageHeader } from "./page-header";
 import { PortalState } from "./portal-state";
 import { StatusBadge } from "./status-badge";
-import { useDemoPortalState } from "./use-demo-portal";
 import styles from "./portal.module.css";
 
 export function OverviewScreen({
   initial,
-  runtimeMode,
 }: {
   initial: PortalOverviewDto;
   runtimeMode: RuntimeMode;
 }) {
-  const demo = useDemoPortalState();
-  const role = demo ? demoRole(demo) : initial.effectiveRole;
-  const organizations = demo ? demoOrganizations(demo) : initial.organizations;
-  const classes = demo ? demoClasses(demo) : initial.classes;
-  const teamMemberCount = demo
-    ? demoTeam(demo).length
-    : initial.teamMemberCount;
-  const roleLabel =
+  const {
+    effectiveRole: role,
+    organizations,
+    classes,
+    teamMemberCount,
+  } = initial;
+  const activeClasses = classes.filter(
+    (item) => item.status === RecordStatus.ACTIVE,
+  );
+  const nextHref =
     role === "platform_admin"
-      ? "Administrador da plataforma"
-      : role === "organization_admin"
-        ? "Administrador da organização"
-        : "Professor";
-  const scopeLabel = demo ? demoScopeLabel(demo) : initial.scopeLabel;
+      ? "/portal/admin/organizacoes"
+      : role === "teacher" && activeClasses.length === 1
+        ? `/portal/turmas/${activeClasses[0]!.id}`
+        : "/portal/turmas";
 
   if (!role) {
     return (
       <PortalState
         icon="lock"
         title="Este perfil não possui acesso ativo"
-        description="Selecione um perfil demo ativo vinculado a uma organização ativa."
+        description="Peça ao administrador para verificar seu vínculo profissional."
       />
     );
   }
@@ -57,94 +49,123 @@ export function OverviewScreen({
     <>
       <PageHeader
         eyebrow="Visão geral"
-        title={`Seu trabalho como ${roleLabel.toLowerCase()}`}
+        title={
+          role === "teacher"
+            ? "Vamos preparar a próxima sessão?"
+            : "Tudo pronto para começar?"
+        }
         description={
           role === "platform_admin"
-            ? "Prepare organizações e seus administradores para que a estrutura V1 possa operar."
+            ? "Organize as unidades e seus responsáveis para receber as turmas."
             : role === "organization_admin"
               ? "Mantenha equipe, turmas e atribuições prontas para o trabalho dos professores."
-              : "Entre nas turmas ativas atribuídas ao seu vínculo."
+              : "Acesse sua turma, prepare os cartões e libere a entrada no jogo."
+        }
+        actions={
+          <Link className={styles.button} href={nextHref}>
+            <Icon name={role === "platform_admin" ? "building" : "school"} />
+            {role === "platform_admin"
+              ? "Gerenciar organizações"
+              : role === "teacher" && activeClasses.length === 1
+                ? `Abrir turma ${activeClasses[0]!.name}`
+                : "Ver turmas"}
+          </Link>
         }
       />
-      {runtimeMode === "demo" && (
-        <p className={styles.demoScopeNotice}>
-          Troque o perfil acima para comparar os acessos de cada função.
-        </p>
-      )}
-      <section className={styles.roleContextBand}>
-        <div>
-          <span>Perfil efetivo</span>
-          <strong>{roleLabel}</strong>
-        </div>
-        <div>
-          <span>Escopo</span>
-          <strong>{scopeLabel}</strong>
-        </div>
-        <div>
-          <span>Próximo passo</span>
-          <strong>
-            {role === "platform_admin"
-              ? "Organizações"
-              : role === "organization_admin"
-                ? "Estrutura de turmas"
-                : "Turmas atribuídas"}
-          </strong>
-        </div>
-      </section>
-      <section className={styles.summaryStrip} aria-label="Resumo operacional">
-        {role === "platform_admin" ? (
-          <>
-            <article className={styles.summaryCard}>
-              <p>Organizações</p>
-              <strong>{organizations.length}</strong>
-              <small>
-                {
-                  organizations.filter(
-                    (item) => item.status === RecordStatus.ACTIVE,
-                  ).length
-                }{" "}
-                ativas
-              </small>
-            </article>
-            <article className={styles.summaryCard}>
-              <p>Vínculos adultos</p>
-              <strong>{teamMemberCount}</strong>
-              <small>Em toda a plataforma</small>
-            </article>
-          </>
-        ) : (
-          <>
-            <article className={styles.summaryCard}>
-              <p>Turmas visíveis</p>
-              <strong>{classes.length}</strong>
-              <small>No seu escopo ativo</small>
-            </article>
-            <article className={styles.summaryCard}>
-              <p>Turmas ativas</p>
-              <strong>
-                {
-                  classes.filter((item) => item.status === RecordStatus.ACTIVE)
-                    .length
-                }
-              </strong>
-              <small>Disponíveis agora</small>
-            </article>
-            {role === "organization_admin" && (
+      <ol className={styles.journeySteps} aria-label="Como preparar o trabalho">
+        {(role === "platform_admin"
+          ? [
+              ["Organizações", "Cadastre as unidades da rede."],
+              ["Administradores", "Vincule um responsável a cada unidade."],
+              ["Acompanhamento", "Confira a estrutura de cada organização."],
+            ]
+          : role === "organization_admin"
+            ? [
+                ["Equipe", "Vincule os professores à organização."],
+                ["Turmas", "Crie a turma e atribua seus professores."],
+                ["Acessos", "Prepare os jogadores e seus cartões QR."],
+              ]
+            : [
+                [
+                  "Prepare os cartões",
+                  "Use os mesmos números a cada encontro.",
+                ],
+                ["Inicie a sessão", "Os jogadores entram pelo QR no tablet."],
+                ["Acompanhe", "Consulte a participação em Resultados."],
+              ]
+        ).map(([title, description]) => (
+          <li key={title}>
+            <strong>{title}</strong>
+            <span>{description}</span>
+          </li>
+        ))}
+      </ol>
+      {role !== "teacher" && (
+        <section
+          className={styles.summaryStrip}
+          aria-label="Resumo operacional"
+        >
+          {role === "platform_admin" ? (
+            <>
               <article className={styles.summaryCard}>
-                <p>Equipe</p>
-                <strong>{teamMemberCount}</strong>
-                <small>Vínculos no seu escopo</small>
+                <p>Organizações</p>
+                <strong>{organizations.length}</strong>
+                <small>
+                  {
+                    organizations.filter(
+                      (item) => item.status === RecordStatus.ACTIVE,
+                    ).length
+                  }{" "}
+                  ativas
+                </small>
               </article>
-            )}
-          </>
-        )}
-      </section>
+              <article className={styles.summaryCard}>
+                <p>Vínculos da equipe</p>
+                <strong>{teamMemberCount}</strong>
+                <small>Em toda a plataforma</small>
+              </article>
+            </>
+          ) : (
+            <>
+              <article className={styles.summaryCard}>
+                <p>Suas turmas</p>
+                <strong>{classes.length}</strong>
+                <small>No seu escopo ativo</small>
+              </article>
+              <article className={styles.summaryCard}>
+                <p>Turmas ativas</p>
+                <strong>
+                  {
+                    classes.filter(
+                      (item) => item.status === RecordStatus.ACTIVE,
+                    ).length
+                  }
+                </strong>
+                <small>Disponíveis agora</small>
+              </article>
+              {role === "organization_admin" && (
+                <article className={styles.summaryCard}>
+                  <p>Equipe</p>
+                  <strong>{teamMemberCount}</strong>
+                  <small>Vínculos no seu escopo</small>
+                </article>
+              )}
+            </>
+          )}
+        </section>
+      )}
       {role === "platform_admin" ? (
         organizations.length === 0 ? (
           <PortalState
+            headingLevel={2}
             icon="building"
             title="Nenhuma organização criada"
-            description="Crie a primeira organização para iniciar a estrutura V1."
+            description="Cadastre uma organização e vincule o administrador responsável."
+            actions={
+              <Link className={styles.button} href="/portal/admin/organizacoes">
+                Criar organização
+              </Link>
+            }
           />
         ) : (
           <section>
@@ -181,6 +202,7 @@ export function OverviewScreen({
         )
       ) : classes.length === 0 ? (
         <PortalState
+          headingLevel={2}
           icon="school"
           title={
             role === "teacher"
@@ -192,6 +214,16 @@ export function OverviewScreen({
               ? "Peça ao administrador da organização para atribuir uma turma ativa."
               : "Crie a primeira turma na área de turmas."
           }
+          actions={
+            <Link
+              className={styles.buttonSecondary}
+              href={role === "teacher" ? "/portal/ajuda" : "/portal/turmas"}
+            >
+              {role === "teacher"
+                ? "Como obter acesso a uma turma"
+                : "Criar turma"}
+            </Link>
+          }
         />
       ) : (
         <section>
@@ -202,36 +234,34 @@ export function OverviewScreen({
             </Link>
           </div>
           <div className={styles.dashboardCompactList}>
-            {classes
-              .slice(0, 4)
-              .filter((item) => !item.id.startsWith("demo-class-"))
-              .map((classGroup) => (
-                <Link
-                  href={`/portal/turmas/${classGroup.id}`}
-                  key={classGroup.id}
-                >
-                  <span className={styles.directoryIcon}>
-                    <Icon name="school" />
-                  </span>
-                  <span>
-                    <strong>{classGroup.name}</strong>
-                    <small>{classGroup.organizationName}</small>
-                  </span>
-                  <StatusBadge status={recordStatusLabel(classGroup.status)} />
-                  <Icon name="chevron" />
-                </Link>
-              ))}
+            {classes.slice(0, 4).map((classGroup) => (
+              <Link
+                href={`/portal/turmas/${classGroup.id}`}
+                key={classGroup.id}
+              >
+                <span className={styles.directoryIcon}>
+                  <Icon name="school" />
+                </span>
+                <span>
+                  <strong>{classGroup.name}</strong>
+                  <small>{classGroup.organizationName}</small>
+                </span>
+                <StatusBadge status={recordStatusLabel(classGroup.status)} />
+                <Icon name="chevron" />
+              </Link>
+            ))}
           </div>
         </section>
       )}
       {role !== "platform_admin" && (
-        <section>
-          <div className={styles.sectionHeader}>
-            <h2>Resultados de jogo</h2>
-            <Link className={styles.textLink} href="/portal/resultados">
-              Ver resultados
-            </Link>
+        <section className={styles.followUpBand}>
+          <div>
+            <h2>Depois da sessão</h2>
+            <p>Veja quem participou e o tempo ativo registrado por jogador.</p>
           </div>
+          <Link className={styles.textLink} href="/portal/resultados">
+            Consultar resultados <Icon name="arrow" />
+          </Link>
         </section>
       )}
     </>

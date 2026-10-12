@@ -26,11 +26,8 @@ if (command === "gen" && args.length > 0) {
   process.exit(1);
 }
 
-// Deterministic generated consumer entries. Each target re-exports the same
-// named symbols from its concrete tracked variant barrel, so both target
-// typechecks compile every consumer against the selected concrete exports.
-// The three generated files are git-ignored workspace state; one target
-// command at a time in a checkout is the documented operating rule.
+// Both modes use the same server entry points. Only the service containers
+// and authentication gateway select infrastructure adapters.
 const ACTION_NAMES = [
   "allocatePlayerSlotsAction",
   "assignOrganizationAdministratorAction",
@@ -40,12 +37,12 @@ const ACTION_NAMES = [
   "changeMembershipAction",
   "changeOrganizationStatusAction",
   "createClassAction",
-  "createDemoProfessionalAction",
   "createOrganizationAction",
   "deactivateTeacherAssignmentAction",
   "endClassSessionAction",
   "resolvePlayerEntryAction",
   "rotatePlayerCredentialAction",
+  "showClassPlayerCredentialsAction",
   "signInAction",
   "signOutAction",
   "startClassSessionAction",
@@ -62,48 +59,20 @@ const READER_NAMES = [
   "getPortalShellData",
   "getResultReportsPageData",
   "getTeamPageData",
-  "listStaticClassIds",
-  "listStaticOrganizationIds",
-  "listStaticResultClassIds",
-  "listStaticResultPlayerParams",
-];
-const CLIENT_NAMES = [
-  "changeDemoProfile",
-  "loadClientPortalState",
-  "resetDemoPortal",
 ];
 
 function reExports(names, from) {
   return `export {\n${names.map((name) => `  ${name},`).join("\n")}\n} from "${from}";\n`;
 }
 
+// Directives belong to async implementation files, not re-export barrels.
 const RUNTIME_ENTRIES = {
-  server: {
-    // No "use server" header here: the installed Turbopack transform rejects
-    // any non-async-function export in a "use server" file, so re-exports are
-    // impossible in one. Verified on next 16.3.6: adding the header to this
-    // generated entry fails build:server with "Only async functions are
-    // allowed to be exported in a "use server" file." plus one cascading
-    // error per re-exported name. The directive lives on the five
-    // implementation files this barrel and the generated entry re-export
-    // from; importing those exports through plain re-export chains keeps
-    // every consumer on the generated entry while the actions stay
-    // registered by their own modules.
-    "src/runtime/actions.ts": reExports(ACTION_NAMES, "./actions.server"),
-    "src/runtime/readers.ts": `import "server-only";\n\n${reExports(READER_NAMES, "./readers.server")}`,
-    "src/runtime/client.ts": `"use client";\n\n${reExports(CLIENT_NAMES, "./client.server")}`,
-  },
-  demo: {
-    "src/runtime/actions.ts": reExports(ACTION_NAMES, "./actions.demo"),
-    "src/runtime/readers.ts": `import "server-only";\n\n${reExports(READER_NAMES, "./readers.demo")}`,
-    "src/runtime/client.ts": `"use client";\n\n${reExports(CLIENT_NAMES, "./client.demo")}`,
-  },
+  "src/runtime/actions.ts": reExports(ACTION_NAMES, "./actions.shared"),
+  "src/runtime/readers.ts": `import "server-only";\n\n${reExports(READER_NAMES, "./readers.shared")}`,
 };
 
-function writeRuntimeEntries(selectedTarget) {
-  for (const [relativePath, content] of Object.entries(
-    RUNTIME_ENTRIES[selectedTarget],
-  )) {
+function writeRuntimeEntries() {
+  for (const [relativePath, content] of Object.entries(RUNTIME_ENTRIES)) {
     const filePath = path.join(projectRoot, relativePath);
     const tempPath = `${filePath}.tmp`;
     fs.writeFileSync(tempPath, content);
@@ -111,7 +80,9 @@ function writeRuntimeEntries(selectedTarget) {
   }
 }
 
-writeRuntimeEntries(target);
+writeRuntimeEntries();
+// Remove the obsolete, git-ignored browser adapter entry from older checkouts.
+fs.rmSync(path.join(projectRoot, "src/runtime/client.ts"), { force: true });
 
 if (command === "gen") {
   process.exit(0);
@@ -124,6 +95,16 @@ const environment = {
   APP_RUNTIME_MODE: target,
   NEXT_PUBLIC_APP_RUNTIME_MODE: target,
 };
+
+// Local mock sessions execute the same server routes and actions.
+if (
+  target === "demo" &&
+  command === "dev" &&
+  !args.includes("--hostname") &&
+  !args.includes("-H")
+) {
+  args.push("--hostname", "127.0.0.1");
+}
 
 if (command === "build") {
   environment.NODE_ENV = "production";

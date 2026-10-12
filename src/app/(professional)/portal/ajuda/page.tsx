@@ -7,7 +7,7 @@ export const metadata = { title: "Ajuda" };
 const topics: Array<[string, string, IconName]> = [
   [
     "Organizações e equipe",
-    "Administradores da plataforma criam organizações e vinculam seus administradores. Dentro de cada organização, a equipe recebe vínculos de administrador ou professor; na demonstração, os perfis ficam somente neste navegador.",
+    "Administradores da plataforma criam organizações e vinculam seus administradores. Dentro de cada organização, a equipe recebe vínculos de administrador ou professor; na demonstração local, os perfis usam dados fictícios isolados por sessão no servidor.",
     "building",
   ],
   [
@@ -21,8 +21,8 @@ const topics: Array<[string, string, IconName]> = [
     "users",
   ],
   [
-    "Credenciais QR",
-    "Ao criar jogadores, o portal gera cartões QR prontos para impressão. Cada jogador tem um único QR ativo; em “Trocar QR”, o código anterior deixa de funcionar imediatamente e deve ser descartado. A entrada do jogador acontece em /jogar.",
+    "Reimprimir ou trocar um cartão QR",
+    "Abra a turma e busque o número do jogador. Use “Exibir QR deste jogador” para reimprimir o mesmo cartão. Use “Trocar QR” apenas quando precisar invalidar o código anterior; o número e o progresso são mantidos. Para imprimir a turma inteira, limpe a busca e use “Exibir QR codes da turma”.",
     "shield",
   ],
   [

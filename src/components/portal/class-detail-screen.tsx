@@ -12,14 +12,10 @@ import {
   deactivateTeacherAssignmentAction,
 } from "@/runtime/actions";
 import { AdultPortalForm } from "./adult-portal-form";
-import { demoClassDetail, recordStatusLabel } from "./adult-portal-helpers";
-import {
-  PlayerAccessWorkflow,
-  workflowFromDemoState,
-} from "./player-access-workflow";
-import { PortalState } from "./portal-state";
+import { recordStatusLabel } from "./adult-portal-helpers";
+import { PlayerAccessWorkflow } from "./player-access-workflow";
 import { StatusBadge } from "./status-badge";
-import { useDemoPortalState } from "./use-demo-portal";
+import { Icon } from "@/components/shared/icon";
 import styles from "./portal.module.css";
 
 export function ClassDetailScreen({
@@ -31,19 +27,7 @@ export function ClassDetailScreen({
   initialWorkflow: ClassWorkflowDto;
   runtimeMode: RuntimeMode;
 }) {
-  const demo = useDemoPortalState();
-  const classGroup = demo
-    ? demoClassDetail(demo, initialClass.id)
-    : initialClass;
-  if (!classGroup) {
-    return (
-      <PortalState
-        icon="lock"
-        title="Esta turma não está disponível"
-        description="Turmas inativas, sem atribuição ativa ou fora da sua organização não concedem acesso."
-      />
-    );
-  }
+  const classGroup = initialClass;
   const assignedMembershipIds = new Set(
     classGroup.teachers
       .filter((teacher) => teacher.status === RecordStatus.ACTIVE)
@@ -52,7 +36,7 @@ export function ClassDetailScreen({
   const assignableTeachers = classGroup.availableTeachers.filter(
     (teacher) => !assignedMembershipIds.has(teacher.id),
   );
-  const workflow = workflowFromDemoState(demo, classGroup.id, initialWorkflow);
+  const workflow = initialWorkflow;
 
   return (
     <>
@@ -61,46 +45,37 @@ export function ClassDetailScreen({
           <Link className={styles.backLink} href="/portal/turmas">
             ← Todas as turmas
           </Link>
-          <p className={styles.eyebrow}>Turma</p>
-          <h1>{classGroup.name}</h1>
+          <div className={styles.classIdentity}>
+            <h1>{classGroup.name}</h1>
+            <StatusBadge status={recordStatusLabel(classGroup.status)} />
+          </div>
           <p>{classGroup.organizationName}</p>
-          <StatusBadge status={recordStatusLabel(classGroup.status)} />
         </div>
-        {classGroup.canManage && (
-          <AdultPortalForm
-            action={changeClassStatusAction}
-            submitLabel={
-              classGroup.status === RecordStatus.ACTIVE
-                ? "Desativar turma"
-                : "Ativar turma"
-            }
-            compact
+        <div className={styles.classActions}>
+          <Link
+            className={styles.buttonSecondary}
+            href={`/portal/resultados/${classGroup.id}`}
           >
-            <input type="hidden" name="classGroupId" value={classGroup.id} />
-            <input
-              type="hidden"
-              name="status"
-              value={
-                classGroup.status === RecordStatus.ACTIVE
-                  ? RecordStatus.INACTIVE
-                  : RecordStatus.ACTIVE
-              }
-            />
-          </AdultPortalForm>
-        )}
+            <Icon name="chart" /> Ver resultados da turma
+          </Link>
+          {classGroup.canManage && (
+            <a className={styles.textLink} href="#professores">
+              Gerenciar professores
+            </a>
+          )}
+        </div>
       </section>
-      {runtimeMode === "demo" && (
-        <p className={styles.demoScopeNotice}>
-          Demonstração local: jogadores, sessões e credenciais ficam somente
-          neste navegador e não têm validade em produção.
-        </p>
-      )}
       {classGroup.status !== RecordStatus.ACTIVE && (
         <section className={styles.inactiveNotice}>
           <strong>Turma inativa</strong>
           <p>
             Professores não acessam esta turma enquanto ela estiver inativa.
           </p>
+          {classGroup.canManage && (
+            <a className={styles.textLink} href="#situacao-turma">
+              Ir para ativação da turma
+            </a>
+          )}
         </section>
       )}
       <PlayerAccessWorkflow
@@ -111,7 +86,7 @@ export function ClassDetailScreen({
         runtimeMode={runtimeMode}
         workflow={workflow}
       />
-      <div className={styles.classManagementGrid}>
+      <div className={styles.classManagementGrid} id="professores">
         <section className={styles.detailPanel}>
           <div className={styles.sectionHeader}>
             <h2>Professores atribuídos</h2>
@@ -147,6 +122,11 @@ export function ClassDetailScreen({
                         action={deactivateTeacherAssignmentAction}
                         submitLabel="Remover da turma"
                         compact
+                        confirmation={{
+                          title: `Remover ${teacher.displayName}?`,
+                          description:
+                            "Este professor perderá o acesso a esta turma. Você poderá atribuí-lo novamente depois.",
+                        }}
                       >
                         <input
                           type="hidden"
@@ -171,7 +151,16 @@ export function ClassDetailScreen({
               </p>
             ) : assignableTeachers.length === 0 ? (
               <p className={styles.inlineEmpty}>
-                Não há outro professor ativo disponível nesta organização.
+                Não há outro professor ativo disponível nesta organização.{" "}
+                <Link
+                  className={styles.textLink}
+                  href={{
+                    pathname: "/portal/admin/equipe",
+                    query: { organization: classGroup.organizationId },
+                  }}
+                >
+                  Gerenciar equipe
+                </Link>
               </p>
             ) : (
               <AdultPortalForm
@@ -206,6 +195,46 @@ export function ClassDetailScreen({
           </section>
         )}
       </div>
+      {classGroup.canManage && (
+        <section className={styles.classSettings} id="situacao-turma">
+          <div>
+            <h2>Situação da turma</h2>
+            <p>
+              Desativar impede o acesso dos professores. Os registros são
+              mantidos.
+            </p>
+          </div>
+          <AdultPortalForm
+            action={changeClassStatusAction}
+            submitLabel={
+              classGroup.status === RecordStatus.ACTIVE
+                ? "Desativar turma"
+                : "Ativar turma"
+            }
+            compact
+            confirmation={
+              classGroup.status === RecordStatus.ACTIVE
+                ? {
+                    title: `Desativar a turma ${classGroup.name}?`,
+                    description:
+                      "Os professores perderão o acesso a esta turma e os jogadores não poderão iniciar novas entradas. Os registros serão preservados. Você poderá ativá-la novamente.",
+                  }
+                : undefined
+            }
+          >
+            <input type="hidden" name="classGroupId" value={classGroup.id} />
+            <input
+              type="hidden"
+              name="status"
+              value={
+                classGroup.status === RecordStatus.ACTIVE
+                  ? RecordStatus.INACTIVE
+                  : RecordStatus.ACTIVE
+              }
+            />
+          </AdultPortalForm>
+        </section>
+      )}
     </>
   );
 }

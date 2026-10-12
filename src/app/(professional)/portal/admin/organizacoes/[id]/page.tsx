@@ -3,16 +3,9 @@ import { notFound, redirect } from "next/navigation";
 import { AdultPortalError } from "@/application/adult-portal/errors";
 import { OrganizationDetailScreen } from "@/components/portal/organization-detail-screen";
 import { getRuntimeMode } from "@/runtime/mode";
-import {
-  getOrganizationPageData,
-  listStaticOrganizationIds,
-} from "@/runtime/readers";
+import { getOrganizationPageData, getPortalShellData } from "@/runtime/readers";
 
 export const metadata = { title: "Detalhe da organização" };
-
-export function generateStaticParams() {
-  return listStaticOrganizationIds().map((id) => ({ id }));
-}
 
 export default async function OrganizationDetailPage({
   params,
@@ -33,6 +26,9 @@ export default async function OrganizationDetailPage({
   return (
     <OrganizationDetailScreen
       initialOrganization={organization}
+      canAccessClasses={
+        (await getPortalShellData()).effectiveRole !== "platform_admin"
+      }
       runtimeMode={getRuntimeMode()}
     />
   );

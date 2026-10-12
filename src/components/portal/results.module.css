@@ -19,7 +19,7 @@
 .summaryCard > span,
 .summaryCard small {
   color: var(--text-muted);
-  font-size: var(--type-compact);
+  font-size: var(--type-small);
   font-weight: 750;
 }
 
@@ -98,7 +98,7 @@
 .classContent small,
 .classTime small {
   color: var(--text-muted);
-  font-size: var(--type-compact);
+  font-size: var(--type-small);
 }
 
 .classTime {
@@ -165,6 +165,101 @@
 
 .tableScroll {
   overflow-x: auto;
+  scroll-padding: 16px;
+}
+
+.tableScroll:focus-visible {
+  outline-offset: -3px;
+}
+
+.playerFilters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px;
+  align-items: end;
+  gap: 12px 20px;
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.participationFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.participationFilters button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  color: var(--text);
+  background: var(--surface);
+  font: inherit;
+  font-size: var(--type-small);
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.participationFilters button:hover {
+  border-color: var(--green-action);
+}
+
+.participationFilters button[aria-pressed="true"] {
+  border-color: var(--green-dark);
+  color: var(--green-dark);
+  background: var(--green-light);
+}
+
+.participationFilters span {
+  font-variant-numeric: tabular-nums;
+}
+
+.filterNote,
+.filterCount,
+.tableHint,
+.filteredEmpty p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--type-small);
+}
+
+.filterNote {
+  max-width: 72ch;
+}
+
+.filterCount {
+  align-self: start;
+}
+
+.tableHint {
+  display: none;
+  padding: 12px 20px 0;
+}
+
+.filteredEmpty {
+  padding: 28px 20px;
+}
+
+.filteredEmpty h3 {
+  margin: 0 0 8px;
+  font-size: var(--type-subtitle);
+}
+
+.filteredEmpty button {
+  margin-top: 16px;
+}
+
+@media (max-width: 1120px) {
+  .playerFilters {
+    grid-template-columns: 1fr;
+  }
+
+  .tableHint {
+    display: block;
+  }
 }
 
 .playerTable {
@@ -204,6 +299,12 @@
   gap: 9px;
   color: var(--text);
   text-decoration: none;
+  min-height: 44px;
+}
+
+.playerLink:hover {
+  color: var(--blue-dark);
+  text-decoration: underline;
 }
 
 .playerLink > svg {
@@ -356,7 +457,21 @@
   }
 
   .classTime {
-    display: none;
+    grid-column: 2;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    text-align: left;
+  }
+
+  .classCard > svg {
+    grid-column: 3;
+    grid-row: 1 / 3;
+  }
+
+  .classContent strong {
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 
   .summaryCard {

@@ -2,12 +2,11 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import type { ActorSession } from "@/server/auth/session";
-import type { RuntimeMode } from "@/runtime/mode";
 import type { PortalShellDto } from "@/application/adult-portal/types";
 import { signOutAction } from "@/runtime/actions";
 import { Icon } from "@/components/shared/icon";
 import { PortalNavigation } from "./portal-navigation";
-import { DemoRoleControls } from "./demo-role-controls";
+import { MockWorkspaceControls } from "./mock-workspace-controls";
 import {
   PortalScopeContext,
   PortalShellIdentity,
@@ -35,46 +34,32 @@ export function Brand({ compact = false }: { compact?: boolean }) {
 
 export function PortalShell({
   session,
-  runtimeMode,
+  mockWorkspace,
   shell,
   children,
 }: {
   session: ActorSession;
-  runtimeMode: RuntimeMode;
+  mockWorkspace?: {
+    activeProfileId: string;
+    resetVersion: number;
+    profiles: { id: string; displayName: string; roleLabel: string }[];
+  };
   shell: PortalShellDto;
   children: ReactNode;
 }) {
   return (
     <div className={styles.shell}>
+      <a className={styles.skipLink} href="#portal-content">
+        Pular para o conteúdo
+      </a>
       <aside className={styles.sidebar}>
         <Brand />
-        {runtimeMode === "demo" && <DemoRoleControls />}
-        <PortalNavigation items={shell.navigation} runtimeMode={runtimeMode} />
+        <PortalNavigation items={shell.navigation} />
         <div className={styles.sidebarProfile}>
           <PortalShellIdentity
             defaultName={session.actor.displayName}
             shell={shell}
-            runtimeMode={runtimeMode}
           />
-          {runtimeMode === "demo" ? (
-            <Link
-              href="/entrar"
-              aria-label="Sair do portal"
-              className={styles.logoutButton}
-            >
-              <Icon name="logout" />
-            </Link>
-          ) : (
-            <form action={signOutAction}>
-              <button
-                type="submit"
-                aria-label="Sair do portal"
-                className={styles.logoutButton}
-              >
-                <Icon name="logout" />
-              </button>
-            </form>
-          )}
         </div>
       </aside>
 
@@ -84,20 +69,30 @@ export function PortalShell({
             <Icon name="building" />
             <span>
               <small>Escopo de acesso</small>
-              <PortalScopeContext shell={shell} runtimeMode={runtimeMode} />
+              <PortalScopeContext shell={shell} />
             </span>
           </div>
           <div className={styles.topbarActions}>
             <Link className={styles.helpLink} href="/portal/ajuda">
               Ajuda
             </Link>
-            <PortalTopbarAvatar
-              defaultName={session.actor.displayName}
-              runtimeMode={runtimeMode}
-            />
+            <PortalTopbarAvatar defaultName={session.actor.displayName} />
+            <form action={signOutAction}>
+              <button type="submit" className={styles.signOutButton}>
+                Sair
+              </button>
+            </form>
           </div>
         </header>
-        <main className={styles.content}>{children}</main>
+        <main className={styles.content} id="portal-content" tabIndex={-1}>
+          {mockWorkspace && (
+            <MockWorkspaceControls
+              key={`${mockWorkspace.activeProfileId}:${mockWorkspace.resetVersion}`}
+              {...mockWorkspace}
+            />
+          )}
+          {children}
+        </main>
       </div>
     </div>
   );

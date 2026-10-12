@@ -20,8 +20,20 @@ export interface PlayerCredentialIssuer {
   issue(): CredentialMaterial;
 }
 
+export interface PlayerCredentialCipher {
+  encrypt(token: string, tokenHash: string): string;
+  decrypt(encryptedToken: string, tokenHash: string): string;
+}
+
 export type NewSlotCredential = {
   tokenHash: string;
+  encryptedToken?: string | null;
+};
+
+export type StoredPlayerCredential = {
+  playerSlotId: string;
+  tokenHash: string;
+  encryptedToken: string | null;
 };
 
 export type ResolvedCredential = {
@@ -46,6 +58,9 @@ export interface PlayerAccessReader {
   getClassScope(classGroupId: string): Promise<ClassScope | null>;
   getSlot(slotId: string): Promise<PlayerSlotDto | null>;
   listSlots(classGroupId: string): Promise<PlayerSlotDto[]>;
+  listStoredCredentials(
+    classGroupId: string,
+  ): Promise<StoredPlayerCredential[]>;
   getActiveSession(classGroupId: string): Promise<GameSessionDto | null>;
   resolveCredential(tokenHash: string): Promise<ResolvedCredential | null>;
 }
@@ -59,6 +74,7 @@ export interface PlayerAccessTransaction extends PlayerAccessReader {
     slotId: string,
     tokenHash: string,
     revokedAt: Date,
+    encryptedToken?: string | null,
   ): Promise<PlayerSlotDto>;
   createSession(classGroupId: string, startedAt: Date): Promise<GameSessionDto>;
   endSession(sessionId: string, endedAt: Date): Promise<GameSessionDto>;

@@ -4,6 +4,7 @@ import { Prisma, type PrismaClient } from "@/generated/prisma/client";
 import {
   GameSessionStatus,
   PlayerCredentialStatus,
+  RecordStatus,
 } from "@/generated/prisma/enums";
 import type {
   NewSlotCredential,
@@ -154,6 +155,16 @@ class PrismaPlayerAccessReader {
     });
   }
 
+  async listStoredCredentials(classGroupId: string) {
+    return this.db.playerCredential.findMany({
+      where: {
+        status: PlayerCredentialStatus.ACTIVE,
+        playerSlot: { classGroupId, status: RecordStatus.ACTIVE },
+      },
+      select: { playerSlotId: true, tokenHash: true, encryptedToken: true },
+    });
+  }
+
   async resolveCredential(
     tokenHash: string,
   ): Promise<ResolvedCredential | null> {
@@ -237,7 +248,12 @@ class PrismaPlayerAccessTransaction
           data: {
             classGroupId,
             playerNumber: firstNumber + index,
-            credentials: { create: { tokenHash: credential.tokenHash } },
+            credentials: {
+              create: {
+                tokenHash: credential.tokenHash,
+                encryptedToken: credential.encryptedToken ?? null,
+              },
+            },
           },
           select: slotSelect,
         }),
@@ -246,13 +262,22 @@ class PrismaPlayerAccessTransaction
     return slots.map(slotDto);
   }
 
-  async rotateCredential(slotId: string, tokenHash: string, revokedAt: Date) {
+  async rotateCredential(
+    slotId: string,
+    tokenHash: string,
+    revokedAt: Date,
+    encryptedToken: string | null = null,
+  ) {
     await this.db.playerCredential.updateMany({
       where: { playerSlotId: slotId, status: PlayerCredentialStatus.ACTIVE },
-      data: { status: PlayerCredentialStatus.REVOKED, revokedAt },
+      data: {
+        status: PlayerCredentialStatus.REVOKED,
+        revokedAt,
+        encryptedToken: null,
+      },
     });
     await this.db.playerCredential.create({
-      data: { playerSlotId: slotId, tokenHash },
+      data: { playerSlotId: slotId, tokenHash, encryptedToken },
     });
     const slot = await this.db.playerSlot.findUniqueOrThrow({
       where: { id: slotId },

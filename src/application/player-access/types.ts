@@ -52,6 +52,7 @@ export type PlayerAccessActionResult = {
   ok: boolean;
   message: string;
   issuedCredentials?: IssuedCredentialDto[];
+  unavailablePlayerNumbers?: number[];
   fieldErrors?: Record<string, string[]>;
 };
 

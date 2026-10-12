@@ -3,14 +3,14 @@ import { describe, expect, it } from "vitest";
 import { AdultPortalService } from "@/application/adult-portal/service";
 import type { AdultRole } from "@/application/adult-portal/types";
 import { OrganizationRole, RecordStatus } from "@/generated/prisma/enums";
-import type { DemoAdultPortalState } from "@/runtime/adult-portal-demo-store";
+import type { DemoAdultPortalState } from "@/server/mock/seed-store";
 import {
   DEMO_CLASS_IDS,
   DEMO_ORGANIZATION_IDS,
   DEMO_PROFILE_IDS,
   DemoAdultPortalStore,
   demoAdultPortalSeed,
-} from "@/runtime/adult-portal-demo-store";
+} from "@/server/mock/seed-store";
 
 function setup() {
   const state = structuredClone(demoAdultPortalSeed);

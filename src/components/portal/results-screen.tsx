@@ -7,6 +7,8 @@ import type {
 import { Icon } from "@/components/shared/icon";
 import { PageHeader } from "@/components/portal/page-header";
 import { PortalState } from "@/components/portal/portal-state";
+import { ClassResultsPlayers } from "./class-results-players";
+import { formatActiveTime } from "./results-helpers";
 
 import styles from "./results.module.css";
 
@@ -14,17 +16,8 @@ const numberFormat = new Intl.NumberFormat("pt-BR");
 const dateFormat = new Intl.DateTimeFormat("pt-BR", {
   dateStyle: "short",
   timeStyle: "short",
+  timeZone: "America/Sao_Paulo",
 });
-
-function formatActiveTime(milliseconds: number) {
-  const totalSeconds = Math.floor(milliseconds / 1000);
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-  if (hours > 0) return `${hours} h ${minutes} min`;
-  if (minutes > 0) return `${minutes} min ${seconds} s`;
-  return `${seconds} s`;
-}
 
 function SummaryCard({
   label,
@@ -54,9 +47,15 @@ export function ResultsScreen({ reports }: { reports: ClassReport[] }) {
           description="Resultados registrados pelo jogo e tempo ativo significativo, organizados por turma e número de jogador."
         />
         <PortalState
+          headingLevel={2}
           icon="chart"
           title="Nenhum resultado sincronizado ainda"
           description="Quando uma turma iniciar uma sessão e o jogo enviar resultados, os totais de participação aparecerão aqui."
+          actions={
+            <Link className={styles.backLink} href="/portal/turmas">
+              Ir para as turmas
+            </Link>
+          }
         />
       </>
     );
@@ -80,7 +79,7 @@ export function ResultsScreen({ reports }: { reports: ClassReport[] }) {
       <PageHeader
         eyebrow="Resultados"
         title="Participação em jogo"
-        description="Tempo ativo e eventos de resultado aceitos pelo servidor, separados por turma."
+        description="Escolha uma turma para ver a participação e o tempo ativo de cada jogador."
       />
       <section className={styles.summaryStrip} aria-label="Resumo das turmas">
         <SummaryCard
@@ -140,11 +139,19 @@ export function ClassResultsScreen({ report }: { report: ClassReport }) {
       <PageHeader
         eyebrow="Resultados / Turma"
         title={report.className}
-        description="Participação por número de jogador. Os valores exibidos vêm dos eventos aceitos pelo servidor."
+        description="Abra um jogador para acompanhar suas sessões e os resultados sincronizados pelo jogo."
         actions={
-          <Link className={styles.backLink} href="/portal/resultados">
-            Voltar aos resultados
-          </Link>
+          <>
+            <Link className={styles.backLink} href="/portal/resultados">
+              Voltar aos resultados
+            </Link>
+            <Link
+              className={styles.backLink}
+              href={`/portal/turmas/${report.classGroupId}`}
+            >
+              Acessos e sessão da turma
+            </Link>
+          </>
         }
       />
       <section className={styles.summaryStrip} aria-label="Resumo da turma">
@@ -171,61 +178,21 @@ export function ClassResultsScreen({ report }: { report: ClassReport }) {
       </section>
       {report.players.length === 0 ? (
         <PortalState
+          headingLevel={2}
           icon="users"
           title="Esta turma ainda não tem jogadores"
           description="Os números de jogador aparecerão aqui depois que forem preparados para a turma."
+          actions={
+            <Link
+              className={styles.backLink}
+              href={`/portal/turmas/${report.classGroupId}`}
+            >
+              Preparar jogadores
+            </Link>
+          }
         />
       ) : (
-        <section className={styles.reportPanel} aria-label="Jogadores da turma">
-          <div className={styles.reportPanelHeader}>
-            <div>
-              <h2>Jogadores numerados</h2>
-              <p>Sem nomes ou dados pessoais de crianças.</p>
-            </div>
-            <span>{numberFormat.format(report.players.length)} números</span>
-          </div>
-          <div className={styles.tableScroll}>
-            <table className={styles.playerTable}>
-              <thead>
-                <tr>
-                  <th scope="col">Jogador</th>
-                  <th scope="col">Sessões</th>
-                  <th scope="col">Tempo ativo</th>
-                  <th scope="col">Resultados</th>
-                  <th scope="col">Última atividade</th>
-                </tr>
-              </thead>
-              <tbody>
-                {report.players.map((player) => (
-                  <tr key={player.playerSlotId}>
-                    <th scope="row">
-                      <Link
-                        className={styles.playerLink}
-                        href={`/portal/resultados/${report.classGroupId}/players/${player.playerSlotId}`}
-                      >
-                        <span className={styles.playerNumber}>
-                          {String(player.playerNumber).padStart(2, "0")}
-                        </span>
-                        <span>
-                          Player {String(player.playerNumber).padStart(2, "0")}
-                        </span>
-                        <Icon name="chevron" />
-                      </Link>
-                    </th>
-                    <td>{numberFormat.format(player.participationCount)}</td>
-                    <td>{formatActiveTime(player.totalActiveMs)}</td>
-                    <td>{numberFormat.format(player.resultCount)}</td>
-                    <td>
-                      {player.lastPlayedAt
-                        ? dateFormat.format(player.lastPlayedAt)
-                        : "Sem atividade"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
+        <ClassResultsPlayers key={report.classGroupId} report={report} />
       )}
     </>
   );
@@ -236,14 +203,14 @@ export function PlayerResultsScreen({ report }: { report: PlayerReport }) {
     <>
       <PageHeader
         eyebrow={`${report.className} / Resultados`}
-        title={`Player ${String(report.playerNumber).padStart(2, "0")}`}
+        title={`Jogador ${String(report.playerNumber).padStart(2, "0")}`}
         description="Histórico de sessões, tempo ativo e campos de resultado fornecidos pelo jogo."
         actions={
           <Link
             className={styles.backLink}
             href={`/portal/resultados/${report.classGroupId}`}
           >
-            Voltar à turma
+            Voltar aos resultados da turma
           </Link>
         }
       />
@@ -266,6 +233,7 @@ export function PlayerResultsScreen({ report }: { report: PlayerReport }) {
       </section>
       {report.participations.length === 0 ? (
         <PortalState
+          headingLevel={2}
           icon="history"
           title="Nenhuma sessão registrada"
           description="Quando este número entrar em uma sessão de jogo, o histórico aparecerá aqui."

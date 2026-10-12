@@ -9,18 +9,21 @@ export function PortalState({
   title,
   description,
   actions,
+  headingLevel = 1,
 }: {
   icon: IconName;
   title: string;
   description: string;
   actions?: ReactNode;
+  headingLevel?: 1 | 2;
 }) {
+  const Heading = headingLevel === 1 ? "h1" : "h2";
   return (
     <section className={styles.stateCard}>
       <span className={styles.stateIcon}>
         <Icon name={icon} />
       </span>
-      <h1>{title}</h1>
+      <Heading>{title}</Heading>
       <p>{description}</p>
       {actions && <div className={styles.stateActions}>{actions}</div>}
     </section>

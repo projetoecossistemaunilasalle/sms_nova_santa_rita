@@ -47,28 +47,16 @@ export default function SignInPage() {
           <h2>Entre no portal.</h2>
           <p>
             {isDemo
-              ? "Explore a demonstração estática sem usar uma conta real."
+              ? "Explore o portal com dados fictícios, sem usar uma conta real."
               : "Use a conta profissional configurada no Neon Auth."}
           </p>
 
           {isDemo ? (
-            <div className={styles.form}>
-              <label className={styles.field}>
-                E-mail profissional
-                <input
-                  type="email"
-                  defaultValue="demonstracao@localhost"
-                  readOnly
-                />
-              </label>
-              <label className={styles.field}>
-                Senha
-                <input type="password" defaultValue="demonstracao" readOnly />
-              </label>
-              <Link className={styles.submit} href="/portal">
+            <form className={styles.form} action={signInAction}>
+              <button className={styles.submit} type="submit">
                 Entrar na demonstração
-              </Link>
-            </div>
+              </button>
+            </form>
           ) : (
             <form className={styles.form} action={signInAction}>
               <label className={styles.field}>
@@ -97,7 +85,7 @@ export default function SignInPage() {
 
           <p className={styles.authHelp}>
             {isDemo
-              ? "Os dados são fictícios e as alterações ficam somente neste navegador."
+              ? "Os dados ficam na memória do servidor local, isolados por sessão. Sair, restaurar o demo ou reiniciar o servidor apaga as alterações."
               : "O acesso depende de um perfil profissional ativo vinculado à identidade autenticada."}
           </p>
         </div>

@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { Icon } from "@/components/shared/icon";
 import type {
   AdultRole,
   OrganizationSummaryDto,
@@ -12,22 +14,19 @@ import {
   assignOrganizationAdministratorAction,
   assignTeacherMembershipAction,
   changeMembershipAction,
-  createDemoProfessionalAction,
 } from "@/runtime/actions";
 
 import { AdultPortalForm } from "./adult-portal-form";
 import {
-  demoOrganizations,
-  demoRole,
-  demoTeam,
   initials,
+  matchesPortalSearch,
   recordStatusLabel,
   roleLabel,
 } from "./adult-portal-helpers";
 import { PageHeader } from "./page-header";
 import { PortalState } from "./portal-state";
 import { StatusBadge } from "./status-badge";
-import { useDemoPortalState } from "./use-demo-portal";
+import { usePortalFilters } from "./use-portal-filters";
 import styles from "./portal.module.css";
 import teamStyles from "./team-screen.module.css";
 
@@ -44,18 +43,31 @@ export function TeamScreen({
   initialRole: AdultRole;
   runtimeMode: RuntimeMode;
 }) {
-  const demo = useDemoPortalState();
-  const role = demo ? demoRole(demo) : initialRole;
-  const members = demo ? demoTeam(demo) : initialMembers;
-  const organizations = demo ? demoOrganizations(demo) : initialOrganizations;
-  const availableProfiles = demo
-    ? demo.profiles.map(({ id, displayName, status, email }) => ({
-        id,
-        displayName,
-        status,
-        email,
-      }))
-    : profiles.map((profile) => ({ ...profile, email: undefined }));
+  const role = initialRole;
+  const members = initialMembers;
+  const organizations = initialOrganizations;
+  const availableProfiles = profiles;
+  const { params, setFilters } = usePortalFilters();
+  const search = params.get("q") ?? "";
+  const status = params.get("status") ?? "all";
+  const organizationId = params.get("organization") ?? "";
+  const [creationOpen, setCreationOpen] = useState(
+    members.length === 0 || params.get("new") === "1",
+  );
+  const activeOrganizations = organizations.filter(
+    (organization) => organization.status === RecordStatus.ACTIVE,
+  );
+  const filteredMembers = members.filter(
+    (member) =>
+      (!organizationId || member.organizationId === organizationId) &&
+      (status === "all" || member.status === status) &&
+      matchesPortalSearch(
+        search,
+        member.displayName,
+        member.organizationName,
+        roleLabel(member.role),
+      ),
+  );
 
   if (!role || role === "teacher") {
     return (
@@ -71,10 +83,6 @@ export function TeamScreen({
     );
   }
 
-  const demoCreationRole =
-    role === "platform_admin"
-      ? OrganizationRole.ORGANIZATION_ADMIN
-      : OrganizationRole.TEACHER;
   const membershipAction =
     role === "platform_admin"
       ? assignOrganizationAdministratorAction
@@ -90,17 +98,24 @@ export function TeamScreen({
             : "Gerencie professores somente dentro das organizações sob sua responsabilidade."
         }
       />
-      {runtimeMode === "demo" && (
-        <p className={teamStyles.demoAccountNotice}>
-          Perfis criados na demonstração ficam neste navegador. Use um e-mail
-          fictício: nenhuma conta real, senha ou mensagem será criada.
-        </p>
-      )}
-      {runtimeMode === "server" && (
-        <section className={teamStyles.serverProvisioningGuide}>
-          <div>
-            <h2>Como adicionar alguém à equipe</h2>
-          </div>
+      <details
+        id="adicionar-equipe"
+        className={styles.creationDisclosure}
+        open={creationOpen}
+        onToggle={(event) => setCreationOpen(event.currentTarget.open)}
+      >
+        <summary>
+          Adicionar à equipe <Icon name="plus" />
+        </summary>
+        {runtimeMode === "demo" && (
+          <p className={teamStyles.demoAccountNotice}>
+            Os perfis de exemplo já estão provisionados na sessão local.
+            Vincule-os usando as mesmas operações do portal; nenhuma conta real
+            será criada.
+          </p>
+        )}
+        <details className={teamStyles.serverProvisioningGuide}>
+          <summary>O profissional não aparece na lista?</summary>
           <p>
             A criação da identidade e das credenciais é feita pelo Neon Auth;
             este portal ainda não envia convites. Depois que o perfil
@@ -123,62 +138,45 @@ export function TeamScreen({
               crie o vínculo.
             </li>
           </ol>
-        </section>
-      )}
-      {runtimeMode === "demo" && (
-        <section
-          className={`${styles.managementPanel} ${teamStyles.demoCreationPanel}`}
-        >
+        </details>
+        <section className={styles.managementPanel}>
           <div>
-            <h2>Criar perfil de demonstração</h2>
+            <h2>
+              {role === "platform_admin"
+                ? "Vincular perfil existente"
+                : "Vincular professor existente"}
+            </h2>
             <p>
-              Simule a inclusão de uma pessoa na equipe. O perfil e o vínculo
-              existem apenas nos dados locais desta demonstração.
+              {role === "platform_admin"
+                ? "Use esta opção para alguém cujo perfil profissional já está disponível. Um vínculo existente pode ser promovido sem duplicá-lo."
+                : "Escolha um perfil profissional já provisionado para conceder acesso à organização."}
             </p>
           </div>
           <AdultPortalForm
-            action={createDemoProfessionalAction}
-            submitLabel="Adicionar ao demo"
-            className={teamStyles.demoProfileForm}
+            action={membershipAction}
+            submitLabel="Criar vínculo"
+            className={teamStyles.existingMemberForm}
+            submitButtonClassName={teamStyles.membershipSubmit}
           >
             <label className={styles.field}>
-              <span>Nome</span>
-              <input
-                className={styles.input}
-                name="displayName"
-                autoComplete="off"
-                maxLength={160}
+              <span>Profissional</span>
+              <select
+                className={styles.select}
+                name="profileId"
                 required
-              />
-            </label>
-            <label className={styles.field}>
-              <span>E-mail fictício</span>
-              <input
-                className={styles.input}
-                name="email"
-                type="email"
-                autoComplete="off"
-                placeholder="ana.demo@example.test"
-                maxLength={254}
-                required
-              />
-              <small className={styles.fieldHelp}>
-                Use um endereço .test. É apenas um identificador local e não
-                será enviado.
-              </small>
-            </label>
-            <input type="hidden" name="role" value={demoCreationRole} />
-            <label className={styles.field}>
-              <span>Permissão na organização</span>
-              <input
-                className={styles.input}
-                value={
-                  demoCreationRole === OrganizationRole.ORGANIZATION_ADMIN
-                    ? "Administrador da organização"
-                    : "Professor"
-                }
-                readOnly
-              />
+                defaultValue=""
+              >
+                <option value="" disabled>
+                  Selecione um perfil
+                </option>
+                {availableProfiles
+                  .filter((profile) => profile.status === RecordStatus.ACTIVE)
+                  .map((profile) => (
+                    <option key={profile.id} value={profile.id}>
+                      {profile.displayName}
+                    </option>
+                  ))}
+              </select>
             </label>
             <label className={styles.field}>
               <span>Organização</span>
@@ -186,7 +184,13 @@ export function TeamScreen({
                 className={styles.select}
                 name="organizationId"
                 required
-                defaultValue=""
+                defaultValue={
+                  activeOrganizations.some((item) => item.id === organizationId)
+                    ? organizationId
+                    : activeOrganizations.length === 1
+                      ? activeOrganizations[0]!.id
+                      : ""
+                }
               >
                 <option value="" disabled>
                   Selecione uma organização
@@ -205,79 +209,13 @@ export function TeamScreen({
             </label>
           </AdultPortalForm>
         </section>
-      )}
-      <section className={styles.managementPanel}>
-        <div>
-          <h2>
-            {role === "platform_admin"
-              ? "Vincular perfil existente"
-              : "Vincular professor existente"}
-          </h2>
-          <p>
-            {role === "platform_admin"
-              ? "Use esta opção para alguém cujo perfil profissional já está disponível. Um vínculo existente pode ser promovido sem duplicá-lo."
-              : "Escolha um perfil profissional já provisionado para conceder acesso à organização."}
-          </p>
-        </div>
-        <AdultPortalForm
-          action={membershipAction}
-          submitLabel="Criar vínculo"
-          className={teamStyles.existingMemberForm}
-          submitButtonClassName={teamStyles.membershipSubmit}
-        >
-          <label className={styles.field}>
-            <span>Profissional</span>
-            <select
-              className={styles.select}
-              name="profileId"
-              required
-              defaultValue=""
-            >
-              <option value="" disabled>
-                Selecione um perfil
-              </option>
-              {availableProfiles
-                .filter((profile) => profile.status === RecordStatus.ACTIVE)
-                .map((profile) => (
-                  <option key={profile.id} value={profile.id}>
-                    {profile.email
-                      ? `${profile.displayName} · ${profile.email}`
-                      : profile.displayName}
-                  </option>
-                ))}
-            </select>
-          </label>
-          <label className={styles.field}>
-            <span>Organização</span>
-            <select
-              className={styles.select}
-              name="organizationId"
-              required
-              defaultValue=""
-            >
-              <option value="" disabled>
-                Selecione uma organização
-              </option>
-              {organizations
-                .filter(
-                  (organization) => organization.status === RecordStatus.ACTIVE,
-                )
-                .map((organization) => (
-                  <option key={organization.id} value={organization.id}>
-                    {organization.name}
-                  </option>
-                ))}
-            </select>
-          </label>
-        </AdultPortalForm>
-      </section>
-      <section className={styles.summaryStrip} aria-label="Resumo da equipe">
-        <article className={styles.summaryCard}>
+      </details>
+      <section className={teamStyles.teamSummary} aria-label="Resumo da equipe">
+        <article>
           <p>Vínculos</p>
           <strong>{members.length}</strong>
-          <small>No escopo acessível</small>
         </article>
-        <article className={styles.summaryCard}>
+        <article>
           <p>Ativos</p>
           <strong>
             {
@@ -285,59 +223,134 @@ export function TeamScreen({
                 .length
             }
           </strong>
-          <small>Com acesso vigente</small>
         </article>
-        <article className={styles.summaryCard}>
+        <article>
           <p>Organizações</p>
           <strong>
             {new Set(members.map((member) => member.organizationId)).size}
           </strong>
-          <small>Representadas na lista</small>
         </article>
       </section>
+      {members.length > 0 && (
+        <div className={styles.directoryToolbar}>
+          <label className={styles.field}>
+            <span>Buscar profissional, perfil ou organização</span>
+            <input
+              className={styles.input}
+              type="search"
+              value={search}
+              onChange={(event) => setFilters({ q: event.target.value })}
+              placeholder="Ex.: Carla Freitas"
+            />
+          </label>
+          <label className={styles.field}>
+            <span>Organização do vínculo</span>
+            <select
+              className={styles.select}
+              value={organizationId}
+              onChange={(event) =>
+                setFilters({ organization: event.target.value })
+              }
+            >
+              <option value="">Todas as organizações</option>
+              {organizations.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
+              {organizationId &&
+                !organizations.some((item) => item.id === organizationId) && (
+                  <option value={organizationId}>
+                    Organização indisponível
+                  </option>
+                )}
+            </select>
+          </label>
+          <label className={styles.field}>
+            <span>Situação do vínculo</span>
+            <select
+              className={styles.select}
+              value={status}
+              onChange={(event) => setFilters({ status: event.target.value })}
+            >
+              <option value="all">Todos</option>
+              <option value={RecordStatus.ACTIVE}>Ativos</option>
+              <option value={RecordStatus.INACTIVE}>Inativos</option>
+            </select>
+          </label>
+          <span role="status">
+            {filteredMembers.length} de {members.length} vínculos
+          </span>
+          {(search || status !== "all" || organizationId) && (
+            <button
+              className={styles.buttonGhost}
+              type="button"
+              onClick={() =>
+                setFilters({ q: "", status: "", organization: "" })
+              }
+            >
+              Limpar filtros
+            </button>
+          )}
+        </div>
+      )}
       {members.length === 0 ? (
         <PortalState
+          headingLevel={2}
           icon="users"
           title="Nenhuma pessoa vinculada"
-          description={
-            runtimeMode === "demo"
-              ? "Crie um perfil demonstrativo acima ou vincule alguém que já esteja na lista."
-              : "Vincule um perfil profissional ativo para começar a liberar acessos neste escopo."
+          description="Vincule um perfil profissional ativo para começar a liberar acessos neste escopo."
+        />
+      ) : filteredMembers.length === 0 ? (
+        <PortalState
+          headingLevel={2}
+          icon="search"
+          title="Nenhum vínculo encontrado"
+          description="Tente outro nome ou limpe os filtros para ver toda a equipe."
+          actions={
+            <button
+              type="button"
+              className={styles.buttonSecondary}
+              onClick={() => {
+                setFilters({ q: "", status: "", organization: "" });
+              }}
+            >
+              Limpar filtros
+            </button>
           }
         />
       ) : (
-        <div className={`${styles.adminTable} ${styles.teamTable}`}>
-          <div className={styles.tableHeader}>
+        <div className={styles.adminTable}>
+          <div className={teamStyles.memberHeader} aria-hidden="true">
             <span>Profissional</span>
             <span>Perfil</span>
-            <span>Organização</span>
             <span>Estado</span>
             <span>Ação</span>
           </div>
-          {members.map((member) => {
+          {filteredMembers.map((member) => {
             const canManage =
               role === "platform_admin" ||
               (role === "organization_admin" &&
                 member.role === OrganizationRole.TEACHER);
             return (
-              <div className={styles.tableRow} key={member.id}>
+              <div
+                className={teamStyles.memberRow}
+                key={member.id}
+                role="group"
+                aria-label={`${member.displayName}, ${member.organizationName}`}
+              >
                 <span className={styles.tableIdentity}>
                   <i className={styles.personAvatar}>
                     {initials(member.displayName)}
                   </i>
                   <span>
                     <strong>{member.displayName}</strong>
-                    <small>
-                      {runtimeMode === "demo"
-                        ? (demo?.profiles.find(
-                            (profile) => profile.id === member.profileId,
-                          )?.email ?? "Perfil fictício de demonstração")
-                        : "Perfil profissional provisionado"}
-                    </small>
+                    <small>{member.organizationName}</small>
                   </span>
                 </span>
-                <span>{roleLabel(member.role)}</span>
-                <span>{member.organizationName}</span>
+                <span className={teamStyles.memberRole}>
+                  {roleLabel(member.role)}
+                </span>
                 <StatusBadge status={recordStatusLabel(member.status)} />
                 {canManage ? (
                   <div className={styles.membershipActions}>
@@ -350,6 +363,16 @@ export function TeamScreen({
                             : "Tornar professor"
                         }
                         compact
+                        confirmation={{
+                          title:
+                            member.role === OrganizationRole.TEACHER
+                              ? "Promover a administrador?"
+                              : "Tornar professor?",
+                          description:
+                            member.role === OrganizationRole.TEACHER
+                              ? `${member.displayName} poderá gerenciar a equipe e as turmas de ${member.organizationName}.`
+                              : `${member.displayName} deixará de gerenciar ${member.organizationName} e terá acesso somente às turmas que lhe forem atribuídas.`,
+                        }}
                       >
                         <input
                           type="hidden"
@@ -380,6 +403,14 @@ export function TeamScreen({
                           : "Ativar"
                       }
                       compact
+                      confirmation={
+                        member.status === RecordStatus.ACTIVE
+                          ? {
+                              title: "Desativar vínculo?",
+                              description: `${member.displayName} perderá o acesso por este vínculo com ${member.organizationName}. Os registros serão mantidos e o vínculo poderá ser reativado.`,
+                            }
+                          : undefined
+                      }
                     >
                       <input
                         type="hidden"

@@ -3,17 +3,9 @@ import { notFound, redirect } from "next/navigation";
 import { AdultPortalError } from "@/application/adult-portal/errors";
 import { ClassDetailScreen } from "@/components/portal/class-detail-screen";
 import { getRuntimeMode } from "@/runtime/mode";
-import {
-  getClassPageData,
-  getPlayerAccessPageData,
-  listStaticClassIds,
-} from "@/runtime/readers";
+import { getClassPageData, getPlayerAccessPageData } from "@/runtime/readers";
 
 export const metadata = { title: "Detalhe da turma" };
-
-export function generateStaticParams() {
-  return listStaticClassIds().map((id) => ({ id }));
-}
 
 export default async function ClassGroupDetailPage({
   params,

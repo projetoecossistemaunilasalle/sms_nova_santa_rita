@@ -52,6 +52,28 @@ function revalidateClass(classGroupId: string) {
   revalidatePath(`/portal/turmas/${classGroupId}`);
 }
 
+export async function showClassPlayerCredentialsAction(
+  _previous: PlayerAccessActionResult,
+  formData: FormData,
+): Promise<PlayerAccessActionResult> {
+  const parsed = classSessionSchema.safeParse(formObject(formData));
+  if (!parsed.success) return validationError(parsed.error);
+  try {
+    const credentials = await (
+      await getPlayerAccessService()
+    ).getClassCredentials(await actorProfileId(), parsed.data.classGroupId);
+    return {
+      ok: true,
+      message: credentials.issuedCredentials.length
+        ? `${credentials.issuedCredentials.length} QR code(s) disponível(is). Os cartões impressos continuam válidos.`
+        : "Nenhum QR code recuperável nesta turma.",
+      ...credentials,
+    };
+  } catch (error) {
+    return operationError(error);
+  }
+}
+
 export async function allocatePlayerSlotsAction(
   _previous: PlayerAccessActionResult,
   formData: FormData,
@@ -59,7 +81,9 @@ export async function allocatePlayerSlotsAction(
   const parsed = allocatePlayerSlotsSchema.safeParse(formObject(formData));
   if (!parsed.success) return validationError(parsed.error);
   try {
-    const slots = await getPlayerAccessService().allocateSlots(
+    const slots = await (
+      await getPlayerAccessService()
+    ).allocateSlots(
       await actorProfileId(),
       parsed.data.classGroupId,
       parsed.data.count,
@@ -86,10 +110,9 @@ export async function rotatePlayerCredentialAction(
   const parsed = rotatePlayerCredentialSchema.safeParse(formObject(formData));
   if (!parsed.success) return validationError(parsed.error);
   try {
-    const slot = await getPlayerAccessService().rotateCredential(
-      await actorProfileId(),
-      parsed.data.playerSlotId,
-    );
+    const slot = await (
+      await getPlayerAccessService()
+    ).rotateCredential(await actorProfileId(), parsed.data.playerSlotId);
     revalidateClass(slot.classGroupId);
     return {
       ok: true,
@@ -114,10 +137,9 @@ export async function startClassSessionAction(
   const parsed = classSessionSchema.safeParse(formObject(formData));
   if (!parsed.success) return validationError(parsed.error);
   try {
-    await getPlayerAccessService().startSession(
-      await actorProfileId(),
-      parsed.data.classGroupId,
-    );
+    await (
+      await getPlayerAccessService()
+    ).startSession(await actorProfileId(), parsed.data.classGroupId);
     revalidateClass(parsed.data.classGroupId);
     return { ok: true, message: "Sessão da turma iniciada." };
   } catch (error) {
@@ -132,10 +154,9 @@ export async function endClassSessionAction(
   const parsed = classSessionSchema.safeParse(formObject(formData));
   if (!parsed.success) return validationError(parsed.error);
   try {
-    await getPlayerAccessService().endSession(
-      await actorProfileId(),
-      parsed.data.classGroupId,
-    );
+    await (
+      await getPlayerAccessService()
+    ).endSession(await actorProfileId(), parsed.data.classGroupId);
     revalidateClass(parsed.data.classGroupId);
     return { ok: true, message: "Sessão da turma encerrada." };
   } catch (error) {
