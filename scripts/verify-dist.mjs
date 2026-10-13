@@ -1,135 +1,124 @@
 #!/usr/bin/env node
-/**
- * Verifica o artefato final montado em dist/ antes da publicacao:
- *
- *   1. as tres entradas existem: landing (/), portal/ e jogo/;
- *   2. nenhum asset da landing ficou com caminho absoluto sem o
- *      base path do GitHub Pages (quebraria sob /sms_nova_santa_rita);
- *   3. o bundle do portal nao tem residuo do base path antigo /SMS_Portal;
- *   4. todo href/src local da landing apontando para o base path
- *      resolve para um arquivo real dentro de dist/.
- *
- * Uso: node scripts/verify-dist.mjs   (respeita PAGES_BASE_PATH)
- */
-
+/** Verify the assembled static site before publishing it under the Pages base path. */
 import path from "node:path";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
-import { validarBundlePhaser } from "./jogo-bundle.mjs";
+import { validarReleaseJogo } from "./jogo-bundle.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const distDir = path.join(repoRoot, "dist");
-const basePath = `/${(process.env.PAGES_BASE_PATH ?? "sms_nova_santa_rita").replace(
-  /^\/+|\/+$/g,
-  "",
-)}`;
 
-const problems = [];
-
-try {
-  validarBundlePhaser(path.join(distDir, "jogo", "runtime"));
-  const gameHtml = fs.readFileSync(path.join(distDir, "jogo", "index.html"), "utf8");
-  if (!gameHtml.includes("./runtime/index.html?integration=catalog-local-v3")) {
-    problems.push("dist/jogo/index.html nao monta o jogo standalone atual.");
-  }
-  if (fs.existsSync(path.join(distDir, "jogo", "html5game"))) {
-    problems.push("dist/jogo/ ainda contem o runner GameMaker antigo.");
-  }
-} catch (error) {
-  problems.push(`Bundle Phaser invalido: ${error.message}`);
+export function normalizarBasePath(value = "sms_nova_santa_rita") {
+  const normalized = value.replace(/^\/+|\/+$/g, "");
+  return normalized ? `/${normalized}` : "/";
 }
 
-// 1. Entradas obrigatorias.
-for (const required of [
-  "index.html",
-  path.join("portal", "index.html"),
-  path.join("jogo", "index.html"),
-]) {
-  if (!fs.existsSync(path.join(distDir, required))) {
-    problems.push(`Arquivo obrigatorio ausente em dist/: ${required}`);
-  }
-}
-
-const landingHtml = readOrNull(path.join(distDir, "index.html"));
-if (landingHtml) {
-  // 2. Caminhos absolutos sem o prefixo do Pages.
-  const unprefixed = landingHtml.match(
-    /(?:href|src)="\/(?!sms_nova_santa_rita\/|portal\/|jogo\/)[^""]*"/g,
-  );
-  const unprefixedAssets = (unprefixed ?? []).filter((match) =>
-    /^"(?:href|src)="\/(assets|_astro|favicon)/.test(match),
-  );
-  if (unprefixedAssets.length > 0) {
-    problems.push(
-      `dist/index.html tem caminhos absolutos sem o base path: ${unprefixedAssets.slice(0, 5).join(", ")}`,
-    );
-  }
-
-  // 4. Todo link interno do base path deve existir no dist.
+/** Attribute references must resolve inside the configured project, not the host root. */
+export function verificarReferenciasLanding(html, distDir, basePath) {
+  const problems = [];
+  const base = normalizarBasePath(basePath);
+  const prefix = base === "/" ? "/" : `${base}/`;
   const refs = new Set(
-    [
-      ...(landingHtml.match(/href="[^"]+"/g) ?? []),
-      ...(landingHtml.match(/src="[^"]+"/g) ?? []),
-    ].map((ref) => ref.slice(ref.indexOf('"') + 1, -1)),
+    [...html.matchAll(/\b(?:href|src)\s*=\s*(["'])(.*?)\1/gi)].map((match) => match[2]),
   );
   for (const ref of refs) {
-    if (!ref.startsWith(basePath)) continue;
-    const relative = ref.slice(basePath.length).split("#")[0].split("?")[0].replace(/\/+$/, "");
-    if (relative === "") continue; // raiz do proprio site
-    const candidate = path.join(distDir, relative);
-    const candidateDirIndex = path.join(distDir, relative, "index.html");
-    if (fs.existsSync(candidate) || fs.existsSync(candidateDirIndex)) continue;
-    problems.push(`dist/index.html aponta para arquivo inexistente: ${ref}`);
+    if (!ref.startsWith("/") || ref.startsWith("//")) continue;
+    const pathname = ref.split(/[?#]/)[0];
+    if (pathname !== base && !pathname.startsWith(prefix)) {
+      problems.push(`dist/index.html tem caminho absoluto sem o base path "${base}": ${ref}`);
+      continue;
+    }
+    let relative;
+    try {
+      relative = decodeURIComponent(pathname === base ? "" : pathname.slice(prefix.length));
+    } catch {
+      problems.push(`dist/index.html tem referencia local invalida: ${ref}`);
+      continue;
+    }
+    if (relative.includes("\\") || relative.split("/").some((segment) => segment === "..")) {
+      problems.push(`dist/index.html tem referencia fora do dist: ${ref}`);
+      continue;
+    }
+    const candidate = path.resolve(distDir, relative);
+    if (
+      candidate !== path.resolve(distDir) &&
+      !candidate.startsWith(`${path.resolve(distDir)}${path.sep}`)
+    ) {
+      problems.push(`dist/index.html tem referencia fora do dist: ${ref}`);
+      continue;
+    }
+    const isFile = (file) => fs.existsSync(file) && fs.statSync(file).isFile();
+    if (!isFile(candidate) && !isFile(path.join(candidate, "index.html")))
+      problems.push(`dist/index.html aponta para arquivo inexistente: ${ref}`);
   }
+  return problems;
 }
 
-// 3. Residuo do base path antigo do portal.
-const portalDir = path.join(distDir, "portal");
-if (fs.existsSync(portalDir)) {
-  const residue = findFilesContaining(portalDir, /\/SMS_Portal\//);
-  if (residue.length > 0) {
-    problems.push(
-      `dist/portal ainda referencia o base path antigo /SMS_Portal/ em: ${residue
-        .slice(0, 5)
-        .join(", ")}`,
-    );
-  }
-}
-
-if (problems.length > 0) {
-  console.error("Verificacao do dist falhou:\n");
-  for (const problem of problems) console.error(` - ${problem}`);
-  process.exit(1);
-}
-
-console.log(
-  `dist/ verificado: landing, portal/ e jogo/ presentes; caminhos consistentes com o base path "${basePath}".`,
-);
-
-function readOrNull(file) {
+export function verificarDist({
+  distDir = path.join(repoRoot, "dist"),
+  basePath = process.env.PAGES_BASE_PATH,
+} = {}) {
+  const problems = [];
   try {
-    return fs.readFileSync(file, "utf8");
-  } catch {
-    return null;
+    validarReleaseJogo(path.join(distDir, "jogo"));
+    const gameHtml = fs.readFileSync(path.join(distDir, "jogo", "index.html"), "utf8");
+    if (!gameHtml.includes("./runtime/index.html?integration=catalog-local-v3"))
+      problems.push("dist/jogo/index.html nao monta o jogo standalone atual.");
+    if (fs.existsSync(path.join(distDir, "jogo", "html5game")))
+      problems.push("dist/jogo/ ainda contem o runner GameMaker antigo.");
+  } catch (error) {
+    problems.push(`Bundle Phaser invalido: ${error.message}`);
   }
+  for (const required of [
+    "index.html",
+    path.join("portal", "index.html"),
+    path.join("jogo", "index.html"),
+  ]) {
+    if (!fs.existsSync(path.join(distDir, required)))
+      problems.push(`Arquivo obrigatorio ausente em dist/: ${required}`);
+  }
+  const landingFile = path.join(distDir, "index.html");
+  if (fs.existsSync(landingFile))
+    problems.push(
+      ...verificarReferenciasLanding(fs.readFileSync(landingFile, "utf8"), distDir, basePath),
+    );
+  const portalDir = path.join(distDir, "portal");
+  if (fs.existsSync(portalDir)) {
+    const residue = findFilesContaining(portalDir, /\/SMS_Portal\//, distDir);
+    if (residue.length)
+      problems.push(
+        `dist/portal ainda referencia o base path antigo /SMS_Portal/ em: ${residue.slice(0, 5).join(", ")}`,
+      );
+  }
+  return problems;
 }
 
-function findFilesContaining(dir, pattern) {
+function findFilesContaining(dir, pattern, distDir) {
   const matches = [];
   const stack = [dir];
-  while (stack.length > 0) {
+  while (stack.length) {
     const current = stack.pop();
     for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
       const full = path.join(current, entry.name);
-      if (entry.isDirectory()) {
-        stack.push(full);
-        continue;
-      }
-      if (entry.name.endsWith(".html") || entry.name.endsWith(".txt")) {
-        const content = fs.readFileSync(full, "utf8");
-        if (pattern.test(content)) matches.push(path.relative(distDir, full));
-      }
+      if (entry.isDirectory()) stack.push(full);
+      else if (
+        /\.(html|txt|js|css|json)$/.test(entry.name) &&
+        pattern.test(fs.readFileSync(full, "utf8"))
+      )
+        matches.push(path.relative(distDir, full));
     }
   }
   return matches;
+}
+
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const problems = verificarDist();
+  if (problems.length) {
+    console.error("Verificacao do dist falhou:\n");
+    for (const problem of problems) console.error(` - ${problem}`);
+    process.exitCode = 1;
+  } else {
+    console.log(
+      `dist/ verificado: landing, portal/ e jogo/ presentes; caminhos consistentes com o base path "${normalizarBasePath(process.env.PAGES_BASE_PATH)}".`,
+    );
+  }
 }

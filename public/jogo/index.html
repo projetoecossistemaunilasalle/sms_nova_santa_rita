@@ -289,7 +289,10 @@ button:focus-visible {
 }
 
 .jp-estado {
-  color: var(--jp-laranja-escuro);
+  flex: none;
+  color: var(--jp-amarelo);
+  margin: 0;
+  padding: 0.5rem 0.9rem;
   text-align: center;
 }
 
@@ -547,6 +550,7 @@ button:focus-visible {
         <span class="jp-barra-titulo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><ellipse cx="12" cy="15.2" rx="5.4" ry="4.4"/><circle cx="5.4" cy="9.6" r="1.9"/><circle cx="9.3" cy="6.7" r="1.9"/><circle cx="14.7" cy="6.7" r="1.9"/><circle cx="18.6" cy="9.6" r="1.9"/></svg> Missões do Caramelito</span>
         <button class="jp-tela-cheia" type="button" aria-label="Tela cheia" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><span class="jp-barra-btn-texto">Tela cheia</span></button>
       </div>
+      <p class="jp-estado" role="status" hidden></p>
       <noscript>
         <p class="jp-aviso">Para jogar, ative o JavaScript no navegador.</p>
       </noscript>
@@ -573,8 +577,6 @@ button:focus-visible {
   <p><strong>PSE Nova Santa Rita</strong> · Programa Saúde na Escola</p>
   <p><a href="../">Conheça o projeto no site</a></p>
 </footer>
-
-<p class="jp-estado" role="status" hidden></p>
 
 <script>
   (function () {

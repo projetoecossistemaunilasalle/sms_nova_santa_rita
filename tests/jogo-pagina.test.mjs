@@ -18,9 +18,10 @@ test("Phaser page keeps input isolated and reserves the full available height", 
   assert.ok(!html.includes("overflow: hidden;\n  touch-action: none"));
   assert.ok(!/\n\s*height: 100vh/.test(html));
   assert.ok(html.includes("min-height: 0;"));
+  assert.ok(html.indexOf('class="jp-estado"') < html.indexOf("<noscript>"));
 });
 
-function setupFullscreen(supported = true) {
+function setupFullscreen(supported = true, requestDenied = false) {
   const attributes = {};
   const handlers = {};
   const label = {};
@@ -44,6 +45,7 @@ function setupFullscreen(supported = true) {
   };
   if (supported) {
     stage.requestFullscreen = async () => {
+      if (requestDenied) throw new Error("denied");
       document.fullscreenElement = stage;
       handlers.fullscreenchange();
     };
@@ -75,6 +77,10 @@ test("fullscreen updates its accessible label, restores game focus and handles E
 
 test("unsupported fullscreen hides the button and denied requests report recovery", async () => {
   assert.equal(setupFullscreen(false).button.hidden, true);
+  const denied = setupFullscreen(true, true);
+  await denied.handlers.click();
+  assert.equal(denied.status.hidden, false);
+  assert.match(denied.status.textContent, /continuar jogando/);
   const context = setupFullscreen();
   context.stage.requestFullscreen = async () => {
     throw new Error("denied");

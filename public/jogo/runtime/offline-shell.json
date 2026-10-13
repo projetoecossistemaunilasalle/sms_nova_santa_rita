@@ -1,17 +1,22 @@
 {
   "schemaVersion": 1,
-  "buildId": "93bf17d599510e3277d00766",
+  "buildId": "2a0bd202a9f64d2e765a00ea",
   "manifestVersion": "4.0.0-real",
   "shell": [
     {
-      "path": "assets/game-DvVamPzU.js",
-      "bytes": 1755543,
-      "sha256": "27e57125a169712c28aebbc017e1136b56f9d01c726f3121abebab215368b9e9"
+      "path": "assets/game-B_Vxqlxd.css",
+      "bytes": 6015,
+      "sha256": "5a4448d6dacc1143c65451e1b21750c2181bb2a95dc9c29ec2707e1e6b6647bd"
+    },
+    {
+      "path": "assets/game-D7rhO-4s.js",
+      "bytes": 1789864,
+      "sha256": "58fc2344ed78bf7384348a785f3fa4c2416414a950288a53e37de77e879fbbcd"
     },
     {
       "path": "assets/manifest.generated.json",
-      "bytes": 154018,
-      "sha256": "735fc3ec2bdb756503c0334dc0dda3402b62a8c7b411964b85b696653b1370bf"
+      "bytes": 175016,
+      "sha256": "43feb1b87f68f9fab00885a9c83f500f28d145a0c1ddf9b555e1200308c422e9"
     },
     {
       "path": "assets/ui/buttons/cafeteria.webp",
@@ -114,14 +119,29 @@
       "sha256": "a0ff3fc5d9c614ffdb61a88055bfdc7cfe4ccd5da90eb92a65cbfe81ee962ebd"
     },
     {
+      "path": "assets/ui/main-menu.webp",
+      "bytes": 176296,
+      "sha256": "a6ce2bc0e311adfd5c7b1b4f0d0bbe1a3b848af5134a1f5089308494167e4f35"
+    },
+    {
+      "path": "fonts/LilitaOne-Regular.ttf",
+      "bytes": 28092,
+      "sha256": "f5b641c45c69d772ee4eda687bc9fda411d5cad6b0b45371491da4580cbc8d59"
+    },
+    {
       "path": "fonts/OpenSans-Semibold.ttf",
       "bytes": 221328,
       "sha256": "aa3b0ef53db12e3d45094030cac0e69d384e44cc5978643dd4390041cad546e2"
     },
     {
       "path": "index.html",
-      "bytes": 13271,
-      "sha256": "b6503b468d6e4823b07faed2d5d93e8492a8e2e7c64c6887e3cbbf1a13f64efb"
+      "bytes": 15150,
+      "sha256": "f27393f6ea9a3f23495f165602422d5533717e7a4e28f72579711cea8b457a5a"
+    },
+    {
+      "path": "pages-source.json",
+      "bytes": 271,
+      "sha256": "f1d043e3126f26b01766be68d3748787c1c344fee104c411befff82312c602e0"
     }
   ],
   "content": [
@@ -316,6 +336,42 @@
       "path": "assets/armor/walk_west.webp",
       "bytes": 52998,
       "sha256": "674af036e46874d6367eacb9e47048eedf96a71352d6efaf386d74850041af85"
+    },
+    {
+      "key": "caramelito.vampire.idle",
+      "path": "assets/vampire/idle.webp",
+      "bytes": 50214,
+      "sha256": "6e83a82e24839f1783038675d966119096fa8d72e1babc24ccf546325a5ba44e"
+    },
+    {
+      "key": "caramelito.vampire.portrait",
+      "path": "assets/vampire/portrait.webp",
+      "bytes": 7450,
+      "sha256": "eb598475e2036b5b9985829f9f33e9b863f1e9228542de65f5f16332201b3982"
+    },
+    {
+      "key": "caramelito.vampire.walk_down",
+      "path": "assets/vampire/walk_down.webp",
+      "bytes": 54142,
+      "sha256": "aea0d97cdc43ae3ba142b732769e242b960391a71cb52ae350b28935e720335f"
+    },
+    {
+      "key": "caramelito.vampire.walk_side",
+      "path": "assets/vampire/walk_side.webp",
+      "bytes": 55096,
+      "sha256": "44ddef0180b8f0a03742b58445f3a0605ca7d8d8b7807b75e4779f777a1f156d"
+    },
+    {
+      "key": "caramelito.vampire.walk_up",
+      "path": "assets/vampire/walk_up.webp",
+      "bytes": 43874,
+      "sha256": "82dd517b8414f51d2731a389db65fe01a03365c2d4a85b0cf5ccc9c106b5d8e5"
+    },
+    {
+      "key": "caramelito.vampire.walk_west",
+      "path": "assets/vampire/walk_west.webp",
+      "bytes": 54942,
+      "sha256": "c57f2dc1a946d8d7a326c18397d32659ade9d745f729ef1dbe8ab7ce0934c1f1"
     },
     {
       "key": "character/lia",

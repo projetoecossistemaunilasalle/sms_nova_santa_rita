@@ -1274,6 +1274,591 @@
         ]
       }
     },
+    "caramelito.vampire.idle": {
+      "key": "caramelito.vampire.idle",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.vampire",
+      "exclusive": false,
+      "bytes": 50214,
+      "url": "/assets/vampire/idle.webp",
+      "logicalName": "spr_player_idle_vampiro",
+      "gmlName": "spr_player_idle_vampiro",
+      "dimensions": {
+        "width": 1008,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_idle_vampiro/spr_player_idle_vampiro.yy",
+        "sourceSha256": "4d1cb47e85df4e8375a434578708f27bceb85315e1ab1ea75393ecf4797c683c",
+        "generatedSha256": "6e83a82e24839f1783038675d966119096fa8d72e1babc24ccf546325a5ba44e",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 7,
+        "frameDurationMs": 333.3333333333333,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 149,
+        "frameAlphaBounds": [
+          {
+            "left": 15,
+            "top": 13,
+            "right": 128,
+            "bottom": 148
+          },
+          {
+            "left": 14,
+            "top": 10,
+            "right": 128,
+            "bottom": 148
+          },
+          {
+            "left": 14,
+            "top": 10,
+            "right": 129,
+            "bottom": 148
+          },
+          {
+            "left": 12,
+            "top": 9,
+            "right": 131,
+            "bottom": 148
+          },
+          {
+            "left": 14,
+            "top": 13,
+            "right": 128,
+            "bottom": 148
+          },
+          {
+            "left": 14,
+            "top": 13,
+            "right": 129,
+            "bottom": 148
+          },
+          {
+            "left": 15,
+            "top": 12,
+            "right": 128,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_idle_vampiro/fedfcd01-3e14-4d1b-bee0-cd3e8a288a48.png",
+            "sourceSha256": "e0d3f348886440339d0290ce98fc764b79ea4619e8c6a1afa79ee88aa2a6f1d0"
+          },
+          {
+            "source": "sprites/spr_player_idle_vampiro/b0bb81bb-434a-4451-af67-0f71fb130bea.png",
+            "sourceSha256": "487bdd142349b5b39e0d7366f32c955abd7ae684e93005d8d54d723815b2e8d8"
+          },
+          {
+            "source": "sprites/spr_player_idle_vampiro/2172a643-26c2-48ce-8272-f10903b741d2.png",
+            "sourceSha256": "a0db3f3041e931f1db4660b3e18ff3fccbce39cbcf88cd3d878d1a3207744257"
+          },
+          {
+            "source": "sprites/spr_player_idle_vampiro/c8c33b20-d013-469b-9bcf-c937f9a11faa.png",
+            "sourceSha256": "8ab09d71d72d4b655fbdafd7890cb945ae36901a6709ea40c3eee7cad32b7c8d"
+          },
+          {
+            "source": "sprites/spr_player_idle_vampiro/21b0a702-c6cf-46ab-b3bb-25ed965a5d45.png",
+            "sourceSha256": "1e0278648f4e0cfd4fbf6c5a01f4dc4a5bfd07eebf0de14be3e9d7a7b342bf3c"
+          },
+          {
+            "source": "sprites/spr_player_idle_vampiro/89d0f697-638c-4cea-a66b-8ba59827ceed.png",
+            "sourceSha256": "c43715ac678e1f0209584d04301185d88934881bea2d0d09c0415650c70b1656"
+          },
+          {
+            "source": "sprites/spr_player_idle_vampiro/13539ce8-81ed-40cc-91d8-2b9adf42b677.png",
+            "sourceSha256": "165a068d2d4514242d55a0e5ef4351c375233d1449983c9a4231b0c25cd56964"
+          }
+        ]
+      }
+    },
+    "caramelito.vampire.portrait": {
+      "key": "caramelito.vampire.portrait",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.vampire",
+      "exclusive": false,
+      "bytes": 7450,
+      "url": "/assets/vampire/portrait.webp",
+      "logicalName": "caramelito.vampire.portrait",
+      "gmlName": "spr_cutscene_caramelito_vampiro",
+      "dimensions": {
+        "width": 144,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_cutscene_caramelito_vampiro/2251e53f-6bea-4f4f-8956-8c2ac6352f93.png",
+        "sourceSha256": "1a948a97ea9356330092c7f404fc5b0688ea57af2cdd6649cc4201a5d7e9ff76",
+        "generatedSha256": "eb598475e2036b5b9985829f9f33e9b863f1e9228542de65f5f16332201b3982",
+        "transform": "scale=144:152",
+        "alphaBounds": {
+          "left": 21,
+          "top": 9,
+          "right": 121,
+          "bottom": 148
+        },
+        "baseline": 149,
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_cutscene_caramelito_vampiro/spr_cutscene_caramelito_vampiro.yy",
+            "sourceSha256": "5f92c93bdf34afdd3da2c4e63ecbb103d37f2db97b25a6db2d80c29ae9465112"
+          }
+        ]
+      }
+    },
+    "caramelito.vampire.walk_down": {
+      "key": "caramelito.vampire.walk_down",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.vampire",
+      "exclusive": false,
+      "bytes": 54142,
+      "url": "/assets/vampire/walk_down.webp",
+      "logicalName": "spr_player_walk_down_vampiro",
+      "gmlName": "spr_player_walk_down_vampiro",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_walk_down_vampiro/spr_player_walk_down_vampiro.yy",
+        "sourceSha256": "985a1d581827b8939bf63a4f32e24699cf246391db759745143d4bd7fb4894db",
+        "generatedSha256": "aea0d97cdc43ae3ba142b732769e242b960391a71cb52ae350b28935e720335f",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 166.66666666666666,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 149,
+        "frameAlphaBounds": [
+          {
+            "left": 13,
+            "top": 10,
+            "right": 129,
+            "bottom": 148
+          },
+          {
+            "left": 13,
+            "top": 11,
+            "right": 130,
+            "bottom": 148
+          },
+          {
+            "left": 15,
+            "top": 10,
+            "right": 128,
+            "bottom": 148
+          },
+          {
+            "left": 15,
+            "top": 10,
+            "right": 127,
+            "bottom": 148
+          },
+          {
+            "left": 13,
+            "top": 9,
+            "right": 129,
+            "bottom": 148
+          },
+          {
+            "left": 13,
+            "top": 11,
+            "right": 130,
+            "bottom": 148
+          },
+          {
+            "left": 15,
+            "top": 10,
+            "right": 127,
+            "bottom": 148
+          },
+          {
+            "left": 14,
+            "top": 10,
+            "right": 128,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_walk_down_vampiro/9fda8a8e-4911-4302-a1e8-49fd25db5b1e.png",
+            "sourceSha256": "9bac5010d5b4b18f4f0b667b3b7f72196d225087a3fa2d35899343406ad774af"
+          },
+          {
+            "source": "sprites/spr_player_walk_down_vampiro/b02c009d-2afc-4e96-a697-b481758287de.png",
+            "sourceSha256": "980f933600271980e4d4809a377a09bd8f0e1aa78d4e533a0ba780ac091882c3"
+          },
+          {
+            "source": "sprites/spr_player_walk_down_vampiro/252c39ce-4336-46bc-b62d-3f9945ac0c94.png",
+            "sourceSha256": "41224aaec3d6cc241cb5a55e9ff9cb7091d747cc9b9491a80da38d5ef843e4dc"
+          },
+          {
+            "source": "sprites/spr_player_walk_down_vampiro/e288c994-7071-47f2-ad7e-657c498d025e.png",
+            "sourceSha256": "51a15f96ea7239828b61df7578ed65bf8313c7cfe7198345744b9a38e86f1902"
+          },
+          {
+            "source": "sprites/spr_player_walk_down_vampiro/dfb42b70-39c0-4396-9d68-95d03bfc450b.png",
+            "sourceSha256": "1e63e2ae48f5fa5e3f6511ac387e936d9cab22147ac50b4dd754bd7c66221f35"
+          },
+          {
+            "source": "sprites/spr_player_walk_down_vampiro/1034189d-8a26-4c9e-a8cd-56acc64794e2.png",
+            "sourceSha256": "ee15ebf2a12182c86d86f2ad14903466190a3f5852867395ca0933feb75fb3cf"
+          },
+          {
+            "source": "sprites/spr_player_walk_down_vampiro/40a5d9f4-c75f-48a0-8307-b054cc35a5fe.png",
+            "sourceSha256": "1a29c713c1681ec753dde8c6e510d4a368aa7112d786854629dbecac16f2700d"
+          },
+          {
+            "source": "sprites/spr_player_walk_down_vampiro/78ac9cd9-f6a3-4d7f-8561-37417dc55756.png",
+            "sourceSha256": "d2fcb5555b06217d15a284fc92606778bf6bd966b14308939a24603f79f67406"
+          }
+        ]
+      }
+    },
+    "caramelito.vampire.walk_side": {
+      "key": "caramelito.vampire.walk_side",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.vampire",
+      "exclusive": false,
+      "bytes": 55096,
+      "url": "/assets/vampire/walk_side.webp",
+      "logicalName": "spr_player_walk_side_vampiro",
+      "gmlName": "spr_player_walk_side_vampiro",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_walk_side_vampiro/spr_player_walk_side_vampiro.yy",
+        "sourceSha256": "69fe3bca3580a8470d784f0dc0dfbc566e63ba8a29f944e663958c2cfac3b43b",
+        "generatedSha256": "44ddef0180b8f0a03742b58445f3a0605ca7d8d8b7807b75e4779f777a1f156d",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 166.66666666666666,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 149,
+        "frameAlphaBounds": [
+          {
+            "left": 9,
+            "top": 10,
+            "right": 133,
+            "bottom": 148
+          },
+          {
+            "left": 11,
+            "top": 22,
+            "right": 132,
+            "bottom": 148
+          },
+          {
+            "left": 10,
+            "top": 11,
+            "right": 132,
+            "bottom": 148
+          },
+          {
+            "left": 10,
+            "top": 9,
+            "right": 132,
+            "bottom": 148
+          },
+          {
+            "left": 11,
+            "top": 12,
+            "right": 132,
+            "bottom": 148
+          },
+          {
+            "left": 12,
+            "top": 19,
+            "right": 131,
+            "bottom": 148
+          },
+          {
+            "left": 9,
+            "top": 9,
+            "right": 133,
+            "bottom": 148
+          },
+          {
+            "left": 10,
+            "top": 12,
+            "right": 132,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_walk_side_vampiro/f6151176-4c59-4378-a383-ec8c328d7e3d.png",
+            "sourceSha256": "f064e9eccbb45353ebac24173fd481479ff284689e905c87cf59d7f9e1853ab4"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_vampiro/2542a4ab-934c-4616-8209-38acd45371c3.png",
+            "sourceSha256": "d42b68739e51870d130e010a210e5df90308088ded0a2f7ffae98b7eab5f8495"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_vampiro/b9470bf0-9bdc-4dbb-b310-887645fcc57f.png",
+            "sourceSha256": "26bae3d5a56e40ab10059e0b2ba152c446005abb961f0cc51d5619feb3ec9215"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_vampiro/4bc322fc-46ef-4a3f-b420-72f54a84e8a2.png",
+            "sourceSha256": "c6a31999b68b6f1962d2918cf0127ae045255e2341c1d1372642b1aecb65403f"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_vampiro/01a22167-61c4-4739-a615-a12835bcfde2.png",
+            "sourceSha256": "db515cde7eee8fae3b7ed05bf2c0fd9bc10163c28608ed21c877c10643cbae67"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_vampiro/21b05ebc-5a93-40b0-8fc7-789ecf5c0e99.png",
+            "sourceSha256": "b65fb6b60aad2d0d9521d65eac977e086f2317f3934bba7a7a01a2f6ff5ef3fb"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_vampiro/fc0aab6e-0a95-49ba-aecb-9ad7e1e03134.png",
+            "sourceSha256": "693c978489a5c89369f01e0bd492b7c3e0e01d6b114fd71fba49568f809b3c1e"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_vampiro/97bce9cf-c6c1-4be6-8c48-68b9583237c8.png",
+            "sourceSha256": "b322bcd94386d3dfb62b4b8627c9e66492b4e5028b947bef78f4d55a7686d3a1"
+          }
+        ]
+      }
+    },
+    "caramelito.vampire.walk_up": {
+      "key": "caramelito.vampire.walk_up",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.vampire",
+      "exclusive": false,
+      "bytes": 43874,
+      "url": "/assets/vampire/walk_up.webp",
+      "logicalName": "spr_player_walk_up_vampiro",
+      "gmlName": "spr_player_walk_up_vampiro",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_walk_up_vampiro/spr_player_walk_up_vampiro.yy",
+        "sourceSha256": "d66643c5e547cadefb893f3d44b443446800444fd12aa26dd2f555cd47d548cb",
+        "generatedSha256": "82dd517b8414f51d2731a389db65fe01a03365c2d4a85b0cf5ccc9c106b5d8e5",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 166.66666666666666,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 149,
+        "frameAlphaBounds": [
+          {
+            "left": 26,
+            "top": 9,
+            "right": 117,
+            "bottom": 148
+          },
+          {
+            "left": 23,
+            "top": 11,
+            "right": 119,
+            "bottom": 148
+          },
+          {
+            "left": 25,
+            "top": 9,
+            "right": 117,
+            "bottom": 148
+          },
+          {
+            "left": 23,
+            "top": 11,
+            "right": 119,
+            "bottom": 148
+          },
+          {
+            "left": 24,
+            "top": 10,
+            "right": 119,
+            "bottom": 148
+          },
+          {
+            "left": 27,
+            "top": 12,
+            "right": 116,
+            "bottom": 148
+          },
+          {
+            "left": 21,
+            "top": 10,
+            "right": 121,
+            "bottom": 148
+          },
+          {
+            "left": 26,
+            "top": 10,
+            "right": 117,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_walk_up_vampiro/62497401-c15f-471f-9761-24557219e514.png",
+            "sourceSha256": "27d079e3336231a5b626b8cf4be9ab8b522224e00122f77186f9dec555429744"
+          },
+          {
+            "source": "sprites/spr_player_walk_up_vampiro/b085b54f-d1c7-4fb7-99b2-64316bf87525.png",
+            "sourceSha256": "958125ea50e4175995c20d97baf35606e3e4e3da5acc84540f2ae78dfb9185a7"
+          },
+          {
+            "source": "sprites/spr_player_walk_up_vampiro/a6fba782-11f4-4103-a29c-f93a75a8feee.png",
+            "sourceSha256": "137560d0aa7d37173ce11a4ce2026b00072e7a7b6f206af13a227d964eec8482"
+          },
+          {
+            "source": "sprites/spr_player_walk_up_vampiro/b42f9776-cb53-43d2-9715-ed77b4e2f0b2.png",
+            "sourceSha256": "5e5ed457df01bfb6b7bb6a55c9e3f01671e2453290d41c28d064da0b0a966ae4"
+          },
+          {
+            "source": "sprites/spr_player_walk_up_vampiro/5c38a2ee-0776-4693-a820-57d8d29ba1aa.png",
+            "sourceSha256": "f83a2acf5525507f9d43932591da454d9ec2046849edcefb003f5be60314bced"
+          },
+          {
+            "source": "sprites/spr_player_walk_up_vampiro/804febf0-aaf2-40f0-a74f-7e2538c41d26.png",
+            "sourceSha256": "0ed62ede3631f3451fc6743ed70fa7d2ca6d1477b6ac82c8d0253b605ba6fb3e"
+          },
+          {
+            "source": "sprites/spr_player_walk_up_vampiro/bdf6c4ca-f676-4a49-9dc5-9f37a9b306f6.png",
+            "sourceSha256": "dc2202002c2b57aa9cfb7af37d50797f84978e21b3495f65b8c996811146de6c"
+          },
+          {
+            "source": "sprites/spr_player_walk_up_vampiro/9adff5b6-87cb-4492-9b3f-99324c4cf234.png",
+            "sourceSha256": "7af5d7fa715ee04442452220fdcad884ff323fbd0b0d9b980c555028dae65f09"
+          }
+        ]
+      }
+    },
+    "caramelito.vampire.walk_west": {
+      "key": "caramelito.vampire.walk_west",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.vampire",
+      "exclusive": false,
+      "bytes": 54942,
+      "url": "/assets/vampire/walk_west.webp",
+      "logicalName": "spr_player_walk_side_vampiro west (per-frame hflip)",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_walk_side_vampiro/spr_player_walk_side_vampiro.yy",
+        "sourceSha256": "69fe3bca3580a8470d784f0dc0dfbc566e63ba8a29f944e663958c2cfac3b43b",
+        "generatedSha256": "c57f2dc1a946d8d7a326c18397d32659ade9d745f729ef1dbe8ab7ce0934c1f1",
+        "transform": "hflip each source frame in original order; xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 166.66666666666666,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 149,
+        "frameAlphaBounds": [
+          {
+            "left": 10,
+            "top": 10,
+            "right": 134,
+            "bottom": 148
+          },
+          {
+            "left": 11,
+            "top": 22,
+            "right": 132,
+            "bottom": 148
+          },
+          {
+            "left": 11,
+            "top": 11,
+            "right": 133,
+            "bottom": 148
+          },
+          {
+            "left": 11,
+            "top": 9,
+            "right": 133,
+            "bottom": 148
+          },
+          {
+            "left": 11,
+            "top": 12,
+            "right": 132,
+            "bottom": 148
+          },
+          {
+            "left": 12,
+            "top": 19,
+            "right": 131,
+            "bottom": 148
+          },
+          {
+            "left": 10,
+            "top": 9,
+            "right": 134,
+            "bottom": 148
+          },
+          {
+            "left": 11,
+            "top": 12,
+            "right": 133,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_walk_side_vampiro/f6151176-4c59-4378-a383-ec8c328d7e3d.png",
+            "sourceSha256": "f064e9eccbb45353ebac24173fd481479ff284689e905c87cf59d7f9e1853ab4"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_vampiro/2542a4ab-934c-4616-8209-38acd45371c3.png",
+            "sourceSha256": "d42b68739e51870d130e010a210e5df90308088ded0a2f7ffae98b7eab5f8495"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_vampiro/b9470bf0-9bdc-4dbb-b310-887645fcc57f.png",
+            "sourceSha256": "26bae3d5a56e40ab10059e0b2ba152c446005abb961f0cc51d5619feb3ec9215"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_vampiro/4bc322fc-46ef-4a3f-b420-72f54a84e8a2.png",
+            "sourceSha256": "c6a31999b68b6f1962d2918cf0127ae045255e2341c1d1372642b1aecb65403f"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_vampiro/01a22167-61c4-4739-a615-a12835bcfde2.png",
+            "sourceSha256": "db515cde7eee8fae3b7ed05bf2c0fd9bc10163c28608ed21c877c10643cbae67"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_vampiro/21b05ebc-5a93-40b0-8fc7-789ecf5c0e99.png",
+            "sourceSha256": "b65fb6b60aad2d0d9521d65eac977e086f2317f3934bba7a7a01a2f6ff5ef3fb"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_vampiro/fc0aab6e-0a95-49ba-aecb-9ad7e1e03134.png",
+            "sourceSha256": "693c978489a5c89369f01e0bd492b7c3e0e01d6b114fd71fba49568f809b3c1e"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_vampiro/97bce9cf-c6c1-4be6-8c48-68b9583237c8.png",
+            "sourceSha256": "b322bcd94386d3dfb62b4b8627c9e66492b4e5028b947bef78f4d55a7686d3a1"
+          }
+        ]
+      }
+    },
     "character/lia": {
       "key": "character/lia",
       "tier": "mission",
@@ -2163,6 +2748,28 @@
           "bottom": 1407
         },
         "baseline": 1406
+      }
+    },
+    "ui/main_menu": {
+      "key": "ui/main_menu",
+      "tier": "mission",
+      "type": "image",
+      "owner": "core",
+      "exclusive": false,
+      "bytes": 176296,
+      "url": "/assets/ui/main-menu.webp",
+      "logicalName": "GPT Image courtyard welcome, main menu background",
+      "dimensions": {
+        "width": 1536,
+        "height": 1024,
+        "originX": 0.5,
+        "originY": 0.5
+      },
+      "provenance": {
+        "source": "art_source/main_menu/courtyard-welcome.png",
+        "sourceSha256": "25a7ff4f616fb142b0602e32b594947fdaf5cd38a54778e45bb13ca781621af7",
+        "generatedSha256": "a6ce2bc0e311adfd5c7b1b4f0d0bbe1a3b848af5134a1f5089308494167e4f35",
+        "transform": "scale=1536:1024"
       }
     },
     "ui/reward_bone": {
@@ -4213,5 +4820,5 @@
       }
     }
   },
-  "totalBytes": 4484577
+  "totalBytes": 4926591
 }

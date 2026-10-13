@@ -25,7 +25,7 @@ import path from "node:path";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import { criarPaginaJogoPhaser } from "./jogo-pagina.mjs";
-import { validarBundlePhaser } from "./jogo-bundle.mjs";
+import { validarBundlePhaser, validarReleaseJogo } from "./jogo-bundle.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -90,10 +90,26 @@ for (const name of selected) {
   const prepared = path.join(staged, "prepared");
   try {
     if (name === "jogo") {
-      validarBundlePhaser(bundle.source);
+      const metadata = validarBundlePhaser(bundle.source);
+      const identity = JSON.parse(
+        fs.readFileSync(path.join(bundle.source, "pages-source.json"), "utf8"),
+      );
       fs.mkdirSync(prepared);
       fs.cpSync(bundle.source, path.join(prepared, "runtime"), { recursive: true });
       fs.writeFileSync(path.join(prepared, "index.html"), criarPaginaJogoPhaser());
+      fs.writeFileSync(
+        path.join(prepared, "release.json"),
+        `${JSON.stringify(
+          {
+            ...identity,
+            buildId: metadata.buildId,
+            manifestVersion: metadata.manifestVersion,
+          },
+          null,
+          2,
+        )}\n`,
+      );
+      validarReleaseJogo(prepared);
     } else {
       fs.cpSync(bundle.source, prepared, { recursive: true });
     }

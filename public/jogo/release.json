@@ -1,0 +1,11 @@
+{
+  "engine": "phaser",
+  "sourceDirty": false,
+  "base": "./",
+  "sourceCommit": "60f34d66ddce9a5120ba4909c806230bd73bfb10",
+  "integration": "catalog-local-v3",
+  "schemaVersion": 1,
+  "sourceRepository": "VictorCardosoPDev/Heroes_Trial",
+  "buildId": "2a0bd202a9f64d2e765a00ea",
+  "manifestVersion": "4.0.0-real"
+}

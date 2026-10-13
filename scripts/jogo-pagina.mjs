@@ -312,7 +312,10 @@ button:focus-visible {
 }
 
 .jp-estado {
-  color: var(--jp-laranja-escuro);
+  flex: none;
+  color: var(--jp-amarelo);
+  margin: 0;
+  padding: 0.5rem 0.9rem;
   text-align: center;
 }
 
@@ -585,6 +588,7 @@ const ABRE_CORPO = `
         <span class="jp-barra-titulo">${SVG_PATINHA.replaceAll("{TAM}", "14")} Missões do Caramelito</span>
         <button class="jp-tela-cheia" type="button" aria-label="Tela cheia" aria-pressed="false">${SVG_TELA_CHEIA}<span class="jp-barra-btn-texto">Tela cheia</span></button>
       </div>
+      <p class="jp-estado" role="status" hidden></p>
       <noscript>
         <p class="jp-aviso">Para jogar, ative o JavaScript no navegador.</p>
       </noscript>
@@ -609,8 +613,6 @@ const FECHA_CORPO = `
   <p><strong>PSE Nova Santa Rita</strong> · Programa Saúde na Escola</p>
   <p><a href="../">Conheça o projeto no site</a></p>
 </footer>
-
-<p class="jp-estado" role="status" hidden></p>
 
 <script>
   (function () {
