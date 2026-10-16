@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 import fs from "node:fs";
 import nextEnv from "@next/env";
+import { packageStandalone } from "./standalone-release.mjs";
 
 const { loadEnvConfig } = nextEnv;
 const projectRoot = path.resolve(
@@ -28,47 +29,11 @@ if (command === "gen" && args.length > 0) {
 
 // Both modes use the same server entry points. Only the service containers
 // and authentication gateway select infrastructure adapters.
-const ACTION_NAMES = [
-  "allocatePlayerSlotsAction",
-  "assignOrganizationAdministratorAction",
-  "assignTeacherMembershipAction",
-  "assignTeacherToClassAction",
-  "changeClassStatusAction",
-  "changeMembershipAction",
-  "changeOrganizationStatusAction",
-  "createClassAction",
-  "createOrganizationAction",
-  "deactivateTeacherAssignmentAction",
-  "endClassSessionAction",
-  "resolvePlayerEntryAction",
-  "rotatePlayerCredentialAction",
-  "showClassPlayerCredentialsAction",
-  "signInAction",
-  "signOutAction",
-  "startClassSessionAction",
-];
-const READER_NAMES = [
-  "getClassPageData",
-  "getClassResultsPageData",
-  "getClassesPageData",
-  "getOrganizationPageData",
-  "getOrganizationsPageData",
-  "getPlayerAccessPageData",
-  "getPlayerResultsPageData",
-  "getPortalOverviewData",
-  "getPortalShellData",
-  "getResultReportsPageData",
-  "getTeamPageData",
-];
-
-function reExports(names, from) {
-  return `export {\n${names.map((name) => `  ${name},`).join("\n")}\n} from "${from}";\n`;
-}
-
 // Directives belong to async implementation files, not re-export barrels.
 const RUNTIME_ENTRIES = {
-  "src/runtime/actions.ts": reExports(ACTION_NAMES, "./actions.shared"),
-  "src/runtime/readers.ts": `import "server-only";\n\n${reExports(READER_NAMES, "./readers.shared")}`,
+  "src/runtime/actions.ts": 'export * from "./actions.shared";\n',
+  "src/runtime/readers.ts":
+    'import "server-only";\n\nexport * from "./readers.shared";\n',
 };
 
 function writeRuntimeEntries() {
@@ -123,10 +88,10 @@ if (target === "demo") {
     "NEON_AUTH_COOKIE_SECRET",
     "APPLICATION_SECRET",
     "ALLOWED_ORIGINS",
-    "AUTH_DEV_BYPASS",
   ]) {
     environment[name] = "";
   }
+  environment.AUTH_DEV_BYPASS = "false";
 }
 
 const nextBin = path.join(
@@ -144,4 +109,6 @@ const result = spawnSync(process.execPath, [nextBin, command, ...args], {
 });
 
 if (result.error) throw result.error;
+if (command === "build" && result.status === 0)
+  packageStandalone(projectRoot, target);
 process.exit(result.status ?? 1);

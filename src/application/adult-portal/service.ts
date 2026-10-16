@@ -114,9 +114,11 @@ export class AdultPortalService {
 
   async getOverview(profileId: string): Promise<PortalOverviewDto> {
     const actor = await this.actor(profileId);
-    const shell = await this.getShell(profileId);
-    const organizations = await this.listOrganizations(profileId);
-    const classes = await this.listClasses(profileId);
+    const shell = buildPortalShell(actor, effectiveRole(actor));
+    const [organizations, classes] = await Promise.all([
+      this.organizationsForActor(actor),
+      this.classesForActor(actor),
+    ]);
     const organizationIds = activeOrganizationIds(actor);
     const team =
       shell.effectiveRole === "teacher"
@@ -142,6 +144,12 @@ export class AdultPortalService {
     profileId: string,
   ): Promise<OrganizationSummaryDto[]> {
     const actor = await this.actor(profileId);
+    return this.organizationsForActor(actor);
+  }
+
+  private async organizationsForActor(
+    actor: ActorSnapshot,
+  ): Promise<OrganizationSummaryDto[]> {
     if (canManageOrganizations(toAuthorizationActor(actor))) {
       return this.store.listOrganizations();
     }
@@ -154,9 +162,7 @@ export class AdultPortalService {
       )
       .map((membership) => membership.organizationId);
     if (adminOrganizationIds.length === 0) return [];
-    return (await this.store.listOrganizations()).filter((organization) =>
-      adminOrganizationIds.includes(organization.id),
-    );
+    return this.store.listOrganizations(adminOrganizationIds);
   }
 
   async getOrganization(
@@ -352,6 +358,12 @@ export class AdultPortalService {
 
   async listClasses(profileId: string): Promise<ClassSummaryDto[]> {
     const actor = await this.actor(profileId);
+    return this.classesForActor(actor);
+  }
+
+  private async classesForActor(
+    actor: ActorSnapshot,
+  ): Promise<ClassSummaryDto[]> {
     const auth = toAuthorizationActor(actor);
     const adminOrganizationIds = activeOrganizationIds(actor).filter((id) =>
       canManageClasses(auth, id),
@@ -395,7 +407,11 @@ export class AdultPortalService {
     const auth = toAuthorizationActor(actor);
     const canManage = canManageClasses(auth, classGroup.organizationId);
     if (!canManage && !canAccessClass(auth, classGroup)) forbidden();
-    return { ...classGroup, canManage };
+    return {
+      ...classGroup,
+      canManage,
+      availableTeachers: canManage ? classGroup.availableTeachers : [],
+    };
   }
 
   async createClass(profileId: string, input: CreateClassInput) {

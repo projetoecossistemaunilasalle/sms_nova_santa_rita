@@ -6,6 +6,7 @@ import { PrismaClient } from "@/generated/prisma/client";
 import { getServerRuntimeEnv } from "@/server/config/env";
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
+let cachedClient: PrismaClient | undefined;
 
 function createPrismaClient(): PrismaClient {
   const adapter = new PrismaNeon({
@@ -15,7 +16,8 @@ function createPrismaClient(): PrismaClient {
 }
 
 export function getPrisma(): PrismaClient {
-  const client = globalForPrisma.prisma ?? createPrismaClient();
+  const client = (cachedClient ??=
+    globalForPrisma.prisma ?? createPrismaClient());
 
   if (process.env.NODE_ENV !== "production") {
     globalForPrisma.prisma = client;

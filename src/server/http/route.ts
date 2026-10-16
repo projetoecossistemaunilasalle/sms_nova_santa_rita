@@ -6,6 +6,7 @@ import {
 } from "@/server/http/correlation";
 import { errorResponse, HttpError } from "@/server/http/errors";
 import { logger } from "@/server/observability/logger";
+import { enforcePlayerRateLimit } from "@/server/security/rate-limit";
 
 type RouteHandler = (
   request: NextRequest,
@@ -24,6 +25,11 @@ export function withHttpContext(handler: RouteHandler) {
     });
 
     try {
+      if (
+        request.nextUrl.pathname.startsWith("/api/v1/player/") &&
+        request.nextUrl.pathname !== "/api/v1/player/refresh"
+      )
+        await enforcePlayerRateLimit(request);
       const response = await handler(request, { correlationId });
       response.headers.set(CORRELATION_HEADER, correlationId);
       requestLogger.info({ status: response.status }, "request completed");

@@ -13,7 +13,12 @@ export type QueuedStateSave = {
   requestId: string;
   request: StateSaveRequestV1;
   queuedAt: number;
+  classSessionId?: string;
+  branchGeneration?: number;
 };
+
+export type StateBranch = { generation: number; baseRevision: number };
+export type StateRejection = { requestId: string; status?: number };
 
 export type QueuedResult = {
   id: number;
@@ -52,6 +57,7 @@ export type GameOfflineSyncStatus = {
   queuedResults: number;
   queuedActiveTime: number;
   stateBlocked: boolean;
+  rejection?: StateRejection;
 };
 
 export type GameOfflineSyncReport = {
@@ -66,13 +72,22 @@ export type GameOfflineSyncReport = {
     client_event_id: string;
   }>;
   conflict?: StateSaveConflictV1;
+  rejection?: StateRejection;
   failedStream?: "state" | "events";
+  retryable?: boolean;
 };
 
 export type GameOfflineTransport = {
-  saveState(request: StateSaveRequestV1): Promise<unknown>;
-  uploadResult(event: ResultEventV1): Promise<unknown>;
-  uploadActiveTime(batch: ActiveTimeBatchV1): Promise<unknown>;
+  saveState(
+    request: StateSaveRequestV1,
+    classSessionId?: string,
+  ): Promise<unknown>;
+  uploadResult(event: ResultEventV1, classSessionId?: string): Promise<unknown>;
+  uploadActiveTime(
+    batch: ActiveTimeBatchV1,
+    classSessionId?: string,
+  ): Promise<unknown>;
+  includePreviousSessions?: boolean;
 };
 
 export interface GameOfflinePersistence {
@@ -87,6 +102,7 @@ export interface GameOfflinePersistence {
     playerId: string,
     request: StateSaveRequestV1,
     classSessionId?: string,
+    branch?: StateBranch,
   ): Promise<QueuedStateSave>;
   listStates(playerId: string): Promise<QueuedStateSave[]>;
   acknowledgeState(
@@ -96,7 +112,12 @@ export interface GameOfflinePersistence {
   ): Promise<void>;
   blockState(playerId: string, conflict: StateSaveConflictV1): Promise<void>;
   getStateConflict(playerId: string): Promise<StateSaveConflictV1 | null>;
-  discardStateBranch(playerId: string): Promise<void>;
+  rejectStateBranch(playerId: string, rejection: StateRejection): Promise<void>;
+  getStateRejection(playerId: string): Promise<StateRejection | null>;
+  discardStateBranch(
+    playerId: string,
+    expectedRequestId?: string,
+  ): Promise<void>;
   enqueueResult(
     playerId: string,
     classSessionId: string,
@@ -109,7 +130,7 @@ export interface GameOfflinePersistence {
     event: QueuedActiveTime["event"],
     identity: EventRequestIdentity,
   ): Promise<EventRequestReceipt>;
-  listEvents(playerId: string, classSessionId: string): Promise<QueuedEvent[]>;
+  listEvents(playerId: string, classSessionId?: string): Promise<QueuedEvent[]>;
   acknowledgeEvent(queued: QueuedEvent): Promise<void>;
   status(playerId: string): Promise<GameOfflineSyncStatus>;
 }

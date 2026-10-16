@@ -13,6 +13,7 @@ import {
   OfflineRequestReuseError,
   OfflineSessionMismatchError,
   OfflineStateBlockedError,
+  OfflineBranchChangedError,
 } from "./errors";
 import type {
   EventRequestIdentity,
@@ -23,22 +24,30 @@ import type {
   QueuedEvent,
   QueuedResult,
   QueuedStateSave,
+  StateBranch,
+  StateRejection,
 } from "./types";
 
 const DATABASE_NAME = "missoes-caramelito-game-v1";
-const DATABASE_VERSION = 3;
+const DATABASE_VERSION = 5;
 const BOOTSTRAP_STORE = "bootstraps";
 const STATE_QUEUE_STORE = "stateQueue";
 const EVENT_QUEUE_STORE = "eventQueue";
 const EVENT_REQUEST_STORE = "eventRequests";
 const CONTROL_STORE = "controls";
+const BACKUP_STORE = "stateBackups";
+const ARCHIVE_STORE = "stateBranchArchives";
 
 type StoredBootstrap = {
   playerId: string;
   bootstrap?: PlayerBootstrapV1;
   generation?: number;
 };
-type StoredControl = { playerId: string; conflict: StateSaveConflictV1 | null };
+type StoredControl = {
+  playerId: string;
+  conflict: StateSaveConflictV1 | null;
+  rejection?: StateRejection;
+};
 type StoredEventRequest = {
   playerId: string;
   classSessionId: string;
@@ -90,6 +99,36 @@ export function openDatabase(factory: IDBFactory): Promise<IDBDatabase> {
       if (!db.objectStoreNames.contains(CONTROL_STORE)) {
         db.createObjectStore(CONTROL_STORE, { keyPath: "playerId" });
       }
+      if (!db.objectStoreNames.contains(BACKUP_STORE))
+        db.createObjectStore(BACKUP_STORE, { keyPath: "playerId" });
+      if (!db.objectStoreNames.contains(ARCHIVE_STORE)) {
+        db.createObjectStore(ARCHIVE_STORE, {
+          keyPath: "id",
+          autoIncrement: true,
+        });
+      }
+      // Preserve the launch session for saves queued by older host versions.
+      const transaction = request.transaction!;
+      const cursor = transaction.objectStore(STATE_QUEUE_STORE).openCursor();
+      cursor.onsuccess = () => {
+        const row = cursor.result;
+        if (!row) return;
+        const value = row.value as QueuedStateSave;
+        if (!value.classSessionId) {
+          const bootstrap = transaction
+            .objectStore(BOOTSTRAP_STORE)
+            .get(value.playerId);
+          bootstrap.onsuccess = () => {
+            const stored = bootstrap.result as StoredBootstrap | undefined;
+            if (stored?.bootstrap)
+              row.update({
+                ...value,
+                classSessionId: stored.bootstrap.class_session_id,
+              });
+            row.continue();
+          };
+        } else row.continue();
+      };
     };
     request.onerror = () => {
       if (settled) return;
@@ -214,6 +253,7 @@ export class IndexedDbGameOfflinePersistence implements GameOfflinePersistence {
     playerId: string,
     request: StateSaveRequestV1,
     classSessionId?: string,
+    branch?: StateBranch,
   ): Promise<QueuedStateSave> {
     return this.write(
       [BOOTSTRAP_STORE, STATE_QUEUE_STORE, CONTROL_STORE],
@@ -239,6 +279,8 @@ export class IndexedDbGameOfflinePersistence implements GameOfflinePersistence {
           started = true;
           if (!bootstrap?.bootstrap)
             return fail(new OfflineBootstrapMissingError());
+          if (branch && bootstrap.generation !== branch.generation)
+            return fail(new OfflineBranchChangedError());
           if (
             classSessionId &&
             bootstrap.bootstrap.class_session_id !== classSessionId
@@ -255,17 +297,37 @@ export class IndexedDbGameOfflinePersistence implements GameOfflinePersistence {
             succeed(existing);
             return;
           }
-          if (control?.conflict) return fail(new OfflineStateBlockedError());
+          if (control?.conflict || control?.rejection)
+            return fail(new OfflineStateBlockedError());
+          if (
+            branch &&
+            queuedStates.some(
+              (item) => item.branchGeneration !== branch.generation,
+            )
+          )
+            return fail(new OfflineBranchChangedError());
+          const nextRevision =
+            bootstrap.bootstrap.revision + queuedStates.length;
+          if (
+            branch &&
+            (request.expected_revision < branch.baseRevision ||
+              request.expected_revision > nextRevision)
+          )
+            return fail(new OfflineBranchChangedError());
           const normalized = parseStateSaveRequestV1({
             ...request,
-            expected_revision:
-              bootstrap.bootstrap.revision + queuedStates.length,
+            // Only an instance that loaded this branch may allocate its next revision.
+            expected_revision: branch
+              ? nextRevision
+              : request.expected_revision,
           });
           const record: NewQueuedState = {
             playerId,
+            classSessionId: bootstrap.bootstrap.class_session_id,
             requestId: normalized.request_id,
             request: normalized,
             queuedAt: Date.now(),
+            ...(branch ? { branchGeneration: branch.generation } : {}),
           };
           const add = stateStore.add(record);
           add.onsuccess = () => succeed({ ...record, id: Number(add.result) });
@@ -325,7 +387,11 @@ export class IndexedDbGameOfflinePersistence implements GameOfflinePersistence {
           const stored = get.result as StoredBootstrap | undefined;
           if (
             stored?.bootstrap &&
-            stored.bootstrap.revision <= success.revision
+            stored.bootstrap.revision <= success.revision &&
+            queued.branchGeneration !== undefined &&
+            stored.generation === queued.branchGeneration &&
+            (!queued.classSessionId ||
+              queued.classSessionId === stored.bootstrap.class_session_id)
           ) {
             const next: PlayerBootstrapV1 = {
               type: "portal.bootstrap.v1",
@@ -360,42 +426,50 @@ export class IndexedDbGameOfflinePersistence implements GameOfflinePersistence {
     conflict: StateSaveConflictV1,
   ): Promise<void> {
     await this.write(
-      [BOOTSTRAP_STORE, CONTROL_STORE],
+      [BOOTSTRAP_STORE, CONTROL_STORE, STATE_QUEUE_STORE],
       (transaction, succeed, fail) => {
-        const bootstrapStore = transaction.objectStore(BOOTSTRAP_STORE);
-        const get = bootstrapStore.get(playerId);
-        get.onsuccess = () => {
-          const existing = get.result as StoredBootstrap | undefined;
-          if (
-            !existing?.bootstrap ||
-            conflict.revision >= existing.bootstrap.revision
-          ) {
-            if (!existing?.bootstrap)
-              return fail(new OfflineBootstrapMissingError());
-            const next: PlayerBootstrapV1 = {
-              type: "portal.bootstrap.v1",
-              request_id: conflict.request_id,
-              protocol_version: existing.bootstrap.protocol_version,
-              player_id: existing.bootstrap.player_id,
-              class_session_id: existing.bootstrap.class_session_id,
-              revision: conflict.revision,
-              new_player: false,
-              state: conflict.state,
-            };
-            const put = bootstrapStore.put({
-              ...existing,
-              playerId,
-              bootstrap: next,
-            } satisfies StoredBootstrap);
-            put.onerror = () => fail(put.error);
-          }
-          const control = transaction
-            .objectStore(CONTROL_STORE)
-            .put({ playerId, conflict } satisfies StoredControl);
-          control.onsuccess = () => succeed(undefined);
-          control.onerror = () => fail(control.error);
+        const queued = transaction
+          .objectStore(STATE_QUEUE_STORE)
+          .index("byPlayerRequest")
+          .get([playerId, conflict.request_id]);
+        queued.onerror = () => fail(queued.error);
+        queued.onsuccess = () => {
+          if (!queued.result) return succeed(undefined);
+          const bootstrapStore = transaction.objectStore(BOOTSTRAP_STORE);
+          const get = bootstrapStore.get(playerId);
+          get.onsuccess = () => {
+            const existing = get.result as StoredBootstrap | undefined;
+            if (
+              !existing?.bootstrap ||
+              conflict.revision >= existing.bootstrap.revision
+            ) {
+              if (!existing?.bootstrap)
+                return fail(new OfflineBootstrapMissingError());
+              const next: PlayerBootstrapV1 = {
+                type: "portal.bootstrap.v1",
+                request_id: conflict.request_id,
+                protocol_version: existing.bootstrap.protocol_version,
+                player_id: existing.bootstrap.player_id,
+                class_session_id: existing.bootstrap.class_session_id,
+                revision: conflict.revision,
+                new_player: false,
+                state: conflict.state,
+              };
+              const put = bootstrapStore.put({
+                ...existing,
+                playerId,
+                bootstrap: next,
+              } satisfies StoredBootstrap);
+              put.onerror = () => fail(put.error);
+            }
+            const control = transaction
+              .objectStore(CONTROL_STORE)
+              .put({ playerId, conflict } satisfies StoredControl);
+            control.onsuccess = () => succeed(undefined);
+            control.onerror = () => fail(control.error);
+          };
+          get.onerror = () => fail(get.error);
         };
-        get.onerror = () => fail(get.error);
       },
     );
   }
@@ -412,21 +486,103 @@ export class IndexedDbGameOfflinePersistence implements GameOfflinePersistence {
     ).then((control) => control?.conflict ?? null);
   }
 
-  async discardStateBranch(playerId: string): Promise<void> {
-    await this.write(
-      [STATE_QUEUE_STORE, CONTROL_STORE],
-      (transaction, succeed, fail) => {
-        const stateStore = transaction.objectStore(STATE_QUEUE_STORE);
-        const request = stateStore.index("byPlayer").getAllKeys(playerId);
-        request.onsuccess = () => {
-          for (const key of request.result) stateStore.delete(key);
-          const control = transaction
-            .objectStore(CONTROL_STORE)
-            .put({ playerId, conflict: null } satisfies StoredControl);
-          control.onsuccess = () => succeed(undefined);
-          control.onerror = () => fail(control.error);
-        };
+  getStateRejection(playerId: string): Promise<StateRejection | null> {
+    return this.read<StoredControl | undefined>(
+      CONTROL_STORE,
+      (store, succeed, fail) => {
+        const request = store.get(playerId);
+        request.onsuccess = () =>
+          succeed(request.result as StoredControl | undefined);
         request.onerror = () => fail(request.error);
+      },
+    ).then((control) => control?.rejection ?? null);
+  }
+
+  async rejectStateBranch(
+    playerId: string,
+    rejection: StateRejection,
+  ): Promise<void> {
+    await this.write(
+      [CONTROL_STORE, STATE_QUEUE_STORE],
+      (transaction, succeed, fail) => {
+        const queued = transaction
+          .objectStore(STATE_QUEUE_STORE)
+          .index("byPlayerRequest")
+          .get([playerId, rejection.requestId]);
+        queued.onerror = () => fail(queued.error);
+        queued.onsuccess = () => {
+          // A delayed response must not reject a replacement branch after recovery.
+          if (!queued.result) return succeed(undefined);
+          const request = transaction.objectStore(CONTROL_STORE).put({
+            playerId,
+            conflict: null,
+            rejection,
+          } satisfies StoredControl);
+          request.onsuccess = () => succeed(undefined);
+          request.onerror = () => fail(request.error);
+        };
+      },
+    );
+  }
+
+  async discardStateBranch(
+    playerId: string,
+    expectedRequestId?: string,
+  ): Promise<void> {
+    await this.write(
+      [
+        STATE_QUEUE_STORE,
+        CONTROL_STORE,
+        BACKUP_STORE,
+        ARCHIVE_STORE,
+        BOOTSTRAP_STORE,
+      ],
+      (transaction, succeed, fail) => {
+        const controlRequest = transaction
+          .objectStore(CONTROL_STORE)
+          .get(playerId);
+        controlRequest.onerror = () => fail(controlRequest.error);
+        controlRequest.onsuccess = () => {
+          const control = controlRequest.result as StoredControl | undefined;
+          if (
+            expectedRequestId &&
+            expectedRequestId !==
+              (control?.rejection?.requestId ?? control?.conflict?.request_id)
+          )
+            return fail(new OfflineBranchChangedError());
+          const stateStore = transaction.objectStore(STATE_QUEUE_STORE);
+          const request = stateStore.index("byPlayer").getAll(playerId);
+          request.onsuccess = () => {
+            const states = request.result as QueuedStateSave[];
+            if (states.length > 0) {
+              transaction
+                .objectStore(BACKUP_STORE)
+                .put({ playerId, states, savedAt: Date.now() });
+              transaction
+                .objectStore(ARCHIVE_STORE)
+                .add({ playerId, states, control, savedAt: Date.now() });
+            }
+            const bootstrapStore = transaction.objectStore(BOOTSTRAP_STORE);
+            const bootstrapRequest = bootstrapStore.get(playerId);
+            bootstrapRequest.onsuccess = () => {
+              const stored = bootstrapRequest.result as
+                StoredBootstrap | undefined;
+              if (stored)
+                bootstrapStore.put({
+                  ...stored,
+                  generation: (stored.generation ?? 0) + 1,
+                });
+            };
+            bootstrapRequest.onerror = () => fail(bootstrapRequest.error);
+            for (const state of states) stateStore.delete(state.id);
+            const clearControl = transaction
+              .objectStore(CONTROL_STORE)
+              .put({ playerId, conflict: null } satisfies StoredControl);
+            clearControl.onsuccess = () => succeed(undefined);
+            clearControl.onerror = () => fail(clearControl.error);
+          };
+          request.onerror = () => fail(request.error);
+        };
       },
     );
   }
@@ -569,7 +725,10 @@ export class IndexedDbGameOfflinePersistence implements GameOfflinePersistence {
     );
   }
 
-  listEvents(playerId: string, classSessionId: string): Promise<QueuedEvent[]> {
+  listEvents(
+    playerId: string,
+    classSessionId?: string,
+  ): Promise<QueuedEvent[]> {
     return this.read<QueuedEvent[]>(
       EVENT_QUEUE_STORE,
       (store, succeed, fail) => {
@@ -577,7 +736,10 @@ export class IndexedDbGameOfflinePersistence implements GameOfflinePersistence {
         request.onsuccess = () =>
           succeed(
             (request.result as QueuedEvent[])
-              .filter((event) => event.classSessionId === classSessionId)
+              .filter(
+                (event) =>
+                  !classSessionId || event.classSessionId === classSessionId,
+              )
               .sort((a, b) => a.id - b.id),
           );
         request.onerror = () => fail(request.error);
@@ -596,7 +758,7 @@ export class IndexedDbGameOfflinePersistence implements GameOfflinePersistence {
   }
 
   async status(playerId: string): Promise<GameOfflineSyncStatus> {
-    const [states, events, conflict] = await Promise.all([
+    const [states, events, conflict, rejection] = await Promise.all([
       this.listStates(playerId),
       this.read<QueuedEvent[]>(EVENT_QUEUE_STORE, (store, succeed, fail) => {
         const request = store.index("byPlayer").getAll(playerId);
@@ -604,13 +766,15 @@ export class IndexedDbGameOfflinePersistence implements GameOfflinePersistence {
         request.onerror = () => fail(request.error);
       }),
       this.getStateConflict(playerId),
+      this.getStateRejection(playerId),
     ]);
     return {
       queuedStates: states.length,
       queuedResults: events.filter((event) => event.kind === "result").length,
       queuedActiveTime: events.filter((event) => event.kind === "active_time")
         .length,
-      stateBlocked: Boolean(conflict),
+      stateBlocked: Boolean(conflict || rejection),
+      ...(rejection ? { rejection } : {}),
     };
   }
 

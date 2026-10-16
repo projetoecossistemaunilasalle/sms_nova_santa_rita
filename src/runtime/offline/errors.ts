@@ -29,3 +29,12 @@ export class OfflineSessionMismatchError extends Error {
     this.name = "OfflineSessionMismatchError";
   }
 }
+
+export class OfflineBranchChangedError extends Error {
+  constructor() {
+    super(
+      "Another game instance owns this player's state; reload before saving",
+    );
+    this.name = "OfflineBranchChangedError";
+  }
+}

@@ -153,8 +153,11 @@ class PrismaAdultPortalReader {
     };
   }
 
-  async listOrganizations(): Promise<OrganizationSummaryDto[]> {
+  async listOrganizations(
+    organizationIds?: readonly string[],
+  ): Promise<OrganizationSummaryDto[]> {
     const records = await this.db.organization.findMany({
+      where: organizationIds ? { id: { in: [...organizationIds] } } : undefined,
       orderBy: { name: "asc" },
       select: organizationSelect,
     });

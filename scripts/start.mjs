@@ -1,8 +1,8 @@
-import { cpSync, existsSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import nextEnv from "@next/env";
+import { standaloneServer } from "./standalone-release.mjs";
 
 const { loadEnvConfig } = nextEnv;
 
@@ -10,7 +10,6 @@ const projectRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "..",
 );
-const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 
 loadEnvConfig(projectRoot);
 
@@ -27,30 +26,14 @@ function run(command, args, options = {}) {
 }
 
 const demo = process.argv.includes("--demo");
-const buildStatus = run(npmCommand, [
-  "run",
-  demo ? "build:demo" : "build:server",
-]);
-if (buildStatus !== 0) process.exit(buildStatus);
-
 const standaloneDir = path.join(projectRoot, ".next", "standalone");
-const serverFile = path.join(standaloneDir, "server.js");
-
-if (!existsSync(serverFile)) {
-  console.error("O build standalone não gerou .next/standalone/server.js.");
+let serverFile;
+try {
+  serverFile = standaloneServer(projectRoot, demo ? "demo" : "server");
+} catch (error) {
+  console.error(error.message);
   process.exit(1);
 }
-
-cpSync(
-  path.join(projectRoot, ".next", "static"),
-  path.join(standaloneDir, ".next", "static"),
-  {
-    recursive: true,
-  },
-);
-cpSync(path.join(projectRoot, "public"), path.join(standaloneDir, "public"), {
-  recursive: true,
-});
 
 const args = process.argv.slice(2).filter((arg) => arg !== "--demo");
 const runtimeEnv = {
@@ -66,10 +49,10 @@ if (demo) {
     "NEON_AUTH_COOKIE_SECRET",
     "APPLICATION_SECRET",
     "ALLOWED_ORIGINS",
-    "AUTH_DEV_BYPASS",
   ]) {
     runtimeEnv[name] = "";
   }
+  runtimeEnv.AUTH_DEV_BYPASS = "false";
 }
 
 for (let index = 0; index < args.length; index += 1) {

@@ -381,8 +381,14 @@ export class DemoAdultPortalStore
     };
   }
 
-  async listOrganizations(): Promise<OrganizationSummaryDto[]> {
+  async listOrganizations(
+    organizationIds?: readonly string[],
+  ): Promise<OrganizationSummaryDto[]> {
     return this.state.organizations
+      .filter(
+        (organization) =>
+          !organizationIds || organizationIds.includes(organization.id),
+      )
       .map((organization) => this.organizationDto(organization))
       .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
   }
@@ -694,6 +700,37 @@ export class DemoPlayerAccessStore
   implements PlayerAccessStore, PlayerAccessTransaction
 {
   constructor(readonly state: DemoAdultPortalState = cloneSeed()) {}
+
+  async updateEncryptedCredential(
+    playerSlotId: string,
+    tokenHash: string,
+    encryptedToken: string,
+  ) {
+    const credential = this.state.playerCredentials.find(
+      (item) =>
+        item.playerSlotId === playerSlotId &&
+        item.tokenHash === tokenHash &&
+        item.status === PlayerCredentialStatus.ACTIVE,
+    );
+    if (credential) credential.encryptedToken = encryptedToken;
+  }
+
+  async getExistingParticipation(gameSessionId: string, playerSlotId: string) {
+    const session = this.state.gameSessions.find(
+      (item) => item.id === gameSessionId,
+    );
+    const participation = this.state.participations.find(
+      (item) =>
+        item.gameSessionId === gameSessionId &&
+        item.playerSlotId === playerSlotId,
+    );
+    return session && participation
+      ? {
+          session: this.sessionDto(session),
+          participation: this.participationDto(participation),
+        }
+      : null;
+  }
 
   async transaction<T>(
     work: (transaction: PlayerAccessTransaction) => Promise<T>,

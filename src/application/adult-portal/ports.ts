@@ -28,7 +28,9 @@ export type NewClass = {
 
 export interface AdultPortalReader {
   getActor(profileId: string): Promise<ActorSnapshot | null>;
-  listOrganizations(): Promise<OrganizationSummaryDto[]>;
+  listOrganizations(
+    organizationIds?: readonly string[],
+  ): Promise<OrganizationSummaryDto[]>;
   getOrganization(id: string): Promise<OrganizationSummaryDto | null>;
   listMemberships(organizationIds?: string[]): Promise<TeamMemberDto[]>;
   getMembership(id: string): Promise<TeamMemberDto | null>;

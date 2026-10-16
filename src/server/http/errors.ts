@@ -9,6 +9,7 @@ export const apiErrorCodes = [
   "CONFLICT",
   "INTERNAL_SERVER_ERROR",
   "SESSION_EXPIRED",
+  "RATE_LIMITED",
 ] as const;
 
 export type ApiErrorCode = (typeof apiErrorCodes)[number];
@@ -24,6 +25,7 @@ export class HttpError extends Error {
     readonly code: ApiErrorCode,
     message: string,
     readonly details?: ApiErrorDetail[],
+    readonly retryAfterSeconds?: number,
   ) {
     super(message);
     this.name = "HttpError";
@@ -45,7 +47,13 @@ export function errorResponse(
     },
     {
       status: error.status,
-      headers: { [CORRELATION_HEADER]: correlationId },
+      headers: {
+        [CORRELATION_HEADER]: correlationId,
+        "Cache-Control": "no-store",
+        ...(error.retryAfterSeconds
+          ? { "Retry-After": String(error.retryAfterSeconds) }
+          : {}),
+      },
     },
   );
 }

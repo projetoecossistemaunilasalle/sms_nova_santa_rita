@@ -22,17 +22,21 @@ import {
   OfflineBootstrapMissingError,
   OfflineSessionMismatchError,
   OfflineStateBlockedError,
+  OfflineBranchChangedError,
 } from "./errors";
 import { IndexedDbGameOfflinePersistence, openDatabase } from "./indexed-db";
+import { GameTransportError } from "./network";
 import type {
   GameOfflinePersistence,
   GameOfflineSyncReport,
   GameOfflineSyncStatus,
   GameOfflineTransport,
   QueuedActiveTime,
+  StateBranch,
 } from "./types";
 
 export class GameOfflineStore {
+  private readonly branches = new Map<string, StateBranch>();
   constructor(
     private readonly persistence: GameOfflinePersistence,
     private readonly createEventId: () => string = createClientEventId,
@@ -50,7 +54,20 @@ export class GameOfflineStore {
     const reservedGeneration =
       generation ??
       (await this.persistence.reserveBootstrapGeneration(bootstrap.player_id));
-    return this.persistence.cacheBootstrap(bootstrap, reservedGeneration);
+    const accepted = await this.persistence.cacheBootstrap(
+      bootstrap,
+      reservedGeneration,
+    );
+    if (
+      accepted?.request_id === bootstrap.request_id &&
+      accepted.revision === bootstrap.revision
+    ) {
+      this.branches.set(bootstrap.player_id, {
+        generation: reservedGeneration,
+        baseRevision: bootstrap.revision,
+      });
+    }
+    return accepted;
   }
 
   reserveBootstrapGeneration(playerId: string): Promise<number> {
@@ -62,7 +79,10 @@ export class GameOfflineStore {
   }
 
   async getNextExpectedRevision(playerId: string): Promise<number> {
-    if (await this.persistence.getStateConflict(playerId)) {
+    if (
+      (await this.persistence.getStateConflict(playerId)) ||
+      (await this.persistence.getStateRejection(playerId))
+    ) {
       throw new OfflineStateBlockedError();
     }
     const bootstrap = await this.persistence.getBootstrap(playerId);
@@ -77,10 +97,13 @@ export class GameOfflineStore {
     classSessionId?: string,
   ): Promise<LocalDurabilityAcknowledgementV1> {
     const request = parseStateSaveRequestV1(input);
+    const branch = this.branches.get(playerId);
+    if (!branch) throw new OfflineBranchChangedError();
     const queued = await this.persistence.enqueueState(
       playerId,
       request,
       classSessionId,
+      branch,
     );
     return {
       type: "portal.local_durable.v1",
@@ -161,11 +184,33 @@ export class GameOfflineStore {
     return this.persistence.status(playerId);
   }
 
-  async discardConflictedStateBranch(playerId: string): Promise<void> {
-    await this.persistence.discardStateBranch(playerId);
+  async discardConflictedStateBranch(
+    playerId: string,
+    expectedRequestId?: string,
+  ): Promise<void> {
+    await withPlayerLock(playerId, () =>
+      this.persistence.discardStateBranch(playerId, expectedRequestId),
+    );
+    this.branches.delete(playerId);
   }
 
   async sync(
+    playerId: string,
+    transport: GameOfflineTransport,
+    onStateConflict?: (conflict: StateSaveConflictV1) => void | Promise<void>,
+    expectedClassSessionId?: string,
+  ): Promise<GameOfflineSyncReport> {
+    return withPlayerLock(playerId, () =>
+      this.syncUnlocked(
+        playerId,
+        transport,
+        onStateConflict,
+        expectedClassSessionId,
+      ),
+    );
+  }
+
+  private async syncUnlocked(
     playerId: string,
     transport: GameOfflineTransport,
     onStateConflict?: (conflict: StateSaveConflictV1) => void | Promise<void>,
@@ -187,13 +232,24 @@ export class GameOfflineStore {
     const eventAcknowledgements: GameOfflineSyncReport["eventAcknowledgements"] =
       [];
     let failedStream: GameOfflineSyncReport["failedStream"];
+    let retryable = false;
     let conflict = await this.persistence.getStateConflict(playerId);
+    let rejection = await this.persistence.getStateRejection(playerId);
 
-    if (!conflict) {
+    if (!conflict && !rejection) {
       for (const queued of await this.persistence.listStates(playerId)) {
+        if (!queued.classSessionId) {
+          rejection = { requestId: queued.request.request_id };
+          await this.persistence.rejectStateBranch(playerId, rejection);
+          failedStream = "state";
+          break;
+        }
         let response: unknown;
         try {
-          response = await transport.saveState(queued.request);
+          response = await transport.saveState(
+            queued.request,
+            queued.classSessionId,
+          );
         } catch (error) {
           const parsedConflict = parseStateConflictResponse(error);
           if (parsedConflict?.request_id === queued.request.request_id) {
@@ -205,6 +261,21 @@ export class GameOfflineStore {
             );
           } else {
             failedStream = "state";
+            if (
+              (error instanceof GameTransportError && !error.retryable) ||
+              error instanceof OfflineSessionMismatchError
+            ) {
+              rejection = {
+                requestId: queued.request.request_id,
+                ...(error instanceof GameTransportError
+                  ? { status: error.status }
+                  : {}),
+              };
+              await this.persistence.rejectStateBranch(playerId, rejection);
+            }
+            retryable ||=
+              !(error instanceof OfflineSessionMismatchError) &&
+              (!(error instanceof GameTransportError) || error.retryable);
           }
           break;
         }
@@ -218,8 +289,9 @@ export class GameOfflineStore {
           );
           break;
         }
+        let success: StateSaveSuccessV1;
         try {
-          const success = parseStateSaveSuccessV1(response);
+          success = parseStateSaveSuccessV1(response);
           if (
             success.request_id !== queued.request.request_id ||
             success.revision !== queued.request.expected_revision + 1
@@ -228,19 +300,31 @@ export class GameOfflineStore {
               "State save acknowledgement did not match the queued request",
             );
           }
+        } catch {
+          failedStream = "state";
+          rejection = { requestId: queued.request.request_id };
+          await this.persistence.rejectStateBranch(playerId, rejection);
+          break;
+        }
+        try {
           await this.persistence.acknowledgeState(playerId, queued, success);
           savedStates += 1;
           stateAcknowledgements.push(success);
         } catch {
           failedStream = "state";
+          retryable = true;
           break;
         }
       }
     }
 
+    const eventSessionId = transport.includePreviousSessions
+      ? undefined
+      : bootstrap.class_session_id;
+    const failedSessions = new Set<string>();
     let eventQueue = await this.persistence.listEvents(
       playerId,
-      bootstrap.class_session_id,
+      eventSessionId,
     );
     while (eventQueue.length > 0) {
       const first = eventQueue[0];
@@ -248,7 +332,7 @@ export class GameOfflineStore {
       try {
         if (first.kind === "result") {
           const acknowledgement = parseResultAcknowledgementV1(
-            await transport.uploadResult(first.event),
+            await transport.uploadResult(first.event, first.classSessionId),
           );
           if (acknowledgement.client_event_id !== first.event.client_event_id) {
             throw new Error(
@@ -265,7 +349,11 @@ export class GameOfflineStore {
         } else {
           const consecutive: QueuedActiveTime[] = [];
           for (const item of eventQueue) {
-            if (item.kind !== "active_time" || consecutive.length === 100)
+            if (
+              item.kind !== "active_time" ||
+              item.classSessionId !== first.classSessionId ||
+              consecutive.length === 100
+            )
               break;
             consecutive.push(item);
           }
@@ -274,7 +362,7 @@ export class GameOfflineStore {
             events: consecutive.map(({ event }) => event),
           });
           const acknowledgement = activeTimeAcknowledgementV1Schema.parse(
-            await transport.uploadActiveTime(batch),
+            await transport.uploadActiveTime(batch, first.classSessionId),
           );
           const sentIds = new Set(
             batch.events.map(({ client_event_id }) => client_event_id),
@@ -302,23 +390,27 @@ export class GameOfflineStore {
           }
           if (acknowledged.size !== consecutive.length) {
             failedStream = "events";
-            break;
+            retryable = true;
+            failedSessions.add(first.classSessionId);
           }
         }
-      } catch {
+      } catch (error) {
         failedStream = "events";
-        break;
+        retryable ||=
+          !(error instanceof OfflineSessionMismatchError) &&
+          (!(error instanceof GameTransportError) || error.retryable);
+        failedSessions.add(first.classSessionId);
       }
-      eventQueue = await this.persistence.listEvents(
-        playerId,
-        bootstrap.class_session_id,
+      eventQueue = await this.persistence.listEvents(playerId, eventSessionId);
+      eventQueue = eventQueue.filter(
+        (event) => !failedSessions.has(event.classSessionId),
       );
     }
 
     const remaining = await this.persistence.status(playerId);
     return {
       state:
-        conflict || remaining.stateBlocked
+        conflict || rejection || remaining.stateBlocked
           ? "blocked"
           : failedStream ||
               remaining.queuedStates +
@@ -333,7 +425,9 @@ export class GameOfflineStore {
       stateAcknowledgements,
       eventAcknowledgements,
       ...(conflict ? { conflict } : {}),
+      ...(rejection ? { rejection } : {}),
       ...(failedStream ? { failedStream } : {}),
+      ...(failedStream ? { retryable } : {}),
     };
   }
 
@@ -353,6 +447,20 @@ export class GameOfflineStore {
       // A bridge recovery callback must not prevent independent event uploads.
     }
   }
+}
+
+function withPlayerLock<T>(
+  playerId: string,
+  work: () => Promise<T>,
+): Promise<T> {
+  const locks = globalThis.navigator?.locks;
+  return locks
+    ? locks.request(
+        `caramelito-sync-${playerId}`,
+        { signal: AbortSignal.timeout(60_000) },
+        work,
+      )
+    : work();
 }
 
 export async function openGameOfflineStore(

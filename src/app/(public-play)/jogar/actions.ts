@@ -14,6 +14,8 @@ import {
 import { getPlayerAccessService } from "@/server/services/player-access-container";
 import { getRuntimeMode } from "@/runtime/mode";
 import { randomUUID } from "node:crypto";
+import { headers } from "next/headers";
+import { enforceRateLimit } from "@/server/security/rate-limit";
 
 export async function resolvePlayerEntryAction(
   token: string,
@@ -23,6 +25,12 @@ export async function resolvePlayerEntryAction(
     return { state: "invalid" };
   }
   const isMock = getRuntimeMode() === "demo";
+  if (!isMock)
+    await enforceRateLimit(
+      "player-entry",
+      hashPlayerCredentialToken(parsed.data),
+      new Headers(await headers()),
+    );
   if (isMock) {
     const { findMockDatabase } = await import("@/server/mock/session");
     if (!(await findMockDatabase())) return { state: "invalid" };

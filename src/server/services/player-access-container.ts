@@ -29,7 +29,13 @@ export async function getPlayerAccessService(): Promise<PlayerAccessService> {
       new SecurePlayerCredentialIssuer(),
       new SecurePlayerCredentialCipher(
         getServerRuntimeEnv().APPLICATION_SECRET,
+        {
+          keyId: getServerRuntimeEnv().PLAYER_CREDENTIAL_KEY_ID,
+          keys: getServerRuntimeEnv().PLAYER_CREDENTIAL_KEYS,
+        },
       ),
+      () => new Date(),
+      getServerRuntimeEnv().OFFLINE_FLUSH_WINDOW_SECONDS,
     );
   if (process.env.NODE_ENV !== "production") {
     globalForPlayerAccess.playerAccessService = service;

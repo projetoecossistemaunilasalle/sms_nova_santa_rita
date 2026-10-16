@@ -8,6 +8,8 @@ import type { RuntimeMode } from "@/runtime/mode";
 import { resolvePlayerEntryAction } from "@/runtime/actions";
 import { GameHost } from "./game-host";
 import { readPlayerEntryCredential } from "./player-entry-credential";
+import { recoverOfflinePlayerQueue } from "./recover-offline-queue";
+import { GameSyncRetryScheduler } from "@/runtime/offline/network";
 
 import styles from "./public.module.css";
 
@@ -96,6 +98,41 @@ export function PlayerEntryScreen({
     setEntryCredential(token);
     queueMicrotask(() => void resolve(token));
   }, []);
+
+  const waitingPlayerId = view.state === "waiting" ? view.playerSlotId : null;
+  useEffect(() => {
+    if (runtimeMode !== "server" || !waitingPlayerId || !entryCredential)
+      return;
+    let disposed = false;
+    let running = false;
+    const scheduler = new GameSyncRetryScheduler(() => void flush());
+    async function flush() {
+      if (disposed || running || !navigator.onLine) return;
+      running = true;
+      try {
+        const report = await recoverOfflinePlayerQueue(
+          entryCredential!,
+          waitingPlayerId!,
+        );
+        if (!disposed && report?.retryable) scheduler.schedule();
+      } catch {
+        // Keep the entry surface usable if this browser cannot open IndexedDB.
+      } finally {
+        running = false;
+      }
+    }
+    function reconnect() {
+      scheduler.reset();
+      void flush();
+    }
+    void flush();
+    window.addEventListener("online", reconnect);
+    return () => {
+      disposed = true;
+      scheduler.reset();
+      window.removeEventListener("online", reconnect);
+    };
+  }, [runtimeMode, waitingPlayerId, entryCredential]);
 
   if (view.state === "loading") {
     return (

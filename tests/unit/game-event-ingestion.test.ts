@@ -46,6 +46,7 @@ function fixture() {
           id: launchContext.gameSessionId,
           classGroupId: "class-1",
           status: GameSessionStatus.ENDED,
+          endedAt: new Date(),
         },
       })),
     },
@@ -142,6 +143,18 @@ function resultEvent(): ResultEventV1 {
 }
 
 describe("game event ingestion", () => {
+  it("rejects late event uploads after 24 hours without inserting any result", async () => {
+    const { db, results, service } = fixture();
+    const participation = await db.participation.findUnique();
+    participation.gameSession.endedAt = new Date(
+      Date.now() - 24 * 60 * 60 * 1000 - 1000,
+    );
+    db.participation.findUnique.mockResolvedValue(participation);
+    await expect(
+      service.submitResult("valid", resultEvent()),
+    ).rejects.toMatchObject({ code: "INACTIVE_ACCESS" });
+    expect(results.size).toBe(0);
+  });
   it("accepts result retries once and permits a brief flush after session end", async () => {
     const { db, results, service } = fixture();
     const event = resultEvent();

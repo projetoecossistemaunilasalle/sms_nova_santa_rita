@@ -209,12 +209,56 @@ class PrismaPlayerAccessReader {
       },
     };
   }
+
+  async getExistingParticipation(gameSessionId: string, playerSlotId: string) {
+    const participation = await this.db.participation.findUnique({
+      where: { gameSessionId_playerSlotId: { gameSessionId, playerSlotId } },
+      select: {
+        id: true,
+        gameSessionId: true,
+        playerSlotId: true,
+        joinedAt: true,
+        gameSession: {
+          select: {
+            id: true,
+            classGroupId: true,
+            status: true,
+            startedAt: true,
+            endedAt: true,
+          },
+        },
+      },
+    });
+    if (!participation) return null;
+    const { gameSession: session, ...record } = participation;
+    return { session, participation: record };
+  }
 }
 
 class PrismaPlayerAccessTransaction
   extends PrismaPlayerAccessReader
   implements PlayerAccessTransaction
 {
+  async updateEncryptedCredential(
+    playerSlotId: string,
+    tokenHash: string,
+    encryptedToken: string,
+  ) {
+    await this.db.playerCredential.updateMany({
+      where: { playerSlotId, tokenHash, status: PlayerCredentialStatus.ACTIVE },
+      data: { encryptedToken },
+    });
+  }
+
+  override async getExistingParticipation(
+    gameSessionId: string,
+    playerSlotId: string,
+  ) {
+    await this.db.$queryRaw(
+      Prisma.sql`SELECT "id" FROM "game_sessions" WHERE "id" = ${gameSessionId}::uuid FOR SHARE`,
+    );
+    return super.getExistingParticipation(gameSessionId, playerSlotId);
+  }
   override async resolveCredential(
     tokenHash: string,
   ): Promise<ResolvedCredential | null> {

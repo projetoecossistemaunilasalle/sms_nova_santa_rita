@@ -212,6 +212,16 @@ model ActiveTimeEvent {
   @@map("active_time_events")
 }
 
+model RequestRateLimit {
+  key         String   @id @db.Char(64)
+  windowStart DateTime @map("window_start") @db.Timestamptz(3)
+  count       Int
+  expiresAt   DateTime @map("expires_at") @db.Timestamptz(3)
+
+  @@index([expiresAt])
+  @@map("request_rate_limits")
+}
+
 model TeacherAssignment {
   id           String                 @id @default(uuid()) @db.Uuid
   membershipId String                 @map("membership_id") @db.Uuid

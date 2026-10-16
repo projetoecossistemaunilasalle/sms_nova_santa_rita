@@ -24,8 +24,12 @@ function eventStore() {
 export function getGameEventService(): GameEventService {
   const service =
     globalForGameEvents.gameEventService ??
-    new GameEventService(eventStore(), (token) =>
-      verifyLaunchToken(token, getServerRuntimeEnv().APPLICATION_SECRET),
+    new GameEventService(
+      eventStore(),
+      (token) =>
+        verifyLaunchToken(token, getServerRuntimeEnv().APPLICATION_SECRET),
+      () => new Date(),
+      getServerRuntimeEnv().OFFLINE_FLUSH_WINDOW_SECONDS,
     );
   if (process.env.NODE_ENV !== "production") {
     globalForGameEvents.gameEventService = service;

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { getAuthGateway } from "@/server/auth/gateway";
 import { getGameEventReportService } from "@/server/services/game-event-container";
+import type { PlayerHistoryPage } from "@/application/game-events/report-pagination";
 
 async function profileId(): Promise<string> {
   await connection();
@@ -26,11 +27,13 @@ export async function getClassResultsPageData(classGroupId: string) {
 export async function getPlayerResultsPageData(
   classGroupId: string,
   playerSlotId: string,
+  page?: PlayerHistoryPage,
 ) {
   const id = await profileId();
   return (await getGameEventReportService()).getPlayerReport(
     id,
     classGroupId,
     playerSlotId,
+    page,
   );
 }

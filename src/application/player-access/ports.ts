@@ -23,6 +23,7 @@ export interface PlayerCredentialIssuer {
 export interface PlayerCredentialCipher {
   encrypt(token: string, tokenHash: string): string;
   decrypt(encryptedToken: string, tokenHash: string): string;
+  needsReencryption?(encryptedToken: string): boolean;
 }
 
 export type NewSlotCredential = {
@@ -63,9 +64,18 @@ export interface PlayerAccessReader {
   ): Promise<StoredPlayerCredential[]>;
   getActiveSession(classGroupId: string): Promise<GameSessionDto | null>;
   resolveCredential(tokenHash: string): Promise<ResolvedCredential | null>;
+  getExistingParticipation(
+    gameSessionId: string,
+    playerSlotId: string,
+  ): Promise<ActiveEntryParticipation | null>;
 }
 
 export interface PlayerAccessTransaction extends PlayerAccessReader {
+  updateEncryptedCredential(
+    playerSlotId: string,
+    tokenHash: string,
+    encryptedToken: string,
+  ): Promise<void>;
   allocateSlots(
     classGroupId: string,
     credentials: readonly NewSlotCredential[],

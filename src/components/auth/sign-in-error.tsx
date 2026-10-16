@@ -10,7 +10,9 @@ export function SignInError() {
 
   return (
     <p role="alert" className={styles.authHelp}>
-      Não foi possível autenticar. Verifique os dados e tente novamente.
+      {error === "rate_limited"
+        ? "Muitas tentativas de entrada. Aguarde 15 minutos e tente novamente."
+        : "Não foi possível autenticar. Verifique os dados e tente novamente."}
     </p>
   );
 }

@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { AdultPortalService } from "@/application/adult-portal/service";
 import type { AdultRole } from "@/application/adult-portal/types";
@@ -21,6 +21,45 @@ function setup() {
 }
 
 describe("AdultPortalService", () => {
+  it("uses one authorization snapshot when composing the overview", async () => {
+    const store = new DemoAdultPortalStore(
+      structuredClone(demoAdultPortalSeed),
+    );
+    const read = vi.spyOn(store, "getActor");
+    await new AdultPortalService(store).getOverview(
+      DEMO_PROFILE_IDS.ORGANIZATION_ADMIN,
+    );
+    expect(read).toHaveBeenCalledTimes(1);
+  });
+  it("passes the authorized organization scope to the reader instead of fetching globally", async () => {
+    const store = new DemoAdultPortalStore(
+      structuredClone(demoAdultPortalSeed),
+    );
+    const read = vi.spyOn(store, "listOrganizations");
+    const service = new AdultPortalService(store);
+    const organizations = await service.listOrganizations(
+      DEMO_PROFILE_IDS.ORGANIZATION_ADMIN,
+    );
+    expect(read).toHaveBeenCalledWith(
+      organizations.map((organization) => organization.id),
+    );
+    expect(await store.listOrganizations([])).toEqual([]);
+  });
+  it("does not disclose the school's assignable teacher roster to a classroom teacher", async () => {
+    const { service } = setup();
+    expect(
+      (await service.getClass(DEMO_PROFILE_IDS.TEACHER, DEMO_CLASS_IDS.THIRD_A))
+        .availableTeachers,
+    ).toEqual([]);
+    expect(
+      (
+        await service.getClass(
+          DEMO_PROFILE_IDS.ORGANIZATION_ADMIN,
+          DEMO_CLASS_IDS.THIRD_A,
+        )
+      ).availableTeachers.length,
+    ).toBeGreaterThan(0);
+  });
   it("gives the platform administrator the complete organization scope", async () => {
     const { service } = setup();
     const organizations = await service.listOrganizations(

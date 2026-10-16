@@ -100,7 +100,7 @@ settings in `.env.local`.
 | `npm run dev` / `npm run dev:demo`                          | Develop against the server or demo target                                         |
 | `npm run build` (`build:server`)                            | Standalone server build in `.next/`                                               |
 | `npm run build:demo`                                        | Standalone local mock build in `.next/`                                           |
-| `npm run start`                                             | Build and start the standalone server via `scripts/start.mjs`                     |
+| `npm run start`                                             | Start the existing packaged server release via `scripts/start.mjs`                |
 | `npm run typecheck` / `typecheck:server` / `typecheck:demo` | Generate runtime entries, then run `tsc` for the selected target                  |
 | `npm test`                                                  | Generate the demo runtime entries, then run Vitest                                |
 | `npm run clean:build`                                       | Remove build artifacts from a fixed allowlist                                     |
@@ -114,12 +114,15 @@ modes. Do not run concurrent builds/dev servers from one checkout: both use
 ## Runtime targets
 
 - `npm run build:demo` builds the same server application with mock adapters.
-  It needs no Neon credentials. `npm run start:demo` rebuilds and launches it
+  It needs no Neon credentials. `npm run start:demo` launches the existing demo build
   locally. This is no longer a static export and cannot run on GitHub Pages.
 - `npm run build:server` creates the standalone, server-capable Next.js build
   in `.next/`. It requires `DATABASE_URL`, `NEON_AUTH_BASE_URL`,
-  `NEON_AUTH_COOKIE_SECRET`, and `APPLICATION_SECRET`. `npm run start` rebuilds
-  and launches it through `scripts/start.mjs`.
+  `NEON_AUTH_COOKIE_SECRET`, and `APPLICATION_SECRET`. The build also packages
+  `public` and `.next/static` into `.next/standalone`. `npm run start` launches
+  that release unchanged through `scripts/start.mjs`, refusing missing or
+  wrong-target builds. For artifact-only deployment, copy `.next/standalone`
+  and run its `server.js` with Node and the production environment configured.
 - `npm run build` is intentionally an alias for `build:server`.
 
 In server mode, an adult must first exist in Neon Auth and have a matching active
@@ -134,6 +137,63 @@ lint, Prisma validation, both typechecks, the server build, the demo build, and
 the unit tests on every pull request and every push to `main`. GitHub Pages
 publication has been removed because the mock now needs a Node.js server.
 Deployment to the planned physical Windows Server host is not configured yet.
+
+## Reliability and deployment prerequisites
+
+- Apply pending migrations with `npx prisma migrate deploy` before deploying this
+  version. The new `request_rate_limits` table supplies atomic shared limits across
+  server instances; the demo never accesses it. No production database migration
+  is executed automatically by the application.
+- Configure readiness against `/api/health/ready` (200 or 503, database/schema
+  check with `READINESS_TIMEOUT_MS`) and liveness against `/api/health/live`.
+  Database outages must not trigger liveness restarts. Readiness does not check
+  the external Neon Auth service.
+- Login is limited to 10 attempts per account per 15 minutes; player QR entry and
+  renewal to 60 requests per credential per minute; game APIs to 240 requests per
+  player per minute, shared across launch-token renewals. Keys are HMAC digests,
+  not stored email addresses, bearer tokens or raw IPs. Old buckets are pruned in
+  bounded batches. Apply network/WAF limits as well, especially for unauthenticated
+  traffic with randomized identities.
+- IP limits are enabled only when `RATE_LIMIT_CLIENT_IP_HEADER` names a trusted
+  proxy header (`x-real-ip`, `x-forwarded-for`, or `cf-connecting-ip`). The proxy
+  must strip incoming client values, write its own client address, and prevent
+  direct access to the backend. With no trusted header configured, the application
+  deliberately ignores forwarded addresses. Shared school-network budgets are
+  higher than per-account/player budgets.
+- `OFFLINE_FLUSH_WINDOW_SECONDS=86400` permits state, results and active-time
+  uploads to their **original participation** for 24 hours after session closure.
+  Renewal never creates participation or grants a new bootstrap for a closed
+  session. Revoked credentials and inactive players/classes/organizations remain
+  denied. Records beyond the deadline stay local; they are never reassigned to a
+  newer session. Reopening the same QR also attempts recovery while waiting for
+  the teacher, without launching the game.
+- Requests, including response-body reads, have a 15-second client timeout.
+  Transient failures retry with jittered exponential backoff capped at 30 seconds;
+  permanent rejections remain queued without a retry loop. Browser Web Locks
+  serialize synchronization where supported; IndexedDB transactions remain the
+  atomic revision-allocation mechanism. Server-wins state recovery retains the
+  most recent discarded branch in IndexedDB's `stateBackups` store, rather than
+  deleting the only copy. It is a local recovery aid, not a cloud backup or merge.
+
+### Credential encryption key rotation
+
+`PLAYER_CREDENTIAL_KEYS` is a JSON object mapping immutable key IDs to secrets
+of at least 32 characters. `PLAYER_CREDENTIAL_KEY_ID` selects the encryption key.
+With no key ring configured, `default` uses `APPLICATION_SECRET` for compatibility.
+
+Before rotating, add the current secret to the ring under its existing ID (usually
+`default`), add a fresh secret under a new ID, and select the new ID. Keep historical
+keys available. V2 ciphertext stores the key ID; legacy V1 ciphertext is read using
+the retained keys. Successfully reprinted historical credentials are re-encrypted
+under the active key, without changing QR tokens, player slots or game progress.
+Do not remove an old key until all rows and any restorable database backups using
+it have been migrated or deliberately retired. Unreadable cards are reported as
+unavailable without preventing the other cards in the class from being printed.
+
+Restart the server after changing environment settings: validated configuration is
+memoized per process. Rotating `APPLICATION_SECRET` invalidates current launch
+tokens, but an active QR can renew the original participation within the flush
+window. Encryption rotation does not require changing the launch-signing secret.
 
 ## Verification
 

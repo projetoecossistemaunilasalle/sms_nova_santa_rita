@@ -1,6 +1,11 @@
 import { PlayerCredentialStatus, RecordStatus } from "@/generated/prisma/enums";
 import { AdultPortalError } from "@/application/adult-portal/errors";
+import type { PlayerHistoryPage } from "./report-pagination";
 import type { LaunchTokenContext } from "@/server/security/launch-token";
+import {
+  canFlushSession,
+  DEFAULT_OFFLINE_FLUSH_WINDOW_SECONDS,
+} from "@/application/player-access/flush-policy";
 import type {
   ActiveTimeAcknowledgementV1,
   ActiveTimeBatchV1,
@@ -34,6 +39,8 @@ export class GameEventService {
   constructor(
     private readonly store: GameEventStore,
     private readonly verify: (token: string) => LaunchVerification,
+    private readonly now: () => Date = () => new Date(),
+    private readonly flushWindowSeconds = DEFAULT_OFFLINE_FLUSH_WINDOW_SECONDS,
   ) {}
 
   private async requireLaunch(
@@ -56,8 +63,16 @@ export class GameEventService {
     ) {
       throw new GameEventError("INACTIVE_ACCESS");
     }
-    // Events belong to the participation established at entry. Unlike bootstrap
-    // and state writes, a short flush is allowed after the teacher ends the session.
+    if (
+      !canFlushSession(
+        scope.sessionStatus,
+        scope.sessionEndedAt,
+        this.now(),
+        this.flushWindowSeconds,
+      )
+    ) {
+      throw new GameEventError("INACTIVE_ACCESS");
+    }
     return scope;
   }
 
@@ -122,11 +137,13 @@ export class GameEventReportService {
     profileId: string,
     classGroupId: string,
     playerSlotId: string,
+    page?: PlayerHistoryPage,
   ) {
     await this.canReadClass(profileId, classGroupId);
     const report = await this.reports.getPlayerReport(
       classGroupId,
       playerSlotId,
+      page,
     );
     if (!report) {
       throw new AdultPortalError("Jogador não encontrado.", "NOT_FOUND");

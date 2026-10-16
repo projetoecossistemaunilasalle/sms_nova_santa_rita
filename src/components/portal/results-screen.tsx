@@ -199,6 +199,9 @@ export function ClassResultsScreen({ report }: { report: ClassReport }) {
 }
 
 export function PlayerResultsScreen({ report }: { report: PlayerReport }) {
+  const { history } = report;
+  const historyUrl = (sessionPage: number, resultPage = 1) =>
+    `/portal/resultados/${report.classGroupId}/players/${report.playerSlotId}?sessionPage=${sessionPage}&resultPage=${resultPage}`;
   return (
     <>
       <PageHeader
@@ -231,6 +234,32 @@ export function PlayerResultsScreen({ report }: { report: PlayerReport }) {
           note="Eventos registrados"
         />
       </section>
+      {history.sessionPages > 1 && (
+        <nav
+          className={styles.pagination}
+          aria-label="Páginas do histórico de sessões"
+        >
+          {history.sessionPage > 1 && (
+            <Link
+              className={styles.backLink}
+              href={historyUrl(history.sessionPage - 1)}
+            >
+              Sessão mais recente
+            </Link>
+          )}
+          <span>
+            Sessão {history.sessionPage} de {history.sessionPages}
+          </span>
+          {history.sessionPage < history.sessionPages && (
+            <Link
+              className={styles.backLink}
+              href={historyUrl(history.sessionPage + 1)}
+            >
+              Sessão mais antiga
+            </Link>
+          )}
+        </nav>
+      )}
       {report.participations.length === 0 ? (
         <PortalState
           headingLevel={2}
@@ -299,6 +328,38 @@ export function PlayerResultsScreen({ report }: { report: PlayerReport }) {
                 <p className={styles.noEvents}>
                   Ainda não há eventos de resultado nesta sessão.
                 </p>
+              )}
+              {history.resultPages > 1 && (
+                <nav
+                  className={styles.pagination}
+                  aria-label="Páginas de resultados desta sessão"
+                >
+                  {history.resultPage > 1 && (
+                    <Link
+                      className={styles.backLink}
+                      href={historyUrl(
+                        history.sessionPage,
+                        history.resultPage - 1,
+                      )}
+                    >
+                      Resultados mais recentes
+                    </Link>
+                  )}
+                  <span>
+                    Página {history.resultPage} de {history.resultPages}
+                  </span>
+                  {history.resultPage < history.resultPages && (
+                    <Link
+                      className={styles.backLink}
+                      href={historyUrl(
+                        history.sessionPage,
+                        history.resultPage + 1,
+                      )}
+                    >
+                      Resultados mais antigos
+                    </Link>
+                  )}
+                </nav>
               )}
             </article>
           ))}

@@ -10,6 +10,10 @@ import {
   type StateSaveRequestV1,
 } from "@/contracts/v1";
 import type { LaunchTokenContext } from "@/server/security/launch-token";
+import {
+  canFlushSession,
+  DEFAULT_OFFLINE_FLUSH_WINDOW_SECONDS,
+} from "@/application/player-access/flush-policy";
 
 export type LaunchVerification =
   | { valid: true; payload: LaunchTokenContext }
@@ -21,6 +25,7 @@ export type LaunchScope = LaunchTokenContext & {
   classStatus: RecordStatus;
   organizationStatus: RecordStatus;
   sessionStatus: GameSessionStatus;
+  sessionEndedAt?: Date | null;
 };
 
 export type StoredGameState = {
@@ -73,11 +78,14 @@ export class GameStateService {
   constructor(
     private readonly store: GameStateStore,
     private readonly verify: (token: string) => LaunchVerification,
+    private readonly now: () => Date = () => new Date(),
+    private readonly flushWindowSeconds = DEFAULT_OFFLINE_FLUSH_WINDOW_SECONDS,
   ) {}
 
   private async requireLaunch(
     token: string,
     transaction: GameStateTransaction,
+    operation: "bootstrap" | "save",
   ): Promise<LaunchScope> {
     const verified = this.verify(token);
     if (!verified.valid) {
@@ -95,7 +103,17 @@ export class GameStateService {
     ) {
       throw new GameStateError("INACTIVE_ACCESS");
     }
-    if (scope.sessionStatus !== GameSessionStatus.ACTIVE) {
+    if (
+      operation === "bootstrap"
+        ? verified.payload.purpose === "flush" ||
+          scope.sessionStatus !== GameSessionStatus.ACTIVE
+        : !canFlushSession(
+            scope.sessionStatus,
+            scope.sessionEndedAt,
+            this.now(),
+            this.flushWindowSeconds,
+          )
+    ) {
       throw new GameStateError("SESSION_ENDED");
     }
     return scope;
@@ -106,7 +124,7 @@ export class GameStateService {
     requestId: string,
   ): Promise<PlayerBootstrapV1> {
     return this.store.transaction(async (transaction) => {
-      const scope = await this.requireLaunch(token, transaction);
+      const scope = await this.requireLaunch(token, transaction, "bootstrap");
       const current = await transaction.getState(scope.playerSlotId);
       return current
         ? {
@@ -134,7 +152,7 @@ export class GameStateService {
 
   async save(token: string, request: StateSaveRequestV1) {
     return this.store.transaction(async (transaction) => {
-      const scope = await this.requireLaunch(token, transaction);
+      const scope = await this.requireLaunch(token, transaction, "save");
       const current = await transaction.getState(scope.playerSlotId);
       if (!current && request.expected_revision !== 0) {
         throw new GameStateError("INVALID_REVISION");

@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { runtimeEnvSchema, serverRuntimeEnvSchema } from "@/server/config/env";
 
@@ -12,8 +12,57 @@ const validEnvironment = {
   APPLICATION_SECRET: "b".repeat(32),
   ALLOWED_ORIGINS: "https://portal.example.org,http://localhost:3000",
 };
+afterEach(() => {
+  vi.unstubAllEnvs();
+  vi.resetModules();
+});
 
 describe("runtimeEnvSchema", () => {
+  it("validates key rings and the bounded offline flush window", () => {
+    expect(
+      serverRuntimeEnvSchema.parse(validEnvironment)
+        .OFFLINE_FLUSH_WINDOW_SECONDS,
+    ).toBe(86400);
+    expect(() =>
+      serverRuntimeEnvSchema.parse({
+        ...validEnvironment,
+        PLAYER_CREDENTIAL_KEY_ID: "missing",
+      }),
+    ).toThrow();
+    expect(() =>
+      serverRuntimeEnvSchema.parse({
+        ...validEnvironment,
+        PLAYER_CREDENTIAL_KEYS: '{"old":"short"}',
+      }),
+    ).toThrow();
+    expect(() =>
+      serverRuntimeEnvSchema.parse({
+        ...validEnvironment,
+        PLAYER_CREDENTIAL_KEYS: "not json",
+      }),
+    ).toThrow();
+    expect(() =>
+      serverRuntimeEnvSchema.parse({
+        ...validEnvironment,
+        OFFLINE_FLUSH_WINDOW_SECONDS: "0",
+      }),
+    ).toThrow();
+    expect(
+      serverRuntimeEnvSchema.parse({
+        ...validEnvironment,
+        PLAYER_CREDENTIAL_KEY_ID: "new",
+        PLAYER_CREDENTIAL_KEYS: JSON.stringify({ new: "c".repeat(32) }),
+      }).PLAYER_CREDENTIAL_KEYS.new,
+    ).toBe("c".repeat(32));
+  });
+  it("memoizes successfully validated server settings", async () => {
+    for (const [key, value] of Object.entries(validEnvironment))
+      vi.stubEnv(key, value);
+    const { getServerRuntimeEnv } = await import("@/server/config/env");
+    const first = getServerRuntimeEnv();
+    vi.stubEnv("APPLICATION_SECRET", "changed-after-startup");
+    expect(getServerRuntimeEnv()).toBe(first);
+  });
   it("allows the demo runtime without server secrets", () => {
     expect(
       runtimeEnvSchema.parse({
@@ -21,6 +70,12 @@ describe("runtimeEnvSchema", () => {
         NODE_ENV: "production",
       }),
     ).toMatchObject({ APP_RUNTIME_MODE: "demo", AUTH_DEV_BYPASS: false });
+    expect(
+      runtimeEnvSchema.parse({
+        APP_RUNTIME_MODE: "demo",
+        AUTH_DEV_BYPASS: "false",
+      }).AUTH_DEV_BYPASS,
+    ).toBe(false);
   });
 
   it("requires an explicit supported runtime mode", () => {

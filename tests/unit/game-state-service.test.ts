@@ -105,6 +105,36 @@ function reverseObjectKeys(value: unknown): unknown {
 }
 
 describe("GameStateService", () => {
+  it("permits late state saves within 24 hours but never bootstraps a flush token", async () => {
+    const store = new MemoryStore();
+    const endedAt = new Date("2026-10-12T12:00:00Z");
+    store.scope!.sessionStatus = GameSessionStatus.ENDED;
+    store.scope!.sessionEndedAt = endedAt;
+    const service = new GameStateService(
+      store,
+      () => ({ valid: true, payload: { ...context, purpose: "flush" } }),
+      () => new Date(endedAt.getTime() + 60_000),
+    );
+    await expect(service.save("launch", saveRequest(0))).resolves.toMatchObject(
+      { type: "portal.save_ok.v1", revision: 1 },
+    );
+    await expect(
+      service.bootstrap("launch", "late-bootstrap"),
+    ).rejects.toMatchObject({ code: "SESSION_ENDED" });
+    store.scope!.sessionStatus = GameSessionStatus.ACTIVE;
+    await expect(
+      service.bootstrap("launch", "flush-only"),
+    ).rejects.toMatchObject({ code: "SESSION_ENDED" });
+    store.scope!.sessionStatus = GameSessionStatus.ENDED;
+    const expired = new GameStateService(
+      store,
+      () => ({ valid: true, payload: context }),
+      () => new Date(endedAt.getTime() + 24 * 60 * 60 * 1000),
+    );
+    await expect(expired.save("launch", saveRequest(1))).rejects.toMatchObject({
+      code: "SESSION_ENDED",
+    });
+  });
   it("bootstraps a new player, saves, and loads the state on a later bootstrap", async () => {
     const store = new MemoryStore();
     const service = new GameStateService(store, () => ({

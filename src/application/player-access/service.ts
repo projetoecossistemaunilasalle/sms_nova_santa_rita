@@ -1,4 +1,12 @@
-import { PlayerCredentialStatus, RecordStatus } from "@/generated/prisma/enums";
+import {
+  GameSessionStatus,
+  PlayerCredentialStatus,
+  RecordStatus,
+} from "@/generated/prisma/enums";
+import {
+  canFlushSession,
+  DEFAULT_OFFLINE_FLUSH_WINDOW_SECONDS,
+} from "./flush-policy";
 import {
   canAccessClass,
   canManageClasses,
@@ -28,6 +36,7 @@ export class PlayerAccessService {
     private readonly credentials: PlayerCredentialIssuer,
     private readonly cipher: PlayerCredentialCipher,
     private readonly now: () => Date = () => new Date(),
+    private readonly flushWindowSeconds = DEFAULT_OFFLINE_FLUSH_WINDOW_SECONDS,
   ) {}
 
   private async requireClassAccess(
@@ -145,10 +154,24 @@ export class PlayerAccessService {
           unavailablePlayerNumbers.push(slot.playerNumber);
           continue;
         }
+        let token: string;
+        try {
+          token = this.cipher.decrypt(stored.encryptedToken, stored.tokenHash);
+        } catch {
+          unavailablePlayerNumbers.push(slot.playerNumber);
+          continue;
+        }
+        if (this.cipher.needsReencryption?.(stored.encryptedToken)) {
+          await transaction.updateEncryptedCredential(
+            slot.id,
+            stored.tokenHash,
+            this.cipher.encrypt(token, stored.tokenHash),
+          );
+        }
         issuedCredentials.push({
           playerSlotId: slot.id,
           playerNumber: slot.playerNumber,
-          token: this.cipher.decrypt(stored.encryptedToken, stored.tokenHash),
+          token,
         });
       }
       return { issuedCredentials, unavailablePlayerNumbers };
@@ -214,5 +237,59 @@ export class PlayerAccessService {
         };
       },
     );
+  }
+
+  async renewEntry(
+    tokenHash: string,
+    playerSlotId: string,
+    gameSessionId: string,
+  ) {
+    return this.store.transaction(async (transaction) => {
+      const credential = await transaction.resolveCredential(tokenHash);
+      if (!credential || credential.slot.id !== playerSlotId)
+        return { state: "invalid" as const };
+      if (credential.status !== PlayerCredentialStatus.ACTIVE)
+        return { state: "revoked" as const };
+      if (
+        credential.slot.status !== RecordStatus.ACTIVE ||
+        credential.classGroup.status !== RecordStatus.ACTIVE ||
+        credential.classGroup.organizationStatus !== RecordStatus.ACTIVE
+      )
+        return { state: "inactive" as const };
+      // Renewal never creates participation or switches to the latest class session.
+      const existing = await transaction.getExistingParticipation(
+        gameSessionId,
+        playerSlotId,
+      );
+      if (
+        !existing ||
+        existing.session.classGroupId !== credential.slot.classGroupId ||
+        existing.participation.playerSlotId !== playerSlotId ||
+        existing.participation.gameSessionId !== gameSessionId
+      )
+        return { state: "invalid" as const };
+      if (
+        !canFlushSession(
+          existing.session.status,
+          existing.session.endedAt,
+          this.now(),
+          this.flushWindowSeconds,
+        )
+      )
+        return { state: "ended" as const };
+      return {
+        state: "ready" as const,
+        classGroupId: credential.slot.classGroupId,
+        credentialId: credential.id,
+        playerSlotId,
+        playerNumber: credential.slot.playerNumber,
+        gameSessionId,
+        participationId: existing.participation.id,
+        purpose:
+          existing.session.status === GameSessionStatus.ACTIVE
+            ? ("play" as const)
+            : ("flush" as const),
+      };
+    });
   }
 }

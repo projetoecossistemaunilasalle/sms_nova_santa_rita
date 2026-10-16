@@ -66,6 +66,39 @@ export const serverRuntimeEnvSchema = sharedRuntimeEnvSchema
     NEON_AUTH_BASE_URL: z.string().url(),
     NEON_AUTH_COOKIE_SECRET: z.string().min(32),
     APPLICATION_SECRET: z.string().min(32),
+    PLAYER_CREDENTIAL_KEY_ID: z
+      .string()
+      .regex(/^[A-Za-z0-9_-]{1,64}$/)
+      .default("default"),
+    PLAYER_CREDENTIAL_KEYS: z
+      .string()
+      .default("{}")
+      .transform((value, context) => {
+        try {
+          return z
+            .record(
+              z.string().regex(/^[A-Za-z0-9_-]{1,64}$/),
+              z.string().min(32),
+            )
+            .parse(JSON.parse(value));
+        } catch {
+          context.addIssue({
+            code: "custom",
+            message:
+              "Must be a JSON object of credential key IDs and secrets of at least 32 characters",
+          });
+          return z.NEVER;
+        }
+      }),
+    OFFLINE_FLUSH_WINDOW_SECONDS: z.coerce
+      .number()
+      .int()
+      .min(300)
+      .max(7 * 24 * 60 * 60)
+      .default(24 * 60 * 60),
+    RATE_LIMIT_CLIENT_IP_HEADER: z
+      .enum(["x-forwarded-for", "x-real-ip", "cf-connecting-ip"])
+      .optional(),
     ALLOWED_ORIGINS: commaSeparatedOrigins.default(["http://localhost:3000"]),
     LOG_LEVEL: z
       .enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"])
@@ -78,6 +111,17 @@ export const serverRuntimeEnvSchema = sharedRuntimeEnvSchema
       .default(2_000),
   })
   .superRefine((env, context) => {
+    if (
+      env.PLAYER_CREDENTIAL_KEY_ID !== "default" &&
+      !env.PLAYER_CREDENTIAL_KEYS[env.PLAYER_CREDENTIAL_KEY_ID]
+    ) {
+      context.addIssue({
+        code: "custom",
+        path: ["PLAYER_CREDENTIAL_KEY_ID"],
+        message:
+          "The active credential key must exist in PLAYER_CREDENTIAL_KEYS",
+      });
+    }
     if (env.NODE_ENV === "production" && env.AUTH_DEV_BYPASS) {
       context.addIssue({
         code: "custom",
@@ -97,6 +141,7 @@ export type RuntimeEnv = z.infer<typeof runtimeEnvSchema>;
 export type ServerRuntimeEnv = z.infer<typeof serverRuntimeEnvSchema>;
 
 let cachedEnv: RuntimeEnv | undefined;
+let cachedServerEnv: ServerRuntimeEnv | undefined;
 
 export function getRuntimeEnv(): RuntimeEnv {
   cachedEnv ??= runtimeEnvSchema.parse(process.env);
@@ -108,7 +153,7 @@ export function validateRuntimeEnv(): void {
 }
 
 export function getServerRuntimeEnv(): ServerRuntimeEnv {
-  return serverRuntimeEnvSchema.parse(process.env);
+  return (cachedServerEnv ??= serverRuntimeEnvSchema.parse(process.env));
 }
 
 /**

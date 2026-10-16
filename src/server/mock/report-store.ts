@@ -4,6 +4,10 @@ import type {
   PlayerReport,
 } from "@/application/game-events/ports";
 import type { DemoAdultPortalState } from "@/server/mock/seed-store";
+import {
+  reportPage,
+  type PlayerHistoryPage,
+} from "@/application/game-events/report-pagination";
 
 // No invented scores: reports reflect the current roster and participation.
 // Game ingestion is outside the portal mock's scope.
@@ -65,6 +69,7 @@ export class MockGameEventReportStore implements GameEventReportStore {
   async getPlayerReport(
     classGroupId: string,
     playerSlotId: string,
+    page: PlayerHistoryPage = {},
   ): Promise<PlayerReport | null> {
     const [report] = await this.listClassReports([classGroupId]);
     const player = report?.players.find(
@@ -96,6 +101,13 @@ export class MockGameEventReportStore implements GameEventReportStore {
             ]
           : [];
       });
+    participations.sort(
+      (a, b) =>
+        b.joinedAt.getTime() - a.joinedAt.getTime() ||
+        b.gameSessionId.localeCompare(a.gameSessionId),
+    );
+    const sessionPages = Math.max(1, participations.length);
+    const sessionPage = reportPage(page.sessionPage, sessionPages);
     return {
       classGroupId,
       className: report.className,
@@ -105,7 +117,8 @@ export class MockGameEventReportStore implements GameEventReportStore {
       participationCount: player.participationCount,
       totalActiveMs: player.totalActiveMs,
       resultCount: player.resultCount,
-      participations,
+      participations: participations.slice(sessionPage - 1, sessionPage),
+      history: { sessionPage, sessionPages, resultPage: 1, resultPages: 1 },
     };
   }
 }

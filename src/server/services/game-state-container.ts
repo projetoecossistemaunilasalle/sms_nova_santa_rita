@@ -6,7 +6,11 @@ import { getServerRuntimeEnv } from "@/server/config/env";
 import { verifyLaunchToken } from "@/server/security/launch-token";
 
 export function getGameStateService(): GameStateService {
-  return new GameStateService(new PrismaGameStateStore(), (token) =>
-    verifyLaunchToken(token, getServerRuntimeEnv().APPLICATION_SECRET),
+  return new GameStateService(
+    new PrismaGameStateStore(),
+    (token) =>
+      verifyLaunchToken(token, getServerRuntimeEnv().APPLICATION_SECRET),
+    () => new Date(),
+    getServerRuntimeEnv().OFFLINE_FLUSH_WINDOW_SECONDS,
   );
 }

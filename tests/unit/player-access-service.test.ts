@@ -87,6 +87,27 @@ class FakePlayerAccessStore
   participations: ParticipationDto[] = [];
   nextPlayerNumber = 1;
 
+  async getExistingParticipation(gameSessionId: string, playerSlotId: string) {
+    const session = this.sessions.find((item) => item.id === gameSessionId);
+    const participation = this.participations.find(
+      (item) =>
+        item.gameSessionId === gameSessionId &&
+        item.playerSlotId === playerSlotId,
+    );
+    return session && participation ? { session, participation } : null;
+  }
+
+  async updateEncryptedCredential(
+    playerSlotId: string,
+    tokenHash: string,
+    encryptedToken: string,
+  ) {
+    const credential = this.credentials.find(
+      (item) => item.slotId === playerSlotId && item.hash === tokenHash,
+    );
+    if (credential) credential.encryptedToken = encryptedToken;
+  }
+
   async transaction<T>(
     work: (transaction: PlayerAccessTransaction) => Promise<T>,
   ) {
@@ -279,6 +300,82 @@ function setup() {
 }
 
 describe("PlayerAccessService", () => {
+  it("renews the original ended participation without joining a newer session", async () => {
+    const { service, store } = setup();
+    await service.allocateSlots("teacher-a", classGroup.id, 1);
+    const oldSession = await service.startSession("teacher-a", classGroup.id);
+    const original = await service.resolveEntry("hash-1");
+    await service.endSession("teacher-a", classGroup.id);
+    await service.startSession("teacher-a", classGroup.id);
+    const count = store.participations.length;
+    await expect(
+      service.renewEntry("hash-1", "slot-1", oldSession.id),
+    ).resolves.toMatchObject({
+      state: "ready",
+      gameSessionId: oldSession.id,
+      purpose: "flush",
+      participationId:
+        original.state === "ready" ? original.participationId : "invalid",
+    });
+    expect(store.participations).toHaveLength(count);
+    await expect(
+      service.renewEntry("hash-1", "slot-1", "session-2"),
+    ).resolves.toEqual({ state: "invalid" });
+    await expect(
+      service.renewEntry("hash-1", "another-player", oldSession.id),
+    ).resolves.toEqual({ state: "invalid" });
+    store.credentials[0]!.status = PlayerCredentialStatus.REVOKED;
+    await expect(
+      service.renewEntry("hash-1", "slot-1", oldSession.id),
+    ).resolves.toEqual({ state: "revoked" });
+  });
+
+  it("rejects renewal at the 24-hour deadline and for inactive classes", async () => {
+    const { service, store } = setup();
+    await service.allocateSlots("teacher-a", classGroup.id, 1);
+    const session = await service.startSession("teacher-a", classGroup.id);
+    await service.resolveEntry("hash-1");
+    await service.endSession("teacher-a", classGroup.id);
+    const afterDeadline = new PlayerAccessService(
+      store,
+      new FakeCredentialIssuer(),
+      fakeCipher,
+      () => new Date(session.endedAt!.getTime() + 24 * 60 * 60 * 1000),
+    );
+    await expect(
+      afterDeadline.renewEntry("hash-1", "slot-1", session.id),
+    ).resolves.toEqual({ state: "ended" });
+    store.classes.set(classGroup.id, {
+      ...classGroup,
+      status: RecordStatus.INACTIVE,
+    });
+    await expect(
+      service.renewEntry("hash-1", "slot-1", session.id),
+    ).resolves.toEqual({ state: "inactive" });
+  });
+
+  it("re-encrypts readable historical credentials without changing cards or player identity", async () => {
+    const { service, store } = setup();
+    await service.allocateSlots("teacher-a", classGroup.id, 1);
+    const rotatingCipher = {
+      ...fakeCipher,
+      needsReencryption: () => true,
+      encrypt: (token: string) => `current:${token}`,
+    };
+    const currentService = new PlayerAccessService(
+      store,
+      new FakeCredentialIssuer(),
+      rotatingCipher,
+    );
+    const credentials = await currentService.getClassCredentials(
+      "teacher-a",
+      classGroup.id,
+    );
+    expect(credentials.issuedCredentials[0]?.token).toBe("token-1");
+    expect(store.credentials[0]?.encryptedToken).toBe("current:token-1");
+    expect(store.slots).toHaveLength(1);
+    expect(store.credentials[0]?.status).toBe(PlayerCredentialStatus.ACTIVE);
+  });
   it("reopens the same credentials across service instances without any mutation", async () => {
     const { service, store } = setup();
     const issued = await service.allocateSlots("teacher-a", classGroup.id, 2);

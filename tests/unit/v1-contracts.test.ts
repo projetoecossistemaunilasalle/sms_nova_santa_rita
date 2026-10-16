@@ -38,6 +38,14 @@ const jsonSchema = (name: SchemaName): object =>
   );
 
 const ajv = new Ajv2020({ allErrors: true, strict: false });
+ajv.addFormat("uuid", {
+  type: "string",
+  validate: (value: string) => z.uuid().safeParse(value).success,
+});
+ajv.addFormat("ulid", {
+  type: "string",
+  validate: (value: string) => z.ulid().safeParse(value).success,
+});
 ajv.addKeyword({
   keyword: "x-uniqueBy",
   schemaType: ["string", "array"],

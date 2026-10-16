@@ -12,6 +12,8 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
+vi.mock("next/headers", () => ({ headers: async () => new Headers() }));
+vi.mock("@/server/security/rate-limit", () => ({ enforceRateLimit: vi.fn() }));
 vi.mock("@/server/auth/gateway", () => ({
   getAuthGateway: () => ({ getSession: mocks.getSession }),
 }));

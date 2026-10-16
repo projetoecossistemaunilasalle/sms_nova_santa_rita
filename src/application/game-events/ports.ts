@@ -1,4 +1,5 @@
 import type { ActiveTimeBatchV1, ResultEventV1 } from "@/contracts/v1";
+import type { PlayerHistoryPage } from "./report-pagination";
 import type {
   GameSessionStatus,
   PlayerCredentialStatus,
@@ -12,6 +13,7 @@ export type EventLaunchScope = LaunchTokenContext & {
   classStatus: RecordStatus;
   organizationStatus: RecordStatus;
   sessionStatus: GameSessionStatus;
+  sessionEndedAt?: Date | null;
 };
 
 export interface GameEventTransaction {
@@ -73,6 +75,12 @@ export type PlayerParticipationReport = {
 };
 
 export type PlayerReport = {
+  history: {
+    sessionPage: number;
+    sessionPages: number;
+    resultPage: number;
+    resultPages: number;
+  };
   classGroupId: string;
   className: string;
   playerSlotId: string;
@@ -89,6 +97,7 @@ export interface GameEventReportReader {
   getPlayerReport(
     classGroupId: string,
     playerSlotId: string,
+    page?: PlayerHistoryPage,
   ): Promise<PlayerReport | null>;
 }
 

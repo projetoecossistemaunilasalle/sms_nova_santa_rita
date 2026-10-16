@@ -39,7 +39,9 @@ class PrismaGameStateTransaction implements GameStateTransaction {
       select: {
         playerSlotId: true,
         gameSessionId: true,
-        gameSession: { select: { classGroupId: true, status: true } },
+        gameSession: {
+          select: { classGroupId: true, status: true, endedAt: true },
+        },
         playerSlot: {
           select: {
             status: true,
@@ -77,6 +79,7 @@ class PrismaGameStateTransaction implements GameStateTransaction {
       organizationStatus:
         participation.playerSlot.classGroup.organization.status,
       sessionStatus: participation.gameSession.status,
+      sessionEndedAt: participation.gameSession.endedAt,
     };
   }
 

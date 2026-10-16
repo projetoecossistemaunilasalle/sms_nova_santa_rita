@@ -12,40 +12,34 @@ import {
   safeParsePlayerBootstrapV1,
   stateSaveConflictV1Schema,
   stateSaveSuccessV1Schema,
-  type ActiveTimeBatchV1,
-  type ResultEventV1,
   type PlayerBootstrapV1,
   type ProtocolErrorV1,
   type StateSaveConflictV1,
   type StateSaveRequestV1,
 } from "@/contracts/v1";
 import type { PlayerEntryActionResult } from "@/application/player-access/types";
-import { resolvePlayerEntryAction } from "@/runtime/actions";
 import type { RuntimeMode } from "@/runtime/mode";
-import { OfflineSessionMismatchError } from "@/runtime/offline/errors";
+import {
+  OfflineBranchChangedError,
+  OfflineSessionMismatchError,
+} from "@/runtime/offline/errors";
 import {
   openGameOfflineStore,
   type GameOfflineStore,
 } from "@/runtime/offline/sync-engine";
-import type { GameOfflineTransport } from "@/runtime/offline/types";
+import { GameSyncRetryScheduler } from "@/runtime/offline/network";
+import { createGameOfflineTransport } from "./game-offline-transport";
 import {
   createBridgeRequestId,
   expectedGameOrigin,
   isTrustedGameMessage,
   parseGameBridgeMessage,
 } from "./game-bridge";
-import {
-  hasUsableLaunchToken,
-  LAUNCH_TOKEN_RENEWAL_LEAD_MS,
-  retryAfterUnauthorized,
-} from "./game-host-token";
 import { readDemoGameSnapshot, saveDemoGameState } from "./demo-game-state";
 import {
   applyProgressToBootstrap,
   demoStorageKey,
-  errorMessageForEntry,
   newBootstrap,
-  readResponseJson,
   type HostAlert,
   type HostPhase,
   type HostSyncState,
@@ -73,16 +67,17 @@ export function GameHost({
   gameClientUrl: string | null;
 }) {
   const frameRef = useRef<HTMLIFrameElement | null>(null);
-  const launchRef = useRef({
-    token: entry.launchToken,
-    expiresAt: Date.parse(entry.expiresAt),
-  });
+  const transportRef = useRef<ReturnType<
+    typeof createGameOfflineTransport
+  > | null>(null);
+  const retryScheduler = useRef<GameSyncRetryScheduler | null>(null);
   const bootstrapStarted = useRef(false);
   const bootstrapRef = useRef<PlayerBootstrapV1 | null>(null);
   const inFlightSaves = useRef(new Set<string>());
   const savedReplies = useRef(new Map<string, unknown>());
   const handledConflicts = useRef(new Set<string>());
   const pendingConflict = useRef<string | null>(null);
+  const branchReady = useRef(false);
   const offlineStorePromise = useRef<Promise<GameOfflineStore> | null>(null);
   const syncPromise = useRef<Promise<void> | null>(null);
   const syncRequested = useRef(false);
@@ -94,6 +89,9 @@ export function GameHost({
   const [lastHostMessage, setLastHostMessage] = useState<unknown>(null);
   const [syncState, setSyncState] = useState<HostSyncState>("pending");
   const [queuedCount, setQueuedCount] = useState(0);
+  const [recoveryRequest, setRecoveryRequest] = useState<string | null>(null);
+  const [reloadRequired, setReloadRequired] = useState(false);
+  const [recovering, setRecovering] = useState(false);
 
   const gameOrigin = gameClientUrl ? expectedGameOrigin(gameClientUrl) : null;
 
@@ -122,53 +120,12 @@ export function GameHost({
     target.postMessage(message, gameOrigin);
   }
 
-  async function validLaunchToken(
-    forceRefresh = false,
-    allowNearExpiry = false,
-  ): Promise<string> {
-    const current = launchRef.current;
-    if (
-      !forceRefresh &&
-      hasUsableLaunchToken(
-        current.expiresAt,
-        Date.now(),
-        allowNearExpiry ? 0 : LAUNCH_TOKEN_RENEWAL_LEAD_MS,
-      )
-    ) {
-      return current.token;
-    }
-
-    const refreshed = await resolvePlayerEntryAction(credential);
-    if (refreshed.state !== "ready") {
-      throw new Error(errorMessageForEntry(refreshed));
-    }
-
-    launchRef.current = {
-      token: refreshed.launchToken,
-      expiresAt: Date.parse(refreshed.expiresAt),
-    };
-    return refreshed.launchToken;
-  }
-
-  async function postWithFreshBearer(
-    path: string,
-    body: unknown,
-    allowNearExpiry = false,
-  ): Promise<Response> {
-    const token = await validLaunchToken(false, allowNearExpiry);
-    const send = (accessToken: string) =>
-      fetch(path, {
-        method: "POST",
-        cache: "no-store",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
-
-    const response = await send(token);
-    return retryAfterUnauthorized(response, send, () => validLaunchToken(true));
+  function getTransport() {
+    return (transportRef.current ??= createGameOfflineTransport(
+      credential,
+      entry.playerSlotId,
+      entry,
+    ));
   }
 
   function getOfflineStore(): Promise<GameOfflineStore> {
@@ -177,6 +134,7 @@ export function GameHost({
   }
 
   function installBootstrap(value: PlayerBootstrapV1) {
+    branchReady.current = false;
     bootstrapRef.current = value;
     setBootstrap(value);
     setPhase("applying");
@@ -190,6 +148,7 @@ export function GameHost({
   }
 
   function deliverConflict(conflict: StateSaveConflictV1) {
+    branchReady.current = false;
     if (handledConflicts.current.has(conflict.request_id)) return;
     handledConflicts.current.add(conflict.request_id);
     pendingConflict.current = conflict.request_id;
@@ -228,6 +187,7 @@ export function GameHost({
         setQueuedCount(pendingBefore);
 
         if (!navigator.onLine) {
+          retryScheduler.current?.reset();
           setSyncState(statusBefore.stateBlocked ? "blocked" : "pending");
           if (pendingBefore > 0) {
             setAlert({
@@ -239,24 +199,7 @@ export function GameHost({
           return;
         }
 
-        const transport: GameOfflineTransport = {
-          saveState: async (request) =>
-            readResponseJson(
-              await postWithFreshBearer("/api/v1/player/state", request),
-            ),
-          uploadResult: async (event: ResultEventV1) =>
-            readResponseJson(
-              await postWithFreshBearer("/api/v1/player/results", event, true),
-            ),
-          uploadActiveTime: async (batch: ActiveTimeBatchV1) =>
-            readResponseJson(
-              await postWithFreshBearer(
-                "/api/v1/player/active-time",
-                batch,
-                true,
-              ),
-            ),
-        };
+        const transport = getTransport().forSession(entry.gameSessionId);
 
         const report = await store.sync(
           entry.playerSlotId,
@@ -267,6 +210,16 @@ export function GameHost({
           entry.gameSessionId,
         );
         if (report.conflict) deliverConflict(report.conflict);
+        if (report.rejection) {
+          branchReady.current = false;
+          setRecoveryRequest(report.rejection.requestId);
+          setPhase("error");
+          setAlert({
+            tone: "warning",
+            message:
+              "O servidor recusou o progresso desta sessão. Peça ajuda ao professor: é possível preservar uma cópia local e carregar o progresso do servidor, sem enviar os registros antigos em outra sessão.",
+          });
+        }
 
         for (const acknowledgement of report.stateAcknowledgements) {
           replyToRequest(acknowledgement.request_id, acknowledgement);
@@ -309,12 +262,17 @@ export function GameHost({
             ? "blocked"
             : report.state,
         );
+        if (report.retryable && pendingAfter > 0)
+          retryScheduler.current?.schedule();
+        else retryScheduler.current?.reset();
 
         if (report.state === "pending" && pendingAfter > 0) {
           setAlert({
             tone: "warning",
             message:
-              "Alguns registros estão guardados neste dispositivo e serão enviados quando a conexão voltar.",
+              report.retryable === false && report.failedStream
+                ? "O acesso desta sessão terminou ou foi recusado. Os registros continuam guardados neste dispositivo; peça ajuda ao professor."
+                : "Alguns registros estão guardados neste dispositivo e serão enviados quando a conexão voltar.",
           });
         } else if (report.state === "synced") {
           setAlert(null);
@@ -410,22 +368,34 @@ export function GameHost({
     const bootstrapGeneration = await store.reserveBootstrapGeneration(
       entry.playerSlotId,
     );
-    const requestId = createBridgeRequestId();
-    const response = await postWithFreshBearer("/api/v1/player/bootstrap", {
-      request_id: requestId,
-    });
-    const payload = await readResponseJson(response);
-    const result = safeParsePlayerBootstrapV1(payload);
-
-    if (!response.ok || !result.success) {
-      if (response.status === 401) {
+    const cached = await store.getBootstrap(entry.playerSlotId);
+    if (cached) {
+      const report = await store.sync(
+        entry.playerSlotId,
+        getTransport().forSession(cached.class_session_id),
+      );
+      const status = await store.getSyncStatus(entry.playerSlotId);
+      if (report.rejection || report.conflict || status.queuedStates > 0) {
+        setRecoveryRequest(
+          report.rejection?.requestId ?? report.conflict?.request_id ?? null,
+        );
+        setReloadRequired(!report.rejection && !report.conflict);
         throw new Error(
-          "O acesso temporário terminou. Escaneie o QR novamente.",
+          "Há progresso local pendente. Sincronize novamente ou, se o servidor recusou os registros, preserve uma cópia local antes de carregar o progresso do servidor.",
         );
       }
-      if (response.status === 409) {
-        throw new Error("A sessão da turma não está mais ativa.");
-      }
+    }
+    const requestId = createBridgeRequestId();
+    const payload = await getTransport().post(
+      "/api/v1/player/bootstrap",
+      {
+        request_id: requestId,
+      },
+      entry.gameSessionId,
+    );
+    const result = safeParsePlayerBootstrapV1(payload);
+
+    if (!result.success) {
       throw new Error("Não foi possível carregar o progresso do jogador.");
     }
 
@@ -436,11 +406,14 @@ export function GameHost({
       throw new Error("O contexto recebido não corresponde a este jogador.");
     }
 
-    const cached = await store.cacheBootstrap(result.data, bootstrapGeneration);
-    if (!cached || cached.class_session_id !== entry.gameSessionId) {
+    const accepted = await store.cacheBootstrap(
+      result.data,
+      bootstrapGeneration,
+    );
+    if (!accepted || accepted.class_session_id !== entry.gameSessionId) {
       throw new OfflineSessionMismatchError();
     }
-    installBootstrap(cached);
+    installBootstrap(accepted);
     void synchronizeQueue();
   }
 
@@ -558,13 +531,19 @@ export function GameHost({
       });
       await synchronizeQueue();
     } catch (error) {
+      if (error instanceof OfflineBranchChangedError) {
+        branchReady.current = false;
+        setReloadRequired(true);
+      }
       setPhase("error");
       setAlert({
         tone: "error",
         message:
-          error instanceof OfflineSessionMismatchError
-            ? "A sessão mudou. Escaneie o QR atual para continuar com segurança."
-            : "Não foi possível guardar o progresso neste navegador. O jogo não confirmou este passo e pode tentar novamente.",
+          error instanceof OfflineBranchChangedError
+            ? "Outra janela assumiu este jogador. Carregue o progresso atual antes de continuar; este passo não foi confirmado."
+            : error instanceof OfflineSessionMismatchError
+              ? "A sessão mudou. Escaneie o QR atual para continuar com segurança."
+              : "Não foi possível guardar o progresso neste navegador. O jogo não confirmou este passo e pode tentar novamente.",
       });
     }
   }
@@ -630,13 +609,12 @@ export function GameHost({
         pendingConflict.current = null;
         void getOfflineStore()
           .then(async (store) => {
-            await store.discardConflictedStateBranch(entry.playerSlotId);
-            const authoritative = await store.getBootstrap(entry.playerSlotId);
-            if (authoritative) updateCurrentBootstrap(authoritative);
-            setPhase("playing");
-            setSyncState("pending");
-            setAlert(null);
-            await synchronizeQueue();
+            await store.discardConflictedStateBranch(
+              entry.playerSlotId,
+              message.request_id,
+            );
+            bootstrapStarted.current = false;
+            await beginBootstrap();
           })
           .catch(() => {
             pendingConflict.current = message.request_id;
@@ -649,12 +627,14 @@ export function GameHost({
         return;
       }
       if (message.request_id !== bootstrapRef.current?.request_id) return;
+      branchReady.current = true;
       setPhase("playing");
       setAlert(null);
       return;
     }
 
     if (message.type === "game.save.v1") {
+      if (!branchReady.current) return;
       const saved = savedReplies.current.get(message.request_id);
       if (saved) {
         postToGame(saved);
@@ -711,6 +691,10 @@ export function GameHost({
   useEffect(() => {
     if (runtimeMode !== "server" || !gameOrigin) return;
     const targetOrigin = gameOrigin;
+    const scheduler = new GameSyncRetryScheduler(() =>
+      synchronizeRef.current(),
+    );
+    retryScheduler.current = scheduler;
 
     function onWindowMessage(event: MessageEvent) {
       const frameWindow = frameRef.current?.contentWindow ?? null;
@@ -731,6 +715,7 @@ export function GameHost({
     }
 
     function reconnectAndSync() {
+      scheduler.reset();
       sendVisibility();
       synchronizeRef.current();
     }
@@ -743,6 +728,8 @@ export function GameHost({
     document.addEventListener("visibilitychange", sendVisibility);
 
     return () => {
+      scheduler.reset();
+      retryScheduler.current = null;
       window.removeEventListener("message", onWindowMessage);
       window.removeEventListener("focus", sendVisibility);
       window.removeEventListener("blur", sendVisibility);
@@ -767,11 +754,43 @@ export function GameHost({
   }, [phase, runtimeMode]);
 
   function handleFrameLoad() {
+    branchReady.current = false;
+    savedReplies.current.clear();
     bootstrapStarted.current = false;
     setBootstrap(null);
     bootstrapRef.current = null;
     setPhase("waiting");
     setAlert(null);
+  }
+
+  async function recoverState() {
+    if (recovering) return;
+    setRecovering(true);
+    branchReady.current = false;
+    try {
+      await syncPromise.current;
+      if (recoveryRequest) {
+        const store = await getOfflineStore();
+        await store.discardConflictedStateBranch(
+          entry.playerSlotId,
+          recoveryRequest,
+        );
+      }
+      setRecoveryRequest(null);
+      setReloadRequired(false);
+      savedReplies.current.clear();
+      pendingConflict.current = null;
+      bootstrapStarted.current = false;
+      await beginBootstrap();
+    } catch {
+      setAlert({
+        tone: "error",
+        message:
+          "Não foi possível recuperar a fila. Os registros foram preservados; tente novamente com conexão.",
+      });
+    } finally {
+      setRecovering(false);
+    }
   }
 
   return (
@@ -782,6 +801,20 @@ export function GameHost({
         runtimeMode={runtimeMode}
       />
       {alert && <GameHostAlert alert={alert} />}
+      {(recoveryRequest || reloadRequired) && (
+        <button
+          type="button"
+          className={styles.retryButton}
+          disabled={recovering}
+          onClick={() => void recoverState()}
+        >
+          {recovering
+            ? "Carregando progresso..."
+            : recoveryRequest
+              ? "Preservar cópia local e carregar do servidor"
+              : "Carregar progresso atual"}
+        </button>
+      )}
       <GameHostFrame
         bootstrap={bootstrap}
         frameRef={frameRef}

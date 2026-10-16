@@ -8,6 +8,7 @@ import { IDBFactory } from "fake-indexeddb";
 import {
   OfflineRequestReuseError,
   OfflineSessionMismatchError,
+  OfflineBranchChangedError,
 } from "@/runtime/offline/errors";
 import {
   IndexedDbGameOfflinePersistence,
@@ -24,6 +25,7 @@ import type {
   QueuedEvent,
   QueuedResult,
   QueuedStateSave,
+  StateRejection,
 } from "@/runtime/offline/types";
 import type {
   ActiveTimeSubmissionV1,
@@ -54,6 +56,7 @@ class MemoryOfflinePersistence implements GameOfflinePersistence {
     { fingerprint: string; clientEventId: string }
   >();
   private conflicts = new Map<string, StateSaveConflictV1>();
+  private rejections = new Map<string, StateRejection>();
 
   async getBootstrap(playerId: string) {
     return this.bootstraps.get(playerId) ?? null;
@@ -115,6 +118,7 @@ class MemoryOfflinePersistence implements GameOfflinePersistence {
     const queued: QueuedStateSave = {
       id: this.nextSequence++,
       playerId,
+      classSessionId: bootstrap.class_session_id,
       requestId: request.request_id,
       queuedAt: 1,
       request: {
@@ -176,9 +180,17 @@ class MemoryOfflinePersistence implements GameOfflinePersistence {
     return this.conflicts.get(playerId) ?? null;
   }
 
+  async getStateRejection(playerId: string) {
+    return this.rejections.get(playerId) ?? null;
+  }
+  async rejectStateBranch(playerId: string, rejection: StateRejection) {
+    this.rejections.set(playerId, rejection);
+  }
+
   async discardStateBranch(playerId: string) {
     this.states = this.states.filter((item) => item.playerId !== playerId);
     this.conflicts.delete(playerId);
+    this.rejections.delete(playerId);
   }
 
   async enqueueResult(
@@ -739,6 +751,143 @@ describe("GameOfflineStore", () => {
 });
 
 describe("offline persistence lifecycle (IndexedDB)", () => {
+  it("fences a stale game instance instead of upgrading its revision", async () => {
+    const factory = new IDBFactory();
+    const first = await openGameOfflineStore({ indexedDB: factory });
+    const second = await openGameOfflineStore({ indexedDB: factory });
+    const bootstrap = fixture<PlayerBootstrapV1>(
+      "returning-player-bootstrap.json",
+    );
+    const request = fixture<StateSaveRequestV1>("state-save-request.json");
+    try {
+      await first.cacheBootstrap(bootstrap);
+      await second.cacheBootstrap({
+        ...bootstrap,
+        request_id: "tab-b-bootstrap",
+        revision: 43,
+      });
+      await expect(
+        first.enqueueState(bootstrap.player_id, {
+          ...request,
+          request_id: "tab-a",
+        }),
+      ).rejects.toBeInstanceOf(OfflineBranchChangedError);
+      await second.enqueueState(bootstrap.player_id, {
+        ...request,
+        expected_revision: 43,
+        request_id: "tab-b",
+      });
+      const revisions: number[] = [];
+      await first.sync(bootstrap.player_id, {
+        saveState: async (queued) => {
+          revisions.push(queued.expected_revision);
+          return {
+            type: "portal.save_ok.v1",
+            request_id: queued.request_id,
+            revision: queued.expected_revision + 1,
+          };
+        },
+        uploadResult: async () => {
+          throw new Error("unused");
+        },
+        uploadActiveTime: async () => {
+          throw new Error("unused");
+        },
+      });
+      expect(revisions).toEqual([43]);
+    } finally {
+      first.close();
+      second.close();
+    }
+  });
+
+  it("preserves discarded state in a local backup and does not overwrite it on a repeated acknowledgement", async () => {
+    const factory = new IDBFactory();
+    const store = await openGameOfflineStore({ indexedDB: factory });
+    const bootstrap = fixture<PlayerBootstrapV1>(
+      "returning-player-bootstrap.json",
+    );
+    const request = fixture<StateSaveRequestV1>("state-save-request.json");
+    await store.cacheBootstrap(bootstrap);
+    await store.enqueueState(bootstrap.player_id, request);
+    await store.discardConflictedStateBranch(bootstrap.player_id);
+    await store.discardConflictedStateBranch(bootstrap.player_id);
+    expect((await store.getSyncStatus(bootstrap.player_id)).queuedStates).toBe(
+      0,
+    );
+    store.close();
+    const database = await openDatabase(factory);
+    try {
+      const backup = await new Promise<{ states: QueuedStateSave[] }>(
+        (resolve, reject) => {
+          const read = database
+            .transaction("stateBackups")
+            .objectStore("stateBackups")
+            .get(bootstrap.player_id);
+          read.onsuccess = () => resolve(read.result);
+          read.onerror = () => reject(read.error);
+        },
+      );
+      expect(backup.states).toHaveLength(1);
+      expect(backup.states[0]?.request.state).toEqual(request.state);
+      expect(backup.states[0]?.classSessionId).toBe(bootstrap.class_session_id);
+    } finally {
+      database.close();
+    }
+  });
+
+  it("migrates V3 saves without losing their original session association", async () => {
+    const factory = new IDBFactory();
+    const bootstrap = fixture<PlayerBootstrapV1>(
+      "returning-player-bootstrap.json",
+    );
+    const request = fixture<StateSaveRequestV1>("state-save-request.json");
+    const legacy = await new Promise<IDBDatabase>((resolve, reject) => {
+      const open = factory.open("missoes-caramelito-game-v1", 3);
+      open.onupgradeneeded = () => {
+        open.result.createObjectStore("bootstraps", { keyPath: "playerId" });
+        const states = open.result.createObjectStore("stateQueue", {
+          keyPath: "id",
+          autoIncrement: true,
+        });
+        states.createIndex("byPlayer", "playerId");
+        states.createIndex("byPlayerRequest", ["playerId", "requestId"], {
+          unique: true,
+        });
+      };
+      open.onsuccess = () => resolve(open.result);
+      open.onerror = () => reject(open.error);
+    });
+    await new Promise<void>((resolve, reject) => {
+      const write = legacy.transaction(
+        ["bootstraps", "stateQueue"],
+        "readwrite",
+      );
+      write
+        .objectStore("bootstraps")
+        .put({ playerId: bootstrap.player_id, bootstrap });
+      write.objectStore("stateQueue").put({
+        playerId: bootstrap.player_id,
+        requestId: request.request_id,
+        request,
+        queuedAt: 1,
+      });
+      write.oncomplete = () => resolve();
+      write.onerror = () => reject(write.error);
+    });
+    legacy.close();
+    const database = await openDatabase(factory);
+    try {
+      const states = await new IndexedDbGameOfflinePersistence(
+        database,
+      ).listStates(bootstrap.player_id);
+      expect(states).toHaveLength(1);
+      expect(states[0]?.classSessionId).toBe(bootstrap.class_session_id);
+      expect(states[0]?.request).toEqual(request);
+    } finally {
+      database.close();
+    }
+  });
   it("persists a queued state save across close and reopen through the production store", async () => {
     const bootstrap = fixture<PlayerBootstrapV1>(
       "returning-player-bootstrap.json",

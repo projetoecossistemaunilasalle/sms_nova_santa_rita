@@ -96,6 +96,11 @@ against the current catalog, complete-status/reward agreement, authored dialogue
 bounds, reward-ledger validity, and totals derived from rewards remain GameMaker-owned
 semantic checks performed before export and during atomic apply.
 
+JSON Schema validators must register both `uuid` and `ulid` string formats. Ajv 8
+does not supply these formats by default; `ajv-formats` supplies UUID but ULID needs
+a custom format validator. Do not disable format validation to suppress warnings.
+The contract tests register both formats, in addition to the generated patterns.
+
 ## Frozen V1 naming
 
 The checked-in ready, acknowledgement, local-durability, and typed-error field names

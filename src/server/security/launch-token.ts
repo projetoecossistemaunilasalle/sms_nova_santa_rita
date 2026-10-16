@@ -7,6 +7,7 @@ export type LaunchTokenContext = {
   participationId: string;
   playerSlotId: string;
   gameSessionId: string;
+  purpose?: "play" | "flush";
 };
 
 export type LaunchTokenPayload = LaunchTokenContext & {
@@ -82,6 +83,9 @@ function isLaunchTokenPayload(value: unknown): value is LaunchTokenPayload {
     typeof payload.exp === "number" &&
     Number.isInteger(payload.exp) &&
     payload.exp - payload.iat === LAUNCH_TOKEN_TTL_SECONDS &&
+    (payload.purpose === undefined ||
+      payload.purpose === "play" ||
+      payload.purpose === "flush") &&
     typeof payload.participationId === "string" &&
     payload.participationId.length > 0 &&
     typeof payload.credentialId === "string" &&
