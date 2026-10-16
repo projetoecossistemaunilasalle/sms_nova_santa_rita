@@ -1,17 +1,22 @@
 {
   "schemaVersion": 1,
-  "buildId": "df713698d0de019892371d41",
+  "buildId": "78ad3922e8801c6713eca627",
   "manifestVersion": "4.0.0-real",
   "shell": [
+    {
+      "path": "assets/game-BEIZ7dke.js",
+      "bytes": 1914811,
+      "sha256": "25167d331e7fb6a1dfac59b90ffe97f0b2f6e8659de8607c787841ecd2ac3970"
+    },
     {
       "path": "assets/game-B_Vxqlxd.css",
       "bytes": 6015,
       "sha256": "5a4448d6dacc1143c65451e1b21750c2181bb2a95dc9c29ec2707e1e6b6647bd"
     },
     {
-      "path": "assets/game-DiXP-xcp.js",
-      "bytes": 1913579,
-      "sha256": "c57f96dbdebfdbcc97c54cb349ff316141a480efbd60d44b9d5e0fa2500df341"
+      "path": "assets/loading-art-BcMeO0DY.webp",
+      "bytes": 238838,
+      "sha256": "ac15185497d7157e2e7b46e583cb220102026bf9651f60422a184722767cc01f"
     },
     {
       "path": "assets/manifest.generated.json",
@@ -135,13 +140,13 @@
     },
     {
       "path": "index.html",
-      "bytes": 16082,
-      "sha256": "99e1c667ff57793642260d045078a48beb10600e6a9f90da266ae5da4616f5d4"
+      "bytes": 17139,
+      "sha256": "37d938d8afa9ab617dcc5cc6f7e7cd2f7b350c17b81b4689195f256f462b7e1c"
     },
     {
       "path": "pages-source.json",
       "bytes": 271,
-      "sha256": "12f412f21f51989377dfb2724638a6e91ed31efda7a481d965f9cde18885af84"
+      "sha256": "6f4d6bb50aaefbbbc20f7b56b242a1bf5c01cee1b153a02babcf3ab5ee06cf66"
     }
   ],
   "content": [

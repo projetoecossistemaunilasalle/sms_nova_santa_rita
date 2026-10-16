@@ -2,7 +2,7 @@
     "engine":  "phaser",
     "sourceDirty":  false,
     "base":  "./",
-    "sourceCommit":  "5089645237051b05ba4d9e3a5499eefbfb9e6026",
+    "sourceCommit":  "f5ef7dc8ef1d624b81576053da128fd592f77f25",
     "integration":  "catalog-local-v3",
     "schemaVersion":  1,
     "sourceRepository":  "VictorCardosoPDev/Heroes_Trial"
