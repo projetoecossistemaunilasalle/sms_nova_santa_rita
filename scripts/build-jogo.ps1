@@ -30,6 +30,8 @@ try {
     [IO.File]::WriteAllText((Join-Path $game 'dist\pages-source.json'), $identity + "`n", [Text.UTF8Encoding]::new($false))
     & node tools/build-offline-shell.mjs
     if ($LASTEXITCODE -ne 0) { throw 'Build offline do jogo falhou.' }
+    & node (Join-Path $PSScriptRoot 'prune-jogo-dist.mjs') (Join-Path $game 'dist')
+    if ($LASTEXITCODE -ne 0) { throw 'Limpeza do bundle do jogo falhou.' }
 } finally {
     Pop-Location
     $env:WEB_BUILD_DIR = $previousBuildDirectory

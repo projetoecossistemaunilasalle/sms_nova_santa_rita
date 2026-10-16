@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "buildId": "2a0bd202a9f64d2e765a00ea",
+  "buildId": "df713698d0de019892371d41",
   "manifestVersion": "4.0.0-real",
   "shell": [
     {
@@ -9,14 +9,14 @@
       "sha256": "5a4448d6dacc1143c65451e1b21750c2181bb2a95dc9c29ec2707e1e6b6647bd"
     },
     {
-      "path": "assets/game-D7rhO-4s.js",
-      "bytes": 1789864,
-      "sha256": "58fc2344ed78bf7384348a785f3fa4c2416414a950288a53e37de77e879fbbcd"
+      "path": "assets/game-DiXP-xcp.js",
+      "bytes": 1913579,
+      "sha256": "c57f96dbdebfdbcc97c54cb349ff316141a480efbd60d44b9d5e0fa2500df341"
     },
     {
       "path": "assets/manifest.generated.json",
-      "bytes": 175016,
-      "sha256": "43feb1b87f68f9fab00885a9c83f500f28d145a0c1ddf9b555e1200308c422e9"
+      "bytes": 315800,
+      "sha256": "02aa0660c72df8bb3deb926c10c976c824add7ebc3687e7da05331e9d20f5ccc"
     },
     {
       "path": "assets/ui/buttons/cafeteria.webp",
@@ -25,8 +25,8 @@
     },
     {
       "path": "assets/ui/buttons/classroom.webp",
-      "bytes": 15948,
-      "sha256": "8a20347bedfd387f850750a0a50c351a46a47c205f882e147a0ab62b6fd6c512"
+      "bytes": 15028,
+      "sha256": "b8d4e78e2dee06951a7313f4bb35e3a6fefdb3307b8ff89459745faf96a498a3"
     },
     {
       "path": "assets/ui/buttons/close.webp",
@@ -70,8 +70,8 @@
     },
     {
       "path": "assets/ui/buttons/laboratory.webp",
-      "bytes": 11520,
-      "sha256": "23af268ad52c5413d18ee02a0f73530cf1331cc15ff4903874b1ec1d29eeaa78"
+      "bytes": 16356,
+      "sha256": "058df3122595863ef0954ce795dc743e8374bd510231374d6cb54ca2f2105861"
     },
     {
       "path": "assets/ui/buttons/muted.webp",
@@ -135,13 +135,13 @@
     },
     {
       "path": "index.html",
-      "bytes": 15150,
-      "sha256": "f27393f6ea9a3f23495f165602422d5533717e7a4e28f72579711cea8b457a5a"
+      "bytes": 16082,
+      "sha256": "99e1c667ff57793642260d045078a48beb10600e6a9f90da266ae5da4616f5d4"
     },
     {
       "path": "pages-source.json",
       "bytes": 271,
-      "sha256": "f1d043e3126f26b01766be68d3748787c1c344fee104c411befff82312c602e0"
+      "sha256": "12f412f21f51989377dfb2724638a6e91ed31efda7a481d965f9cde18885af84"
     }
   ],
   "content": [
@@ -424,8 +424,8 @@
     {
       "key": "cutscene/patio",
       "path": "assets/world/school.webp",
-      "bytes": 94148,
-      "sha256": "99478a1e3784fcfff9982f63f6fe362917749c61c5c4f4586302782bd0165ef7"
+      "bytes": 172450,
+      "sha256": "0c21f242849f2cb5cc8708e8228b42b2cdde9b19140c8169ee32d869704ce2d2"
     },
     {
       "key": "cutscene/scene_patio_lia1",
@@ -484,8 +484,8 @@
     {
       "key": "smile-kit/child",
       "path": "assets/dental-world/spr_npc_kit_sorriso.webp",
-      "bytes": 93308,
-      "sha256": "de887861c9a397aadc9cb4257ddebec2dcdb4975e438cbcf3a98ba8b00820898"
+      "bytes": 75410,
+      "sha256": "9ec755d5149faa60e52396fe10926e5ed85e74fac4440066ad448ddc62a17996"
     },
     {
       "key": "ui/reward_bone",
@@ -500,418 +500,1372 @@
       "sha256": "25806fe05e21c4a624f05b204871120f1056bc315edfb947913a5528aabb142b"
     },
     {
+      "key": "voice/brushing.complete.child.remember",
+      "path": "assets/audio/brushing.complete.child.remember.ogg",
+      "bytes": 24553,
+      "sha256": "1443f5bb36657d89be3b2e2937702f051fa5563f2bde3e9a279680c24a2a5964"
+    },
+    {
+      "key": "voice/brushing.intro.caramelito.together",
+      "path": "assets/audio/brushing.intro.caramelito.together.ogg",
+      "bytes": 14478,
+      "sha256": "778d0ea05ffe0eab4f226abe0e44801f8ed9d54e93516a5d8e872b54a6447abc"
+    },
+    {
+      "key": "voice/brushing.intro.child.help",
+      "path": "assets/audio/brushing.intro.child.help.ogg",
+      "bytes": 15993,
+      "sha256": "87057ced261a0db4ba4d8e7f8ab41c978b4f1d8365da535804e20205c1dec4bb"
+    },
+    {
+      "key": "voice/brushing.intro.child.learning",
+      "path": "assets/audio/brushing.intro.child.learning.ogg",
+      "bytes": 26648,
+      "sha256": "80dde4a32c2686cc3a745d18421ba05a830673089d8d26ca28e5842d6ccc99da"
+    },
+    {
+      "key": "voice/brushing.thanks.caramelito.care",
+      "path": "assets/audio/brushing.thanks.caramelito.care.ogg",
+      "bytes": 27584,
+      "sha256": "2560f4afb7b5681b10dc6f96a439e8c5b397a536cbf14cd9e86fb19c9de3fe97"
+    },
+    {
+      "key": "voice/brushing.thanks.child.clean",
+      "path": "assets/audio/brushing.thanks.child.clean.ogg",
+      "bytes": 19295,
+      "sha256": "47d8c7d8f18fb9be9bc6bf266eb504bf4b201e6666ab02e9bf38b940840caae3"
+    },
+    {
+      "key": "voice/brushing.thanks.child.thanks",
+      "path": "assets/audio/brushing.thanks.child.thanks.ogg",
+      "bytes": 15431,
+      "sha256": "ec83a6f69f5021752e525b48c896e1ce627fdcb4e51f1b643b3430c003c8d304"
+    },
+    {
       "key": "voice/bullying.choice.caramelito.ask_what_to_do",
       "path": "assets/audio/bullying.choice.caramelito.ask_what_to_do.ogg",
       "bytes": 12578,
-      "sha256": "238ecda7d8e26a2cba795647b95086d2e9345e974a3a53550f5b042030bcb2ec"
+      "sha256": "834c4acc8ea4adada51b985df2f57961ae079bf2819c05d82f95fa1d390b16ab"
     },
     {
       "key": "voice/bullying.choice.endure.response",
       "path": "assets/audio/bullying.choice.endure.response.ogg",
       "bytes": 17515,
-      "sha256": "9c1910fe89c6fea2daffb047c867df2f7b4583d86c4cabc9971495d9bf7b1f32"
+      "sha256": "5887abb561f3fd6182878f6e42bf237cf227b1a8d500230ade6da7466a01351a"
     },
     {
       "key": "voice/bullying.choice.retaliate.response",
       "path": "assets/audio/bullying.choice.retaliate.response.ogg",
       "bytes": 32629,
-      "sha256": "17c451e89daeeccdbe100baa3d09c6b481610591e397680d35285d75f0162e9b"
+      "sha256": "69dfef4f85d128fe834000f210776e2f29b55412ff3d1122cff6bad32a73a491"
     },
     {
       "key": "voice/bullying.choice.seek_help.response",
       "path": "assets/audio/bullying.choice.seek_help.response.ogg",
       "bytes": 15897,
-      "sha256": "e26645f0f1dd89824fd8183f7e092c38e7b1b5ae3b786bfda335229f1c7c1b9d"
+      "sha256": "0af1f8e9de8f08da8743365e2d1f9cbe8d404096ed4533bdc2de75a24cee52f7"
     },
     {
       "key": "voice/bullying.complete.commenter.learns_to_stop",
       "path": "assets/audio/bullying.complete.commenter.learns_to_stop.ogg",
       "bytes": 28636,
-      "sha256": "07b349b90a350ef1fa291230812b323c6353ca3ac2dd5c2809b8372bab0fb06a"
+      "sha256": "642a981bbc6d6b2c8ec20042b720ca3535cc69528be6c96400142fa5fef015db"
     },
     {
       "key": "voice/bullying.complete.hoodie.will_seek_adult",
       "path": "assets/audio/bullying.complete.hoodie.will_seek_adult.ogg",
       "bytes": 24591,
-      "sha256": "372683b4017291bf54d5ecd77b1265de2f7b68b8e0efaf20292e0f7bfe20f8b3"
+      "sha256": "43adc85602e4ef9f4cae99af023546adcd3250b755784231b6ec471935406877"
     },
     {
       "key": "voice/bullying.complete.witness.will_seek_help",
       "path": "assets/audio/bullying.complete.witness.will_seek_help.ogg",
       "bytes": 20732,
-      "sha256": "e22035087e753d7e9bf75d1f0ee4dfe4986fd8720915e8d0270e737a0986b4d6"
+      "sha256": "016de0d426903937c2dd61f884ab289ca3bccfea156001ce053bfdc78216b92a"
     },
     {
       "key": "voice/bullying.final.caramelito.asking_help_is_strength",
       "path": "assets/audio/bullying.final.caramelito.asking_help_is_strength.ogg",
       "bytes": 35480,
-      "sha256": "ecdd13f6e639110f8612bbedb94a53e78e052c73acb37f23e8994a5f311c21a6"
+      "sha256": "74efbbf81c8ec6b5c5147df2461816d6ae19e61176c9959ef60446ac8f1f4b2d"
     },
     {
       "key": "voice/bullying.find_commenter.commenter.just_playing",
       "path": "assets/audio/bullying.find_commenter.commenter.just_playing.ogg",
       "bytes": 11027,
-      "sha256": "2ad53004301d5f98298755e9e8a1918ef56812afb3cbd95dfaa302df4622262d"
+      "sha256": "8c92909e994f08508108b3a292ac889bd40ede5a31e2c23728cd9d5da12d94ec"
     },
     {
       "key": "voice/bullying.find_witness.witness.repeated_often",
       "path": "assets/audio/bullying.find_witness.witness.repeated_often.ogg",
       "bytes": 15927,
-      "sha256": "a290d59f4f895482dcd174409585cfb2ca054b897ab6cca572ccd265ac91f469"
+      "sha256": "03ed942dc8e052673ee2c0e310fe032660e6d7b32c9e4660b81432879768291e"
     },
     {
       "key": "voice/bullying.help_guidance.caramelito.trusted_adults",
       "path": "assets/audio/bullying.help_guidance.caramelito.trusted_adults.ogg",
       "bytes": 53974,
-      "sha256": "731a10f716e1d8834e818457cd655b405332cfffd89b988ccdf4491ff4c22770"
+      "sha256": "e3b26829f31b2ed5bb2a66bf3d521fdeb1c729895469b2eddda94f02471b18f0"
     },
     {
       "key": "voice/bullying.idle.hoodie.waits",
       "path": "assets/audio/bullying.idle.hoodie.waits.ogg",
       "bytes": 26564,
-      "sha256": "09f88838460f79343afd9320e6a80fb3060251594719e2c61fe3e34100fc2b47"
+      "sha256": "7ef42f7b950ae6fcabc44b3e562d5188c0f14c5a3bbc567b072e7b69f112a1ba"
     },
     {
       "key": "voice/bullying.intro.caramelito.find_others",
       "path": "assets/audio/bullying.intro.caramelito.find_others.ogg",
       "bytes": 31204,
-      "sha256": "30d292c60767595c5dbd117394d591ce13acfda5a068e92d027dabf0f3d8c78f"
+      "sha256": "48b86cd029b447a92bda079ff69bc9290839f30e0f5158b48738750726511df1"
     },
     {
       "key": "voice/bullying.intro.caramelito.not_fun_for_everyone",
       "path": "assets/audio/bullying.intro.caramelito.not_fun_for_everyone.ogg",
       "bytes": 23842,
-      "sha256": "e303894243df5b452840b9fe5722299083625402b3c35553f33e883a415cc390"
+      "sha256": "d580373e9e26a8bb4b2f4197e72b81d92944c32021f1f14a65455093b87dde0b"
     },
     {
       "key": "voice/bullying.intro.commenter.teases_hoodie",
       "path": "assets/audio/bullying.intro.commenter.teases_hoodie.ogg",
       "bytes": 10205,
-      "sha256": "a6a45115fad87381c456c869b5fe5978958d8a096d17ae3faa30d3c231bde159"
+      "sha256": "c66b18afb718f746982dbadd11d0c328733261671e96ee17bf137ecb70796c2b"
     },
     {
       "key": "voice/bullying.intro.hoodie.stop_request",
       "path": "assets/audio/bullying.intro.hoodie.stop_request.ogg",
       "bytes": 11091,
-      "sha256": "a56e44427bc3dd9bffa2bf62aeae6388d84d5d0244c08607cebdf00a817bbf12"
+      "sha256": "dc6e9700b62695900952a916f1788e72dd95ffa1ecb594c75cef6263fe0210f3"
     },
     {
       "key": "voice/bullying.return_hoodie.caramelito.summarizes",
       "path": "assets/audio/bullying.return_hoodie.caramelito.summarizes.ogg",
       "bytes": 40898,
-      "sha256": "b60b9fba930d9353ab130bca4058699bedf5e9bcdab1563386cbba5c29c96808"
+      "sha256": "32c3294800d4c8b974c1857735fda16c4dfe86b5b8d02c50205d88ec3c0b126e"
+    },
+    {
+      "key": "voice/lia.activity.lia.instruction",
+      "path": "assets/audio/lia.activity.lia.instruction.ogg",
+      "bytes": 17488,
+      "sha256": "0b546fc5a9af02e903a5c0b377e5d8bbcf03563a2bce8f8dd2c60908cc79dcb6"
+    },
+    {
+      "key": "voice/lia.choice.caramelito.prompt",
+      "path": "assets/audio/lia.choice.caramelito.prompt.ogg",
+      "bytes": 21288,
+      "sha256": "f6ed8692e34b1a25bd465be31bdbf64d397e7f131279bda23a41d6eb7a1490b1"
     },
     {
       "key": "voice/lia.choice.include.response",
       "path": "assets/audio/lia.choice.include.response.ogg",
-      "bytes": 24074,
-      "sha256": "d7f085d326be0b4fe0345fd1ac0e02079ca99f5ad5aa9c17d1fe490aa61868e1"
+      "bytes": 9712,
+      "sha256": "2ac4834495f2fb17ab3f369aaf3c4ddae54acf6f434b3a35d20fec0b203ef31e"
     },
     {
       "key": "voice/lia.choice.listen.response",
       "path": "assets/audio/lia.choice.listen.response.ogg",
       "bytes": 24236,
-      "sha256": "bedf8c859a217987680bfef1de94f5a5e53ca142ca75fe19208dbf26f0a7849f"
+      "sha256": "3dfaadd11d9cd617dd89138d01ef54c7acf49906b659fa46f8861a02cd5942ad"
     },
     {
       "key": "voice/lia.choice.respect.response",
       "path": "assets/audio/lia.choice.respect.response.ogg",
       "bytes": 21860,
-      "sha256": "674e6a6c891c49400bac6be82687fa9af3b52ad5d1bb4f635dce8529cdc1a6e7"
+      "sha256": "a3812913c71694ae28921efd57887a46a87fe4c78b0b41afe7e0c015b727eab7"
     },
     {
       "key": "voice/lia.complete.lia.thanks",
       "path": "assets/audio/lia.complete.lia.thanks.ogg",
       "bytes": 33709,
-      "sha256": "2dbd90d21b259e89fd5f1a298702727759667811179b94b0dc417d2b00120c0a"
+      "sha256": "0a9c10afb887a565696cb477c43b18b1d67b7c8d7baad963baa054d8a5642311"
     },
     {
       "key": "voice/lia.cutscene.caramelito.introduces_thought",
       "path": "assets/audio/lia.cutscene.caramelito.introduces_thought.ogg",
       "bytes": 28675,
-      "sha256": "1ef4c5be54e8cfef718456056d20885b54975352b0db91d38dd96cd5abec6edf"
+      "sha256": "d24f4b214ae85b733ebc74fae01e617a5833f1719e6281fd5aa33b85b10c148d"
     },
     {
       "key": "voice/lia.cutscene.lia.asks_for_help",
       "path": "assets/audio/lia.cutscene.lia.asks_for_help.ogg",
       "bytes": 20320,
-      "sha256": "a61ae7e30d9cb41cb1dc3be7e9eb304cfb45d996c2a600acbeec70db864c6e06"
+      "sha256": "6ee86b9ad9911314cf393ad993ad323e92504bf6c615bb76a06e7d5d9d8486f0"
     },
     {
       "key": "voice/lia.cutscene.lia.small_actions",
       "path": "assets/audio/lia.cutscene.lia.small_actions.ogg",
       "bytes": 28092,
-      "sha256": "e42ed2ac4d7e8e1fbaf09dbd53690427612c1953f21183c34a305f6f4001fb9f"
+      "sha256": "f506372fabf639a8b5d3395fd0a005185b2a6ccd79776507bece0d4b90ae3056"
     },
     {
       "key": "voice/pingpong.activity.caramelito.ask_what_to_do",
       "path": "assets/audio/pingpong.activity.caramelito.ask_what_to_do.ogg",
       "bytes": 26738,
-      "sha256": "2c38f8d6680fa70f555c4db78e0fc6b433e74076a1296565fe4d2d173e1d0de0"
+      "sha256": "d9835d3eeb97533411d99057613ba9b83df40f5b0d72821cc75039fed35a0f3c"
     },
     {
       "key": "voice/pingpong.activity.caramelito.child_arrives",
       "path": "assets/audio/pingpong.activity.caramelito.child_arrives.ogg",
       "bytes": 20646,
-      "sha256": "6c140c503e5a21ab9c06a64f4f8361517a9f9bb1a3d033ae0ba823658301e9f0"
+      "sha256": "e1f449585ab0c701683bff9fcd114b5402b5e83fe09185919fc82ec5280f8d81"
     },
     {
       "key": "voice/pingpong.activity.caramelito.confirm_adult",
       "path": "assets/audio/pingpong.activity.caramelito.confirm_adult.ogg",
       "bytes": 19244,
-      "sha256": "e88ed0e387ddc444b299dd620f804d86f0d3608a20ea1be58b66829a527098b8"
+      "sha256": "f9b993f308dd531550f1be273e964c3eb24f8b2442185a05b68c18e1c8436697"
     },
     {
       "key": "voice/pingpong.activity.caramelito.confirm_check_child",
       "path": "assets/audio/pingpong.activity.caramelito.confirm_check_child.ogg",
       "bytes": 13813,
-      "sha256": "4265fa7340b42799a3ccd30ea6edeeae277d48e997e167c2ee84086f77877e86"
+      "sha256": "54e20998d7025b3f84b7f56b54501f35111f992b5514186a5e7eb16e396ed0ac"
     },
     {
       "key": "voice/pingpong.activity.caramelito.confirm_invite",
       "path": "assets/audio/pingpong.activity.caramelito.confirm_invite.ogg",
       "bytes": 20299,
-      "sha256": "e23f24198797484096921e2bf25ef2e03e3aa4be356093ca31040878c8a5b830"
+      "sha256": "b684a7fd6cc8b3af2fe58c4e22514a2ad52d655b26007495f116d6207c71cb5d"
     },
     {
       "key": "voice/pingpong.activity.caramelito.confirm_other_game",
       "path": "assets/audio/pingpong.activity.caramelito.confirm_other_game.ogg",
       "bytes": 17016,
-      "sha256": "50201736e6eb3bdc3a3c7f3fb4ce470c3fd038d3d7f0d18131363e6683074796"
+      "sha256": "734fa7010b6eb789a8299f9ae1c392e265747dd36044cbb0610799a1efacce2b"
     },
     {
       "key": "voice/pingpong.activity.caramelito.consequence_adult",
       "path": "assets/audio/pingpong.activity.caramelito.consequence_adult.ogg",
       "bytes": 29555,
-      "sha256": "067ef03492a3b7c53cc18dec16dd9d7678bf15ade620ff51ee1cc15f9ae98ab1"
+      "sha256": "8bcbd7bdb2c149a65eeb99acf18a61f0979ec86dab01a3f39850fc9aa894e4dd"
     },
     {
       "key": "voice/pingpong.activity.caramelito.consequence_check_child",
       "path": "assets/audio/pingpong.activity.caramelito.consequence_check_child.ogg",
       "bytes": 26690,
-      "sha256": "a8e15f7a90f24dac0873a9d638dab02a1d5c86ef4652cd341f0e018b46057015"
+      "sha256": "10c588650d50d6d6741687491ed0a1c5029d9fcbc10842380d840f27a607ad5b"
     },
     {
       "key": "voice/pingpong.activity.caramelito.consequence_invite",
       "path": "assets/audio/pingpong.activity.caramelito.consequence_invite.ogg",
       "bytes": 28055,
-      "sha256": "3112d186aa9a2d623c675972d251dbed86ffc077fe5742a1835656a2e7c6b5a0"
+      "sha256": "9bda77ddead5cbb39600452b9b96dfa69c09fc61bcea3a7caa46de48c185a75f"
     },
     {
       "key": "voice/pingpong.activity.caramelito.consequence_other_game",
       "path": "assets/audio/pingpong.activity.caramelito.consequence_other_game.ogg",
       "bytes": 29119,
-      "sha256": "ddfed7368f3877b76faed6a88ef46651c05bc1ba96f4c485fa2d470983a4612b"
+      "sha256": "8ee2599af9d5bbc6a10189c5e762a3913e3f10f62f0c192a54d1d8324e1354a2"
     },
     {
       "key": "voice/pingpong.activity.caramelito.rejection_feedback",
       "path": "assets/audio/pingpong.activity.caramelito.rejection_feedback.ogg",
       "bytes": 23675,
-      "sha256": "021e5419e75e5776f316ed00d3b4c0580b149590f4acf361870bc2c6b4a0a4da"
+      "sha256": "e3a415f164ebecc102f0896a873dd919ffd17ddef5f7dfbef02d56d0a0cac038"
+    },
+    {
+      "key": "voice/pingpong.activity.pingpong_kid.instruction",
+      "path": "assets/audio/pingpong.activity.pingpong_kid.instruction.ogg",
+      "bytes": 16822,
+      "sha256": "cefdb05dfd18af7752cd813bce317e78f776de507ff7cba7e9f6795db7d5eb63"
     },
     {
       "key": "voice/pingpong.choice.ask.response",
       "path": "assets/audio/pingpong.choice.ask.response.ogg",
       "bytes": 41077,
-      "sha256": "451813b99293728c31eb78556b315afdd5d309e62ff3b2a514b3ac249bbeab40"
+      "sha256": "2347fcb5e05796fbe08e494e51b8e69aeb5e1b235bcd9485d14197c206c0a1a4"
+    },
+    {
+      "key": "voice/pingpong.choice.caramelito.prompt",
+      "path": "assets/audio/pingpong.choice.caramelito.prompt.ogg",
+      "bytes": 24432,
+      "sha256": "965c21b91ffb514cb2b049a51a74f39866d75439f0056f646da11d74adf03c8e"
     },
     {
       "key": "voice/pingpong.choice.invite.response",
       "path": "assets/audio/pingpong.choice.invite.response.ogg",
       "bytes": 41732,
-      "sha256": "c22b4e34da4206205a33d40a5a3d5ad4d27afc3369452ce833442e4a2a74df4c"
+      "sha256": "8faf45b84b32e1c5c311d6d4f4e2efc80c72fbea81c38acf0a0989651bc8e307"
     },
     {
       "key": "voice/pingpong.choice.new_game.response",
       "path": "assets/audio/pingpong.choice.new_game.response.ogg",
       "bytes": 35866,
-      "sha256": "b09ab8502e6171ae1c556fb0955d8b7c0d3d8d496af6e5041f764ba403e1d12f"
+      "sha256": "fb6dc57d96a789a4af511cedb84c8893f07965fcdc4f60929cb3342b610ac2c5"
     },
     {
       "key": "voice/pingpong.choice.teacher.response",
       "path": "assets/audio/pingpong.choice.teacher.response.ogg",
       "bytes": 45296,
-      "sha256": "074c40b705addae0015f1ea37198734a820c3c23b5fc2ef858b27f870fb2243a"
+      "sha256": "fa096f282712e3a25c2d7ca3ad0e6626093307eb255658b6dd99fbfba5020da8"
     },
     {
       "key": "voice/pingpong.complete.pingpong_kid.thanks",
       "path": "assets/audio/pingpong.complete.pingpong_kid.thanks.ogg",
       "bytes": 31232,
-      "sha256": "af1ce8b3e28b76627e744cb684d02f0425e0c00ac341ff36345fba21cc3a5672"
+      "sha256": "529ed412127cb057838e3fa116ea07fc24f5099831cb767fd7bf4960f62628ed"
     },
     {
       "key": "voice/pingpong.cutscene.caramelito.ask_how_to_help",
       "path": "assets/audio/pingpong.cutscene.caramelito.ask_how_to_help.ogg",
       "bytes": 28193,
-      "sha256": "00a5f0d418b9f40aa21d72ef83df7d7fd29fcc1522925f6bf5d4577c900d9017"
+      "sha256": "741c945579f96bd5ca1c63cadae0a6abecc9ecd7fa784ff6941fa514ac24e249"
     },
     {
       "key": "voice/pingpong.cutscene.caramelito.children_playing",
       "path": "assets/audio/pingpong.cutscene.caramelito.children_playing.ogg",
       "bytes": 19278,
-      "sha256": "1e68effaab71cc53dbf61740896369f4cf779ef797559ffec05a7c53e697706f"
+      "sha256": "ee5c95c337930f52a609ebc94002ce73d4b025a30cdd2cce94a2480130c7cbaa"
     },
     {
       "key": "voice/pingpong.cutscene.caramelito.no_answer",
       "path": "assets/audio/pingpong.cutscene.caramelito.no_answer.ogg",
       "bytes": 12287,
-      "sha256": "d073e78914842587f63a3949af02e4542b37425ae90b4e1ced1b99258adfddd2"
+      "sha256": "5cbf7e7ab1b27e0beb196e7986a2e2a94a5b492e1dc1e5d8409ea860ad86a8c5"
     },
     {
       "key": "voice/pingpong.cutscene.caramelito.notices_problem",
       "path": "assets/audio/pingpong.cutscene.caramelito.notices_problem.ogg",
       "bytes": 11223,
-      "sha256": "043beb2638d2d1148539bbba22a103352b7560ca7a7a1ae1cc0563b481373a04"
+      "sha256": "3793db337005fb0a1605eed0d0ffa5750b743c114ab0898363f2a4f31582d3e9"
     },
     {
       "key": "voice/pingpong.cutscene.caramelito.sunny_afternoon",
       "path": "assets/audio/pingpong.cutscene.caramelito.sunny_afternoon.ogg",
       "bytes": 16455,
-      "sha256": "3dc1a7c210227d65c8edc27554fb4ede148f1919d74adbb144440c88e1b77540"
+      "sha256": "e10df4745eab02c8f415f9cbdd1c84b39d41ef9eddb7f7ae540d5335a4e58aa1"
     },
     {
       "key": "voice/pingpong.cutscene.pingpong_kid.ask_to_join",
       "path": "assets/audio/pingpong.cutscene.pingpong_kid.ask_to_join.ogg",
       "bytes": 9183,
-      "sha256": "2c9d03bd7bb8f6d6eb6415c521fa6f67ebed26849c2a8d3fa403167b3c2e5fbe"
+      "sha256": "2547912132ccccd3f86d076228ccdb56ab12c531c58a5ed49f45959a8133b1d5"
     },
     {
       "key": "voice/pingpong.cutscene.teammate_1.rejects",
       "path": "assets/audio/pingpong.cutscene.teammate_1.rejects.ogg",
       "bytes": 11331,
-      "sha256": "3955f8e0f94bcee6ba622e5ce3c7507204bed2d2f4142274f9c17d40cdcce1f2"
+      "sha256": "7ea0d2b58ffceba590b1932ab1f409a1decde649701ad400b4558fec129839e0"
     },
     {
       "key": "voice/pingpong.cutscene.teammate_2.sends_away",
       "path": "assets/audio/pingpong.cutscene.teammate_2.sends_away.ogg",
       "bytes": 13853,
-      "sha256": "6762c77523b51390c44b87908d207302defcc81ea3cd126b888dee4bf257a336"
+      "sha256": "9efee36173c658337114894c528adf15e79410112fd86b51c179e59fb5683772"
+    },
+    {
+      "key": "voice/pingpong.replay.pingpong_kid.ask_replay",
+      "path": "assets/audio/pingpong.replay.pingpong_kid.ask_replay.ogg",
+      "bytes": 16967,
+      "sha256": "8b10cbbb82702e13c1592fcc34dea9393a34f4c518c10f26a8c032fba7fc10e7"
     },
     {
       "key": "voice/respect.comfort.caramelito.explains_activity",
       "path": "assets/audio/respect.comfort.caramelito.explains_activity.ogg",
       "bytes": 39910,
-      "sha256": "f8fb6b5017e6bbb690993d5c28835e8922f55d4b1d99b387eae0ffeb8f8420a6"
+      "sha256": "ab2b05e50efea6e912e1df7dbd3b8ef544f5192e66a307a432f9e6e2b3f74085"
+    },
+    {
+      "key": "voice/respect.comfort.caramelito.instruction",
+      "path": "assets/audio/respect.comfort.caramelito.instruction.ogg",
+      "bytes": 13914,
+      "sha256": "3224995b1d13ca98a8b2896024344d68bd97aec0cb084a5cd115cd214013f737"
     },
     {
       "key": "voice/respect.comfort.caramelito.people_feel_differently",
       "path": "assets/audio/respect.comfort.caramelito.people_feel_differently.ogg",
       "bytes": 31487,
-      "sha256": "00f2e5cd3145e3cf713afbb0e384b6fbaea1e995b56ac03c1e4c4357311d8fa3"
+      "sha256": "08b9115eddd55ae462e8ddde40c53a3b27480088b48d130f6efa9600b046790c"
     },
     {
       "key": "voice/respect.complete.bia.thanks_for_respect",
       "path": "assets/audio/respect.complete.bia.thanks_for_respect.ogg",
       "bytes": 21998,
-      "sha256": "64b73b169ec89846d92b6204c05b33a9cca98ceec7cdd07d4a7e85ba8c6321da"
+      "sha256": "a6079650e2e1d176f2da0380647152dd86ff184e6420373c2b76ba77d15c9463"
     },
     {
       "key": "voice/respect.complete.caio.respecting_feelings",
       "path": "assets/audio/respect.complete.caio.respecting_feelings.ogg",
       "bytes": 21153,
-      "sha256": "518e017640efbfd1b14aeea54e7556eda9f6bfcc57399f3cee2eef688302c288"
+      "sha256": "7e5a27b9ba2ce8c38c3879bf84b1f554efdc2107d750f6b8624aa717ec05d1f2"
     },
     {
       "key": "voice/respect.complete.leo.respecting_feelings",
       "path": "assets/audio/respect.complete.leo.respecting_feelings.ogg",
       "bytes": 20139,
-      "sha256": "a9ad4eff77a1272e20fc348ab96bd2c84080f1fd26a210c83183c398e096d170"
+      "sha256": "1426535cd42be6be031d1f3be105e1463600dc78bb3255f93f691337861e17a6"
     },
     {
       "key": "voice/respect.final.caramelito.summary",
       "path": "assets/audio/respect.final.caramelito.summary.ogg",
       "bytes": 51699,
-      "sha256": "94c45250cc6daa5ec8bf0abcb95a3b76ba8b3a3b1bc3b2b616db36bbb2c40a26"
+      "sha256": "2eb8bd753f56388d105f6e9a6178bb9adc24e5a1f9aba0a73ff8595797ab6e99"
     },
     {
       "key": "voice/respect.greeting.caio.asks_preference",
       "path": "assets/audio/respect.greeting.caio.asks_preference.ogg",
       "bytes": 14982,
-      "sha256": "aac5ed804f0e979fae0a71168d572c35ea23dee1dbb8339674f5d9b69cc239b7"
+      "sha256": "353d2f9cedf661cd4565684f0fafb11acaed5412a2e127d51f9b9687a85669a3"
     },
     {
       "key": "voice/respect.greeting.caio.introduces_self",
       "path": "assets/audio/respect.greeting.caio.introduces_self.ogg",
       "bytes": 13339,
-      "sha256": "d4c7eb770a7d32f4859d4b7a6be2065ddb8a2de5f6d1393827b4aaadff3c1819"
+      "sha256": "1409cd7e9357ac4de2e74c7f129888d642bdcd94e9f37e98f026e2595eeaf318"
+    },
+    {
+      "key": "voice/respect.greeting.caio.prompt",
+      "path": "assets/audio/respect.greeting.caio.prompt.ogg",
+      "bytes": 14526,
+      "sha256": "57f7b329138e96edbf6355d9f7922ffad65ebc0cae17ee7b27b1db8f2cb6f547"
     },
     {
       "key": "voice/respect.group.bia.declines_hug",
       "path": "assets/audio/respect.group.bia.declines_hug.ogg",
       "bytes": 12378,
-      "sha256": "ef010279439c314173d3fd98c817764d904ff91d2df31703ba6b0aec79fac575"
+      "sha256": "4982f863af7dbe25f632d330f33537717a2fd2084d051ccf57c68c5c2ca0190f"
     },
     {
       "key": "voice/respect.group.caramelito.explains_limit",
       "path": "assets/audio/respect.group.caramelito.explains_limit.ogg",
       "bytes": 31952,
-      "sha256": "2652a734b97c76c5a7a21489f8401c6a366df0fbd89d13ad6a0076bc4d9d2f7a"
+      "sha256": "2320acd55edae93888b1f2c4b1aed8d32e2028aa1ffc62e13389964474a03442"
     },
     {
       "key": "voice/respect.group.leo.asks_for_hug",
       "path": "assets/audio/respect.group.leo.asks_for_hug.ogg",
       "bytes": 13022,
-      "sha256": "3a67b01602eea703d7669f84952f64a73ede8f0bff6bfbf74372e80a35502432"
+      "sha256": "e1495d6beb33df07e46344e70c62167bc4f42e39605a53a882894474b715c494"
     },
     {
       "key": "voice/respect.idle.bia.prefers_wave",
       "path": "assets/audio/respect.idle.bia.prefers_wave.ogg",
       "bytes": 11313,
-      "sha256": "42b936d98002fe3e937310b2e5f05a2a08e9b2232c16c76816246956bff0d7e4"
+      "sha256": "9629999a9c26f35145dd60939d072f10c703db12c59365c2cbb6e2b1fad88fc7"
     },
     {
       "key": "voice/respect.idle.caio.listen_first",
       "path": "assets/audio/respect.idle.caio.listen_first.ogg",
       "bytes": 21751,
-      "sha256": "78899855f4421e3252f2b7cc695773a745992cbb4459b48248bb8b14a9d6425f"
+      "sha256": "773d5bcdde53e7ce844e7273e49ac5cacbe4953edf27027ef28a5363df479867"
     },
     {
       "key": "voice/respect.idle.leo.listen_first",
       "path": "assets/audio/respect.idle.leo.listen_first.ogg",
       "bytes": 17367,
-      "sha256": "3c0e7fbba0b520facef28b6430c27d786993d64a52850fd2f38380aabe02da8a"
+      "sha256": "7448dd906371f8b59651ae44d34812b8a1711a70d598ff8a8616c114091c266b"
+    },
+    {
+      "key": "voice/respect.limit.caramelito.prompt",
+      "path": "assets/audio/respect.limit.caramelito.prompt.ogg",
+      "bytes": 19094,
+      "sha256": "d6612cb91a6fe0d8aaac5ee03da0acb3195840c08f1b423791050052808e7a3b"
     },
     {
       "key": "voice/respect.limit.get_angry.response",
       "path": "assets/audio/respect.limit.get_angry.response.ogg",
       "bytes": 22005,
-      "sha256": "3b520a68d979958089658d558a62063a2622a16179db8d669319901a44c643ab"
+      "sha256": "50736abf8769481bd434da1448f5ad38884694db20aba76c4c0ccf1462168646"
     },
     {
       "key": "voice/respect.limit.hug_anyway.response",
       "path": "assets/audio/respect.limit.hug_anyway.response.ogg",
       "bytes": 34921,
-      "sha256": "8ab054c19ebd6695551e91e050ce0c73a5b87d00c5264957add81a8a9dc88f7d"
+      "sha256": "5c6e61de64e36b5108e23d24b589ed891c11988eb318083dca3605b0c191a312"
     },
     {
       "key": "voice/respect.seek_help.alone.response",
       "path": "assets/audio/respect.seek_help.alone.response.ogg",
       "bytes": 28554,
-      "sha256": "9f81089b9bb52d69addccaee1ab165369fb09340baf4fdda401c52f3bdc2edf8"
+      "sha256": "c0af313373a0b522a74022f158ef7d6a90af68633331972b5a68b851df5f55b0"
+    },
+    {
+      "key": "voice/respect.seek_help.caramelito.prompt",
+      "path": "assets/audio/respect.seek_help.caramelito.prompt.ogg",
+      "bytes": 19193,
+      "sha256": "a851eab7f9fb414630738afa56cf54cbb74c26224a138520b98c357e697d77d7"
     },
     {
       "key": "voice/respect.seek_help.hide.response",
       "path": "assets/audio/respect.seek_help.hide.response.ogg",
       "bytes": 38617,
-      "sha256": "aa517d3ec966a52d12c6fbfd88caa877ea47d03624365cdeb8bb6d2547e224ad"
+      "sha256": "0c0cb26f5bdf50c0a96a8ee301568601f33f1e747d82eb2e75685dcff3b3eb6d"
+    },
+    {
+      "key": "voice/smile_kit.complete.child.thanks",
+      "path": "assets/audio/smile_kit.complete.child.thanks.ogg",
+      "bytes": 27565,
+      "sha256": "f7cde629cbadebec6466748da4ed3cae4d6748c57ba4b9e0c8313b5ccc9bb397"
+    },
+    {
+      "key": "voice/smile_kit.intro.child.invitation",
+      "path": "assets/audio/smile_kit.intro.child.invitation.ogg",
+      "bytes": 39047,
+      "sha256": "5759dca64b00c9d8886bb8c970434fcb3982393b2387da74f915cc4f5d48b293"
+    },
+    {
+      "key": "voice/system.activity.continue",
+      "path": "assets/audio/system.activity.continue.ogg",
+      "bytes": 9577,
+      "sha256": "4296e621b042c56f5a975dd43e0a27a62013a011ad8859a8c0c29c7030ab605d"
+    },
+    {
+      "key": "voice/system.activity.exit.confirm",
+      "path": "assets/audio/system.activity.exit.confirm.ogg",
+      "bytes": 50619,
+      "sha256": "d8b23898dff134ad591b89e89f2d6e8da9081277fac993f79b5d870577c893ed"
+    },
+    {
+      "key": "voice/system.activity.fallback",
+      "path": "assets/audio/system.activity.fallback.ogg",
+      "bytes": 10910,
+      "sha256": "5daba0a8ab107063fa44c886d5d5c22c3496d4fbb5ca47f2922f4a96afc3f0b8"
+    },
+    {
+      "key": "voice/system.activity.pause.instruction",
+      "path": "assets/audio/system.activity.pause.instruction.ogg",
+      "bytes": 22635,
+      "sha256": "db72e0658c8e0854a3d51302be308bee275868c547a77b86f2669b5e99bf137d"
+    },
+    {
+      "key": "voice/system.activity.pending",
+      "path": "assets/audio/system.activity.pending.ogg",
+      "bytes": 11806,
+      "sha256": "ddb50be368dce5ab2407affdbd1940bfae8b95fa3b46a8a29af5fead6f0affff"
+    },
+    {
+      "key": "voice/system.activity.pending_attempt",
+      "path": "assets/audio/system.activity.pending_attempt.ogg",
+      "bytes": 15016,
+      "sha256": "bbd77cfb5b2434faa299f341a26739846f5f06c6bc219d2a47fe03d68ef5a1d7"
+    },
+    {
+      "key": "voice/system.activity.recovery.abandon",
+      "path": "assets/audio/system.activity.recovery.abandon.ogg",
+      "bytes": 11028,
+      "sha256": "aff54c16bc016c28577ae29d170c50c8999a97c89540b2ade22582e80992f1a0"
+    },
+    {
+      "key": "voice/system.activity.recovery.invalid_result",
+      "path": "assets/audio/system.activity.recovery.invalid_result.ogg",
+      "bytes": 40838,
+      "sha256": "f2c13123a1b4f03f8eaa64d1727b406f7cba99b899308d738bb2ba366b21b289"
+    },
+    {
+      "key": "voice/system.activity.recovery.retry",
+      "path": "assets/audio/system.activity.recovery.retry.ogg",
+      "bytes": 13277,
+      "sha256": "89481b5e0c26cc95e25318c729457d096279e2b1844fff2006d7760baaafe580"
+    },
+    {
+      "key": "voice/system.activity.recovery.stale",
+      "path": "assets/audio/system.activity.recovery.stale.ogg",
+      "bytes": 29820,
+      "sha256": "ee30aa9eca91071875e691225e59f563fdcf948f1a6a72eba9a96373fac49db7"
+    },
+    {
+      "key": "voice/system.activity.recovery.unconfirmed",
+      "path": "assets/audio/system.activity.recovery.unconfirmed.ogg",
+      "bytes": 78565,
+      "sha256": "a19221b483d0fd04bf0d4d923aa958203f355a0d7ae86ab7abd12d4eef26d70a"
+    },
+    {
+      "key": "voice/system.activity.replay",
+      "path": "assets/audio/system.activity.replay.ogg",
+      "bytes": 14343,
+      "sha256": "e3e5dd7f46977ca313496f6743e15c912bcf7d6600e8f66835a81a90ca9f1ded"
+    },
+    {
+      "key": "voice/system.activity.replay.accept",
+      "path": "assets/audio/system.activity.replay.accept.ogg",
+      "bytes": 9497,
+      "sha256": "95a3203d33ade6f0ae73a3f8423bbfae7eed82d407f451ff3335ac376de6b659"
+    },
+    {
+      "key": "voice/system.activity.replay.decline",
+      "path": "assets/audio/system.activity.replay.decline.ogg",
+      "bytes": 5736,
+      "sha256": "d0e9d436819d7e813f9305964e05fdda77b2b207202bb45fbd9b33382c3771ab"
+    },
+    {
+      "key": "voice/system.activity.resume",
+      "path": "assets/audio/system.activity.resume.ogg",
+      "bytes": 5446,
+      "sha256": "7c5f5bae1546ad8f28fe5aa96fb2f53c82070c152dadbed5cb7be23221d470d5"
+    },
+    {
+      "key": "voice/system.activity.returning",
+      "path": "assets/audio/system.activity.returning.ogg",
+      "bytes": 6654,
+      "sha256": "58d7fe1d1d3bca5fe68378747a4f2899cfcfae97f65c5f8fc50d18bca9305704"
+    },
+    {
+      "key": "voice/system.audio.options.unavailable",
+      "path": "assets/audio/system.audio.options.unavailable.ogg",
+      "bytes": 16693,
+      "sha256": "5e7296e2aaa051ad3dcf466a8e67148f519274fd3ef7ea66038ee538600225fc"
+    },
+    {
+      "key": "voice/system.loading.preparing",
+      "path": "assets/audio/system.loading.preparing.ogg",
+      "bytes": 10673,
+      "sha256": "efd250529d703038cb9a1a0fdcc29ecc904572e350804f798ac32a5f9f4e78af"
+    },
+    {
+      "key": "voice/system.loading.retry",
+      "path": "assets/audio/system.loading.retry.ogg",
+      "bytes": 45641,
+      "sha256": "2ea4d4ade2f2a3ffefa7743c374b7439f9aa5ec7801cc6144ca0badbf59f9961"
+    },
+    {
+      "key": "voice/system.menu.activities",
+      "path": "assets/audio/system.menu.activities.ogg",
+      "bytes": 13278,
+      "sha256": "34c778b9d35e80d47ef17653e3e2a85bd55d514d6fb263fe66c4318d39694dc6"
+    },
+    {
+      "key": "voice/system.menu.interact",
+      "path": "assets/audio/system.menu.interact.ogg",
+      "bytes": 17021,
+      "sha256": "14c4f02f5c5773489dae78fbfa7fc4ab0b24c711f5dfc9a0f50deca9aa87a973"
+    },
+    {
+      "key": "voice/system.menu.introduction",
+      "path": "assets/audio/system.menu.introduction.ogg",
+      "bytes": 31223,
+      "sha256": "911071ffdc8f22f1e14cb9880ce44f52953736ab00b1459f432ce2ae493fc47f"
+    },
+    {
+      "key": "voice/system.menu.walk",
+      "path": "assets/audio/system.menu.walk.ogg",
+      "bytes": 20718,
+      "sha256": "fe14a9bb05caf6688c9177b7d4b996a30a448ae7a148ea5bd92926ed2f61e38a"
+    },
+    {
+      "key": "voice/system.narrative.choice.confirm",
+      "path": "assets/audio/system.narrative.choice.confirm.ogg",
+      "bytes": 18029,
+      "sha256": "2d3303de98f4daed45f1f6a845b91aefcf2c33a539d379f3443dff636547a66b"
+    },
+    {
+      "key": "voice/system.narrative.choose",
+      "path": "assets/audio/system.narrative.choose.ogg",
+      "bytes": 12036,
+      "sha256": "ba6a4c8053a9576168d7f1acbb9faee175239c138e4a9e2ac21dffbf9c0c0dbf"
+    },
+    {
+      "key": "voice/system.narrative.retry",
+      "path": "assets/audio/system.narrative.retry.ogg",
+      "bytes": 12283,
+      "sha256": "d651678815152805ae7a0e5aba37cc727cfbed30c286c36a079a637e060700b0"
+    },
+    {
+      "key": "voice/system.orientation.landscape",
+      "path": "assets/audio/system.orientation.landscape.ogg",
+      "bytes": 28876,
+      "sha256": "d0681d546b8bb3ae283505e108c25a75a17330a186bda172c6ebaf73ebb63249"
+    },
+    {
+      "key": "voice/system.orientation.portrait",
+      "path": "assets/audio/system.orientation.portrait.ogg",
+      "bytes": 28566,
+      "sha256": "c6b7d1f825d072f205d3c7dd459ce2c2ca2d1d0978d14a6053ded4a09c92e0ff"
+    },
+    {
+      "key": "voice/system.reward.lead",
+      "path": "assets/audio/system.reward.lead.ogg",
+      "bytes": 10586,
+      "sha256": "5e937dbd8aec02d36c1b1f2608833efed39de3891f115e9e3c09cb05e52a88f5"
+    },
+    {
+      "key": "voice/system.reward.message",
+      "path": "assets/audio/system.reward.message.ogg",
+      "bytes": 13192,
+      "sha256": "474ea13a00c966cd2a212115f939d5ae0163439a04321c59befad87995c57013"
+    },
+    {
+      "key": "voice/system.reward.title",
+      "path": "assets/audio/system.reward.title.ogg",
+      "bytes": 9375,
+      "sha256": "ed317d73c342226ede49e58b4b272fc99a20a633a4e1dc626d3ec526c742daa2"
+    },
+    {
+      "key": "voice/system.settings.paused",
+      "path": "assets/audio/system.settings.paused.ogg",
+      "bytes": 14544,
+      "sha256": "ae2daa4cbfaa4ca252a368995c99b266ece8f7b5bec168a30a3a29247f1c2fff"
+    },
+    {
+      "key": "voice/system.shop.cancel",
+      "path": "assets/audio/system.shop.cancel.ogg",
+      "bytes": 11182,
+      "sha256": "66b735f15db03b3027b45c357a133879044f248536758bd8f6c2ca9fc6603624"
+    },
+    {
+      "key": "voice/system.shop.confirm",
+      "path": "assets/audio/system.shop.confirm.ogg",
+      "bytes": 10633,
+      "sha256": "f9017ea87f3f08480bdf60760d97211ceadabb7fd04a234fb9719113b048d709"
+    },
+    {
+      "key": "voice/system.shop.confirm_hint",
+      "path": "assets/audio/system.shop.confirm_hint.ogg",
+      "bytes": 13552,
+      "sha256": "fc5a90e15697522ac4589ba47b1d2043374bd8bc2b1a398e3a1e6ee0e0c20ed8"
+    },
+    {
+      "key": "voice/system.shop.equipped",
+      "path": "assets/audio/system.shop.equipped.ogg",
+      "bytes": 9358,
+      "sha256": "463e44e2fb0bd91355b0a0a51cf8084f7b661be9cbea41c5a105d76de94e08ce"
+    },
+    {
+      "key": "voice/system.shop.insufficient",
+      "path": "assets/audio/system.shop.insufficient.ogg",
+      "bytes": 18802,
+      "sha256": "2cb76cf4426f58849f34cf99451349438cb176bb15ad8e083526a30192d82920"
+    },
+    {
+      "key": "voice/system.shop.introduction",
+      "path": "assets/audio/system.shop.introduction.ogg",
+      "bytes": 13899,
+      "sha256": "bbd36cc8032469432674d23dfb4e1d34c8969f209bfcf52f5992eb0dcb3db682"
+    },
+    {
+      "key": "voice/system.shop.load_failed",
+      "path": "assets/audio/system.shop.load_failed.ogg",
+      "bytes": 27850,
+      "sha256": "29262c967a4b60646c9b15efafa1215bd6f99d0eeca8a64ce512352ba2c1122e"
+    },
+    {
+      "key": "voice/system.shop.loading",
+      "path": "assets/audio/system.shop.loading.ogg",
+      "bytes": 9028,
+      "sha256": "978b92ac497042cdb72f27ac4d776098938756c362669d410d2880d0ca4fb36a"
+    },
+    {
+      "key": "voice/system.shop.new_outfit",
+      "path": "assets/audio/system.shop.new_outfit.ogg",
+      "bytes": 38989,
+      "sha256": "8c3d08d8c6e97a3887a42db40f5f0eb8ab911c053368bd9a155af289d7c01474"
+    },
+    {
+      "key": "voice/system.shop.owned",
+      "path": "assets/audio/system.shop.owned.ogg",
+      "bytes": 28083,
+      "sha256": "d2e6976ff47e9f818869ee396e775b85ae143187552accd933770a65543b000c"
+    },
+    {
+      "key": "voice/system.shop.unavailable",
+      "path": "assets/audio/system.shop.unavailable.ogg",
+      "bytes": 20744,
+      "sha256": "332b0aaa2b7c93637f9172ea8806a1bb5d6a0d8ec549ac44a36071299334fef7"
+    },
+    {
+      "key": "voice/web.activity.brushing_teeth_practice.clean",
+      "path": "assets/audio/web.activity.brushing_teeth_practice.clean.ogg",
+      "bytes": 13715,
+      "sha256": "a083eff7c6dd222948d5c4fb6a497e88f13b14fa56ec8c04bb01d4524f884482"
+    },
+    {
+      "key": "voice/web.activity.brushing_teeth_practice.instruction",
+      "path": "assets/audio/web.activity.brushing_teeth_practice.instruction.ogg",
+      "bytes": 23042,
+      "sha256": "c1b983f5d87fbd9ef1ce551d472b812a7164d76639748e38595d06ca13c82658"
+    },
+    {
+      "key": "voice/web.activity.brushing_teeth_practice.reminder",
+      "path": "assets/audio/web.activity.brushing_teeth_practice.reminder.ogg",
+      "bytes": 22022,
+      "sha256": "2b33e0fd2b36a537e915c250232e41bb871f831fac2d5f9e8ffb2167af61e363"
+    },
+    {
+      "key": "voice/web.activity.brushing_teeth_practice.returning",
+      "path": "assets/audio/web.activity.brushing_teeth_practice.returning.ogg",
+      "bytes": 12512,
+      "sha256": "a299e17ae59805d6c33bef77063ccbae172583161ff09ff7477a9b5fb7fe7446"
+    },
+    {
+      "key": "voice/web.activity.brushing_teeth_practice.title",
+      "path": "assets/audio/web.activity.brushing_teeth_practice.title.ogg",
+      "bytes": 8793,
+      "sha256": "bce68e83d7f37a445a0dd2e5a10cedabd47ff2cbdb185eebc6fa7d0ced51358f"
+    },
+    {
+      "key": "voice/web.activity.comfort_traffic_light.card.0",
+      "path": "assets/audio/web.activity.comfort_traffic_light.card.0.ogg",
+      "bytes": 9690,
+      "sha256": "e9bdfb592cfdf15ea8c8e42acbc9e0e1decdffd25342a771160eceee852e2dbf"
+    },
+    {
+      "key": "voice/web.activity.comfort_traffic_light.card.1",
+      "path": "assets/audio/web.activity.comfort_traffic_light.card.1.ogg",
+      "bytes": 11152,
+      "sha256": "bfd2ce48509c037474b2a21a0629b5f8297cd2b5f426d5f916d8fbd9fc034a77"
+    },
+    {
+      "key": "voice/web.activity.comfort_traffic_light.card.2",
+      "path": "assets/audio/web.activity.comfort_traffic_light.card.2.ogg",
+      "bytes": 12890,
+      "sha256": "2fb57d5c04d5b1037302d8ee8e63b4602fee1a73b858c6a9f4af25157377a1c7"
+    },
+    {
+      "key": "voice/web.activity.comfort_traffic_light.card.3",
+      "path": "assets/audio/web.activity.comfort_traffic_light.card.3.ogg",
+      "bytes": 14529,
+      "sha256": "d6591a1020371a39b8630514bbce5406747aa0031da30139b3f4436f78d773b1"
+    },
+    {
+      "key": "voice/web.activity.comfort_traffic_light.instruction",
+      "path": "assets/audio/web.activity.comfort_traffic_light.instruction.ogg",
+      "bytes": 36924,
+      "sha256": "f5fb9e81fc67006b3c3b08547ba52f45055d4099ddbf26cd20b01d0d513d3ff2"
+    },
+    {
+      "key": "voice/web.activity.comfort_traffic_light.keyboard_hint",
+      "path": "assets/audio/web.activity.comfort_traffic_light.keyboard_hint.ogg",
+      "bytes": 36766,
+      "sha256": "1afa7a9c280837b7da132862b474de0af70c0378c3d01f39c1e969324351b99b"
+    },
+    {
+      "key": "voice/web.activity.comfort_traffic_light.reflection",
+      "path": "assets/audio/web.activity.comfort_traffic_light.reflection.ogg",
+      "bytes": 35880,
+      "sha256": "5550e5ba297d757e04e2b77cff97079b2b6e45efa4b43cc5050702c6a1636722"
+    },
+    {
+      "key": "voice/web.activity.comfort_traffic_light.title",
+      "path": "assets/audio/web.activity.comfort_traffic_light.title.ogg",
+      "bytes": 12437,
+      "sha256": "8903adfdeb83dc245de8387a0e74c9166cf8a7d51f1ec6cacce407a585dea578"
+    },
+    {
+      "key": "voice/web.activity.comfort_traffic_light.zone.0",
+      "path": "assets/audio/web.activity.comfort_traffic_light.zone.0.ogg",
+      "bytes": 9930,
+      "sha256": "90925792d7ae94570684531e898ae726e38b4e8df761c043e7a83c5e0588a5b3"
+    },
+    {
+      "key": "voice/web.activity.comfort_traffic_light.zone.1",
+      "path": "assets/audio/web.activity.comfort_traffic_light.zone.1.ogg",
+      "bytes": 12856,
+      "sha256": "0b1008785b4cf4dfc14a4553629cd881fa77f2651b87ab3f6803d888e22b2f68"
+    },
+    {
+      "key": "voice/web.activity.comfort_traffic_light.zone.2",
+      "path": "assets/audio/web.activity.comfort_traffic_light.zone.2.ogg",
+      "bytes": 15738,
+      "sha256": "295e221ef3fe34ce776dfaec9946acc1f4bb35206bb5ad5b72eb6058aef76c9d"
+    },
+    {
+      "key": "voice/web.activity.defend_balls.instruction",
+      "path": "assets/audio/web.activity.defend_balls.instruction.ogg",
+      "bytes": 15145,
+      "sha256": "acd03d89a93f49e5f249d9bf8e349ea81c15aaf6767a3106f1171eacf1e8b382"
+    },
+    {
+      "key": "voice/web.activity.defend_balls.returning",
+      "path": "assets/audio/web.activity.defend_balls.returning.ogg",
+      "bytes": 9563,
+      "sha256": "cc727e452a8fa945a8d2e7724b48f4f8369d607ac8efcea8ae69eaebe80ea8ff"
+    },
+    {
+      "key": "voice/web.activity.defend_balls.title",
+      "path": "assets/audio/web.activity.defend_balls.title.ogg",
+      "bytes": 10084,
+      "sha256": "20aa2392cbd234d3fb88ccf373e59370202e926a3202b9fef524437d915bd67f"
+    },
+    {
+      "key": "voice/web.activity.memory_match_pairs.card.0",
+      "path": "assets/audio/web.activity.memory_match_pairs.card.0.ogg",
+      "bytes": 4972,
+      "sha256": "c58d02a0e4a21b12abdd9ceecb4c96a41a712e07a6c6dcf5952ff6d524cd282d"
+    },
+    {
+      "key": "voice/web.activity.memory_match_pairs.card.1",
+      "path": "assets/audio/web.activity.memory_match_pairs.card.1.ogg",
+      "bytes": 5763,
+      "sha256": "240a7071c992d7ac97385a7415212b6fe2ceb539ecfaac6bdbab9240e7c0c182"
+    },
+    {
+      "key": "voice/web.activity.memory_match_pairs.card.2",
+      "path": "assets/audio/web.activity.memory_match_pairs.card.2.ogg",
+      "bytes": 5190,
+      "sha256": "75c364e26f8587df444bfe5324c3822d7f9ea7ceb2ff2e4e87cac38a308858b3"
+    },
+    {
+      "key": "voice/web.activity.memory_match_pairs.card.3",
+      "path": "assets/audio/web.activity.memory_match_pairs.card.3.ogg",
+      "bytes": 6308,
+      "sha256": "5dc63a65560d35537d6f16fdea941774879434095767c24f2af61cf732c0f9aa"
+    },
+    {
+      "key": "voice/web.activity.memory_match_pairs.instruction",
+      "path": "assets/audio/web.activity.memory_match_pairs.instruction.ogg",
+      "bytes": 10962,
+      "sha256": "43bb0e58af9550648357fdc5764187d0f867a913ca2bf3b7cd4f4a7c9e5d130a"
+    },
+    {
+      "key": "voice/web.activity.memory_match_pairs.title",
+      "path": "assets/audio/web.activity.memory_match_pairs.title.ogg",
+      "bytes": 8708,
+      "sha256": "e5b29105eafc2e52b3f665b0933a4e0c548d3838448f2a9cf433a2311de9041c"
+    },
+    {
+      "key": "voice/web.activity.smile_kit_selection.complete",
+      "path": "assets/audio/web.activity.smile_kit_selection.complete.ogg",
+      "bytes": 35976,
+      "sha256": "97803332f456e322defea60b8e7e19b3cb804c548ee6966a761e2501150a524b"
+    },
+    {
+      "key": "voice/web.activity.smile_kit_selection.confirm_hint",
+      "path": "assets/audio/web.activity.smile_kit_selection.confirm_hint.ogg",
+      "bytes": 15389,
+      "sha256": "55d5c4ddf1d6e5b6cb82f29569a65a156b26829f75799daea1a08476ea134e58"
+    },
+    {
+      "key": "voice/web.activity.smile_kit_selection.confirm_ready",
+      "path": "assets/audio/web.activity.smile_kit_selection.confirm_ready.ogg",
+      "bytes": 18426,
+      "sha256": "8ce4a9ad749b012782172acdee832222b0fc9823bd8c1dd0a8ac59bb0ba89c29"
+    },
+    {
+      "key": "voice/web.activity.smile_kit_selection.correct",
+      "path": "assets/audio/web.activity.smile_kit_selection.correct.ogg",
+      "bytes": 16191,
+      "sha256": "bd7dde44fcaeeecbddce97535dcff0d7ca2ef01446475d8d4bfe5b977f2237aa"
+    },
+    {
+      "key": "voice/web.activity.smile_kit_selection.initial",
+      "path": "assets/audio/web.activity.smile_kit_selection.initial.ogg",
+      "bytes": 20210,
+      "sha256": "e42898e9833fe1e2ae7ed30c6c5af981bd52e7c3d519cf7e6ae0e3b5858eaeff"
+    },
+    {
+      "key": "voice/web.activity.smile_kit_selection.instruction",
+      "path": "assets/audio/web.activity.smile_kit_selection.instruction.ogg",
+      "bytes": 17528,
+      "sha256": "ee960aa5fb25b7a19f29bdcb9a870f1d43246f4212d81e7db2b2ed49e64aa6b1"
+    },
+    {
+      "key": "voice/web.activity.smile_kit_selection.item.0",
+      "path": "assets/audio/web.activity.smile_kit_selection.item.0.ogg",
+      "bytes": 9931,
+      "sha256": "ad7efc221da6e03e8a3dbd4ddfb25595dfa335c5e7fa5de9a301e87916ef23fb"
+    },
+    {
+      "key": "voice/web.activity.smile_kit_selection.item.1",
+      "path": "assets/audio/web.activity.smile_kit_selection.item.1.ogg",
+      "bytes": 7474,
+      "sha256": "1729f23aa3fdd5d43cd9684fefaad03826a249059d6a54dce8cab0dabc12c958"
+    },
+    {
+      "key": "voice/web.activity.smile_kit_selection.item.2",
+      "path": "assets/audio/web.activity.smile_kit_selection.item.2.ogg",
+      "bytes": 4381,
+      "sha256": "4f050739be88fa26c07d3641f7c883e502f41707b1378c1ea9839b7adf024fa3"
+    },
+    {
+      "key": "voice/web.activity.smile_kit_selection.item.3",
+      "path": "assets/audio/web.activity.smile_kit_selection.item.3.ogg",
+      "bytes": 12594,
+      "sha256": "a3ea8b956a11f6af0d9953065acf6cf2399e996f0a0faf9a5387f31259816145"
+    },
+    {
+      "key": "voice/web.activity.smile_kit_selection.item.4",
+      "path": "assets/audio/web.activity.smile_kit_selection.item.4.ogg",
+      "bytes": 6374,
+      "sha256": "43f4c896e700c7024b35243440b2db51bce5282723c2d233cec12cd08d5ed9b8"
+    },
+    {
+      "key": "voice/web.activity.smile_kit_selection.item.5",
+      "path": "assets/audio/web.activity.smile_kit_selection.item.5.ogg",
+      "bytes": 5624,
+      "sha256": "a0fbcba61fd500c1466b67e4876974283b70df31e759358025088fc1996a637d"
+    },
+    {
+      "key": "voice/web.activity.smile_kit_selection.title",
+      "path": "assets/audio/web.activity.smile_kit_selection.title.ogg",
+      "bytes": 7952,
+      "sha256": "85f80223f853c4c2b519f0d87ad45db0eabbfc0c5e6009bd86dec1b94df47db1"
+    },
+    {
+      "key": "voice/web.activity.smile_kit_selection.wrong",
+      "path": "assets/audio/web.activity.smile_kit_selection.wrong.ogg",
+      "bytes": 29762,
+      "sha256": "b261603b24bb847923affb015645113fea29d842e939ac3454de55546d3f6475"
+    },
+    {
+      "key": "voice/web.choice.lia_memory.choice.include.label",
+      "path": "assets/audio/web.choice.lia_memory.choice.include.label.ogg",
+      "bytes": 12633,
+      "sha256": "03179fe3962c0a953a22db2500f0b1ff35929d76cd179954cab4c36cd1f3380f"
+    },
+    {
+      "key": "voice/web.choice.lia_memory.choice.listen.label",
+      "path": "assets/audio/web.choice.lia_memory.choice.listen.label.ogg",
+      "bytes": 11903,
+      "sha256": "321f2da617511eb64a2becb7cd20c95361477e64528414a54b7abec8845997b6"
+    },
+    {
+      "key": "voice/web.choice.lia_memory.choice.respect.label",
+      "path": "assets/audio/web.choice.lia_memory.choice.respect.label.ogg",
+      "bytes": 12479,
+      "sha256": "ae3574bc6fd83d1a448beca0ee7266c82b07e87417cca0c280f54f35edd3b327"
+    },
+    {
+      "key": "voice/web.choice.pingpong_soccer.choice.ask.label",
+      "path": "assets/audio/web.choice.pingpong_soccer.choice.ask.label.ogg",
+      "bytes": 12644,
+      "sha256": "7f8cd8299d6552fba96d1d2cd75eaab214d658758f0cba81366d8f64bb3a0df6"
+    },
+    {
+      "key": "voice/web.choice.pingpong_soccer.choice.invite.label",
+      "path": "assets/audio/web.choice.pingpong_soccer.choice.invite.label.ogg",
+      "bytes": 12357,
+      "sha256": "44e6e307b9d34419b10e094727f4c311d1fc3dc061019bdaa9a13f91e3451680"
+    },
+    {
+      "key": "voice/web.choice.pingpong_soccer.choice.new_game.label",
+      "path": "assets/audio/web.choice.pingpong_soccer.choice.new_game.label.ogg",
+      "bytes": 12718,
+      "sha256": "bdd15323115032f6cfe8758de48c2e5aae3bd86d270aad768f0b3266385f31a5"
+    },
+    {
+      "key": "voice/web.choice.pingpong_soccer.choice.teacher.label",
+      "path": "assets/audio/web.choice.pingpong_soccer.choice.teacher.label.ogg",
+      "bytes": 9880,
+      "sha256": "fbc5363fc513ffefd9a7b5d7a48177d411dcf02c64b36a272df6ca750d00c5f1"
+    },
+    {
+      "key": "voice/web.choice.respect_also_cares.greeting_choice.handshake.label",
+      "path": "assets/audio/web.choice.respect_also_cares.greeting_choice.handshake.label.ogg",
+      "bytes": 7754,
+      "sha256": "1e0ee5f8d2588d26af6fe312706ba4231aab6316225fde2fd0c64f01fd6aab23"
+    },
+    {
+      "key": "voice/web.choice.respect_also_cares.greeting_choice.hug.label",
+      "path": "assets/audio/web.choice.respect_also_cares.greeting_choice.hug.label.ogg",
+      "bytes": 5168,
+      "sha256": "bb7ca438a4f2dcd5600a1a3fef5ce537862458dba528ddb6803cd50865007c07"
+    },
+    {
+      "key": "voice/web.choice.respect_also_cares.greeting_choice.smile.label",
+      "path": "assets/audio/web.choice.respect_also_cares.greeting_choice.smile.label.ogg",
+      "bytes": 5330,
+      "sha256": "f1ea3562a1b91ea9a976e91eecdb0bbbafd59f47908ca06914ed8784312961e6"
+    },
+    {
+      "key": "voice/web.choice.respect_also_cares.greeting_choice.wave.label",
+      "path": "assets/audio/web.choice.respect_also_cares.greeting_choice.wave.label.ogg",
+      "bytes": 5522,
+      "sha256": "62111fdfd2df15d8847062955f9948e629d6cc85823e84685bc0d3c2b2066ad0"
+    },
+    {
+      "key": "voice/web.choice.respect_also_cares.respect_limit.get_angry.label",
+      "path": "assets/audio/web.choice.respect_also_cares.respect_limit.get_angry.label.ogg",
+      "bytes": 7209,
+      "sha256": "3d2b0308a943e6b1306ac5c288d4dde00d617cbf5a1ae471bd934f0aa0166c76"
+    },
+    {
+      "key": "voice/web.choice.respect_also_cares.respect_limit.hug_anyway.label",
+      "path": "assets/audio/web.choice.respect_also_cares.respect_limit.hug_anyway.label.ogg",
+      "bytes": 11603,
+      "sha256": "3ab25af896f79cd147f7353f146da59ceba388a80b8f9e3afc98823c65cb7a00"
+    },
+    {
+      "key": "voice/web.choice.respect_also_cares.respect_limit.other_greeting.label",
+      "path": "assets/audio/web.choice.respect_also_cares.respect_limit.other_greeting.label.ogg",
+      "bytes": 12286,
+      "sha256": "9b8e24c9d5b91673341cc40d28b6155908924dc8d7ec41d588dea1caee57733f"
+    },
+    {
+      "key": "voice/web.choice.respect_also_cares.seek_help.alone.label",
+      "path": "assets/audio/web.choice.respect_also_cares.seek_help.alone.label.ogg",
+      "bytes": 13097,
+      "sha256": "f133712803653591535bad341c20830d880a335134d624b5a89b7660a7fcfbdd"
+    },
+    {
+      "key": "voice/web.choice.respect_also_cares.seek_help.hide.label",
+      "path": "assets/audio/web.choice.respect_also_cares.seek_help.hide.label.ogg",
+      "bytes": 13889,
+      "sha256": "0b35e3b92a5ffdce00b373484c892503e8f61511588252e71e3b1cee663acc25"
+    },
+    {
+      "key": "voice/web.choice.respect_also_cares.seek_help.trusted_adult.label",
+      "path": "assets/audio/web.choice.respect_also_cares.seek_help.trusted_adult.label.ogg",
+      "bytes": 14271,
+      "sha256": "38baf7494ee783e2dca3299b7174f3fc4c32e289c90b2752ae9a968497325233"
+    },
+    {
+      "key": "voice/web.choice.when_play_stops_being_play.choice.endure.label",
+      "path": "assets/audio/web.choice.when_play_stops_being_play.choice.endure.label.ogg",
+      "bytes": 11208,
+      "sha256": "f3780e5a4ec935a65abd725b98c6b5b7aa626ab7a6c6004ee13c01f245210eeb"
+    },
+    {
+      "key": "voice/web.choice.when_play_stops_being_play.choice.retaliate.label",
+      "path": "assets/audio/web.choice.when_play_stops_being_play.choice.retaliate.label.ogg",
+      "bytes": 12028,
+      "sha256": "8a10f4934714f363bc629f2f0587d019990ce852c6744096b731a158cf859e32"
+    },
+    {
+      "key": "voice/web.choice.when_play_stops_being_play.choice.seek_help.label",
+      "path": "assets/audio/web.choice.when_play_stops_being_play.choice.seek_help.label.ogg",
+      "bytes": 14365,
+      "sha256": "d9aacb569e1b0a1c5540443e42fd704ff60deaf99cb59ec3d920d95f2e7d2223"
+    },
+    {
+      "key": "voice/web.mission.brushing_teeth.activity.objective",
+      "path": "assets/audio/web.mission.brushing_teeth.activity.objective.ogg",
+      "bytes": 19142,
+      "sha256": "3a4521456b3919e996adc1ccc67b9e19062c81d03f759b25ed3bf338d8ec0574"
+    },
+    {
+      "key": "voice/web.mission.brushing_teeth.intro.objective",
+      "path": "assets/audio/web.mission.brushing_teeth.intro.objective.ogg",
+      "bytes": 14657,
+      "sha256": "212f388d4e1f1ec49561c49bef8a6eac4689aeb641bf4f9c40019f97954e2720"
+    },
+    {
+      "key": "voice/web.mission.brushing_teeth.thanks.objective",
+      "path": "assets/audio/web.mission.brushing_teeth.thanks.objective.ogg",
+      "bytes": 10135,
+      "sha256": "c585a8dce20b4b9c0fb9a1e75301ad2bdb3ced2e5fd96b1abeab41303eedfbdf"
+    },
+    {
+      "key": "voice/web.mission.brushing_teeth.title",
+      "path": "assets/audio/web.mission.brushing_teeth.title.ogg",
+      "bytes": 9091,
+      "sha256": "56e8064f43b7cd445349fc37471f9cc4f54770608b8e8a13104ff108aaaf3507"
+    },
+    {
+      "key": "voice/web.mission.lia_memory.activity.objective",
+      "path": "assets/audio/web.mission.lia_memory.activity.objective.ogg",
+      "bytes": 17128,
+      "sha256": "5f13a740243c47c055e82e8aa95b7630c0f0fe645d0f95825acf52eec8823678"
+    },
+    {
+      "key": "voice/web.mission.lia_memory.choice.objective",
+      "path": "assets/audio/web.mission.lia_memory.choice.objective.ogg",
+      "bytes": 14796,
+      "sha256": "81b83425f2e80b2f51248d913daef120dcc3e5a1170777e81bff1b5cc3bf4a4a"
+    },
+    {
+      "key": "voice/web.mission.lia_memory.consequence.objective",
+      "path": "assets/audio/web.mission.lia_memory.consequence.objective.ogg",
+      "bytes": 7100,
+      "sha256": "06fcbcd3dd5412356367d679feca169ea8135e405baaa00bf1dd9ceb513b1447"
+    },
+    {
+      "key": "voice/web.mission.lia_memory.cutscene.objective",
+      "path": "assets/audio/web.mission.lia_memory.cutscene.objective.ogg",
+      "bytes": 13182,
+      "sha256": "fc87145e76c498444228f93d2327e4ddfb3856909f6b7379214a62d388ee952c"
+    },
+    {
+      "key": "voice/web.mission.lia_memory.title",
+      "path": "assets/audio/web.mission.lia_memory.title.ogg",
+      "bytes": 11123,
+      "sha256": "b35ae938ee69e617552de81ce8fad2d7a40eb18650f777dfef39cbdf1e19fd1a"
+    },
+    {
+      "key": "voice/web.mission.pingpong_soccer.activity.objective",
+      "path": "assets/audio/web.mission.pingpong_soccer.activity.objective.ogg",
+      "bytes": 16999,
+      "sha256": "86b85e3e0e24b2f26acd4d472fcd6ef0c78a4f25208ce168bdd60f2543728f4a"
+    },
+    {
+      "key": "voice/web.mission.pingpong_soccer.choice.objective",
+      "path": "assets/audio/web.mission.pingpong_soccer.choice.objective.ogg",
+      "bytes": 15440,
+      "sha256": "ef72ca09f5778af5430a1e15afe77fb5e6300f70264a73528ab08e28d1d1474e"
+    },
+    {
+      "key": "voice/web.mission.pingpong_soccer.consequence.objective",
+      "path": "assets/audio/web.mission.pingpong_soccer.consequence.objective.ogg",
+      "bytes": 12955,
+      "sha256": "0c64970c01564bfac81a320a8035f6a73cb9844f304eaa1994140b9a442f0cb1"
+    },
+    {
+      "key": "voice/web.mission.pingpong_soccer.cutscene.objective",
+      "path": "assets/audio/web.mission.pingpong_soccer.cutscene.objective.ogg",
+      "bytes": 13489,
+      "sha256": "cba41434a3138916b840f23f56c39dd65e8cd234d0c01066985ec637ec90205e"
+    },
+    {
+      "key": "voice/web.mission.pingpong_soccer.title",
+      "path": "assets/audio/web.mission.pingpong_soccer.title.ogg",
+      "bytes": 10821,
+      "sha256": "a6612d3edbe376da725b810c6e9ef9a2a163473930fc8e50b9e34d4d2795a0ff"
+    },
+    {
+      "key": "voice/web.mission.respect_also_cares.comfort_activity.objective",
+      "path": "assets/audio/web.mission.respect_also_cares.comfort_activity.objective.ogg",
+      "bytes": 15601,
+      "sha256": "6060fda611f3576a41086b4f10a5034c5255f3337e2a458becc4b1d9531d66db"
+    },
+    {
+      "key": "voice/web.mission.respect_also_cares.comfort_intro.objective",
+      "path": "assets/audio/web.mission.respect_also_cares.comfort_intro.objective.ogg",
+      "bytes": 16136,
+      "sha256": "aa5725c38bacc7f7e0cc917c37a0afe042ed809d35aea1f6bc2e7c9afbc05af5"
+    },
+    {
+      "key": "voice/web.mission.respect_also_cares.final_dialogue.objective",
+      "path": "assets/audio/web.mission.respect_also_cares.final_dialogue.objective.ogg",
+      "bytes": 14511,
+      "sha256": "592afb5c1db0409645dffad9f9013ec8954a88306bd3465cff7e627c3f336eb8"
+    },
+    {
+      "key": "voice/web.mission.respect_also_cares.greeting_choice.objective",
+      "path": "assets/audio/web.mission.respect_also_cares.greeting_choice.objective.ogg",
+      "bytes": 15676,
+      "sha256": "6c32435656b2a4fc5ce9ee323d05eae05bf96b6c92deb82f050b0dc2249cdee6"
+    },
+    {
+      "key": "voice/web.mission.respect_also_cares.greeting.objective",
+      "path": "assets/audio/web.mission.respect_also_cares.greeting.objective.ogg",
+      "bytes": 14146,
+      "sha256": "460d0f2831e382ff0396d0090b3d53efc7401fb0191661958106e3d443a25fae"
+    },
+    {
+      "key": "voice/web.mission.respect_also_cares.group_scene.objective",
+      "path": "assets/audio/web.mission.respect_also_cares.group_scene.objective.ogg",
+      "bytes": 14018,
+      "sha256": "9737d4364901d5c5d8a55a6094d43040bcd606013189bd66b155309eacd60673"
+    },
+    {
+      "key": "voice/web.mission.respect_also_cares.respect_limit.objective",
+      "path": "assets/audio/web.mission.respect_also_cares.respect_limit.objective.ogg",
+      "bytes": 21613,
+      "sha256": "7062eaf938eb1b34538a7add3f377c7b449926449c67f9b8e9fa6fedfbba2b15"
+    },
+    {
+      "key": "voice/web.mission.respect_also_cares.seek_help.objective",
+      "path": "assets/audio/web.mission.respect_also_cares.seek_help.objective.ogg",
+      "bytes": 21426,
+      "sha256": "aa3cac3bf6043d2e2b59e493ad0a0da8046ce1436f1d95357680ff7b91dd7779"
+    },
+    {
+      "key": "voice/web.mission.respect_also_cares.title",
+      "path": "assets/audio/web.mission.respect_also_cares.title.ogg",
+      "bytes": 13235,
+      "sha256": "1d89dd0888b361d3a3b33fa74fe1b29ebe776cc5690d42d148c6c4da3f03a03b"
+    },
+    {
+      "key": "voice/web.mission.smile_kit.activity.objective",
+      "path": "assets/audio/web.mission.smile_kit.activity.objective.ogg",
+      "bytes": 17015,
+      "sha256": "3ef7bacfcfb6632aa847686ff1eb79e8c6275c6cbc0ce32cca063bd3c0daea17"
+    },
+    {
+      "key": "voice/web.mission.smile_kit.intro.objective",
+      "path": "assets/audio/web.mission.smile_kit.intro.objective.ogg",
+      "bytes": 10145,
+      "sha256": "346a41cd0f716e7b2a2947fa0e28fd78208d9d92c4d1efbe803906f4d46942e3"
+    },
+    {
+      "key": "voice/web.mission.smile_kit.title",
+      "path": "assets/audio/web.mission.smile_kit.title.ogg",
+      "bytes": 7844,
+      "sha256": "220cb07ed5be450e1055505bf5de98fe10a9c357b32da217d95b9045b205dab5"
+    },
+    {
+      "key": "voice/web.mission.when_play_stops_being_play.choice.objective",
+      "path": "assets/audio/web.mission.when_play_stops_being_play.choice.objective.ogg",
+      "bytes": 9504,
+      "sha256": "07fd38b473fc64491a7ba7cb72e46c7bdc149d2a6583b246d2dd36a15b93fd11"
+    },
+    {
+      "key": "voice/web.mission.when_play_stops_being_play.find_commenter.objective",
+      "path": "assets/audio/web.mission.when_play_stops_being_play.find_commenter.objective.ogg",
+      "bytes": 18887,
+      "sha256": "d556a3096ff22173c62e84b751f87b1cd8146f432e4299cfc0fb384be5bc2c44"
+    },
+    {
+      "key": "voice/web.mission.when_play_stops_being_play.find_witness.objective",
+      "path": "assets/audio/web.mission.when_play_stops_being_play.find_witness.objective.ogg",
+      "bytes": 20360,
+      "sha256": "7afc88151760ea40df014c48232db87575632a04242624eb2df3a75c871feab0"
+    },
+    {
+      "key": "voice/web.mission.when_play_stops_being_play.help_guidance.objective",
+      "path": "assets/audio/web.mission.when_play_stops_being_play.help_guidance.objective.ogg",
+      "bytes": 13891,
+      "sha256": "0b6d7df187341209fbb2a4fc391d20b4dd2160c80b0bc2bd941e13d6f23976b7"
+    },
+    {
+      "key": "voice/web.mission.when_play_stops_being_play.intro.objective",
+      "path": "assets/audio/web.mission.when_play_stops_being_play.intro.objective.ogg",
+      "bytes": 12978,
+      "sha256": "d7696249c45944cf45687de36bc9caf182f9814a03366d77ef062e403596e059"
+    },
+    {
+      "key": "voice/web.mission.when_play_stops_being_play.return_hoodie.objective",
+      "path": "assets/audio/web.mission.when_play_stops_being_play.return_hoodie.objective.ogg",
+      "bytes": 16329,
+      "sha256": "0bcdf4136d7babad8ac813e5c0d8fe13fef599d83dba2d99cb71ca5fdf08eaf0"
+    },
+    {
+      "key": "voice/web.mission.when_play_stops_being_play.title",
+      "path": "assets/audio/web.mission.when_play_stops_being_play.title.ogg",
+      "bytes": 17776,
+      "sha256": "70dedceddaac95c7f19d2f960018f9edd9d30d76374969d055632ca9a5522385"
+    },
+    {
+      "key": "voice/web.reward.brushing_teeth.message",
+      "path": "assets/audio/web.reward.brushing_teeth.message.ogg",
+      "bytes": 14128,
+      "sha256": "6df538054c34087368eb669575ba9be644e2cb03a7ee586d45e386d0357f4832"
+    },
+    {
+      "key": "voice/web.reward.lia_memory.message",
+      "path": "assets/audio/web.reward.lia_memory.message.ogg",
+      "bytes": 24087,
+      "sha256": "da1635662f7003ba9da407fa18a75f80b1c49fb0607c99db01ea4fc6a14414c8"
+    },
+    {
+      "key": "voice/web.reward.pingpong_soccer.message",
+      "path": "assets/audio/web.reward.pingpong_soccer.message.ogg",
+      "bytes": 20275,
+      "sha256": "17be318dad4488b02442ac3a34183617ce5d3fa15972ece1bca7241e57dd9545"
+    },
+    {
+      "key": "voice/web.reward.respect_also_cares.message",
+      "path": "assets/audio/web.reward.respect_also_cares.message.ogg",
+      "bytes": 22206,
+      "sha256": "2b2ca77339e3238c89619e84bc2df7602b56a5e398f73a840bec6481d8ea2845"
+    },
+    {
+      "key": "voice/web.reward.smile_kit.message",
+      "path": "assets/audio/web.reward.smile_kit.message.ogg",
+      "bytes": 21864,
+      "sha256": "8252cfdac4ee4c969f25a5063ab61765a2e2c2ffe72f230e96dc2e75d3b5ab6c"
+    },
+    {
+      "key": "voice/web.reward.when_play_stops_being_play.message",
+      "path": "assets/audio/web.reward.when_play_stops_being_play.message.ogg",
+      "bytes": 20471,
+      "sha256": "4cdb40a179deb7dcb694882dc1396e9dc28b03ddf696fdcb8dd4b34c04185d99"
     },
     {
       "key": "world/cafeteria",
       "path": "assets/world/cafeteria.webp",
-      "bytes": 70564,
-      "sha256": "a6586139e4912f2c3987db00cf81ca8d88d5939242acb8f84b527a3e42f90f09"
+      "bytes": 66520,
+      "sha256": "cd8a7b23328708e024ecc6dfe094a1f2191518c0d7a3d3da4a725c45bdb8c08e"
     },
     {
       "key": "world/classroom",
       "path": "assets/world/classroom.webp",
-      "bytes": 58770,
-      "sha256": "f36924ce8d19152cc68b1678c91862bf65747b9629535c7d141d6c4063fb1f9b"
+      "bytes": 84762,
+      "sha256": "8ece085e44e8b42be3977a353dccd627acaab552922516b28d016667e7456ceb"
     },
     {
       "key": "world/corridor",
       "path": "assets/world/corridor.webp",
-      "bytes": 85874,
-      "sha256": "975766e348def891bf10078412891a777697dd11acbfc3b6bc98bc2d6d3cdd51"
+      "bytes": 94218,
+      "sha256": "0a5da67a674572a6cf63c9341caa46d52c874e273f8d796794ac9ed60c33a99e"
     },
     {
       "key": "world/door-marker",
@@ -934,14 +1888,14 @@
     {
       "key": "world/laboratory",
       "path": "assets/world/laboratory.webp",
-      "bytes": 101806,
-      "sha256": "956250641d82010af517ba4e56b8d9cac781ebba612661ac4a8d3ea39e53f49b"
+      "bytes": 87052,
+      "sha256": "0d1910f43a1b9084641b2104e3bdcc0403ce97264d094ad47837d13209feb124"
     },
     {
       "key": "world/principal",
       "path": "assets/world/principal.webp",
-      "bytes": 56208,
-      "sha256": "4d8d5ec02a59d42d0614fbe3bad2a2c5729799c10a5ef2116c668271e3d04704"
+      "bytes": 61966,
+      "sha256": "23672704b6a9429ca1419e4ae98b956a75e7bacb6424c8766bac02222d6e8ee8"
     },
     {
       "key": "world/prop/banco_1",
@@ -952,68 +1906,56 @@
     {
       "key": "world/prop/mesa_diretoria",
       "path": "assets/world/props/mesa_diretoria.webp",
-      "bytes": 13564,
-      "sha256": "504019f627f98f93ab3a117d2f1ca7116836de9f4b9d74344b4d24b5791cdfde"
-    },
-    {
-      "key": "world/prop/spr_arvore_patio",
-      "path": "assets/world/props/spr_arvore_patio.webp",
-      "bytes": 11048,
-      "sha256": "f0ca60dfa15e2dd5c56a903a14bfd43a989be28dd72c6ca417b1567afc869367"
-    },
-    {
-      "key": "world/prop/spr_carteira_b",
-      "path": "assets/world/props/spr_carteira_b.webp",
-      "bytes": 20274,
-      "sha256": "8532e1f55bd20522019e3975aa23bdfeaad0c7e644bb3722316aac8fdba7d67d"
+      "bytes": 15190,
+      "sha256": "d13a6d23294843ef3963e397df12553b6876f0617a86499e89f55b5724c46e5b"
     },
     {
       "key": "world/prop/spr_carteira_c",
       "path": "assets/world/props/spr_carteira_c.webp",
-      "bytes": 18566,
-      "sha256": "4f6c1d55ca1a5431af30767bc6175f5a57c34ada9d7a93a83125a0d0ea17ff68"
+      "bytes": 12658,
+      "sha256": "b5d192626ade60c5f9e48183cbee037be839ef418b12dc63fb718448704e9c8a"
     },
     {
       "key": "world/prop/spr_carteira_y",
       "path": "assets/world/props/spr_carteira_y.webp",
-      "bytes": 20050,
-      "sha256": "3a81c343aebcd75a186159828d8c450c42c10765e34e1beb598eb96f4d13b9ee"
+      "bytes": 11374,
+      "sha256": "23dd9eaedf8717703a0d9839a4d89354f323ab0c8daaa6662811b9d125e65756"
+    },
+    {
+      "key": "world/prop/spr_grama_corredor",
+      "path": "assets/world/props/spr_grama_corredor.webp",
+      "bytes": 14446,
+      "sha256": "90ac64657432437a8808228e3a14466d5238349bf5dc4aa0d619b5ef4734f29b"
+    },
+    {
+      "key": "world/prop/spr_mesa_1",
+      "path": "assets/world/props/spr_mesa_1.webp",
+      "bytes": 8626,
+      "sha256": "6c42a7893c40eb43966461c461d084dde20a81d68e9c2cf79297eb74417da8d9"
+    },
+    {
+      "key": "world/prop/spr_mesa_2",
+      "path": "assets/world/props/spr_mesa_2.webp",
+      "bytes": 10018,
+      "sha256": "5af620141f4ad6d0f26513f216104a2cc3f91f20b105c40a8257373f46ef271d"
     },
     {
       "key": "world/prop/spr_mesa_professor",
       "path": "assets/world/props/spr_mesa_professor.webp",
-      "bytes": 23530,
-      "sha256": "2c5d6b9ba1341eb917b72ff034c661c4c05e52b4d8905970b32383474236dcb4"
+      "bytes": 29268,
+      "sha256": "5cc000a63228bc3d230ed6cbce2b988859abcb320384ebd825467fb14ea8c7ce"
     },
     {
       "key": "world/prop/spr_mesa1",
       "path": "assets/world/props/spr_mesa1.webp",
-      "bytes": 8026,
-      "sha256": "eaa4c66552c84ef516646d7b69063d155e1875c69fffb83cd9e481fe16bb4221"
+      "bytes": 10084,
+      "sha256": "deea06a75d3905007493b929a6d17eac616cfa62a9490aa0c40a13e25caacf4c"
     },
     {
-      "key": "world/prop/spr_mesa2",
-      "path": "assets/world/props/spr_mesa2.webp",
-      "bytes": 8190,
-      "sha256": "9e9c8f2ca0d5eb8e3430438daa2db611c9890a5de71675b82611666e194ca6d6"
-    },
-    {
-      "key": "world/prop/spr_mesa3",
-      "path": "assets/world/props/spr_mesa3.webp",
-      "bytes": 10926,
-      "sha256": "b0caa059a6bb10e8aa1a38950077bca274cc31ee91de65c60d8fe7cd55673962"
-    },
-    {
-      "key": "world/prop/spr_mesa4",
-      "path": "assets/world/props/spr_mesa4.webp",
-      "bytes": 8146,
-      "sha256": "3b9f43700cbb31a60f9cfa683eebbf7af53969d7c511b465b208baa178c39ed7"
-    },
-    {
-      "key": "world/prop/spr_muro_corredor",
-      "path": "assets/world/props/spr_muro_corredor.webp",
-      "bytes": 14564,
-      "sha256": "92d3d3576b7c17c3f517683f39d8f0eb4bdeda22bee23af1be15cf970ca6b1fc"
+      "key": "world/prop/spr_muro_metal",
+      "path": "assets/world/props/spr_muro_metal.webp",
+      "bytes": 32330,
+      "sha256": "4f8ff7512418d26d2158815651782918bcf8a15c2584fa89d90e3c2671cf64c0"
     },
     {
       "key": "world/prop/spr_muro1",
@@ -1026,6 +1968,48 @@
       "path": "assets/world/props/spr_muro2.webp",
       "bytes": 11794,
       "sha256": "d2fa9e27205bb726ea58ff11143786739c0154583e118335dfdf428846255851"
+    },
+    {
+      "key": "world/prop/spr_parquinho",
+      "path": "assets/world/props/spr_parquinho.webp",
+      "bytes": 4780,
+      "sha256": "a240307a6ed4cc95ab56648db3f117fdc3aa01d239736c339e8ac32441915fa0"
+    },
+    {
+      "key": "world/prop/spr_parquinho2",
+      "path": "assets/world/props/spr_parquinho2.webp",
+      "bytes": 19056,
+      "sha256": "fa90d497382aeece7b9bdc89c3e7756dbefef5ffb51b675263b092cdb1bf7c6c"
+    },
+    {
+      "key": "world/prop/spr_pedaco_pilar",
+      "path": "assets/world/props/spr_pedaco_pilar.webp",
+      "bytes": 1794,
+      "sha256": "bc79694de990d1f8cb419950d9cf85d5cbf95ae9f0f1e5da8213ed0178dff750"
+    },
+    {
+      "key": "world/prop/spr_pilar3",
+      "path": "assets/world/props/spr_pilar3.webp",
+      "bytes": 3638,
+      "sha256": "4b045774146c976ba520ff067e38233af6a4e41f506e7f19449d0f69133d2ab5"
+    },
+    {
+      "key": "world/prop/spr_pilares_corredor/part-1",
+      "path": "assets/world/props/spr_pilares_corredor-part-1.webp",
+      "bytes": 294,
+      "sha256": "530161705c9369761a3c71539df01f4320fbbfb1ec708b352c24a5615e39fed6"
+    },
+    {
+      "key": "world/prop/spr_pilares_corredor/part-2",
+      "path": "assets/world/props/spr_pilares_corredor-part-2.webp",
+      "bytes": 2512,
+      "sha256": "d25021367ebdd0de65f0fe9ae81a788fa34d2020e6387983b6c4a3d95ddb9f2a"
+    },
+    {
+      "key": "world/prop/spr_pilares_corredor/part-3",
+      "path": "assets/world/props/spr_pilares_corredor-part-3.webp",
+      "bytes": 2890,
+      "sha256": "8ecdb4303f4151fbef15123d8cd319202bb93d1a19ea42bf979ef7b0ec124a0f"
     },
     {
       "key": "world/prop/spr_porta_azul",
