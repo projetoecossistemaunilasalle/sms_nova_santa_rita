@@ -11,6 +11,7 @@ import type {
   NewClass,
   NewMembership,
   NewOrganization,
+  NewProfessionalProfile,
 } from "@/application/adult-portal/ports";
 import type {
   ActorSnapshot,
@@ -339,6 +340,32 @@ export class DemoAdultPortalStore
   implements AdultPortalStore, AdultPortalTransaction
 {
   constructor(readonly state: DemoAdultPortalState = cloneSeed()) {}
+
+  async createProfessionalProfile(input: NewProfessionalProfile) {
+    if (
+      this.state.profiles.some(
+        (profile) => profile.email?.toLowerCase() === input.email.toLowerCase(),
+      )
+    ) {
+      throw new AdultPortalError(
+        "Já existe uma conta com este e-mail. Vincule o perfil existente.",
+        "CONFLICT",
+      );
+    }
+    const profile = {
+      id: crypto.randomUUID(),
+      displayName: input.displayName,
+      email: input.email,
+      platformRole: null,
+      status: RecordStatus.ACTIVE,
+    };
+    this.state.profiles.push(profile);
+    return {
+      id: profile.id,
+      displayName: profile.displayName,
+      status: profile.status,
+    };
+  }
 
   async transaction<T>(
     work: (transaction: AdultPortalTransaction) => Promise<T>,

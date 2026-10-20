@@ -20,9 +20,9 @@ documents that conflict with these are historical records, not guidance.
 
 ## Users
 
-- **Platform administrators** manage organizations and organization-level administrators.
-- **Organization administrators** manage organization structure, classes, teacher assignments, and organization staff access.
-- **Teachers** use already-prepared classes, prepare numbered player access with minimal setup, run classroom game sessions, and inspect class and numbered-player results.
+- **Platform administrators** manage organizations and create accounts for organization administrators or professionals.
+- **Organization administrators** manage organization structure, classes, professional assignments, and staff access, and create professional accounts within their own organizations.
+- **Professionals (Profissional)** include educators and PSE staff. They use already-prepared classes, prepare numbered player access with minimal setup, run classroom game sessions, and inspect class and numbered-player results.
 - **Children** access the game through low-friction numbered player credentials, preferably QR codes. They do not create conventional accounts, usernames, passwords, or email-based profiles.
 
 ## V1 adult roles
@@ -31,7 +31,7 @@ V1 has three adult permission levels:
 
 1. Platform administrator.
 2. Organization administrator.
-3. Teacher.
+3. Professional (displayed as Profissional; legacy `TEACHER` / `teacher` identifiers remain compatible).
 
 Teachers should not be required to create organizations, build school structure, maintain full child rosters, or administer passwords.
 

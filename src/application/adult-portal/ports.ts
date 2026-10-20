@@ -15,6 +15,23 @@ export type NewOrganization = {
   type: string;
 };
 
+export type NewProfessionalProfile = {
+  authUserId: string;
+  displayName: string;
+  email: string;
+};
+
+export interface AccountIdentityProvider {
+  create(input: {
+    displayName: string;
+    email: string;
+    password: string;
+  }): Promise<{
+    authUserId: string;
+    rollback(): Promise<void>;
+  }>;
+}
+
 export type NewMembership = {
   organizationId: string;
   profileId: string;
@@ -58,6 +75,9 @@ export interface AdultPortalReader {
 }
 
 export interface AdultPortalTransaction extends AdultPortalReader {
+  createProfessionalProfile(
+    input: NewProfessionalProfile,
+  ): Promise<ProfessionalOptionDto>;
   createOrganization(input: NewOrganization): Promise<OrganizationSummaryDto>;
   updateOrganizationStatus(
     id: string,

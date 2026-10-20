@@ -13,7 +13,11 @@ import {
 import { toAuthorizationActor } from "@/application/authorization/authorization-actor";
 
 import { AdultPortalError } from "./errors";
-import type { AdultPortalReader, AdultPortalStore } from "./ports";
+import type {
+  AccountIdentityProvider,
+  AdultPortalReader,
+  AdultPortalStore,
+} from "./ports";
 import { buildPortalShell } from "./shell-view-model";
 import type {
   AssignMembershipInput,
@@ -22,6 +26,7 @@ import type {
   ChangeMembershipInput,
   ChangeOrganizationStatusInput,
   CreateClassInput,
+  CreateAccountInput,
   CreateOrganizationInput,
   DeactivateTeacherAssignmentInput,
 } from "./schemas";
@@ -32,6 +37,7 @@ import {
   changeMembershipSchema,
   changeOrganizationStatusSchema,
   createClassSchema,
+  createAccountSchema,
   createOrganizationSchema,
   deactivateTeacherAssignmentSchema,
 } from "./schemas";
@@ -98,7 +104,58 @@ function forbidden(message = "Você não pode realizar esta operação."): never
 }
 
 export class AdultPortalService {
-  constructor(private readonly store: AdultPortalStore) {}
+  constructor(
+    private readonly store: AdultPortalStore,
+    private readonly identities?: AccountIdentityProvider,
+  ) {}
+
+  async createAccount(profileId: string, input: CreateAccountInput) {
+    const data = createAccountSchema.parse(input);
+    const authorize = async (reader: AdultPortalReader) => {
+      const actor = toAuthorizationActor(await this.actor(profileId, reader));
+      if (
+        !canManageOrganizations(actor) &&
+        (data.role !== OrganizationRole.TEACHER ||
+          !canManageOrganizationStaff(actor, data.organizationId))
+      )
+        forbidden();
+      await this.assertActiveOrganization(reader, data.organizationId);
+    };
+    // Check before contacting the provider, then again before committing access.
+    await authorize(this.store);
+    if (!this.identities) {
+      throw new AdultPortalError(
+        "A criação de contas não está configurada. Contate o administrador da plataforma.",
+        "VALIDATION",
+      );
+    }
+    const identity = await this.identities.create(data);
+    try {
+      return await this.store.transaction(async (transaction) => {
+        await authorize(transaction);
+        const profile = await transaction.createProfessionalProfile({
+          authUserId: identity.authUserId,
+          displayName: data.displayName,
+          email: data.email,
+        });
+        return transaction.createMembership({
+          profileId: profile.id,
+          organizationId: data.organizationId,
+          role: data.role,
+        });
+      });
+    } catch (error) {
+      try {
+        await identity.rollback();
+      } catch {
+        throw new AdultPortalError(
+          "Não foi possível concluir o vínculo nem remover a identidade criada. Peça ao administrador para verificar o cadastro no Neon Auth antes de tentar novamente.",
+          "CONFLICT",
+        );
+      }
+      throw error;
+    }
+  }
 
   private async actor(
     profileId: string,
@@ -341,7 +398,7 @@ export class AdultPortalService {
           data.role !== OrganizationRole.TEACHER
         ) {
           forbidden(
-            "Administradores da organização gerenciam apenas professores da própria organização.",
+            "Administradores da organização gerenciam apenas profissionais da própria organização.",
           );
         }
         if (data.status === RecordStatus.ACTIVE) {
@@ -457,7 +514,7 @@ export class AdultPortalService {
         forbidden();
       if (classGroup.status !== RecordStatus.ACTIVE) {
         throw new AdultPortalError(
-          "Ative a turma antes de atribuir professores.",
+          "Ative a turma antes de atribuir profissionais.",
           "VALIDATION",
         );
       }
@@ -470,7 +527,7 @@ export class AdultPortalService {
         membership.profileStatus !== RecordStatus.ACTIVE
       ) {
         throw new AdultPortalError(
-          "A atribuição exige um vínculo de professor ativo na mesma organização.",
+          "A atribuição exige um vínculo de profissional ativo na mesma organização.",
           "VALIDATION",
         );
       }
@@ -486,7 +543,7 @@ export class AdultPortalService {
       }
       if (existing) {
         throw new AdultPortalError(
-          "Este professor já possui atribuição nesta turma.",
+          "Este profissional já possui atribuição nesta turma.",
           "CONFLICT",
         );
       }

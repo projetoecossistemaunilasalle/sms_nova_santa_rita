@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { z } from "zod";
 
 import { AdultPortalError } from "@/application/adult-portal/errors";
@@ -12,12 +13,16 @@ import {
   changeMembershipSchema,
   changeOrganizationStatusSchema,
   createClassSchema,
+  createAccountSchema,
   createOrganizationSchema,
   deactivateTeacherAssignmentSchema,
 } from "@/application/adult-portal/schemas";
 import type { ActionResult } from "@/application/adult-portal/types";
 import { getAuthGateway } from "@/server/auth/gateway";
 import { getAdultPortalService } from "@/server/services/adult-portal-container";
+import { enforceRateLimit } from "@/server/security/rate-limit";
+import { HttpError } from "@/server/http/errors";
+import { getRuntimeMode } from "@/runtime/mode";
 
 const initialError: ActionResult = {
   ok: false,
@@ -60,8 +65,42 @@ async function runAction(
     if (error instanceof AdultPortalError) {
       return { ...initialError, message: error.message };
     }
+    if (error instanceof HttpError && error.status === 429) {
+      return {
+        ...initialError,
+        message:
+          "Muitas tentativas. Aguarde alguns minutos antes de criar outra conta.",
+      };
+    }
     return initialError;
   }
+}
+
+export async function createAccountAction(
+  _previous: ActionResult,
+  formData: FormData,
+) {
+  const parsed = createAccountSchema.safeParse(formObject(formData));
+  if (!parsed.success) return validationError(parsed.error);
+  const input = parsed.data;
+  return runAction(
+    async (profileId, service) => {
+      await enforceRateLimit(
+        "account-creation",
+        profileId,
+        new Headers(await headers()),
+      );
+      return service.createAccount(profileId, input);
+    },
+    getRuntimeMode() === "demo"
+      ? "Conta de demonstração criada e vinculada à organização. Nenhuma credencial real foi criada."
+      : "Conta criada e vinculada à organização. Compartilhe as credenciais por um canal seguro; nenhum convite foi enviado.",
+    [
+      "/portal",
+      "/portal/admin/equipe",
+      `/portal/admin/organizacoes/${input.organizationId}`,
+    ],
+  );
 }
 
 export async function createOrganizationAction(
@@ -125,7 +164,7 @@ export async function assignTeacherMembershipAction(
   const input = parsed.data;
   return runAction(
     (profileId, service) => service.assignTeacher(profileId, input),
-    "Professor vinculado à organização.",
+    "Profissional vinculado à organização.",
     [
       "/portal/admin/equipe",
       `/portal/admin/organizacoes/${input.organizationId}`,
@@ -188,7 +227,7 @@ export async function assignTeacherToClassAction(
   const input = parsed.data;
   return runAction(
     (profileId, service) => service.assignTeacherToClass(profileId, input),
-    "Professor atribuído à turma.",
+    "Profissional atribuído à turma.",
     ["/portal/turmas", `/portal/turmas/${input.classGroupId}`],
   );
 }

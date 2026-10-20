@@ -46,15 +46,20 @@ export async function consumeRateLimit(
 }
 
 export async function enforceRateLimit(
-  operation: "sign-in" | "player-entry" | "player-api",
+  operation: "sign-in" | "account-creation" | "player-entry" | "player-api",
   principal: string,
   requestHeaders: Headers,
 ): Promise<void> {
   if (getRuntimeMode() !== "server") return;
   const env = getServerRuntimeEnv();
-  const windowSeconds = operation === "sign-in" ? 900 : 60;
-  const limit =
-    operation === "sign-in" ? 10 : operation === "player-entry" ? 60 : 240;
+  const isAccountOperation =
+    operation === "sign-in" || operation === "account-creation";
+  const windowSeconds = isAccountOperation ? 900 : 60;
+  const limit = isAccountOperation
+    ? 10
+    : operation === "player-entry"
+      ? 60
+      : 240;
   const keyFor = (value: string) =>
     createHmac("sha256", env.APPLICATION_SECRET)
       .update(`${operation}\0${value}`)
@@ -63,8 +68,11 @@ export async function enforceRateLimit(
     ? requestHeaders.get(env.RATE_LIMIT_CLIENT_IP_HEADER)?.split(",")[0]?.trim()
     : undefined;
   if (clientIp && isIP(clientIp)) {
-    const ipLimit =
-      operation === "sign-in" ? 120 : operation === "player-entry" ? 300 : 2000;
+    const ipLimit = isAccountOperation
+      ? 120
+      : operation === "player-entry"
+        ? 300
+        : 2000;
     if (
       !(await consumeRateLimit(
         keyFor(`ip:${clientIp}`),

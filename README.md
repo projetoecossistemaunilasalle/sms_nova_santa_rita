@@ -197,6 +197,43 @@ window. Encryption rotation does not require changing the launch-signing secret.
 
 ## Verification
 
+### Adult account creation
+
+In **Equipe > Criar conta ou vincular perfil**, platform administrators can create
+organization administrators or professionals. Organization administrators can only
+create professionals within organizations they actively administer. New accounts
+receive an active profile and membership together; class assignments remain explicit.
+The visible role is **Profissional**, including educators and PSE staff. Existing
+`TEACHER` / `teacher` storage and authorization identifiers remain unchanged, so no
+role migration is required.
+
+Production provisioning uses the Neon Auth / Better Auth admin endpoints with an
+isolated service session, never the signed-in operator's cookies. Configure
+`NEON_AUTH_ADMIN_EMAIL` and `NEON_AUTH_ADMIN_PASSWORD` for a dedicated identity with
+the auth provider's `admin` role in the same branch as `NEON_AUTH_BASE_URL`. Do not
+give that service identity a portal profile. Keep both values in server-side secret
+storage and make sure the first `ALLOWED_ORIGINS` entry is trusted by Neon Auth.
+Restart after configuration changes. Without these settings, creation fails closed;
+existing sign-in and profile linking continue to work.
+
+Accounts use an administrator-supplied 12–128 character password. The portal does
+not store or log passwords, send invitations, or force a first-login password
+change. Share credentials through a secure channel; the provider's verification
+policy still applies. All created provider identities have role `user`, even when
+their portal membership is an organization administrator. Existing email addresses
+are rejected rather than taken over or reset.
+
+Creation is limited to 10 attempts per operator per 15 minutes. Provider creation
+occurs outside the database transaction; authorization is rechecked before the
+profile and membership are committed. If persistence fails, the new identity is
+removed. Ambiguous provider responses or failed cleanup require an administrator
+to inspect Neon Auth before retrying; external calls are not blindly retried.
+The demo creates only session-local profiles and never stores the supplied password.
+
+Provider API reference: [Better Auth admin plugin](https://github.com/better-auth/better-auth/blob/main/docs/content/docs/plugins/admin.mdx).
+
+### Checks
+
 ```bash
 npm run check
 npm run build:demo

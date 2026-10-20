@@ -8,6 +8,7 @@ import type {
   NewClass,
   NewMembership,
   NewOrganization,
+  NewProfessionalProfile,
 } from "@/application/adult-portal/ports";
 import type {
   ActorSnapshot,
@@ -344,6 +345,13 @@ class PrismaAdultPortalTransaction
   extends PrismaAdultPortalReader
   implements AdultPortalTransaction
 {
+  async createProfessionalProfile(input: NewProfessionalProfile) {
+    return this.db.professionalProfile.create({
+      data: { authUserId: input.authUserId, displayName: input.displayName },
+      select: { id: true, displayName: true, status: true },
+    });
+  }
+
   async createOrganization(input: NewOrganization) {
     const record = await this.db.organization.create({
       data: input,

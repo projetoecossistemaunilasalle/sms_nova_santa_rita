@@ -65,6 +65,8 @@ export const serverRuntimeEnvSchema = sharedRuntimeEnvSchema
     DATABASE_URL: postgresUrl,
     NEON_AUTH_BASE_URL: z.string().url(),
     NEON_AUTH_COOKIE_SECRET: z.string().min(32),
+    NEON_AUTH_ADMIN_EMAIL: z.email().optional(),
+    NEON_AUTH_ADMIN_PASSWORD: z.string().min(1).optional(),
     APPLICATION_SECRET: z.string().min(32),
     PLAYER_CREDENTIAL_KEY_ID: z
       .string()

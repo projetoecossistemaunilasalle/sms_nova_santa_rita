@@ -137,7 +137,7 @@ describe("AdultPortalService", () => {
     await expect(
       service.createClass(DEMO_PROFILE_IDS.TEACHER, {
         organizationId: DEMO_ORGANIZATION_IDS.VICTOR_AGGENS,
-        name: "Turma de professor",
+        name: "Turma de profissional",
       }),
     ).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(
@@ -345,7 +345,7 @@ const shellScopeCases: ShellScopeCase[] = [
     name: "teacher",
     profileId: DEMO_PROFILE_IDS.TEACHER,
     effectiveRole: "teacher",
-    roleLabel: "Professor",
+    roleLabel: "Profissional",
     scopeLabel: "EMEF Victor Aggens",
     navigation: ["/portal", "/portal/turmas", "/portal/resultados"],
   },
@@ -358,7 +358,7 @@ const shellScopeCases: ShellScopeCase[] = [
       )!.status = RecordStatus.INACTIVE;
     },
     effectiveRole: "teacher",
-    roleLabel: "Professor",
+    roleLabel: "Profissional",
     scopeLabel: "Sem organização ativa",
     navigation: ["/portal", "/portal/turmas", "/portal/resultados"],
   },
@@ -374,7 +374,7 @@ const shellScopeCases: ShellScopeCase[] = [
       });
     },
     effectiveRole: "teacher",
-    roleLabel: "Professor",
+    roleLabel: "Profissional",
     scopeLabel: "Sem organização ativa",
     navigation: ["/portal", "/portal/turmas", "/portal/resultados"],
   },

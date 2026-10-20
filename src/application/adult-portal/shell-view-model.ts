@@ -89,7 +89,7 @@ export function buildPortalShell(
         ? "Administrador da plataforma"
         : effectiveRole === "organization_admin"
           ? "Administrador da organização"
-          : "Professor",
+          : "Profissional",
     scopeLabel,
     navigation,
   };

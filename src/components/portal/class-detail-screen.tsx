@@ -59,8 +59,8 @@ export function ClassDetailScreen({
             <Icon name="chart" /> Ver resultados da turma
           </Link>
           {classGroup.canManage && (
-            <a className={styles.textLink} href="#professores">
-              Gerenciar professores
+            <a className={styles.textLink} href="#profissionais">
+              Gerenciar profissionais
             </a>
           )}
         </div>
@@ -69,7 +69,7 @@ export function ClassDetailScreen({
         <section className={styles.inactiveNotice}>
           <strong>Turma inativa</strong>
           <p>
-            Professores não acessam esta turma enquanto ela estiver inativa.
+            Profissionais não acessam esta turma enquanto ela estiver inativa.
           </p>
           {classGroup.canManage && (
             <a className={styles.textLink} href="#situacao-turma">
@@ -86,10 +86,10 @@ export function ClassDetailScreen({
         runtimeMode={runtimeMode}
         workflow={workflow}
       />
-      <div className={styles.classManagementGrid} id="professores">
+      <div className={styles.classManagementGrid} id="profissionais">
         <section className={styles.detailPanel}>
           <div className={styles.sectionHeader}>
-            <h2>Professores atribuídos</h2>
+            <h2>Profissionais atribuídos</h2>
             <span>
               {
                 classGroup.teachers.filter(
@@ -101,7 +101,7 @@ export function ClassDetailScreen({
           </div>
           {classGroup.teachers.length === 0 ? (
             <p className={styles.inlineEmpty}>
-              Nenhum professor atribuído a esta turma.
+              Nenhum profissional atribuído a esta turma.
             </p>
           ) : (
             <div className={styles.assignmentList}>
@@ -125,7 +125,7 @@ export function ClassDetailScreen({
                         confirmation={{
                           title: `Remover ${teacher.displayName}?`,
                           description:
-                            "Este professor perderá o acesso a esta turma. Você poderá atribuí-lo novamente depois.",
+                            "Este profissional perderá o acesso a esta turma. Você poderá atribuí-lo novamente depois.",
                         }}
                       >
                         <input
@@ -143,7 +143,7 @@ export function ClassDetailScreen({
         {classGroup.canManage && (
           <section className={styles.detailPanel}>
             <div className={styles.sectionHeader}>
-              <h2>Atribuir professor</h2>
+              <h2>Atribuir profissional</h2>
             </div>
             {classGroup.status !== RecordStatus.ACTIVE ? (
               <p className={styles.inlineWarning}>
@@ -151,7 +151,7 @@ export function ClassDetailScreen({
               </p>
             ) : assignableTeachers.length === 0 ? (
               <p className={styles.inlineEmpty}>
-                Não há outro professor ativo disponível nesta organização.{" "}
+                Não há outro profissional ativo disponível nesta organização.{" "}
                 <Link
                   className={styles.textLink}
                   href={{
@@ -165,7 +165,7 @@ export function ClassDetailScreen({
             ) : (
               <AdultPortalForm
                 action={assignTeacherToClassAction}
-                submitLabel="Atribuir professor"
+                submitLabel="Atribuir profissional"
               >
                 <input
                   type="hidden"
@@ -173,7 +173,7 @@ export function ClassDetailScreen({
                   value={classGroup.id}
                 />
                 <label className={styles.field}>
-                  <span>Professor ativo</span>
+                  <span>Profissional ativo</span>
                   <select
                     className={styles.select}
                     name="membershipId"
@@ -181,7 +181,7 @@ export function ClassDetailScreen({
                     defaultValue=""
                   >
                     <option value="" disabled>
-                      Selecione um professor
+                      Selecione um profissional
                     </option>
                     {assignableTeachers.map((teacher) => (
                       <option key={teacher.id} value={teacher.id}>
@@ -200,7 +200,7 @@ export function ClassDetailScreen({
           <div>
             <h2>Situação da turma</h2>
             <p>
-              Desativar impede o acesso dos professores. Os registros são
+              Desativar impede o acesso dos profissionais. Os registros são
               mantidos.
             </p>
           </div>
@@ -217,7 +217,7 @@ export function ClassDetailScreen({
                 ? {
                     title: `Desativar a turma ${classGroup.name}?`,
                     description:
-                      "Os professores perderão o acesso a esta turma e os jogadores não poderão iniciar novas entradas. Os registros serão preservados. Você poderá ativá-la novamente.",
+                      "Os profissionais perderão o acesso a esta turma e os jogadores não poderão iniciar novas entradas. Os registros serão preservados. Você poderá ativá-la novamente.",
                   }
                 : undefined
             }

@@ -58,7 +58,7 @@ export function OverviewScreen({
           role === "platform_admin"
             ? "Organize as unidades e seus responsáveis para receber as turmas."
             : role === "organization_admin"
-              ? "Mantenha equipe, turmas e atribuições prontas para o trabalho dos professores."
+              ? "Mantenha equipe, turmas e atribuições prontas para o trabalho dos profissionais."
               : "Acesse sua turma, prepare os cartões e libere a entrada no jogo."
         }
         actions={
@@ -81,8 +81,8 @@ export function OverviewScreen({
             ]
           : role === "organization_admin"
             ? [
-                ["Equipe", "Vincule os professores à organização."],
-                ["Turmas", "Crie a turma e atribua seus professores."],
+                ["Equipe", "Vincule os profissionais à organização."],
+                ["Turmas", "Crie a turma e atribua seus profissionais."],
                 ["Acessos", "Prepare os jogadores e seus cartões QR."],
               ]
             : [

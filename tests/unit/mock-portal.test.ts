@@ -13,6 +13,7 @@ vi.mock("@/server/auth/neon-server", () => ({
   },
 }));
 vi.mock("next/headers", () => ({
+  headers: async () => new Headers(),
   cookies: async () => ({
     get: (name: string) =>
       request.cookies.has(name)
@@ -66,6 +67,7 @@ import {
   changeClassStatusAction,
   createClassAction,
   createOrganizationAction,
+  createAccountAction,
 } from "@/app/(professional)/portal/adult-portal-actions";
 import {
   allocatePlayerSlotsAction,
@@ -141,6 +143,58 @@ afterEach(async () => {
 });
 
 describe("shared portal with server-side mock adapters", () => {
+  it("creates professional accounts through the action without changing the admin session", async () => {
+    await switchProfile(DEMO_PROFILE_IDS.ORGANIZATION_ADMIN);
+    const result = await createAccountAction(
+      previous,
+      form({
+        displayName: "Equipe PSE",
+        email: "pse@example.org",
+        password: "demo-only-password",
+        organizationId: DEMO_ORGANIZATION_IDS.VICTOR_AGGENS,
+        role: "TEACHER",
+      }),
+    );
+    expect(result.ok).toBe(true);
+    expect((await getTeamPageData()).members).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ displayName: "Equipe PSE", role: "TEACHER" }),
+      ]),
+    );
+    expect((await getAuthGateway().getSession())?.actor.profileId).toBe(
+      DEMO_PROFILE_IDS.ORGANIZATION_ADMIN,
+    );
+    expect(JSON.stringify((await getMockDatabase()).state)).not.toContain(
+      "demo-only-password",
+    );
+    expect(request.revalidatePath).toHaveBeenCalledWith("/portal/admin/equipe");
+  });
+
+  it("rejects account creation without a session and returns field errors without credentials", async () => {
+    const invalid = await createAccountAction(
+      previous,
+      form({ password: "secret" }),
+    );
+    expect(invalid).toMatchObject({
+      ok: false,
+      fieldErrors: { email: expect.any(Array) },
+    });
+    expect(JSON.stringify(invalid)).not.toContain("secret");
+    await endMockSession();
+    expect(
+      await createAccountAction(
+        previous,
+        form({
+          displayName: "Teste PSE",
+          email: "pse@example.org",
+          password: "demo-only-password",
+          organizationId: DEMO_ORGANIZATION_IDS.VICTOR_AGGENS,
+          role: "TEACHER",
+        }),
+      ),
+    ).toMatchObject({ ok: false, message: "Sessão expirada." });
+  });
+
   it("uses an opaque HttpOnly session and authenticates the seeded teacher", async () => {
     expect(request.setCookie).toHaveBeenCalledWith(
       MOCK_SESSION_COOKIE,

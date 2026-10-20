@@ -138,7 +138,7 @@ export function OrganizationDetailScreen({
                     <span>
                       <strong>{classGroup.name}</strong>
                       <small>
-                        {classGroup.teacherCount} professor(es) ativo(s)
+                        {classGroup.teacherCount} profissional(is) ativo(s)
                       </small>
                     </span>
                     <StatusBadge

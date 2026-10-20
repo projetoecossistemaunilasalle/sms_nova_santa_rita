@@ -109,6 +109,15 @@ export function AdultPortalForm({
           {state.message}
         </p>
       )}
+      {!state.ok && state.fieldErrors && (
+        <ul className={styles.formError} aria-label="Campos a revisar">
+          {Object.entries(state.fieldErrors).flatMap(([field, errors]) =>
+            (errors ?? []).map((error, index) => (
+              <li key={`${field}-${index}`}>{error}</li>
+            )),
+          )}
+        </ul>
+      )}
     </form>
   );
 }

@@ -9,6 +9,7 @@ export {
   changeMembershipAction,
   changeOrganizationStatusAction,
   createClassAction,
+  createAccountAction,
   createOrganizationAction,
   deactivateTeacherAssignmentAction,
 } from "@/app/(professional)/portal/adult-portal-actions";

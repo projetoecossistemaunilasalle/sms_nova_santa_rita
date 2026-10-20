@@ -54,7 +54,7 @@ export function OrganizationsScreen({
       <PortalState
         icon="lock"
         title="Organizações ficam com a administração"
-        description="Professores acessam somente as turmas ativas que foram atribuídas a eles."
+        description="Profissionais acessam somente as turmas ativas que foram atribuídas a eles."
       />
     );
   }

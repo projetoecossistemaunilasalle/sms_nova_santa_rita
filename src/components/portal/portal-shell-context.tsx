@@ -11,7 +11,7 @@ function roleLabel(role: PortalShellDto["effectiveRole"] | null): string {
     ? "Administrador da plataforma"
     : role === "organization_admin"
       ? "Administrador da organização"
-      : "Professor";
+      : "Profissional";
 }
 
 export function PortalShellIdentity({

@@ -7,7 +7,7 @@ export function recordStatusLabel(status: RecordStatus): "Ativa" | "Inativa" {
 export function roleLabel(role: OrganizationRole): string {
   return role === OrganizationRole.ORGANIZATION_ADMIN
     ? "Administrador da organização"
-    : "Professor";
+    : "Profissional";
 }
 
 export function initials(name: string): string {

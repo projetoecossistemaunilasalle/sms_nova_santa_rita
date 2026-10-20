@@ -7,12 +7,17 @@ export const metadata = { title: "Ajuda" };
 const topics: Array<[string, string, IconName]> = [
   [
     "Organizações e equipe",
-    "Administradores da plataforma criam organizações e vinculam seus administradores. Dentro de cada organização, a equipe recebe vínculos de administrador ou professor; na demonstração local, os perfis usam dados fictícios isolados por sessão no servidor.",
+    "Administradores da plataforma criam organizações e vinculam seus administradores. Dentro de cada organização, a equipe recebe vínculos de administrador ou profissional; na demonstração local, os perfis usam dados fictícios isolados por sessão no servidor.",
     "building",
   ],
   [
-    "Turmas e professores",
-    "Administradores de organização criam turmas e atribuem professores a elas. Professores enxergam apenas as turmas ativas atribuídas ao seu vínculo e não precisam montar a estrutura da escola.",
+    "Criar contas",
+    "Em Equipe, abra “Criar conta ou vincular perfil”. Administradores da plataforma podem criar administradores de organização ou profissionais. Administradores de organização criam apenas profissionais nas organizações sob sua gestão. O perfil Profissional atende educadores e equipes do PSE. Para contas reais, compartilhe as credenciais por um canal seguro; o portal não envia convites automaticamente.",
+    "users",
+  ],
+  [
+    "Turmas e profissionais",
+    "Administradores de organização criam turmas e atribuem profissionais a elas. Profissionais enxergam apenas as turmas ativas atribuídas ao seu vínculo e não precisam montar a estrutura da escola.",
     "school",
   ],
   [
@@ -27,7 +32,7 @@ const topics: Array<[string, string, IconName]> = [
   ],
   [
     "Sessões de turma",
-    "O professor inicia e encerra a sessão da turma. Antes do início, jogadores com QR válido veem uma tela de espera; depois do encerramento, novas entradas deixam de ser aceitas.",
+    "O profissional inicia e encerra a sessão da turma. Antes do início, jogadores com QR válido veem uma tela de espera; depois do encerramento, novas entradas deixam de ser aceitas.",
     "play",
   ],
   [
@@ -37,7 +42,7 @@ const topics: Array<[string, string, IconName]> = [
   ],
   [
     "Perfis na demonstração",
-    "No modo demonstração, o seletor “Perfil demonstrado” alterna entre administrador da plataforma, administrador da organização e professor para comparar os acessos de cada função. Use “Restaurar demo” para voltar aos dados de exemplo.",
+    "No modo demonstração, o seletor “Perfil demonstrado” alterna entre administrador da plataforma, administrador da organização e profissional para comparar os acessos de cada função. Use “Restaurar demo” para voltar aos dados de exemplo.",
     "flag",
   ],
 ];

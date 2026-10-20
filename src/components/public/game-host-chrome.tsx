@@ -15,7 +15,7 @@ const phaseCopy: Record<HostPhase, string> = {
   playing: "Jogo pronto",
   saving: "Guardando progresso",
   conflict: "Recuperação necessária",
-  error: "Verifique com o professor",
+  error: "Verifique com o profissional",
 };
 
 export function GameHostHeader({
@@ -108,7 +108,7 @@ export function GameHostFrame({
           </span>
           <h2>O jogo ainda não está conectado</h2>
           <p>
-            Seu acesso está pronto. Peça ao professor para verificar a
+            Seu acesso está pronto. Peça ao profissional para verificar a
             configuração do jogo antes de continuar.
           </p>
         </div>

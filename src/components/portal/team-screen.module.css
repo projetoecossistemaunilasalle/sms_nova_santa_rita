@@ -146,34 +146,34 @@
   font-size: var(--type-small);
 }
 
-.demoCreationPanel {
+.accountCreationPanel {
   margin-bottom: 16px;
 }
 
-.demoCreationPanel h2 {
+.accountCreationPanel h2 {
   margin: 0;
   font-family: var(--font-display);
 }
 
-.demoCreationPanel > div > p {
+.accountCreationPanel > div > p {
   max-width: 40ch;
   margin: 6px 0 0;
   color: var(--text-muted);
   font-size: var(--type-small);
 }
 
-.demoProfileForm {
+.accountForm {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: end;
+  align-items: start;
 }
 
-.demoProfileForm > :global(button) {
+.accountForm > :global(button) {
   grid-column: 1 / -1;
   justify-self: end;
   margin-bottom: 5px;
 }
 
-.demoProfileForm > :global(p) {
+.accountForm > :global(p) {
   grid-column: 1 / -1;
 }
 
@@ -190,7 +190,7 @@
     grid-template-columns: 1fr;
   }
 
-  .demoProfileForm > :global(button) {
+  .accountForm > :global(button) {
     justify-self: start;
     margin-bottom: 0;
   }
@@ -205,11 +205,11 @@
     grid-template-columns: 1fr;
   }
 
-  .demoProfileForm {
+  .accountForm {
     grid-template-columns: 1fr;
   }
 
-  .demoProfileForm > :global(button) {
+  .accountForm > :global(button) {
     width: 100%;
   }
 }

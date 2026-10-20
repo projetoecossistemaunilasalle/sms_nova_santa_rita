@@ -5,6 +5,23 @@ import { OrganizationRole, RecordStatus } from "@/generated/prisma/enums";
 const id = z.string().trim().min(1, "Identificador obrigatório.");
 const status = z.enum([RecordStatus.ACTIVE, RecordStatus.INACTIVE]);
 
+export const createAccountSchema = z.object({
+  displayName: z.string().trim().min(2, "Informe o nome completo.").max(160),
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .pipe(z.email("Informe um e-mail válido.").max(254)),
+  password: z
+    .string()
+    .min(12, "Use uma senha com pelo menos 12 caracteres.")
+    .max(128),
+  organizationId: id,
+  role: z.enum([OrganizationRole.ORGANIZATION_ADMIN, OrganizationRole.TEACHER]),
+});
+
+export type CreateAccountInput = z.infer<typeof createAccountSchema>;
+
 export const createOrganizationSchema = z.object({
   name: z.string().trim().min(2, "Informe o nome da organização.").max(200),
   type: z.string().trim().min(2, "Informe o tipo da organização.").max(80),

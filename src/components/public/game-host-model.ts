@@ -53,13 +53,13 @@ export async function readResponseJson(response: Response): Promise<unknown> {
 export function errorMessageForEntry(result: PlayerEntryActionResult): string {
   switch (result.state) {
     case "ended":
-      return "A sessão da turma foi encerrada. Peça ao professor para iniciar uma nova sessão.";
+      return "A sessão da turma foi encerrada. Peça ao profissional para iniciar uma nova sessão.";
     case "expired":
-      return "O acesso temporário terminou. Escaneie o QR novamente com a orientação do professor.";
+      return "O acesso temporário terminou. Escaneie o QR novamente com a orientação do profissional.";
     case "waiting":
-      return "A turma ainda não está jogando. Aguarde a orientação do professor.";
+      return "A turma ainda não está jogando. Aguarde a orientação do profissional.";
     default:
-      return "Este acesso não está mais disponível. Peça ao professor um QR atualizado.";
+      return "Este acesso não está mais disponível. Peça ao profissional um QR atualizado.";
   }
 }
 

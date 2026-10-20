@@ -77,7 +77,7 @@ export function ClassesScreen({
         title="Turmas"
         description={
           canCreate
-            ? "Crie turmas e defina quais professores ativos podem acessá-las."
+            ? "Crie turmas e defina quais profissionais ativos podem acessá-las."
             : "Escolha uma turma para preparar os cartões QR e iniciar uma sessão."
         }
       />
@@ -94,8 +94,8 @@ export function ClassesScreen({
             <div>
               <h2>Nova turma</h2>
               <p>
-                Crie a turma e abra seus detalhes para atribuir um professor e
-                preparar os cartões dos jogadores.
+                Crie a turma e abra seus detalhes para atribuir um profissional
+                e preparar os cartões dos jogadores.
               </p>
             </div>
             <AdultPortalForm
@@ -258,13 +258,13 @@ export function ClassesScreen({
                 <p>{classGroup.organizationName}</p>
                 <dl className={styles.classGroupFacts}>
                   <div>
-                    <dt>Professores ativos</dt>
+                    <dt>Profissionais ativos</dt>
                     <dd>{classGroup.teacherCount}</dd>
                   </div>
                   {classGroup.teacherCount === 0 && canCreate && (
                     <div>
                       <dt>Próximo passo</dt>
-                      <dd>Atribuir professor</dd>
+                      <dd>Atribuir profissional</dd>
                     </div>
                   )}
                 </dl>

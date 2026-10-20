@@ -14,6 +14,7 @@ import {
   assignOrganizationAdministratorAction,
   assignTeacherMembershipAction,
   changeMembershipAction,
+  createAccountAction,
 } from "@/runtime/actions";
 
 import { AdultPortalForm } from "./adult-portal-form";
@@ -76,7 +77,7 @@ export function TeamScreen({
         title="A gestão da equipe não faz parte do seu acesso"
         description={
           role
-            ? "Seu perfil de professor permanece focado nas turmas atribuídas."
+            ? "Seu perfil de profissional permanece focado nas turmas atribuídas."
             : "O perfil ou a organização selecionada não está ativo."
         }
       />
@@ -94,8 +95,8 @@ export function TeamScreen({
         title="Equipe"
         description={
           role === "platform_admin"
-            ? "Vincule administradores às organizações sem duplicar credenciais do provedor de autenticação."
-            : "Gerencie professores somente dentro das organizações sob sua responsabilidade."
+            ? "Crie contas e gerencie os acessos de administradores e profissionais nas organizações."
+            : "Crie contas de profissionais e gerencie os acessos nas organizações sob sua responsabilidade."
         }
       />
       <details
@@ -105,46 +106,132 @@ export function TeamScreen({
         onToggle={(event) => setCreationOpen(event.currentTarget.open)}
       >
         <summary>
-          Adicionar à equipe <Icon name="plus" />
+          Criar conta ou vincular perfil <Icon name="plus" />
         </summary>
         {runtimeMode === "demo" && (
           <p className={teamStyles.demoAccountNotice}>
-            Os perfis de exemplo já estão provisionados na sessão local.
-            Vincule-os usando as mesmas operações do portal; nenhuma conta real
-            será criada.
+            As contas criadas nesta demonstração ficam somente na sessão local.
+            Use dados fictícios. Nenhuma conta real será criada e a senha não
+            será armazenada.
           </p>
         )}
-        <details className={teamStyles.serverProvisioningGuide}>
-          <summary>O profissional não aparece na lista?</summary>
-          <p>
-            A criação da identidade e das credenciais é feita pelo Neon Auth;
-            este portal ainda não envia convites. Depois que o perfil
-            profissional correspondente for provisionado, ele aparecerá na lista
-            abaixo para receber um vínculo.
-          </p>
-          <ol>
-            <li>
-              <strong>1. Criar a identidade</strong>
-              Peça ao responsável pelo Neon Auth para cadastrar o profissional.
-            </li>
-            <li>
-              <strong>2. Provisionar o perfil</strong>
-              Peça ao responsável pelo portal para vincular a identidade a um
-              perfil profissional.
-            </li>
-            <li>
-              <strong>3. Conceder acesso</strong>
-              Quando o perfil ativo aparecer abaixo, escolha a organização e
-              crie o vínculo.
-            </li>
-          </ol>
-        </details>
+        <section
+          className={`${styles.managementPanel} ${teamStyles.accountCreationPanel}`}
+        >
+          <div>
+            <h2>Criar conta</h2>
+            <p>
+              Cadastre a pessoa e conceda acesso à organização em uma única
+              etapa.
+            </p>
+            <p>
+              O perfil Profissional atende educadores e equipes do PSE. Ele
+              permite atuar somente nas turmas atribuídas.
+            </p>
+            <p>
+              Compartilhe o e-mail e a senha por um canal seguro. Nenhum convite
+              é enviado automaticamente.
+            </p>
+          </div>
+          {activeOrganizations.length === 0 ? (
+            <p role="status">
+              É necessário ter uma organização ativa sob sua gestão para criar
+              contas.
+            </p>
+          ) : (
+            <AdultPortalForm
+              action={createAccountAction}
+              submitLabel="Criar conta"
+              className={teamStyles.accountForm}
+            >
+              <label className={styles.field}>
+                <span>Nome completo</span>
+                <input
+                  className={styles.input}
+                  name="displayName"
+                  autoComplete="name"
+                  required
+                  minLength={2}
+                  maxLength={160}
+                />
+              </label>
+              <label className={styles.field}>
+                <span>E-mail de acesso</span>
+                <input
+                  className={styles.input}
+                  type="email"
+                  name="email"
+                  autoComplete="off"
+                  required
+                  maxLength={254}
+                />
+              </label>
+              <label className={styles.field}>
+                <span>Senha de acesso</span>
+                <input
+                  className={styles.input}
+                  type="password"
+                  name="password"
+                  autoComplete="new-password"
+                  required
+                  minLength={12}
+                  maxLength={128}
+                  aria-describedby="account-password-hint"
+                />
+                <small id="account-password-hint">
+                  De 12 a 128 caracteres. Não reutilize uma senha pessoal.
+                </small>
+              </label>
+              <label className={styles.field}>
+                <span>Perfil de acesso</span>
+                <select
+                  className={styles.select}
+                  name="role"
+                  defaultValue={OrganizationRole.TEACHER}
+                >
+                  <option value={OrganizationRole.TEACHER}>Profissional</option>
+                  {role === "platform_admin" && (
+                    <option value={OrganizationRole.ORGANIZATION_ADMIN}>
+                      Administrador da organização
+                    </option>
+                  )}
+                </select>
+              </label>
+              <label className={styles.field}>
+                <span>Organização</span>
+                <select
+                  className={styles.select}
+                  name="organizationId"
+                  required
+                  defaultValue={
+                    activeOrganizations.some(
+                      (item) => item.id === organizationId,
+                    )
+                      ? organizationId
+                      : activeOrganizations.length === 1
+                        ? activeOrganizations[0]!.id
+                        : ""
+                  }
+                >
+                  <option value="" disabled>
+                    Selecione uma organização
+                  </option>
+                  {activeOrganizations.map((organization) => (
+                    <option key={organization.id} value={organization.id}>
+                      {organization.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </AdultPortalForm>
+          )}
+        </section>
         <section className={styles.managementPanel}>
           <div>
             <h2>
               {role === "platform_admin"
                 ? "Vincular perfil existente"
-                : "Vincular professor existente"}
+                : "Vincular profissional existente"}
             </h2>
             <p>
               {role === "platform_admin"
@@ -360,14 +447,14 @@ export function TeamScreen({
                         submitLabel={
                           member.role === OrganizationRole.TEACHER
                             ? "Promover"
-                            : "Tornar professor"
+                            : "Tornar profissional"
                         }
                         compact
                         confirmation={{
                           title:
                             member.role === OrganizationRole.TEACHER
                               ? "Promover a administrador?"
-                              : "Tornar professor?",
+                              : "Tornar profissional?",
                           description:
                             member.role === OrganizationRole.TEACHER
                               ? `${member.displayName} poderá gerenciar a equipe e as turmas de ${member.organizationName}.`

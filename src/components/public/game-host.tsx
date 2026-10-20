@@ -217,7 +217,7 @@ export function GameHost({
           setAlert({
             tone: "warning",
             message:
-              "O servidor recusou o progresso desta sessão. Peça ajuda ao professor: é possível preservar uma cópia local e carregar o progresso do servidor, sem enviar os registros antigos em outra sessão.",
+              "O servidor recusou o progresso desta sessão. Peça ajuda ao profissional: é possível preservar uma cópia local e carregar o progresso do servidor, sem enviar os registros antigos em outra sessão.",
           });
         }
 
@@ -271,7 +271,7 @@ export function GameHost({
             tone: "warning",
             message:
               report.retryable === false && report.failedStream
-                ? "O acesso desta sessão terminou ou foi recusado. Os registros continuam guardados neste dispositivo; peça ajuda ao professor."
+                ? "O acesso desta sessão terminou ou foi recusado. Os registros continuam guardados neste dispositivo; peça ajuda ao profissional."
                 : "Alguns registros estão guardados neste dispositivo e serão enviados quando a conexão voltar.",
           });
         } else if (report.state === "synced") {
@@ -439,7 +439,7 @@ export function GameHost({
             ? "A sessão mudou. Escaneie o QR atual para carregar o progresso com segurança."
             : error instanceof Error
               ? error.message
-              : "Não foi possível preparar o jogo. Peça ajuda ao professor.",
+              : "Não foi possível preparar o jogo. Peça ajuda ao profissional.",
       });
     }
   }
@@ -560,7 +560,7 @@ export function GameHost({
       setAlert({
         tone: "error",
         message:
-          "O jogo enviou uma mensagem incompatível. Peça ajuda ao professor.",
+          "O jogo enviou uma mensagem incompatível. Peça ajuda ao profissional.",
       });
       showProtocolError(
         "VALIDATION_FAILED",
@@ -677,7 +677,7 @@ export function GameHost({
       setAlert({
         tone: "error",
         message:
-          "O jogo encontrou um problema de integração. Escaneie o QR novamente ou peça ajuda ao professor.",
+          "O jogo encontrou um problema de integração. Escaneie o QR novamente ou peça ajuda ao profissional.",
       });
     }
   }
@@ -747,7 +747,7 @@ export function GameHost({
       setAlert({
         tone: "warning",
         message:
-          "O jogo ainda não respondeu. Confira a conexão ou peça ajuda ao professor.",
+          "O jogo ainda não respondeu. Confira a conexão ou peça ajuda ao profissional.",
       });
     }, 12_000);
     return () => window.clearTimeout(timeout);

@@ -23,31 +23,31 @@ const stateCopy: Record<
     icon: "search",
     title: "Este QR não foi reconhecido",
     description:
-      "Confira se o cartão correto foi escaneado ou peça um novo código ao professor.",
+      "Confira se o cartão correto foi escaneado ou peça um novo código ao profissional.",
   },
   revoked: {
     icon: "history",
     title: "Este QR foi substituído",
     description:
-      "Use o cartão mais recente entregue pelo professor. O acesso antigo não funciona mais.",
+      "Use o cartão mais recente entregue pelo profissional. O acesso antigo não funciona mais.",
   },
   inactive: {
     icon: "pause",
     title: "Este acesso está indisponível",
     description:
-      "A turma ou o jogador não está ativo neste momento. Peça ajuda ao professor.",
+      "A turma ou o jogador não está ativo neste momento. Peça ajuda ao profissional.",
   },
   ended: {
     icon: "archive",
     title: "A sessão foi encerrada",
     description:
-      "A atividade desta turma terminou. Aguarde uma nova orientação do professor.",
+      "A atividade desta turma terminou. Aguarde uma nova orientação do profissional.",
   },
   unauthorized: {
     icon: "shield",
     title: "Não foi possível autorizar a entrada",
     description:
-      "Este acesso não corresponde à sessão atual. Escaneie novamente ou peça ajuda ao professor.",
+      "Este acesso não corresponde à sessão atual. Escaneie novamente ou peça ajuda ao profissional.",
   },
   expired: {
     icon: "clock",
@@ -159,7 +159,7 @@ export function PlayerEntryScreen({
         <span className={styles.entryStatus}>Cartão reconhecido</span>
         <h1>A turma ainda está se preparando</h1>
         <p>
-          Seu acesso está certo. Aguarde o professor iniciar a sessão e tente
+          Seu acesso está certo. Aguarde o profissional iniciar a sessão e tente
           novamente.
         </p>
         <button
@@ -186,8 +186,8 @@ export function PlayerEntryScreen({
         </span>
         <h1>Escaneie seu cartão para jogar</h1>
         <p>
-          Aponte a câmera para o QR do jogador entregue pelo professor. Se
-          precisar, peça ajuda ao professor.
+          Aponte a câmera para o QR do jogador entregue pelo profissional. Se
+          precisar, peça ajuda ao profissional.
         </p>
       </section>
     );
@@ -198,7 +198,7 @@ export function PlayerEntryScreen({
       return (
         <section className={`${styles.entryCard} ${styles.entryProblem}`}>
           <h1>Não foi possível preparar o jogo</h1>
-          <p>Escaneie o QR novamente com a orientação do professor.</p>
+          <p>Escaneie o QR novamente com a orientação do profissional.</p>
         </section>
       );
     }
