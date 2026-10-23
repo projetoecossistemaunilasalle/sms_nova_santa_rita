@@ -12,6 +12,7 @@ export type GameHostDocument = {
 
 export type GameHostDocumentEvent =
   | { type: "ready" }
+  | { type: "remount" }
   | { type: "load" }
   | { type: "bootstrap-started" }
   | {
@@ -37,6 +38,11 @@ export function transitionGameHostDocument(
   event: GameHostDocumentEvent,
 ): GameHostDocument {
   switch (event.type) {
+    case "remount":
+      return {
+        ...initialGameHostDocument(),
+        generation: state.generation + 1,
+      };
     case "ready":
       // Ready is emitted once per document, possibly before its load event.
       return {

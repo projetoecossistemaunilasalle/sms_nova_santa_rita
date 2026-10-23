@@ -116,6 +116,12 @@ export function GameHost({
     return next !== previous;
   }
 
+  function remountFrame() {
+    // Invalidate synchronously, before React replaces the frame.
+    applyDocumentEvent({ type: "remount" });
+    setFrameGeneration((generation) => generation + 1);
+  }
+
   function showProtocolError(
     code: ProtocolErrorV2["code"],
     message: string,
@@ -130,7 +136,11 @@ export function GameHost({
     postToGame(error);
   }
 
-  function postToGame(message: unknown) {
+  function postToGame(
+    message: unknown,
+    generation = gameDocument.current.generation,
+  ) {
+    if (generation !== gameDocument.current.generation) return;
     if (runtimeMode === "demo") {
       setLastHostMessage(message);
       return;
@@ -164,7 +174,7 @@ export function GameHost({
     )
       return;
     setAlert(null);
-    postToGame(value);
+    postToGame(value, generation);
   }
 
   function updateCurrentBootstrap(value: PlayerBootstrapV2) {
@@ -391,7 +401,7 @@ export function GameHost({
     }
   }
 
-  async function bootstrapDemo() {
+  async function bootstrapDemo(documentGeneration: number) {
     const snapshot = readDemoGameSnapshot(
       window.localStorage.getItem(demoStorageKey(entry.playerSlotId)),
     );
@@ -403,7 +413,7 @@ export function GameHost({
 
     installBootstrap(
       newBootstrap(entry.playerSlotId, entry.gameSessionId, snapshot),
-      gameDocument.current.generation,
+      documentGeneration,
     );
   }
 
@@ -474,7 +484,7 @@ export function GameHost({
 
     try {
       if (runtimeMode === "demo") {
-        await bootstrapDemo();
+        await bootstrapDemo(documentGeneration);
       } else {
         await bootstrapServer(documentGeneration);
       }
@@ -742,8 +752,7 @@ export function GameHost({
         });
         if (recovery.reload) {
           upgradeRetried.current = true;
-          setPhase("updating");
-          setFrameGeneration((generation) => generation + 1);
+          remountFrame();
         } else {
           setPhase("error");
           setContentFailure(recovery.message);
@@ -837,22 +846,26 @@ export function GameHost({
 
   async function recoverState() {
     if (recovering) return;
+    const documentGeneration = gameDocument.current.generation;
     setRecovering(true);
     gameDocument.current.branchReady = false;
     try {
       await syncPromise.current;
+      if (gameDocument.current.generation !== documentGeneration) return;
       const requestId = pendingConflict.current ?? recoveryRequest;
       if (requestId) {
         const store = await getOfflineStore();
+        if (gameDocument.current.generation !== documentGeneration) return;
         await store.discardConflictedStateBranch(entry.playerSlotId, requestId);
       }
+      if (gameDocument.current.generation !== documentGeneration) return;
       setRecoveryRequest(null);
       setReloadRequired(false);
-      gameDocument.current.savedReplies.clear();
       pendingConflict.current = null;
-      gameDocument.current.bootstrapStarted = false;
-      await beginBootstrap();
+      // A running game accepts only one bootstrap; wait for the new ready.
+      remountFrame();
     } catch {
+      if (gameDocument.current.generation !== documentGeneration) return;
       setAlert({
         tone: "error",
         message:
