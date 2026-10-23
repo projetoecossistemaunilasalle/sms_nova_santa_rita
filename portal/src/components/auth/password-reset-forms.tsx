@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 
 import styles from "@/components/marketing/marketing.module.css";
 import {
@@ -83,6 +83,13 @@ export function ResetPasswordForm({
   demo: boolean;
 }) {
   const [state, action, pending] = useActionState(resetPasswordAction, idle);
+
+  // The token now lives only in the form; drop it from the address bar and
+  // history so an abandoned reset link can't be replayed from history.
+  useEffect(() => {
+    if (window.location.search)
+      window.history.replaceState(null, "", window.location.pathname);
+  }, []);
 
   if (state.status === "success") {
     return (

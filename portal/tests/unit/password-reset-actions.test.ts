@@ -296,6 +296,20 @@ describe("resetPasswordAction", () => {
     expect(mocks.resetPassword).not.toHaveBeenCalled();
   });
 
+  it("throttles reset submissions with one global key, never per token", async () => {
+    await resetPasswordAction(idle, form(valid));
+    await resetPasswordAction(idle, form({ ...valid, token: "another-token" }));
+
+    const calls = mocks.enforceRateLimit.mock.calls.map(([op, principal]) => [
+      op,
+      principal,
+    ]);
+    expect(calls).toEqual([
+      ["password-reset-submit", "all"],
+      ["password-reset-submit", "all"],
+    ]);
+  });
+
   it("only simulates success in the demo target", async () => {
     vi.stubEnv("APP_RUNTIME_MODE", "demo");
 

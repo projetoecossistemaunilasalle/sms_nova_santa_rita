@@ -50,6 +50,7 @@ export async function enforceRateLimit(
     | "sign-in"
     | "account-creation"
     | "password-reset"
+    | "password-reset-submit"
     | "player-entry"
     | "player-api",
   principal: string,
@@ -60,13 +61,19 @@ export async function enforceRateLimit(
   const isAccountOperation =
     operation === "sign-in" ||
     operation === "account-creation" ||
-    operation === "password-reset";
+    operation === "password-reset" ||
+    operation === "password-reset-submit";
   const windowSeconds = isAccountOperation ? 900 : 60;
-  const limit = isAccountOperation
-    ? 10
-    : operation === "player-entry"
+  // Reset submissions share one global budget: every token is attacker-chosen,
+  // so a per-token key would let rotating tokens bypass throttling.
+  const limit =
+    operation === "password-reset-submit"
       ? 60
-      : 240;
+      : isAccountOperation
+        ? 10
+        : operation === "player-entry"
+          ? 60
+          : 240;
   const keyFor = (value: string) =>
     createHmac("sha256", env.APPLICATION_SECRET)
       .update(`${operation}\0${value}`)
