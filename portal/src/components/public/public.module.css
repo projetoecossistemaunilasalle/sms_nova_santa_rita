@@ -178,16 +178,7 @@
 }
 
 .gameHost {
-  width: min(
-    1160px,
-    100%,
-    calc((100vh - var(--game-host-chrome-offset, 204px)) * 16 / 9 + 8px)
-  );
-  width: min(
-    1160px,
-    100%,
-    calc((100dvh - var(--game-host-chrome-offset, 204px)) * 16 / 9 + 8px)
-  );
+  width: min(1160px, 100%);
   margin-inline: auto;
 }
 
@@ -290,12 +281,30 @@
 .gameHostIframe {
   display: block;
   width: 100%;
-  max-height: calc(100vh - var(--game-host-chrome-offset, 204px));
-  max-height: calc(100dvh - var(--game-host-chrome-offset, 204px));
   aspect-ratio: 16 / 9;
   margin-inline: auto;
   border: 0;
   background: var(--surface-game);
+}
+
+@media (min-width: 521px) and (min-height: 640px) {
+  .gameHost {
+    width: min(
+      1160px,
+      100%,
+      calc((100vh - var(--game-host-chrome-offset, 204px)) * 16 / 9 + 8px)
+    );
+    width: min(
+      1160px,
+      100%,
+      calc((100dvh - var(--game-host-chrome-offset, 204px)) * 16 / 9 + 8px)
+    );
+  }
+
+  .gameHostIframe {
+    max-height: calc(100vh - var(--game-host-chrome-offset, 204px));
+    max-height: calc(100dvh - var(--game-host-chrome-offset, 204px));
+  }
 }
 
 .gameHostUnavailable {
@@ -665,8 +674,8 @@
   }
 
   .gameHostIframe {
-    max-height: 58vh;
-    max-height: 58dvh;
+    max-height: max(180px, 58vh);
+    max-height: max(180px, 58dvh);
     aspect-ratio: 16 / 9;
   }
 

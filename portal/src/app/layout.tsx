@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { connection } from "next/server";
 
@@ -17,12 +17,6 @@ export const metadata: Metadata = {
       { url: "/favicon.ico", sizes: "any" },
     ],
   },
-};
-
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  viewportFit: "cover",
 };
 
 export default async function RootLayout({
