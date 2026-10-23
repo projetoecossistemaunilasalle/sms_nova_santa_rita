@@ -54,6 +54,14 @@ describe("landing inline script CSP", () => {
     ).not.toContain(expected);
   });
 
+  it("hashes line endings the way the HTML parser sees them", () => {
+    const parsed = "\nconst a = 1;\nconst b = 2;\n";
+    const expected = `'sha256-${createHash("sha256").update(parsed).digest("base64")}'`;
+    expect(
+      inlineScriptHashes("<script>\r\nconst a = 1;\rconst b = 2;\r\n</script>"),
+    ).toEqual([expected]);
+  });
+
   it("fails on malformed raw-text markup", () => {
     expect(() => inlineScripts("<script>unfinished")).toThrow("Unclosed");
   });

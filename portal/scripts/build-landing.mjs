@@ -48,9 +48,13 @@ export function inlineScripts(html) {
 export function inlineScriptHashes(html) {
   return [
     ...new Set(
+      // Browsers hash the parsed script text, and HTML parsing turns CRLF and
+      // lone CR into LF (a Windows autocrlf checkout ships CRLF files).
       inlineScripts(html).map(
         (script) =>
-          `'sha256-${createHash("sha256").update(script, "utf8").digest("base64")}'`,
+          `'sha256-${createHash("sha256")
+            .update(script.replace(/\r\n?/g, "\n"), "utf8")
+            .digest("base64")}'`,
       ),
     ),
   ];
