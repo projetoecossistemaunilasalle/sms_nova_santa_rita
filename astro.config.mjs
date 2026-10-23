@@ -12,9 +12,13 @@ const pagesBasePath = `/${
   (process.env.PAGES_BASE_PATH ?? "sms_nova_santa_rita").replace(/^\/+|\/+$/g, "")
 }`;
 
+// Origem canonica para URLs absolutas (og:image). O build do Render usa a URL
+// do servico do portal, que tambem serve este site em "/".
+const siteUrl =
+  process.env.SITE_URL || "https://projetoecossistemaunilasalle.github.io";
+
 export default defineConfig({
-  // Configuracao para deploy no GitHub Pages (site de projeto).
-  site: "https://projetoecossistemaunilasalle.github.io",
+  site: siteUrl,
   base: pagesBasePath,
   integrations: [solid()],
   output: "static",
