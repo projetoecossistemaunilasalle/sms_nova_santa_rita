@@ -23,12 +23,6 @@ const successStyle = {
   fontSize: "0.95rem",
 } as const;
 
-const linkButtonStyle = {
-  display: "inline-block",
-  textAlign: "center",
-  textDecoration: "none",
-} as const;
-
 export function RequestResetForm({ demo }: { demo: boolean }) {
   const [state, action, pending] = useActionState(
     requestPasswordResetAction,
@@ -43,7 +37,7 @@ export function RequestResetForm({ demo }: { demo: boolean }) {
             ? "Demonstração: se o e-mail existisse, as instruções seriam enviadas."
             : "Se houver uma conta com esse e-mail, enviaremos um link para redefinir a senha. Verifique também a caixa de spam."}
         </p>
-        <Link className={styles.submit} href="/entrar" style={linkButtonStyle}>
+        <Link className={styles.submit} href="/entrar">
           Voltar para o início
         </Link>
       </div>
@@ -99,7 +93,7 @@ export function ResetPasswordForm({
             ? "Demonstração: a senha seria redefinida agora."
             : "Senha redefinida. Entre no portal com a nova senha."}
         </p>
-        <Link className={styles.submit} href="/entrar" style={linkButtonStyle}>
+        <Link className={styles.submit} href="/entrar">
           Ir para o login
         </Link>
       </div>
@@ -158,11 +152,7 @@ export function InvalidResetLink({ message }: { message?: string }) {
         {message ??
           "Este link de redefinição é inválido ou expirou. Solicite um novo link."}
       </p>
-      <Link
-        className={styles.submit}
-        href="/entrar/recuperar"
-        style={linkButtonStyle}
-      >
+      <Link className={styles.submit} href="/entrar/recuperar">
         Solicitar novo link
       </Link>
     </div>
