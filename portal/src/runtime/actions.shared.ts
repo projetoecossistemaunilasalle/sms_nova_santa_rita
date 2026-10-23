@@ -1,5 +1,9 @@
 // Shared server actions for real and mock persistence.
 export { signInAction } from "@/app/(professional)/entrar/actions";
+export {
+  requestPasswordResetAction,
+  resetPasswordAction,
+} from "@/app/(professional)/entrar/password-reset-actions";
 export { signOutAction } from "@/app/(professional)/portal/sign-out-action";
 export {
   assignOrganizationAdministratorAction,

@@ -46,14 +46,21 @@ export async function consumeRateLimit(
 }
 
 export async function enforceRateLimit(
-  operation: "sign-in" | "account-creation" | "player-entry" | "player-api",
+  operation:
+    | "sign-in"
+    | "account-creation"
+    | "password-reset"
+    | "player-entry"
+    | "player-api",
   principal: string,
   requestHeaders: Headers,
 ): Promise<void> {
   if (getRuntimeMode() !== "server") return;
   const env = getServerRuntimeEnv();
   const isAccountOperation =
-    operation === "sign-in" || operation === "account-creation";
+    operation === "sign-in" ||
+    operation === "account-creation" ||
+    operation === "password-reset";
   const windowSeconds = isAccountOperation ? 900 : 60;
   const limit = isAccountOperation
     ? 10
