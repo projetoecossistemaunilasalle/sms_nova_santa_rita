@@ -13,6 +13,7 @@
     "build": "npm run build:server",
     "build:demo": "node scripts/next-target.mjs build demo",
     "build:server": "node scripts/next-target.mjs build server",
+    "bundle:game": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/bundle-game.ps1",
     "start": "node scripts/start.mjs",
     "start:demo": "node scripts/start.mjs --demo",
     "clean:build": "node scripts/clean-build-artifacts.mjs",

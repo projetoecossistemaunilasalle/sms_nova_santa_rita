@@ -12,6 +12,7 @@ export default defineConfig([
     ".next-demo-dev/**",
     "out/**",
     "coverage/**",
+    "public/jogo-cliente/**",
     "src/generated/**",
     "src/runtime/actions.ts",
     "src/runtime/readers.ts",

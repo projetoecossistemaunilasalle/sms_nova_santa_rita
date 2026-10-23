@@ -1,5 +1,6 @@
 .next
 node_modules
+public/jogo-cliente/**
 src/generated
 package-lock.json
 contracts
