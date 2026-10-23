@@ -505,3 +505,68 @@
   display: inline-flex;
   align-items: center;
 }
+
+.moduleFilter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.moduleChip {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  color: var(--blue-dark);
+  background: var(--surface);
+  font-size: var(--type-small);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.moduleChip[aria-current="page"] {
+  border-color: var(--blue-dark);
+  color: var(--surface);
+  background: var(--blue-dark);
+}
+
+.moduleTotals {
+  margin-bottom: 22px;
+}
+
+.moduleTotals h2 {
+  margin: 0 0 10px;
+  font-size: var(--type-subtitle);
+}
+
+.moduleTotals ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.moduleTotalCard {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  font-size: var(--type-body-small);
+}
+
+.moduleTotalCard span {
+  color: var(--text-muted);
+}
+
+.metricNote {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: var(--type-compact);
+}

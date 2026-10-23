@@ -8,7 +8,14 @@ import { Icon } from "@/components/shared/icon";
 import { PageHeader } from "@/components/portal/page-header";
 import { PortalState } from "@/components/portal/portal-state";
 import { ClassResultsPlayers } from "./class-results-players";
-import { formatActiveTime } from "./results-helpers";
+import {
+  formatActiveTime,
+  mapModuleTotals,
+  metricLabel,
+  metricNote,
+  resultsHref,
+  type ResultsModuleOption,
+} from "./results-helpers";
 
 import styles from "./results.module.css";
 
@@ -34,6 +41,64 @@ function SummaryCard({
       <strong>{value}</strong>
       <small>{note}</small>
     </article>
+  );
+}
+
+function ModuleFilter({
+  basePath,
+  options,
+  moduleId,
+}: {
+  basePath: string;
+  options: ResultsModuleOption[];
+  moduleId?: string;
+}) {
+  if (options.length === 0) return null;
+  return (
+    <nav className={styles.moduleFilter} aria-label="Filtrar por módulo">
+      <Link
+        className={styles.moduleChip}
+        href={basePath}
+        aria-current={moduleId ? undefined : "page"}
+      >
+        Todos os módulos
+      </Link>
+      {options.map((option) => (
+        <Link
+          className={styles.moduleChip}
+          href={resultsHref(basePath, option.id)}
+          key={option.id}
+          aria-current={option.id === moduleId ? "page" : undefined}
+        >
+          {option.label}
+        </Link>
+      ))}
+    </nav>
+  );
+}
+
+function ModuleTotalsSection({
+  totals,
+  options,
+}: {
+  totals: ClassReport["moduleTotals"];
+  options: ResultsModuleOption[];
+}) {
+  const rows = mapModuleTotals(totals, options);
+  if (rows.length === 0) return null;
+  return (
+    <section className={styles.moduleTotals} aria-label="Totais por módulo">
+      <h2>Totais por módulo</h2>
+      <ul>
+        {rows.map((row) => (
+          <li className={styles.moduleTotalCard} key={row.key}>
+            <strong>{row.label}</strong>
+            <span>{formatActiveTime(row.totalActiveMs)} ativos</span>
+            <span>{numberFormat.format(row.resultCount)} resultados</span>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 
@@ -133,7 +198,16 @@ export function ResultsScreen({ reports }: { reports: ClassReport[] }) {
   );
 }
 
-export function ClassResultsScreen({ report }: { report: ClassReport }) {
+export function ClassResultsScreen({
+  report,
+  moduleOptions = [],
+  moduleId,
+}: {
+  report: ClassReport;
+  moduleOptions?: ResultsModuleOption[];
+  moduleId?: string;
+}) {
+  const classPath = `/portal/resultados/${report.classGroupId}`;
   return (
     <>
       <PageHeader
@@ -153,6 +227,11 @@ export function ClassResultsScreen({ report }: { report: ClassReport }) {
             </Link>
           </>
         }
+      />
+      <ModuleFilter
+        basePath={classPath}
+        options={moduleOptions}
+        moduleId={moduleId}
       />
       <section className={styles.summaryStrip} aria-label="Resumo da turma">
         <SummaryCard
@@ -176,6 +255,10 @@ export function ClassResultsScreen({ report }: { report: ClassReport }) {
           note="Eventos registrados"
         />
       </section>
+      <ModuleTotalsSection
+        totals={report.moduleTotals}
+        options={moduleOptions}
+      />
       {report.players.length === 0 ? (
         <PortalState
           headingLevel={2}
@@ -192,16 +275,29 @@ export function ClassResultsScreen({ report }: { report: ClassReport }) {
           }
         />
       ) : (
-        <ClassResultsPlayers key={report.classGroupId} report={report} />
+        <ClassResultsPlayers
+          key={report.classGroupId}
+          report={report}
+          moduleId={moduleId}
+        />
       )}
     </>
   );
 }
 
-export function PlayerResultsScreen({ report }: { report: PlayerReport }) {
+export function PlayerResultsScreen({
+  report,
+  moduleOptions = [],
+  moduleId,
+}: {
+  report: PlayerReport;
+  moduleOptions?: ResultsModuleOption[];
+  moduleId?: string;
+}) {
+  const playerPath = `/portal/resultados/${report.classGroupId}/players/${report.playerSlotId}`;
   const { history } = report;
   const historyUrl = (sessionPage: number, resultPage = 1) =>
-    `/portal/resultados/${report.classGroupId}/players/${report.playerSlotId}?sessionPage=${sessionPage}&resultPage=${resultPage}`;
+    `${playerPath}?sessionPage=${sessionPage}&resultPage=${resultPage}${moduleId ? `&modulo=${moduleId}` : ""}`;
   return (
     <>
       <PageHeader
@@ -211,11 +307,19 @@ export function PlayerResultsScreen({ report }: { report: PlayerReport }) {
         actions={
           <Link
             className={styles.backLink}
-            href={`/portal/resultados/${report.classGroupId}`}
+            href={resultsHref(
+              `/portal/resultados/${report.classGroupId}`,
+              moduleId,
+            )}
           >
             Voltar aos resultados da turma
           </Link>
         }
+      />
+      <ModuleFilter
+        basePath={playerPath}
+        options={moduleOptions}
+        moduleId={moduleId}
       />
       <section className={styles.summaryStrip} aria-label="Resumo do jogador">
         <SummaryCard
@@ -234,6 +338,10 @@ export function PlayerResultsScreen({ report }: { report: PlayerReport }) {
           note="Eventos registrados"
         />
       </section>
+      <ModuleTotalsSection
+        totals={report.moduleTotals}
+        options={moduleOptions}
+      />
       {history.sessionPages > 1 && (
         <nav
           className={styles.pagination}
@@ -310,16 +418,31 @@ export function PlayerResultsScreen({ report }: { report: PlayerReport }) {
                         {dateFormat.format(result.receivedAt)}
                       </p>
                       {Object.keys(result.metrics).length > 0 && (
-                        <dl className={styles.metricList}>
-                          {Object.entries(result.metrics).map(
-                            ([key, value]) => (
-                              <div key={key}>
-                                <dt>{key}</dt>
-                                <dd>{numberFormat.format(value)}</dd>
-                              </div>
-                            ),
-                          )}
-                        </dl>
+                        <>
+                          <dl className={styles.metricList}>
+                            {Object.entries(result.metrics).map(
+                              ([key, value]) => (
+                                <div key={key}>
+                                  <dt>
+                                    {metricLabel(key, result.metricLabels)}
+                                  </dt>
+                                  <dd>{numberFormat.format(value)}</dd>
+                                </div>
+                              ),
+                            )}
+                          </dl>
+                          {Object.keys(result.metrics).flatMap((key) => {
+                            const note = metricNote(key);
+                            return note
+                              ? [
+                                  <p className={styles.metricNote} key={key}>
+                                    {metricLabel(key, result.metricLabels)}:{" "}
+                                    {note}
+                                  </p>,
+                                ]
+                              : [];
+                          })}
+                        </>
                       )}
                     </article>
                   ))}

@@ -6,6 +6,7 @@ import { Icon } from "@/components/shared/icon";
 import {
   filterReportPlayers,
   formatActiveTime,
+  resultsHref,
   type ParticipationFilter,
 } from "./results-helpers";
 import portalStyles from "./portal.module.css";
@@ -19,7 +20,13 @@ const dateFormat = new Intl.DateTimeFormat("pt-BR", {
   timeZone: "America/Sao_Paulo",
 });
 
-export function ClassResultsPlayers({ report }: { report: ClassReport }) {
+export function ClassResultsPlayers({
+  report,
+  moduleId,
+}: {
+  report: ClassReport;
+  moduleId?: string;
+}) {
   const { params, setFilters } = usePortalFilters();
   const query = params.get("player") ?? "";
   const participation: ParticipationFilter =
@@ -134,7 +141,10 @@ export function ClassResultsPlayers({ report }: { report: ClassReport }) {
                     <th scope="row">
                       <Link
                         className={styles.playerLink}
-                        href={`/portal/resultados/${report.classGroupId}/players/${player.playerSlotId}`}
+                        href={resultsHref(
+                          `/portal/resultados/${report.classGroupId}/players/${player.playerSlotId}`,
+                          moduleId,
+                        )}
                       >
                         <span
                           className={styles.playerNumber}
