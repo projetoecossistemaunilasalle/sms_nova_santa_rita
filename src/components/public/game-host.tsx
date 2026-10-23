@@ -37,6 +37,11 @@ import {
 } from "./game-bridge";
 import { readDemoGameSnapshot, saveDemoGameState } from "./demo-game-state";
 import {
+  initialGameHostDocument,
+  transitionGameHostDocument,
+  type GameHostDocumentEvent,
+} from "./game-host-document";
+import {
   applyProgressToBootstrap,
   contentErrorRecovery,
   DEMO_CONTENT_VERSION,
@@ -73,22 +78,19 @@ export function GameHost({
     typeof createGameOfflineTransport
   > | null>(null);
   const retryScheduler = useRef<GameSyncRetryScheduler | null>(null);
-  const bootstrapStarted = useRef(false);
-  const bootstrapRef = useRef<PlayerBootstrapV2 | null>(null);
+  const gameDocument = useRef(initialGameHostDocument());
   const inFlightSaves = useRef(new Set<string>());
-  const savedReplies = useRef(new Map<string, unknown>());
   const handledConflicts = useRef(new Set<string>());
   const pendingConflict = useRef<string | null>(null);
   const upgradeRetried = useRef(false);
   const [frameGeneration, setFrameGeneration] = useState(0);
   const [contentFailure, setContentFailure] = useState<string | null>(null);
-  const branchReady = useRef(false);
   const offlineStorePromise = useRef<Promise<GameOfflineStore> | null>(null);
   const syncPromise = useRef<Promise<void> | null>(null);
   const syncRequested = useRef(false);
   const synchronizeRef = useRef<() => void>(() => {});
   const receiveRef = useRef<(message: unknown) => void>(() => {});
-  const [phase, setPhase] = useState<HostPhase>("connecting");
+  const [phase, updatePhase] = useState<HostPhase>("connecting");
   const [alert, setAlert] = useState<HostAlert>(null);
   const [bootstrap, setBootstrap] = useState<PlayerBootstrapV2 | null>(null);
   const [lastHostMessage, setLastHostMessage] = useState<unknown>(null);
@@ -99,6 +101,20 @@ export function GameHost({
   const [recovering, setRecovering] = useState(false);
 
   const gameOrigin = gameClientUrl ? expectedGameOrigin(gameClientUrl) : null;
+
+  function setPhase(value: HostPhase) {
+    gameDocument.current.phase = value;
+    updatePhase(value);
+  }
+
+  function applyDocumentEvent(event: GameHostDocumentEvent) {
+    const previous = gameDocument.current;
+    const next = transitionGameHostDocument(previous, event);
+    gameDocument.current = next;
+    if (next.phase !== previous.phase) updatePhase(next.phase);
+    if (next.bootstrap !== previous.bootstrap) setBootstrap(next.bootstrap);
+    return next !== previous;
+  }
 
   function showProtocolError(
     code: ProtocolErrorV2["code"],
@@ -138,27 +154,31 @@ export function GameHost({
     return offlineStorePromise.current;
   }
 
-  function installBootstrap(value: PlayerBootstrapV2) {
-    branchReady.current = false;
-    bootstrapRef.current = value;
-    setBootstrap(value);
-    setPhase("applying");
+  function installBootstrap(value: PlayerBootstrapV2, generation: number) {
+    if (
+      !applyDocumentEvent({
+        type: "bootstrap-installed",
+        bootstrap: value,
+        generation,
+      })
+    )
+      return;
     setAlert(null);
     postToGame(value);
   }
 
   function updateCurrentBootstrap(value: PlayerBootstrapV2) {
-    bootstrapRef.current = value;
+    gameDocument.current.bootstrap = value;
     setBootstrap(value);
   }
 
   function deliverConflict(conflict: StateSaveConflictV2) {
-    branchReady.current = false;
+    gameDocument.current.branchReady = false;
     if (handledConflicts.current.has(conflict.request_id)) return;
     handledConflicts.current.add(conflict.request_id);
     pendingConflict.current = conflict.request_id;
 
-    const current = bootstrapRef.current;
+    const current = gameDocument.current.bootstrap;
     if (current && conflict.state) {
       updateCurrentBootstrap(
         applyProgressToBootstrap(
@@ -186,10 +206,12 @@ export function GameHost({
       return syncPromise.current;
     }
 
+    const documentGeneration = gameDocument.current.generation;
     const operation = (async () => {
       try {
         const store = await getOfflineStore();
         const statusBefore = await store.getSyncStatus(entry.playerSlotId);
+        if (gameDocument.current.generation !== documentGeneration) return;
         const pendingBefore =
           statusBefore.queuedStates +
           statusBefore.queuedResults +
@@ -215,13 +237,15 @@ export function GameHost({
           entry.playerSlotId,
           transport,
           (conflict) => {
-            deliverConflict(conflict);
+            if (gameDocument.current.generation === documentGeneration)
+              deliverConflict(conflict);
           },
           entry.gameSessionId,
         );
+        if (gameDocument.current.generation !== documentGeneration) return;
         if (report.conflict) deliverConflict(report.conflict);
         if (report.rejection) {
-          branchReady.current = false;
+          gameDocument.current.branchReady = false;
           setRecoveryRequest(report.rejection.requestId);
           setPhase("error");
           setAlert({
@@ -258,10 +282,12 @@ export function GameHost({
 
         if (report.stateAcknowledgements.length > 0 && !report.conflict) {
           const accepted = await store.getBootstrap(entry.playerSlotId);
+          if (gameDocument.current.generation !== documentGeneration) return;
           if (accepted) updateCurrentBootstrap(accepted);
         }
 
         const statusAfter = await store.getSyncStatus(entry.playerSlotId);
+        if (gameDocument.current.generation !== documentGeneration) return;
         const pendingAfter =
           statusAfter.queuedStates +
           statusAfter.queuedResults +
@@ -288,6 +314,7 @@ export function GameHost({
           setAlert(null);
         }
       } catch (error) {
+        if (gameDocument.current.generation !== documentGeneration) return;
         const sessionChanged = error instanceof OfflineSessionMismatchError;
         setSyncState("pending");
         setAlert({
@@ -317,6 +344,7 @@ export function GameHost({
       { type: "game.result.v2" | "game.active_time.v2" }
     >,
   ) {
+    const documentGeneration = gameDocument.current.generation;
     try {
       const store = await getOfflineStore();
       const requestIds =
@@ -335,8 +363,12 @@ export function GameHost({
               message,
               entry.gameSessionId,
             );
+      if (gameDocument.current.generation !== documentGeneration) {
+        void synchronizeQueue();
+        return;
+      }
       for (const requestId of requestIds) {
-        savedReplies.current.set(requestId, acknowledgement);
+        gameDocument.current.savedReplies.set(requestId, acknowledgement);
       }
       postToGame(acknowledgement);
       setAlert({
@@ -347,6 +379,7 @@ export function GameHost({
       });
       await synchronizeQueue();
     } catch (error) {
+      if (gameDocument.current.generation !== documentGeneration) return;
       setAlert({
         tone:
           error instanceof OfflineSessionMismatchError ? "warning" : "error",
@@ -370,21 +403,25 @@ export function GameHost({
 
     installBootstrap(
       newBootstrap(entry.playerSlotId, entry.gameSessionId, snapshot),
+      gameDocument.current.generation,
     );
   }
 
-  async function bootstrapServer() {
+  async function bootstrapServer(documentGeneration: number) {
     const store = await getOfflineStore();
+    if (gameDocument.current.generation !== documentGeneration) return;
     const bootstrapGeneration = await store.reserveBootstrapGeneration(
       entry.playerSlotId,
     );
     const cached = await store.getBootstrap(entry.playerSlotId);
+    if (gameDocument.current.generation !== documentGeneration) return;
     if (cached) {
       const report = await store.sync(
         entry.playerSlotId,
         getTransport().forSession(cached.class_session_id),
       );
       const status = await store.getSyncStatus(entry.playerSlotId);
+      if (gameDocument.current.generation !== documentGeneration) return;
       if (report.rejection || report.conflict || status.queuedStates > 0) {
         setRecoveryRequest(
           report.rejection?.requestId ?? report.conflict?.request_id ?? null,
@@ -404,6 +441,7 @@ export function GameHost({
       entry.gameSessionId,
     );
     const result = safeParsePlayerBootstrapV2(payload);
+    if (gameDocument.current.generation !== documentGeneration) return;
 
     if (!result.success) {
       throw new Error("Não foi possível carregar o progresso do jogador.");
@@ -420,27 +458,29 @@ export function GameHost({
       result.data,
       bootstrapGeneration,
     );
+    if (gameDocument.current.generation !== documentGeneration) return;
     if (!accepted || accepted.class_session_id !== entry.gameSessionId) {
       throw new OfflineSessionMismatchError();
     }
-    installBootstrap(accepted);
+    installBootstrap(accepted, documentGeneration);
     void synchronizeQueue();
   }
 
   async function beginBootstrap() {
-    if (bootstrapStarted.current) return;
-    bootstrapStarted.current = true;
-    setPhase("bootstrapping");
+    if (gameDocument.current.bootstrapStarted) return;
+    const documentGeneration = gameDocument.current.generation;
+    applyDocumentEvent({ type: "bootstrap-started" });
     setAlert(null);
 
     try {
       if (runtimeMode === "demo") {
         await bootstrapDemo();
       } else {
-        await bootstrapServer();
+        await bootstrapServer(documentGeneration);
       }
     } catch (error) {
-      bootstrapStarted.current = false;
+      if (gameDocument.current.generation !== documentGeneration) return;
+      gameDocument.current.bootstrapStarted = false;
       setPhase("error");
       setAlert({
         tone: "error",
@@ -473,7 +513,7 @@ export function GameHost({
           request_id: request.request_id,
           revision: result.snapshot.revision,
         });
-        const currentBootstrap = bootstrapRef.current;
+        const currentBootstrap = gameDocument.current.bootstrap;
         if (currentBootstrap) {
           updateCurrentBootstrap(
             applyProgressToBootstrap(
@@ -498,7 +538,7 @@ export function GameHost({
       });
       updateCurrentBootstrap(
         applyProgressToBootstrap(
-          bootstrapRef.current ??
+          gameDocument.current.bootstrap ??
             newBootstrap(entry.playerSlotId, entry.gameSessionId, {
               status: "valid",
               snapshot: result.snapshot,
@@ -526,6 +566,7 @@ export function GameHost({
   }
 
   async function saveServerState(request: StateSaveRequestV2) {
+    const documentGeneration = gameDocument.current.generation;
     try {
       const store = await getOfflineStore();
       const durable = await store.enqueueState(
@@ -533,6 +574,10 @@ export function GameHost({
         request,
         entry.gameSessionId,
       );
+      if (gameDocument.current.generation !== documentGeneration) {
+        void synchronizeQueue();
+        return;
+      }
       replyToRequest(request.request_id, durable);
       setPhase("playing");
       setSyncState("pending");
@@ -544,8 +589,9 @@ export function GameHost({
       });
       await synchronizeQueue();
     } catch (error) {
+      if (gameDocument.current.generation !== documentGeneration) return;
       if (error instanceof OfflineBranchChangedError) {
-        branchReady.current = false;
+        gameDocument.current.branchReady = false;
         setReloadRequired(true);
       }
       setPhase("error");
@@ -562,7 +608,7 @@ export function GameHost({
   }
 
   function replyToRequest(requestId: string, reply: unknown) {
-    savedReplies.current.set(requestId, reply);
+    gameDocument.current.savedReplies.set(requestId, reply);
     postToGame(reply);
   }
 
@@ -583,8 +629,9 @@ export function GameHost({
     }
 
     if (message.type === "game.ready.v2") {
+      applyDocumentEvent({ type: "ready" });
+      setAlert(null);
       if (!message.supported_protocol_versions.includes(PROTOCOL_VERSION)) {
-        bootstrapStarted.current = false;
         setPhase("error");
         setAlert({
           tone: "error",
@@ -602,7 +649,6 @@ export function GameHost({
           message.supported_state_schema_versions.includes(version),
         )
       ) {
-        bootstrapStarted.current = false;
         setPhase("error");
         setAlert({
           tone: "error",
@@ -624,8 +670,13 @@ export function GameHost({
     }
 
     if (message.type === "game.bootstrap_applied.v2") {
-      if (message.request_id !== bootstrapRef.current?.request_id) return;
-      branchReady.current = true;
+      if (
+        !applyDocumentEvent({
+          type: "bootstrap-applied",
+          requestId: message.request_id,
+        })
+      )
+        return;
       postToGame(
         hostVisibilityV2Schema.parse({
           type: "portal.visibility.v2",
@@ -634,14 +685,13 @@ export function GameHost({
           online: navigator.onLine,
         }),
       );
-      setPhase("playing");
       setAlert(null);
       return;
     }
 
     if (message.type === "game.save.v2") {
-      if (!branchReady.current) return;
-      const saved = savedReplies.current.get(message.request_id);
+      if (!gameDocument.current.branchReady) return;
+      const saved = gameDocument.current.savedReplies.get(message.request_id);
       if (saved) {
         postToGame(saved);
         return;
@@ -666,7 +716,7 @@ export function GameHost({
       message.type === "game.result.v2" ||
       message.type === "game.active_time.v2"
     ) {
-      if (!branchReady.current) return;
+      if (!gameDocument.current.branchReady) return;
       if (runtimeMode === "demo") {
         setAlert({
           tone: "warning",
@@ -680,7 +730,7 @@ export function GameHost({
     }
 
     if (message.type === "protocol.error.v2") {
-      branchReady.current = false;
+      gameDocument.current.branchReady = false;
       const recovery = contentErrorRecovery(
         message.code,
         upgradeRetried.current,
@@ -710,7 +760,6 @@ export function GameHost({
   }
 
   receiveRef.current = receiveGameMessage;
-  bootstrapRef.current = bootstrap;
   synchronizeRef.current = () => {
     void synchronizeQueue();
   };
@@ -726,6 +775,8 @@ export function GameHost({
     function onWindowMessage(event: MessageEvent) {
       const frameWindow = frameRef.current?.contentWindow ?? null;
       if (!isTrustedGameMessage(event, frameWindow, targetOrigin)) return;
+      // WindowProxy can survive navigation. Ready resets the document and
+      // bootstrap receipts are also checked against its current request ID.
       receiveRef.current(event.data);
     }
 
@@ -770,7 +821,7 @@ export function GameHost({
     if (phase !== "waiting" || runtimeMode !== "server") return;
 
     const timeout = window.setTimeout(() => {
-      if (bootstrapStarted.current) return;
+      if (gameDocument.current.bootstrapStarted) return;
       setAlert({
         tone: "warning",
         message:
@@ -781,19 +832,13 @@ export function GameHost({
   }, [phase, runtimeMode]);
 
   function handleFrameLoad() {
-    branchReady.current = false;
-    savedReplies.current.clear();
-    bootstrapStarted.current = false;
-    setBootstrap(null);
-    bootstrapRef.current = null;
-    setPhase("waiting");
-    setAlert(null);
+    applyDocumentEvent({ type: "load" });
   }
 
   async function recoverState() {
     if (recovering) return;
     setRecovering(true);
-    branchReady.current = false;
+    gameDocument.current.branchReady = false;
     try {
       await syncPromise.current;
       const requestId = pendingConflict.current ?? recoveryRequest;
@@ -803,9 +848,9 @@ export function GameHost({
       }
       setRecoveryRequest(null);
       setReloadRequired(false);
-      savedReplies.current.clear();
+      gameDocument.current.savedReplies.clear();
       pendingConflict.current = null;
-      bootstrapStarted.current = false;
+      gameDocument.current.bootstrapStarted = false;
       await beginBootstrap();
     } catch {
       setAlert({
