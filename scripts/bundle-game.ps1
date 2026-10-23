@@ -87,7 +87,7 @@ try {
         branch = $branch
         dirty = $dirty
         portalOrigins = $PortalOrigins
-        contentVersion = $manifest.contentVersion
+        contentVersion = $manifest.content_version
         builtAt = [DateTime]::UtcNow.ToString('o')
     }
     # Serialize scalar values individually for identical two-space JSON in 5.1/7.
