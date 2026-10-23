@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "buildId": "456e0b7d50a7f62bd673c0e7",
+  "buildId": "a981da3761f095f0896808aa",
   "manifestVersion": "4.0.0-real",
   "shell": [
     {
@@ -9,9 +9,9 @@
       "sha256": "a606efd530a98a1435470cfc845b018cb08fe9866f7903d915dc567583264719"
     },
     {
-      "path": "assets/game-DMeJylAS.js",
-      "bytes": 1995995,
-      "sha256": "18e7dc2dc5fa1055a6101270a2eb77b5ff1e6aeeecb6c6611968ecc9cbb2c7a4"
+      "path": "assets/game-DCueerdd.js",
+      "bytes": 1998084,
+      "sha256": "6f6b2652bda54f7fd400888f44906d7a287ee70a9d3fe2ae9b8477793be19213"
     },
     {
       "path": "assets/loading-art-BcMeO0DY.webp",
@@ -146,7 +146,7 @@
     {
       "path": "index.html",
       "bytes": 20609,
-      "sha256": "d2715d68485ae4ee878d31958c0999a9ed0ad0a006bfeda4d7de4469cd07ef2a"
+      "sha256": "e77498c61e736a92c5aa38ec75c187f2105f5b2f9f85443f78124d3b7a8fa3a7"
     }
   ],
   "content": [

@@ -1,9 +1,9 @@
 {
   "source": "Heroes_Trial/web-poc",
-  "commit": "72a8cc67800aaf1bc7d3114407e9856078206438",
-  "branch": "feat/portal-v2-bridge",
+  "commit": "b9e5f57a400ba1779e1d7e7220a89660da516dac",
+  "branch": "main",
   "dirty": false,
   "portalOrigins": "self",
   "contentVersion": "heroes_trial_school_2026_10",
-  "builtAt": "2026-10-23T16:28:55.0162227Z"
+  "builtAt": "2026-10-23T21:26:09.2255539Z"
 }
