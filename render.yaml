@@ -1,11 +1,17 @@
-# Render Blueprint for the professional portal (server runtime).
-# The portal also serves the game build committed under public/jogo-cliente/
-# (same origin; see docs/deploy-render.md). Migrations run as the pre-deploy
+# Render Blueprint for the professional portal (server runtime), which lives
+# in portal/ of this repository; the landing itself stays on GitHub Pages.
+# The portal also serves the game build committed under portal/public/jogo-cliente/
+# (same origin; see portal/docs/deploy-render.md). Migrations run as the pre-deploy
 # step, so a failed migration keeps the previous release serving.
 services:
   - type: web
     name: sms-portal
     runtime: node
+    rootDir: portal
+    # Landing-only commits never rebuild the portal.
+    buildFilter:
+      paths:
+        - portal/**
     # No South America region exists; Virginia is the closest to Brazil.
     # Keep the production Neon project in AWS us-east-1 next to it.
     region: virginia

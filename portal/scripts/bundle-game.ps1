@@ -2,7 +2,7 @@ param (
     [ValidateNotNullOrEmpty()]
     [string] $PortalOrigins = 'self',
     [ValidateNotNullOrEmpty()]
-    [string] $GameRoot = $(if ($env:GAME_PROJECT_ROOT) { $env:GAME_PROJECT_ROOT } else { '..\Heroes_Trial\web-poc' }),
+    [string] $GameRoot = $(if ($env:GAME_PROJECT_ROOT) { $env:GAME_PROJECT_ROOT } else { '..\..\Heroes_Trial\web-poc' }),
     [switch] $AllowDirty
 )
 

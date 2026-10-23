@@ -1,10 +1,11 @@
 # Deploy the portal to Render
 
-Operator runbook for the SMS Portal (branch `feat/render-deploy`).
+Operator runbook for the SMS Portal, which lives in `portal/` of the landing repository
+(`projetoecossistemaunilasalle/sms_nova_santa_rita`). The landing itself stays on GitHub Pages.
 
 ## 1. Architecture
 
-- One Render **web service** (native Node runtime, region `virginia`, plan `starter` by default) defined in `render.yaml`.
+- One Render **web service** (native Node runtime, region `virginia`, plan `starter` by default) defined in the repository-root `render.yaml` (`rootDir: portal`, build filter `portal/**`).
 - The service runs the Next.js 16 standalone portal:
   - Build: `npm ci && npm run build:server`
   - Start: `npm run start -- --hostname 0.0.0.0` (Render sets `PORT=10000`)
@@ -56,7 +57,7 @@ Before starting, confirm:
 
 Steps:
 
-1. **Merge and push the branch Render deploys from.** Decision: deploy from `main` after merging `feat/render-deploy`.
+1. **Merge and push to the landing repository's `main`.** Render deploys `portal/` from that branch.
 2. **Create the Neon production project.**
    1. Project in `aws-us-east-1`, Postgres 17, with Neon Auth enabled.
    2. Copy the pooled string into `DATABASE_URL` and the direct string into `DIRECT_URL`.
@@ -81,13 +82,13 @@ Steps:
 
 ## 4. Game updates
 
-The game lives in the sibling repo `Heroes_Trial`. Its build output is committed into this repo.
+The game lives in the separate repo `Heroes_Trial` (checked out next to the landing repository). Its build output is committed into `portal/public/jogo-cliente/`.
 
 1. In `Heroes_Trial`, commit all changes first. The script refuses a dirty tree unless `-AllowDirty` is passed. Avoid `-AllowDirty` for production builds.
-2. In `SMS_Portal`, run `npm run bundle:game`. This runs `scripts/bundle-game.ps1`, which:
-   - builds `..\Heroes_Trial\web-poc` with `VITE_PORTAL_ORIGINS=self` (the game expands `self` to its own origin);
+2. In `portal/`, run `npm run bundle:game`. This runs `scripts/bundle-game.ps1`, which:
+   - builds `..\..\Heroes_Trial\web-poc` (override with `GAME_PROJECT_ROOT`) with `VITE_PORTAL_ORIGINS=self` (the game expands `self` to its own origin);
    - writes `public/jogo-cliente/bundle-info.json` with the game commit and `content_version`.
-3. Review and commit `public/jogo-cliente` in `SMS_Portal`.
+3. Review and commit `portal/public/jogo-cliente`.
 4. Deploy (manual, see section 5).
 5. In the portal, "Versões do jogo": import `public/jogo-cliente/content-manifest.json` and mark it current.
 
@@ -117,5 +118,5 @@ The game lives in the sibling repo `Heroes_Trial`. Its build output is committed
 - **Memory on Starter (512 MB).** Headroom under real class load is not measured. Watch memory during the first live classes and be ready to move to a larger plan.
 - **Tablets and Safari.** Real tablets and Safari are not tested yet. A separate WebKit E2E pass is in progress.
 - **Render prices.** Not checked. Confirm the current plan price before go-live.
-- **Deploy branch.** `render.yaml` does not name a branch. Confirm the branch set in the Render dashboard is `main` after the merge.
+- **Deploy branch.** `render.yaml` does not name a branch. Confirm the Render service deploys `main` of the landing repository.
 - **Custom domain.** Not yet defined. When added, set `ALLOWED_ORIGINS` and `GAME_CLIENT_URL` explicitly, update, the Neon Auth trusted domains, and the landing `PORTAL_URL`.
