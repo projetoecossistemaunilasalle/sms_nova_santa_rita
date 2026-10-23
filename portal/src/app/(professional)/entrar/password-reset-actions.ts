@@ -100,8 +100,8 @@ export async function resetPasswordAction(
 
   try {
     await enforceRateLimit(
-      "password-reset",
-      `token:${token}`,
+      "password-reset-submit",
+      "all",
       new Headers(await headers()),
     );
   } catch (error) {
