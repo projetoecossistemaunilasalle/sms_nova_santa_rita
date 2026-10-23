@@ -8,8 +8,85 @@ import {
   RecordStatus,
 } from "@/generated/prisma/enums";
 import { PrismaPlayerAccessStore } from "@/server/db/prisma-player-access-store";
+import { resolvePolicy } from "@/application/game-content/policy";
+import { demoGameContentSeed } from "@/server/mock/content-seed";
 
 describe("PrismaPlayerAccessStore", () => {
+  it("reads the current manifest and creates the frozen session inside the same transaction", async () => {
+    const manifest = demoGameContentSeed()[0]!;
+    const snapshot = {
+      contentManifestId: manifest.id,
+      contentPolicy: resolvePolicy(null, manifest.payload),
+      startedById: "teacher-a",
+    };
+    const startedAt = new Date("2026-10-23T12:00:00Z");
+    const tx = {
+      gameContentManifest: { findFirst: vi.fn(async () => manifest) },
+      gameSession: {
+        create: vi.fn(async ({ data }: { data: object }) => ({
+          ...data,
+          id: "session",
+          status: GameSessionStatus.ACTIVE,
+          endedAt: null,
+        })),
+      },
+    };
+    const prisma = {
+      $transaction: vi.fn(async <T>(work: (db: unknown) => Promise<T>) =>
+        work(tx),
+      ),
+    };
+    const store = new PrismaPlayerAccessStore(prisma as never);
+    const row = await store.transaction(async (transaction) => {
+      expect(await transaction.getCurrentManifest()).toEqual(manifest);
+      return transaction.createSession("class-a", startedAt, snapshot);
+    });
+    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+    expect(tx.gameContentManifest.findFirst).toHaveBeenCalledWith({
+      where: { isCurrent: true },
+    });
+    expect(tx.gameSession.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: { classGroupId: "class-a", startedAt, ...snapshot },
+      }),
+    );
+    expect(row).toMatchObject(snapshot);
+  });
+
+  it("reads and updates class content defaults without freezing their module expansion", async () => {
+    const selection = { enabled_module_ids: ["saude_bucal"] };
+    const tx = {
+      classGroup: {
+        findUnique: vi.fn(async () => ({
+          id: "class-a",
+          organizationId: "org",
+          status: RecordStatus.ACTIVE,
+          organization: { status: RecordStatus.ACTIVE },
+          defaultContentSelection: selection,
+        })),
+        update: vi.fn(async () => ({})),
+      },
+    };
+    const store = new PrismaPlayerAccessStore({
+      $transaction: async <T>(work: (db: unknown) => Promise<T>) => work(tx),
+    } as never);
+    await store.transaction(async (transaction) => {
+      expect(
+        (await transaction.getClassScope("class-a"))?.defaultContentSelection,
+      ).toEqual(selection);
+      await transaction.setClassDefaultContent("class-a", selection);
+    });
+    expect(tx.classGroup.findUnique).toHaveBeenCalledWith(
+      expect.objectContaining({
+        select: expect.objectContaining({ defaultContentSelection: true }),
+      }),
+    );
+    expect(tx.classGroup.update).toHaveBeenCalledWith({
+      where: { id: "class-a" },
+      data: { defaultContentSelection: selection },
+    });
+  });
+
   it("reserves a monotonic number range before creating slots", async () => {
     const createdNumbers: number[] = [];
     const transactionClient = {
@@ -121,6 +198,12 @@ describe("PrismaPlayerAccessStore", () => {
         return [
           {
             id: "session-a",
+            contentManifestId: demoGameContentSeed()[0]!.id,
+            contentPolicy: resolvePolicy(
+              null,
+              demoGameContentSeed()[0]!.payload,
+            ),
+            startedById: "teacher-a",
             classGroupId: "class-a",
             startedAt: new Date("2026-09-22T12:00:00.000Z"),
             endedAt: null,

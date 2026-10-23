@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import type { ResultEventV1 } from "@/contracts/v1";
+import type { ResultEventV2 } from "@/contracts/v2";
 import { getGameEventService } from "@/server/services/game-event-container";
 import {
   gameEventHttpError,
@@ -17,7 +17,7 @@ export const POST = withHttpContext(async (request: NextRequest) => {
   const event = (await readGameEventRequest(
     request,
     "result",
-  )) as ResultEventV1;
+  )) as ResultEventV2;
   try {
     const acknowledgement = await getGameEventService().submitResult(
       token,

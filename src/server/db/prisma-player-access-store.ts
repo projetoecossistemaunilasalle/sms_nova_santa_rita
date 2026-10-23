@@ -14,10 +14,32 @@ import type {
 } from "@/application/player-access/ports";
 import type { ActorSnapshot } from "@/application/adult-portal/types";
 import { AdultPortalError } from "@/application/adult-portal/errors";
+import type { ContentSelection } from "@/application/game-content/policy";
+import type { SessionContentSnapshot } from "@/application/player-access/types";
+import { validateManifest } from "@/application/game-content/manifest";
+import { parseSessionContentPolicyV1 } from "@/contracts/v2";
 
 import { getPrisma } from "./client";
 
 type DatabaseClient = PrismaClient | Prisma.TransactionClient;
+
+const sessionSelect = {
+  id: true,
+  classGroupId: true,
+  status: true,
+  startedAt: true,
+  endedAt: true,
+  contentManifestId: true,
+  contentPolicy: true,
+  startedById: true,
+} as const;
+
+function sessionDto<T extends { contentPolicy: Prisma.JsonValue }>(row: T) {
+  return {
+    ...row,
+    contentPolicy: parseSessionContentPolicyV1(row.contentPolicy),
+  };
+}
 
 function isUniqueConstraintViolation(error: unknown): boolean {
   return (
@@ -112,6 +134,7 @@ class PrismaPlayerAccessReader {
         organizationId: true,
         status: true,
         organization: { select: { status: true } },
+        defaultContentSelection: true,
       },
     });
     return record
@@ -120,6 +143,8 @@ class PrismaPlayerAccessReader {
           organizationId: record.organizationId,
           organizationStatus: record.organization.status,
           status: record.status,
+          defaultContentSelection:
+            record.defaultContentSelection as ContentSelection | null,
         }
       : null;
   }
@@ -142,17 +167,12 @@ class PrismaPlayerAccessReader {
   }
 
   async getActiveSession(classGroupId: string) {
-    return this.db.gameSession.findFirst({
+    const row = await this.db.gameSession.findFirst({
       where: { classGroupId, status: GameSessionStatus.ACTIVE },
       orderBy: { startedAt: "desc" },
-      select: {
-        id: true,
-        classGroupId: true,
-        status: true,
-        startedAt: true,
-        endedAt: true,
-      },
+      select: sessionSelect,
     });
+    return row ? sessionDto(row) : null;
   }
 
   async listStoredCredentials(classGroupId: string) {
@@ -219,19 +239,13 @@ class PrismaPlayerAccessReader {
         playerSlotId: true,
         joinedAt: true,
         gameSession: {
-          select: {
-            id: true,
-            classGroupId: true,
-            status: true,
-            startedAt: true,
-            endedAt: true,
-          },
+          select: sessionSelect,
         },
       },
     });
     if (!participation) return null;
     const { gameSession: session, ...record } = participation;
-    return { session, participation: record };
+    return { session: sessionDto(session), participation: record };
   }
 }
 
@@ -330,17 +344,44 @@ class PrismaPlayerAccessTransaction
     return slotDto(slot);
   }
 
-  async createSession(classGroupId: string, startedAt: Date) {
-    return this.db.gameSession.create({
-      data: { classGroupId, startedAt },
-      select: {
-        id: true,
-        classGroupId: true,
-        status: true,
-        startedAt: true,
-        endedAt: true,
+  async getCurrentManifest() {
+    const row = await this.db.gameContentManifest.findFirst({
+      where: { isCurrent: true },
+    });
+    return row ? { ...row, payload: validateManifest(row.payload) } : null;
+  }
+
+  async setClassDefaultContent(
+    classGroupId: string,
+    selection: ContentSelection | null,
+  ) {
+    await this.db.classGroup.update({
+      where: { id: classGroupId },
+      data: {
+        defaultContentSelection:
+          selection === null
+            ? Prisma.DbNull
+            : (selection as Prisma.InputJsonValue),
       },
     });
+  }
+
+  async createSession(
+    classGroupId: string,
+    startedAt: Date,
+    content: SessionContentSnapshot,
+  ) {
+    return sessionDto(
+      await this.db.gameSession.create({
+        data: {
+          classGroupId,
+          startedAt,
+          ...content,
+          contentPolicy: content.contentPolicy as Prisma.InputJsonValue,
+        },
+        select: sessionSelect,
+      }),
+    );
   }
 
   async endSession(sessionId: string, endedAt: Date) {
@@ -354,16 +395,12 @@ class PrismaPlayerAccessTransaction
         "CONFLICT",
       );
     }
-    return this.db.gameSession.findUniqueOrThrow({
-      where: { id: sessionId },
-      select: {
-        id: true,
-        classGroupId: true,
-        status: true,
-        startedAt: true,
-        endedAt: true,
-      },
-    });
+    return sessionDto(
+      await this.db.gameSession.findUniqueOrThrow({
+        where: { id: sessionId },
+        select: sessionSelect,
+      }),
+    );
   }
 
   async findOrCreateActiveParticipation(
@@ -378,10 +415,15 @@ class PrismaPlayerAccessTransaction
         classGroupId: string;
         startedAt: Date;
         endedAt: Date | null;
+        contentManifestId: string;
+        contentPolicy: Prisma.JsonValue;
+        startedById: string | null;
       }>
     >(Prisma.sql`
       SELECT "id", "class_group_id" AS "classGroupId",
-             "started_at" AS "startedAt", "ended_at" AS "endedAt"
+             "started_at" AS "startedAt", "ended_at" AS "endedAt",
+             "content_manifest_id" AS "contentManifestId", "content_policy" AS "contentPolicy",
+             "started_by_id" AS "startedById"
       FROM "game_sessions"
       WHERE "class_group_id" = ${classGroupId}::uuid
         AND "status" = 'active'::"game_session_status"
@@ -412,7 +454,7 @@ class PrismaPlayerAccessTransaction
     });
     return {
       session: {
-        ...activeSession,
+        ...sessionDto(activeSession),
         status: GameSessionStatus.ACTIVE,
       },
       participation,

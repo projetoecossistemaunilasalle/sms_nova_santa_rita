@@ -35,7 +35,7 @@ describe("game API request body limits", () => {
     it(`rejects an oversized declared ${kind} body before parsing`, async () => {
       const { request, wasCancelled } = streamedRequest(
         [new Uint8Array([123])],
-        { "content-length": "90001" },
+        { "content-length": "300001" },
       );
 
       await expect(read(request)).rejects.toMatchObject({ status: 413 });
@@ -44,7 +44,7 @@ describe("game API request body limits", () => {
 
     it(`cancels an oversized streamed ${kind} body before buffering it all`, async () => {
       const { request, wasCancelled } = streamedRequest([
-        new Uint8Array(90_000),
+        new Uint8Array(300_000),
         new Uint8Array(1),
       ]);
 

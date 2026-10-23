@@ -3,7 +3,7 @@ import "server-only";
 import { z } from "zod";
 
 import { GameStateError } from "@/application/game-state/service";
-import { stateSaveRequestV1Schema } from "@/contracts/v1";
+import { stateSaveRequestV2Schema } from "@/contracts/v2";
 import { HttpError } from "@/server/http/errors";
 import { readLimitedRequestText } from "@/server/http/read-limited-body";
 
@@ -36,10 +36,10 @@ export async function readGameRequest(
     throw new HttpError(400, "VALIDATION_FAILED", "Invalid JSON request.");
   }
   const result = (
-    kind === "bootstrap" ? bootstrapRequestSchema : stateSaveRequestV1Schema
+    kind === "bootstrap" ? bootstrapRequestSchema : stateSaveRequestV2Schema
   ).safeParse(value);
   if (!result.success)
-    throw new HttpError(400, "VALIDATION_FAILED", "Invalid V1 game request.");
+    throw new HttpError(400, "VALIDATION_FAILED", "Invalid V2 game request.");
   return value;
 }
 

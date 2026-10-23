@@ -5,10 +5,12 @@ import {
 } from "@/generated/prisma/enums";
 import {
   PROTOCOL_VERSION,
-  type GameStateV1,
-  type PlayerBootstrapV1,
-  type StateSaveRequestV1,
-} from "@/contracts/v1";
+  parseStateSaveRequestV2,
+  type GameStateV2,
+  type PlayerBootstrapV2,
+  type StateSaveRequestV2,
+  type SessionContentPolicyV1,
+} from "@/contracts/v2";
 import type { LaunchTokenContext } from "@/server/security/launch-token";
 import {
   canFlushSession,
@@ -26,21 +28,28 @@ export type LaunchScope = LaunchTokenContext & {
   organizationStatus: RecordStatus;
   sessionStatus: GameSessionStatus;
   sessionEndedAt?: Date | null;
+  contentPolicy: SessionContentPolicyV1;
 };
 
 export type StoredGameState = {
   revision: number;
-  state: GameStateV1;
+  state: GameStateV2;
+  contentVersion: string;
 };
 
 export interface GameStateTransaction {
   getLaunchScope(context: LaunchTokenContext): Promise<LaunchScope | null>;
   getState(playerSlotId: string): Promise<StoredGameState | null>;
-  createState(playerSlotId: string, state: GameStateV1): Promise<boolean>;
+  createState(
+    playerSlotId: string,
+    state: GameStateV2,
+    contentVersion: string,
+  ): Promise<boolean>;
   updateState(
     playerSlotId: string,
     expectedRevision: number,
-    state: GameStateV1,
+    state: GameStateV2,
+    contentVersion: string,
   ): Promise<boolean>;
 }
 
@@ -122,13 +131,13 @@ export class GameStateService {
   async bootstrap(
     token: string,
     requestId: string,
-  ): Promise<PlayerBootstrapV1> {
+  ): Promise<PlayerBootstrapV2> {
     return this.store.transaction(async (transaction) => {
       const scope = await this.requireLaunch(token, transaction, "bootstrap");
       const current = await transaction.getState(scope.playerSlotId);
       return current
         ? {
-            type: "portal.bootstrap.v1",
+            type: "portal.bootstrap.v2",
             request_id: requestId,
             protocol_version: PROTOCOL_VERSION,
             player_id: scope.playerSlotId,
@@ -136,9 +145,11 @@ export class GameStateService {
             revision: current.revision,
             new_player: false,
             state: current.state,
+            content_policy: scope.contentPolicy,
+            stored_content_version: current.contentVersion,
           }
         : {
-            type: "portal.bootstrap.v1",
+            type: "portal.bootstrap.v2",
             request_id: requestId,
             protocol_version: PROTOCOL_VERSION,
             player_id: scope.playerSlotId,
@@ -146,11 +157,14 @@ export class GameStateService {
             revision: 0,
             new_player: true,
             state: null,
+            content_policy: scope.contentPolicy,
+            stored_content_version: null,
           };
     });
   }
 
-  async save(token: string, request: StateSaveRequestV1) {
+  async save(token: string, input: StateSaveRequestV2) {
+    const request = parseStateSaveRequestV2(input);
     return this.store.transaction(async (transaction) => {
       const scope = await this.requireLaunch(token, transaction, "save");
       const current = await transaction.getState(scope.playerSlotId);
@@ -160,19 +174,21 @@ export class GameStateService {
       if (current && current.revision !== request.expected_revision) {
         if (
           current.revision === request.expected_revision + 1 &&
+          current.contentVersion === request.content_version &&
           stableJson(current.state) === stableJson(request.state)
         ) {
           return {
-            type: "portal.save_ok.v1" as const,
+            type: "portal.save_ok.v2" as const,
             request_id: request.request_id,
             revision: current.revision,
           };
         }
         return {
-          type: "portal.save_conflict.v1" as const,
+          type: "portal.save_conflict.v2" as const,
           request_id: request.request_id,
           revision: current.revision,
           state: current.state,
+          stored_content_version: current.contentVersion,
         };
       }
       const saved = current
@@ -180,30 +196,37 @@ export class GameStateService {
             scope.playerSlotId,
             current.revision,
             request.state,
+            request.content_version,
           )
-        : await transaction.createState(scope.playerSlotId, request.state);
+        : await transaction.createState(
+            scope.playerSlotId,
+            request.state,
+            request.content_version,
+          );
       if (!saved) {
         const latest = await transaction.getState(scope.playerSlotId);
         if (!latest) throw new GameStateError("INVALID_REVISION");
         if (
           latest.revision === request.expected_revision + 1 &&
+          latest.contentVersion === request.content_version &&
           stableJson(latest.state) === stableJson(request.state)
         ) {
           return {
-            type: "portal.save_ok.v1" as const,
+            type: "portal.save_ok.v2" as const,
             request_id: request.request_id,
             revision: latest.revision,
           };
         }
         return {
-          type: "portal.save_conflict.v1" as const,
+          type: "portal.save_conflict.v2" as const,
           request_id: request.request_id,
           revision: latest.revision,
           state: latest.state,
+          stored_content_version: latest.contentVersion,
         };
       }
       return {
-        type: "portal.save_ok.v1" as const,
+        type: "portal.save_ok.v2" as const,
         request_id: request.request_id,
         revision: request.expected_revision + 1,
       };

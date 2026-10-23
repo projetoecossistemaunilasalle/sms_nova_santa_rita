@@ -3,12 +3,21 @@ import type {
   PlayerCredentialStatus,
   RecordStatus,
 } from "@/generated/prisma/enums";
+import type { ContentSelection } from "@/application/game-content/policy";
+import type { SessionContentPolicyV1 } from "@/contracts/v2";
+
+export type SessionContentSnapshot = {
+  contentManifestId: string;
+  contentPolicy: SessionContentPolicyV1;
+  startedById: string | null;
+};
 
 export type ClassScope = {
   id: string;
   organizationId: string;
   organizationStatus: RecordStatus;
   status: RecordStatus;
+  defaultContentSelection?: ContentSelection | null;
 };
 
 export type PlayerSlotDto = {
@@ -22,7 +31,7 @@ export type PlayerSlotDto = {
 
 export type IssuedPlayerSlotDto = PlayerSlotDto & { credential: string };
 
-export type GameSessionDto = {
+export type GameSessionDto = SessionContentSnapshot & {
   id: string;
   classGroupId: string;
   status: GameSessionStatus;

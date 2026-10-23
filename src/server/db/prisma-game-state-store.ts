@@ -1,7 +1,11 @@
 import "server-only";
 
 import { Prisma, type PrismaClient } from "@/generated/prisma/client";
-import { parseGameStateV1, type GameStateV1 } from "@/contracts/v1";
+import {
+  parseGameStateV2,
+  parseSessionContentPolicyV1,
+  type GameStateV2,
+} from "@/contracts/v2";
 import type {
   GameStateStore,
   GameStateTransaction,
@@ -40,7 +44,12 @@ class PrismaGameStateTransaction implements GameStateTransaction {
         playerSlotId: true,
         gameSessionId: true,
         gameSession: {
-          select: { classGroupId: true, status: true, endedAt: true },
+          select: {
+            classGroupId: true,
+            status: true,
+            endedAt: true,
+            contentPolicy: true,
+          },
         },
         playerSlot: {
           select: {
@@ -80,27 +89,35 @@ class PrismaGameStateTransaction implements GameStateTransaction {
         participation.playerSlot.classGroup.organization.status,
       sessionStatus: participation.gameSession.status,
       sessionEndedAt: participation.gameSession.endedAt,
+      contentPolicy: parseSessionContentPolicyV1(
+        participation.gameSession.contentPolicy,
+      ),
     };
   }
 
   async getState(playerSlotId: string): Promise<StoredGameState | null> {
     const record = await this.db.gameState.findUnique({
       where: { playerSlotId },
-      select: { revision: true, payload: true },
+      select: { revision: true, payload: true, contentVersion: true },
     });
     return record
-      ? { revision: record.revision, state: parseGameStateV1(record.payload) }
+      ? {
+          revision: record.revision,
+          state: parseGameStateV2(record.payload),
+          contentVersion: record.contentVersion,
+        }
       : null;
   }
 
   async createState(
     playerSlotId: string,
-    state: GameStateV1,
+    state: GameStateV2,
+    contentVersion: string,
   ): Promise<boolean> {
     const count = await this.db.$executeRaw(Prisma.sql`
       INSERT INTO "game_states"
         ("player_slot_id", "protocol_version", "schema_version", "content_version", "payload", "revision", "updated_at")
-      VALUES (${playerSlotId}::uuid, 1, ${state.schema_version}, ${state.content_version}, ${JSON.stringify(state)}::jsonb, 1, CURRENT_TIMESTAMP)
+      VALUES (${playerSlotId}::uuid, 2, ${state.schema_version}, ${contentVersion}, ${JSON.stringify(state)}::jsonb, 1, CURRENT_TIMESTAMP)
       ON CONFLICT ("player_slot_id") DO NOTHING
     `);
     return count === 1;
@@ -109,14 +126,15 @@ class PrismaGameStateTransaction implements GameStateTransaction {
   async updateState(
     playerSlotId: string,
     expectedRevision: number,
-    state: GameStateV1,
+    state: GameStateV2,
+    contentVersion: string,
   ): Promise<boolean> {
     const result = await this.db.gameState.updateMany({
       where: { playerSlotId, revision: expectedRevision },
       data: {
-        protocolVersion: 1,
+        protocolVersion: 2,
         schemaVersion: state.schema_version,
-        contentVersion: state.content_version,
+        contentVersion,
         payload: state as Prisma.InputJsonValue,
         revision: { increment: 1 },
       },

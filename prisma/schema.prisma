@@ -164,12 +164,10 @@ model GameSession {
   updatedAt         DateTime             @updatedAt @map("updated_at") @db.Timestamptz(3)
   classGroup        ClassGroup           @relation(fields: [classGroupId], references: [id], onDelete: Restrict)
   participations    Participation[]
-  // TODO(session start chunk): make contentManifestId/contentPolicy required in
-  // this schema AND the same unapplied v2_content_manifest migration.
-  contentManifestId String?              @map("content_manifest_id") @db.Uuid
-  contentPolicy     Json?                @map("content_policy") @db.JsonB
+  contentManifestId String               @map("content_manifest_id") @db.Uuid
+  contentPolicy     Json                 @map("content_policy") @db.JsonB
   startedById       String?              @map("started_by_id") @db.Uuid
-  contentManifest   GameContentManifest? @relation(fields: [contentManifestId], references: [id], onDelete: Restrict)
+  contentManifest   GameContentManifest  @relation(fields: [contentManifestId], references: [id], onDelete: Restrict)
 
   @@index([classGroupId, status])
   @@index([contentManifestId])

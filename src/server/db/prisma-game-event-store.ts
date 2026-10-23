@@ -2,7 +2,11 @@ import "server-only";
 
 import { randomUUID } from "node:crypto";
 import { Prisma, type PrismaClient } from "@/generated/prisma/client";
-import type { ActiveTimeBatchV1, ResultEventV1 } from "@/contracts/v1";
+import {
+  parseContentManifestV1,
+  type ActiveTimeBatchV2,
+  type ResultEventV2,
+} from "@/contracts/v2";
 import type {
   EventLaunchScope,
   GameEventReportStore,
@@ -86,7 +90,13 @@ class PrismaGameEventReader {
           },
         },
         gameSession: {
-          select: { id: true, classGroupId: true, status: true, endedAt: true },
+          select: {
+            id: true,
+            classGroupId: true,
+            status: true,
+            endedAt: true,
+            contentManifest: { select: { payload: true } },
+          },
         },
       },
     });
@@ -116,6 +126,9 @@ class PrismaGameEventReader {
         participation.playerSlot.classGroup.organization.status,
       sessionStatus: participation.gameSession.status,
       sessionEndedAt: participation.gameSession.endedAt,
+      contentManifest: parseContentManifestV1(
+        participation.gameSession.contentManifest.payload,
+      ),
     };
   }
 
@@ -328,7 +341,11 @@ class PrismaGameEventTransaction
     return super.getLaunchScope(context);
   }
 
-  async acceptResult(participationId: string, event: ResultEventV1) {
+  async acceptResult(
+    participationId: string,
+    event: ResultEventV2,
+    moduleId: string | null,
+  ) {
     const payload = event as unknown as Prisma.InputJsonValue;
     const result = await this.db.resultEvent.createMany({
       data: [
@@ -339,6 +356,8 @@ class PrismaGameEventTransaction
           requestId: event.request_id,
           activityId: event.activity_id,
           missionId: event.mission_id,
+          moduleId,
+          presetId: event.context.id_preset,
           attemptId: event.context.id_tentativa,
           resultState: event.result.estado,
           durationMs: BigInt(event.result.duracao_ms),
@@ -363,7 +382,11 @@ class PrismaGameEventTransaction
     }
   }
 
-  async acceptActiveTime(participationId: string, batch: ActiveTimeBatchV1) {
+  async acceptActiveTime(
+    participationId: string,
+    batch: ActiveTimeBatchV2,
+    moduleIds: ReadonlyMap<string, string | null>,
+  ) {
     const rows = batch.events.map((event) => ({
       id: randomUUID(),
       participationId,
@@ -371,6 +394,8 @@ class PrismaGameEventTransaction
       requestId: event.request_id,
       activeMs: event.active_ms,
       mode: event.mode,
+      missionId: event.mission_id ?? null,
+      moduleId: moduleIds.get(event.client_event_id) ?? null,
     }));
     await this.db.activeTimeEvent.createMany({
       data: rows,
@@ -386,6 +411,7 @@ class PrismaGameEventTransaction
         requestId: true,
         activeMs: true,
         mode: true,
+        missionId: true,
       },
     });
     const eventsById = new Map(
@@ -399,7 +425,8 @@ class PrismaGameEventTransaction
         saved.participationId !== participationId ||
         saved.requestId !== incoming.request_id ||
         saved.activeMs !== incoming.active_ms ||
-        saved.mode !== incoming.mode
+        saved.mode !== incoming.mode ||
+        saved.missionId !== (incoming.mission_id ?? null)
       ) {
         eventIdConflict();
       }

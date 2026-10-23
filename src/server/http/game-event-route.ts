@@ -1,6 +1,6 @@
 import "server-only";
 
-import { activeTimeBatchV1Schema, resultEventV1Schema } from "@/contracts/v1";
+import { activeTimeBatchV2Schema, resultEventV2Schema } from "@/contracts/v2";
 import { GameEventError } from "@/application/game-events/service";
 import { HttpError } from "@/server/http/errors";
 import { readLimitedRequestText } from "@/server/http/read-limited-body";
@@ -22,10 +22,10 @@ export async function readGameEventRequest(
     throw new HttpError(400, "VALIDATION_FAILED", "Invalid JSON request.");
   }
   const parsed = (
-    kind === "result" ? resultEventV1Schema : activeTimeBatchV1Schema
+    kind === "result" ? resultEventV2Schema : activeTimeBatchV2Schema
   ).safeParse(value);
   if (!parsed.success) {
-    throw new HttpError(400, "VALIDATION_FAILED", "Invalid V1 game event.");
+    throw new HttpError(400, "VALIDATION_FAILED", "Invalid V2 game event.");
   }
   return parsed.data;
 }

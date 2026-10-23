@@ -11,7 +11,14 @@ import {
   type LaunchScope,
   type StoredGameState,
 } from "@/application/game-state/service";
-import { parseGameStateV1, type StateSaveRequestV1 } from "@/contracts/v1";
+import {
+  parseGameStateV2,
+  type StateSaveRequestV2,
+  GAME_STATE_MAX_UTF8_BYTES,
+  serializedStateUtf8Bytes,
+} from "@/contracts/v2";
+import { resolvePolicy } from "@/application/game-content/policy";
+import { demoGameContentSeed } from "@/server/mock/content-seed";
 import {
   GameSessionStatus,
   PlayerCredentialStatus,
@@ -19,10 +26,11 @@ import {
 } from "@/generated/prisma/enums";
 import type { LaunchTokenContext } from "@/server/security/launch-token";
 
-const state = parseGameStateV1(
+const contentVersion = "saved-game-version";
+const state = parseGameStateV2(
   JSON.parse(
     readFileSync(
-      resolve(process.cwd(), "contracts/fixtures/v1/valid/game-state.json"),
+      resolve(process.cwd(), "contracts/fixtures/v2/valid/game-state.json"),
       "utf8",
     ),
   ),
@@ -43,6 +51,7 @@ class MemoryStore implements GameStateStore, GameStateTransaction {
     classStatus: RecordStatus.ACTIVE,
     organizationStatus: RecordStatus.ACTIVE,
     sessionStatus: GameSessionStatus.ACTIVE,
+    contentPolicy: resolvePolicy(null, demoGameContentSeed()[0]!.payload),
   };
   current: StoredGameState | null = null;
   failNextWrite = false;
@@ -60,32 +69,38 @@ class MemoryStore implements GameStateStore, GameStateTransaction {
   async getState() {
     return this.current;
   }
-  async createState(_playerSlotId: string, next: typeof state) {
+  async createState(
+    _playerSlotId: string,
+    next: typeof state,
+    contentVersion: string,
+  ) {
     if (this.failNextWrite) {
       this.failNextWrite = false;
       return false;
     }
-    this.current = { revision: 1, state: next };
+    this.current = { revision: 1, state: next, contentVersion };
     return true;
   }
   async updateState(
     _playerSlotId: string,
     expected: number,
     next: typeof state,
+    contentVersion: string,
   ) {
     if (this.failNextWrite) {
       this.failNextWrite = false;
       return false;
     }
     if (this.current?.revision !== expected) return false;
-    this.current = { revision: expected + 1, state: next };
+    this.current = { revision: expected + 1, state: next, contentVersion };
     return true;
   }
 }
 
-function saveRequest(expectedRevision: number): StateSaveRequestV1 {
+function saveRequest(expectedRevision: number): StateSaveRequestV2 {
   return {
-    type: "game.save.v1",
+    type: "game.save.v2",
+    content_version: contentVersion,
     request_id: `save-${expectedRevision}`,
     expected_revision: expectedRevision,
     state,
@@ -105,6 +120,69 @@ function reverseObjectKeys(value: unknown): unknown {
 }
 
 describe("GameStateService", () => {
+  it("accepts exactly 262144 UTF-8 state bytes and rejects one more without a write", async () => {
+    const store = new MemoryStore();
+    const service = new GameStateService(store, () => ({
+      valid: true,
+      payload: context,
+    }));
+    const empty = { schema_version: 3 as const, padding: "" };
+    const room = GAME_STATE_MAX_UTF8_BYTES - serializedStateUtf8Bytes(empty);
+    const boundary = {
+      ...empty,
+      padding: "é".repeat(Math.floor(room / 2)) + "a".repeat(room % 2),
+    };
+    expect(serializedStateUtf8Bytes(boundary)).toBe(GAME_STATE_MAX_UTF8_BYTES);
+    await expect(
+      service.save("launch", { ...saveRequest(0), state: boundary }),
+    ).resolves.toMatchObject({ revision: 1 });
+    await expect(
+      service.save("launch", {
+        ...saveRequest(1),
+        state: { ...boundary, padding: boundary.padding + "x" },
+      }),
+    ).rejects.toThrow("262144");
+    expect(store.current?.revision).toBe(1);
+  });
+
+  it("bootstraps the frozen policy and the saved version, not the policy's authored version", async () => {
+    const store = new MemoryStore();
+    const service = new GameStateService(store, () => ({
+      valid: true,
+      payload: context,
+    }));
+    const fresh = await service.bootstrap("launch", "fresh");
+    expect(fresh).toMatchObject({
+      type: "portal.bootstrap.v2",
+      protocol_version: 2,
+      content_policy: store.scope!.contentPolicy,
+      stored_content_version: null,
+    });
+    await service.save("launch", saveRequest(0));
+    const returning = await service.bootstrap("launch", "returning");
+    expect(returning.content_policy).toEqual(store.scope!.contentPolicy);
+    expect(returning.stored_content_version).toBe(contentVersion);
+  });
+
+  it("does not acknowledge an otherwise identical retry with a different content version", async () => {
+    const store = new MemoryStore();
+    const service = new GameStateService(store, () => ({
+      valid: true,
+      payload: context,
+    }));
+    await service.save("launch", saveRequest(0));
+    await expect(
+      service.save("launch", {
+        ...saveRequest(0),
+        content_version: "different",
+      }),
+    ).resolves.toMatchObject({
+      type: "portal.save_conflict.v2",
+      stored_content_version: contentVersion,
+      revision: 1,
+    });
+  });
+
   it("permits late state saves within 24 hours but never bootstraps a flush token", async () => {
     const store = new MemoryStore();
     const endedAt = new Date("2026-10-12T12:00:00Z");
@@ -116,7 +194,7 @@ describe("GameStateService", () => {
       () => new Date(endedAt.getTime() + 60_000),
     );
     await expect(service.save("launch", saveRequest(0))).resolves.toMatchObject(
-      { type: "portal.save_ok.v1", revision: 1 },
+      { type: "portal.save_ok.v2", revision: 1 },
     );
     await expect(
       service.bootstrap("launch", "late-bootstrap"),
@@ -149,7 +227,7 @@ describe("GameStateService", () => {
       class_session_id: context.gameSessionId,
     });
     expect(await service.save("launch", saveRequest(0))).toEqual({
-      type: "portal.save_ok.v1",
+      type: "portal.save_ok.v2",
       request_id: "save-0",
       revision: 1,
     });
@@ -168,13 +246,14 @@ describe("GameStateService", () => {
 
   it("returns the authoritative snapshot on a stale revision", async () => {
     const store = new MemoryStore();
-    store.current = { revision: 3, state };
+    store.current = { revision: 3, state, contentVersion };
     const service = new GameStateService(store, () => ({
       valid: true,
       payload: context,
     }));
     expect(await service.save("launch", saveRequest(1))).toEqual({
-      type: "portal.save_conflict.v1",
+      type: "portal.save_conflict.v2",
+      stored_content_version: contentVersion,
       request_id: "save-1",
       revision: 3,
       state,
@@ -191,7 +270,7 @@ describe("GameStateService", () => {
     const request = saveRequest(0);
 
     await expect(service.save("launch", request)).resolves.toEqual({
-      type: "portal.save_ok.v1",
+      type: "portal.save_ok.v2",
       request_id: request.request_id,
       revision: 1,
     });
@@ -201,16 +280,16 @@ describe("GameStateService", () => {
         state: reverseObjectKeys(request.state) as typeof state,
       }),
     ).resolves.toEqual({
-      type: "portal.save_ok.v1",
+      type: "portal.save_ok.v2",
       request_id: request.request_id,
       revision: 1,
     });
-    expect(store.current).toEqual({ revision: 1, state });
+    expect(store.current).toEqual({ revision: 1, state, contentVersion });
   });
 
   it("still returns a conflict for a stale save with a different snapshot", async () => {
     const store = new MemoryStore();
-    store.current = { revision: 1, state };
+    store.current = { revision: 1, state, contentVersion };
     const service = new GameStateService(store, () => ({
       valid: true,
       payload: context,
@@ -218,18 +297,19 @@ describe("GameStateService", () => {
     const request = saveRequest(0);
     const differentState = {
       ...state,
-      progression: { ...state.progression, coins: state.progression.coins + 1 },
+      opaque_game_field: 1,
     };
 
     await expect(
       service.save("launch", { ...request, state: differentState }),
     ).resolves.toEqual({
-      type: "portal.save_conflict.v1",
+      type: "portal.save_conflict.v2",
+      stored_content_version: contentVersion,
       request_id: request.request_id,
       revision: 1,
       state,
     });
-    expect(store.current).toEqual({ revision: 1, state });
+    expect(store.current).toEqual({ revision: 1, state, contentVersion });
   });
 
   it("rejects expired, revoked, and ended launch contexts", async () => {

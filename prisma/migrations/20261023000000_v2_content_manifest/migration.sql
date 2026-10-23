@@ -2,8 +2,8 @@
 ALTER TABLE "class_groups" ADD COLUMN     "default_content_selection" JSONB;
 
 -- AlterTable
-ALTER TABLE "game_sessions" ADD COLUMN     "content_manifest_id" UUID,
-ADD COLUMN     "content_policy" JSONB,
+ALTER TABLE "game_sessions" ADD COLUMN     "content_manifest_id" UUID NOT NULL,
+ADD COLUMN     "content_policy" JSONB NOT NULL,
 ADD COLUMN     "started_by_id" UUID;
 
 -- AlterTable

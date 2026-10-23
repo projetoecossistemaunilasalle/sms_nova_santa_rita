@@ -1,4 +1,8 @@
-import type { ActiveTimeBatchV1, ResultEventV1 } from "@/contracts/v1";
+import type {
+  ActiveTimeBatchV2,
+  ResultEventV2,
+  ContentManifestV1,
+} from "@/contracts/v2";
 import type { PlayerHistoryPage } from "./report-pagination";
 import type {
   GameSessionStatus,
@@ -14,14 +18,20 @@ export type EventLaunchScope = LaunchTokenContext & {
   organizationStatus: RecordStatus;
   sessionStatus: GameSessionStatus;
   sessionEndedAt?: Date | null;
+  contentManifest: ContentManifestV1;
 };
 
 export interface GameEventTransaction {
   getLaunchScope(context: LaunchTokenContext): Promise<EventLaunchScope | null>;
-  acceptResult(participationId: string, event: ResultEventV1): Promise<void>;
+  acceptResult(
+    participationId: string,
+    event: ResultEventV2,
+    moduleId: string | null,
+  ): Promise<void>;
   acceptActiveTime(
     participationId: string,
-    batch: ActiveTimeBatchV1,
+    batch: ActiveTimeBatchV2,
+    moduleIds: ReadonlyMap<string, string | null>,
   ): Promise<void>;
 }
 

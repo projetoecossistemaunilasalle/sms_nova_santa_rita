@@ -13,6 +13,10 @@ import {
 } from "@/server/authorization/v1-policy";
 import { AdultPortalError } from "@/application/adult-portal/errors";
 import { toAuthorizationActor } from "@/application/authorization/authorization-actor";
+import {
+  resolvePolicy,
+  type ContentSelection,
+} from "@/application/game-content/policy";
 
 import type {
   PlayerAccessReader,
@@ -178,13 +182,49 @@ export class PlayerAccessService {
     });
   }
 
-  async startSession(profileId: string, classGroupId: string) {
+  async startSession(
+    profileId: string,
+    classGroupId: string,
+    selection?: ContentSelection | null,
+  ) {
     return this.store.transaction(async (transaction) => {
-      await this.requireClassAccess(profileId, classGroupId, transaction);
+      const classGroup = await this.requireClassAccess(
+        profileId,
+        classGroupId,
+        transaction,
+      );
       if (await transaction.getActiveSession(classGroupId)) {
         return fail("CONFLICT", "A turma já possui uma sessão ativa.");
       }
-      return transaction.createSession(classGroupId, this.now());
+      const manifest = await transaction.getCurrentManifest();
+      if (!manifest)
+        return fail("CONFLICT", "Nenhuma versão do jogo importada");
+      const contentPolicy = resolvePolicy(
+        selection === undefined
+          ? (classGroup.defaultContentSelection ?? null)
+          : selection,
+        manifest.payload,
+      );
+      return transaction.createSession(classGroupId, this.now(), {
+        contentManifestId: manifest.id,
+        contentPolicy,
+        startedById: profileId,
+      });
+    });
+  }
+
+  async setClassDefaultContent(
+    profileId: string,
+    classGroupId: string,
+    selection: ContentSelection | null,
+  ) {
+    return this.store.transaction(async (transaction) => {
+      await this.requireClassAccess(profileId, classGroupId, transaction);
+      const manifest = await transaction.getCurrentManifest();
+      if (!manifest)
+        return fail("CONFLICT", "Nenhuma versão do jogo importada");
+      resolvePolicy(selection, manifest.payload);
+      await transaction.setClassDefaultContent(classGroupId, selection);
     });
   }
 

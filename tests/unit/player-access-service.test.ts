@@ -15,7 +15,10 @@ import type {
   GameSessionDto,
   ParticipationDto,
   PlayerSlotDto,
+  SessionContentSnapshot,
 } from "@/application/player-access/types";
+import type { ContentSelection } from "@/application/game-content/policy";
+import { demoGameContentSeed } from "@/server/mock/content-seed";
 import {
   GameSessionStatus,
   OrganizationRole,
@@ -73,6 +76,15 @@ const fakeCipher: PlayerCredentialCipher = {
 class FakePlayerAccessStore
   implements PlayerAccessStore, PlayerAccessTransaction
 {
+  async getCurrentManifest() {
+    return demoGameContentSeed()[0]!;
+  }
+  async setClassDefaultContent(
+    classGroupId: string,
+    selection: ContentSelection | null,
+  ) {
+    this.classes.get(classGroupId)!.defaultContentSelection = selection;
+  }
   actors = new Map<string, ActorSnapshot>([["teacher-a", actor()]]);
   classes = new Map<string, ClassScope>([[classGroup.id, classGroup]]);
   slots: PlayerSlotDto[] = [];
@@ -233,8 +245,13 @@ class FakePlayerAccessStore
     };
   }
 
-  async createSession(classGroupId: string, startedAt: Date) {
+  async createSession(
+    classGroupId: string,
+    startedAt: Date,
+    content: SessionContentSnapshot,
+  ) {
     const session: GameSessionDto = {
+      ...content,
       id: `session-${this.sessions.length + 1}`,
       classGroupId,
       status: GameSessionStatus.ACTIVE,

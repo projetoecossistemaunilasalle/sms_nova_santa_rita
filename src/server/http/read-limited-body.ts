@@ -1,6 +1,6 @@
 import { HttpError } from "@/server/http/errors";
 
-export const GAME_REQUEST_MAX_BYTES = 90_000;
+export const GAME_REQUEST_MAX_BYTES = 300_000;
 
 function requestTooLarge(): HttpError {
   return new HttpError(413, "VALIDATION_FAILED", "The request is too large.");

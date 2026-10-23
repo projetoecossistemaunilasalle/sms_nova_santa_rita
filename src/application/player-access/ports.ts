@@ -1,4 +1,6 @@
 import type { ActorSnapshot } from "@/application/adult-portal/types";
+import type { ContentSelection } from "@/application/game-content/policy";
+import type { StoredGameContentManifest } from "@/application/game-content/ports";
 import type {
   PlayerCredentialStatus,
   RecordStatus,
@@ -9,6 +11,7 @@ import type {
   GameSessionDto,
   ParticipationDto,
   PlayerSlotDto,
+  SessionContentSnapshot,
 } from "./types";
 
 export type CredentialMaterial = {
@@ -71,6 +74,11 @@ export interface PlayerAccessReader {
 }
 
 export interface PlayerAccessTransaction extends PlayerAccessReader {
+  getCurrentManifest(): Promise<StoredGameContentManifest | null>;
+  setClassDefaultContent(
+    classGroupId: string,
+    selection: ContentSelection | null,
+  ): Promise<void>;
   updateEncryptedCredential(
     playerSlotId: string,
     tokenHash: string,
@@ -86,7 +94,11 @@ export interface PlayerAccessTransaction extends PlayerAccessReader {
     revokedAt: Date,
     encryptedToken?: string | null,
   ): Promise<PlayerSlotDto>;
-  createSession(classGroupId: string, startedAt: Date): Promise<GameSessionDto>;
+  createSession(
+    classGroupId: string,
+    startedAt: Date,
+    content: SessionContentSnapshot,
+  ): Promise<GameSessionDto>;
   endSession(sessionId: string, endedAt: Date): Promise<GameSessionDto>;
   findOrCreateActiveParticipation(
     classGroupId: string,

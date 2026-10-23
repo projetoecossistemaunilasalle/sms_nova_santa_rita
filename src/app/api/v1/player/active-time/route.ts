@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import type { ActiveTimeBatchV1 } from "@/contracts/v1";
+import type { ActiveTimeBatchV2 } from "@/contracts/v2";
 import { getGameEventService } from "@/server/services/game-event-container";
 import {
   gameEventHttpError,
@@ -17,7 +17,7 @@ export const POST = withHttpContext(async (request: NextRequest) => {
   const batch = (await readGameEventRequest(
     request,
     "active_time",
-  )) as ActiveTimeBatchV1;
+  )) as ActiveTimeBatchV2;
   try {
     const acknowledgement = await getGameEventService().submitActiveTime(
       token,

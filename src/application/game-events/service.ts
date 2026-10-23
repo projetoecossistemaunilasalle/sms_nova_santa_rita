@@ -6,12 +6,15 @@ import {
   canFlushSession,
   DEFAULT_OFFLINE_FLUSH_WINDOW_SECONDS,
 } from "@/application/player-access/flush-policy";
-import type {
-  ActiveTimeAcknowledgementV1,
-  ActiveTimeBatchV1,
-  ResultAcknowledgementV1,
-  ResultEventV1,
-} from "@/contracts/v1";
+import {
+  parseResultEventV2,
+  parseActiveTimeBatchV2,
+  type ActiveTimeAcknowledgementV2,
+  type ActiveTimeBatchV2,
+  type ResultAcknowledgementV2,
+  type ResultEventV2,
+} from "@/contracts/v2";
+import { logger } from "@/server/observability/logger";
 
 import type {
   GameEventReportStore,
@@ -78,28 +81,64 @@ export class GameEventService {
 
   async submitResult(
     token: string,
-    event: ResultEventV1,
-  ): Promise<ResultAcknowledgementV1> {
+    input: ResultEventV2,
+  ): Promise<ResultAcknowledgementV2> {
+    const event = parseResultEventV2(input);
     await this.store.transaction(async (transaction) => {
       const scope = await this.requireLaunch(token, transaction);
-      await transaction.acceptResult(scope.participationId, event);
+      const manifest = scope.contentManifest;
+      const moduleId =
+        manifest.missions.find((item) => item.mission_id === event.mission_id)
+          ?.module_id ?? null;
+      const activity = manifest.activities.find(
+        (item) => item.activity_id === event.activity_id,
+      );
+      const known = new Set(
+        activity?.metrics.map((metric) => metric.key) ?? [],
+      );
+      const unknownMetricKeys = Object.keys(event.result.metricas).filter(
+        (key) => !known.has(key),
+      );
+      if (unknownMetricKeys.length)
+        logger.warn(
+          {
+            activityId: event.activity_id,
+            contentVersion: manifest.content_version,
+            unknownMetricKeys,
+          },
+          "Game result contains metric keys absent from the session manifest",
+        );
+      await transaction.acceptResult(scope.participationId, event, moduleId);
     });
     return {
-      type: "portal.result_ack.v1",
+      type: "portal.result_ack.v2",
       client_event_id: event.client_event_id,
     };
   }
 
   async submitActiveTime(
     token: string,
-    batch: ActiveTimeBatchV1,
-  ): Promise<ActiveTimeAcknowledgementV1> {
+    input: ActiveTimeBatchV2,
+  ): Promise<ActiveTimeAcknowledgementV2> {
+    const batch = parseActiveTimeBatchV2(input);
     await this.store.transaction(async (transaction) => {
       const scope = await this.requireLaunch(token, transaction);
-      await transaction.acceptActiveTime(scope.participationId, batch);
+      const moduleIds = new Map(
+        batch.events.map((event) => [
+          event.client_event_id,
+          scope.contentManifest.missions.find(
+            (item) => item.mission_id === event.mission_id,
+          )?.module_id ?? null,
+        ]),
+      );
+      await transaction.acceptActiveTime(
+        scope.participationId,
+        batch,
+        moduleIds,
+      );
     });
     return {
-      type: "portal.active_time_ack.v1",
+      type: "portal.active_time_ack.v2",
       acknowledged_event_ids: batch.events.map(
         ({ client_event_id }) => client_event_id,
       ),

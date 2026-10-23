@@ -14,7 +14,9 @@ import {
   GameEventReportService,
   GameEventService,
 } from "@/application/game-events/service";
-import type { ResultEventV1 } from "@/contracts/v1";
+import type { ResultEventV2 } from "@/contracts/v2";
+import { demoGameContentSeed } from "@/server/mock/content-seed";
+import { logger } from "@/server/observability/logger";
 
 const launchContext: LaunchTokenContext = {
   credentialId: "credential-1",
@@ -43,6 +45,7 @@ function fixture() {
           },
         },
         gameSession: {
+          contentManifest: { payload: demoGameContentSeed()[0]!.payload },
           id: launchContext.gameSessionId,
           classGroupId: "class-1",
           status: GameSessionStatus.ENDED,
@@ -97,6 +100,7 @@ function fixture() {
                     requestId: event.requestId,
                     activeMs: event.activeMs,
                     mode: event.mode,
+                    missionId: event.missionId,
                   },
                 ]
               : [];
@@ -115,9 +119,9 @@ function fixture() {
   return { activeTime, db, results, service };
 }
 
-function resultEvent(): ResultEventV1 {
+function resultEvent(): ResultEventV2 {
   return {
-    type: "game.result.v1",
+    type: "game.result.v2",
     request_id: "request-result-1",
     client_event_id: "result-event-1",
     activity_id: "lia_memory",
@@ -126,6 +130,7 @@ function resultEvent(): ResultEventV1 {
       id_tentativa: "d86d68e4-a6bd-4f26-8e9d-78b57f01fac2",
       id_atividade: "atitudes_positivas",
       id_mecanica: "memory_pairs",
+      id_preset: "padrao",
       versao_atividade: 1,
       id_casa: 0,
       sequencia_tentativa: 1,
@@ -143,6 +148,144 @@ function resultEvent(): ResultEventV1 {
 }
 
 describe("game event ingestion", () => {
+  it("derives dimensions from the participation's manifest and stores the preset", async () => {
+    const { db, results, activeTime, service } = fixture();
+    await service.submitResult("valid", resultEvent());
+    expect(results.get("result-event-1")).toMatchObject({
+      moduleId: "convivencia",
+      presetId: "padrao",
+      missionId: "lia_memory",
+    });
+    await service.submitActiveTime("valid", {
+      type: "game.active_time.v2",
+      events: [
+        {
+          request_id: "t1",
+          client_event_id: "t1",
+          active_ms: 10,
+          mode: "activity",
+          mission_id: "brushing_teeth",
+        },
+        {
+          request_id: "t2",
+          client_event_id: "t2",
+          active_ms: 20,
+          mode: "dialogue",
+          mission_id: "new_mission",
+        },
+        {
+          request_id: "t3",
+          client_event_id: "t3",
+          active_ms: 30,
+          mode: "exploration",
+        },
+      ],
+    });
+    expect(activeTime.get("t1")).toMatchObject({
+      moduleId: "saude_bucal",
+      missionId: "brushing_teeth",
+    });
+    expect(activeTime.get("t2")).toMatchObject({
+      moduleId: null,
+      missionId: "new_mission",
+    });
+    expect(activeTime.get("t3")).toMatchObject({
+      moduleId: null,
+      missionId: null,
+    });
+    expect(db.participation.findUnique).toHaveBeenCalledWith(
+      expect.objectContaining({
+        select: expect.objectContaining({
+          gameSession: expect.objectContaining({
+            select: expect.objectContaining({
+              contentManifest: { select: { payload: true } },
+            }),
+          }),
+        }),
+      }),
+    );
+  });
+
+  it("accepts unknown missions and logs unknown metric keys without discarding them", async () => {
+    const { results, service } = fixture();
+    const warn = vi.spyOn(logger, "warn").mockImplementation(() => {});
+    try {
+      const event = resultEvent();
+      event.mission_id = "new_mission";
+      event.result.metricas = { pares: 5, game_added_metric: 7 };
+      await expect(service.submitResult("valid", event)).resolves.toMatchObject(
+        { type: "portal.result_ack.v2" },
+      );
+      expect(results.get(event.client_event_id)).toMatchObject({
+        moduleId: null,
+        metrics: event.result.metricas,
+      });
+      expect(warn).toHaveBeenCalledWith(
+        expect.objectContaining({
+          activityId: "lia_memory",
+          unknownMetricKeys: ["game_added_metric"],
+        }),
+        expect.any(String),
+      );
+    } finally {
+      warn.mockRestore();
+    }
+  });
+
+  it("validates V2 results and active time before storing anything", async () => {
+    const { results, activeTime, service } = fixture();
+    await expect(
+      service.submitResult("valid", {
+        ...resultEvent(),
+        type: "game.result.v1",
+      } as never),
+    ).rejects.toThrow();
+    await expect(
+      service.submitResult("valid", {
+        ...resultEvent(),
+        context: { ...resultEvent().context, id_preset: "" },
+      }),
+    ).rejects.toThrow();
+    await expect(
+      service.submitActiveTime("valid", {
+        type: "game.active_time.v2",
+        events: [
+          {
+            request_id: "bad",
+            client_event_id: "bad",
+            active_ms: 30_001,
+            mode: "activity",
+          },
+        ],
+      }),
+    ).rejects.toThrow();
+    expect(results.size).toBe(0);
+    expect(activeTime.size).toBe(0);
+  });
+
+  it("treats a changed active-time mission on a reused event ID as a conflict", async () => {
+    const { service } = fixture();
+    const batch = {
+      type: "game.active_time.v2" as const,
+      events: [
+        {
+          request_id: "t",
+          client_event_id: "t",
+          active_ms: 10,
+          mode: "dialogue" as const,
+          mission_id: "lia_memory",
+        },
+      ],
+    };
+    await service.submitActiveTime("valid", batch);
+    await expect(
+      service.submitActiveTime("valid", {
+        ...batch,
+        events: [{ ...batch.events[0]!, mission_id: "smile_kit" }],
+      }),
+    ).rejects.toMatchObject({ code: "EVENT_ID_CONFLICT" });
+  });
+
   it("rejects late event uploads after 24 hours without inserting any result", async () => {
     const { db, results, service } = fixture();
     const participation = await db.participation.findUnique();
@@ -163,7 +306,7 @@ describe("game event ingestion", () => {
     const retry = await service.submitResult("valid", event);
 
     expect(first).toEqual({
-      type: "portal.result_ack.v1",
+      type: "portal.result_ack.v2",
       client_event_id: event.client_event_id,
     });
     expect(retry).toEqual(first);
@@ -179,7 +322,7 @@ describe("game event ingestion", () => {
     const altered = {
       ...event,
       result: { ...event.result, duracao_ms: 19_000 },
-    } as ResultEventV1;
+    } as ResultEventV2;
 
     await expect(service.submitResult("valid", altered)).rejects.toMatchObject({
       code: "EVENT_ID_CONFLICT",
@@ -189,7 +332,7 @@ describe("game event ingestion", () => {
   it("deduplicates active-time batches and rejects event ID collisions", async () => {
     const { activeTime, service } = fixture();
     const batch = {
-      type: "game.active_time.v1" as const,
+      type: "game.active_time.v2" as const,
       events: [
         {
           request_id: "request-time-1",
@@ -210,7 +353,7 @@ describe("game event ingestion", () => {
     const retry = await service.submitActiveTime("valid", batch);
 
     expect(first).toEqual({
-      type: "portal.active_time_ack.v1",
+      type: "portal.active_time_ack.v2",
       acknowledged_event_ids: ["time-event-1", "time-event-2"],
     });
     expect(retry).toEqual(first);

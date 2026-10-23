@@ -34,6 +34,11 @@ import type {
   PlayerSlotDto,
 } from "@/application/player-access/types";
 import { AdultPortalError } from "@/application/adult-portal/errors";
+import type { ContentSelection } from "@/application/game-content/policy";
+import { resolvePolicy } from "@/application/game-content/policy";
+import type { StoredGameContentManifest } from "@/application/game-content/ports";
+import type { SessionContentSnapshot } from "@/application/player-access/types";
+import { demoGameContentSeed } from "./content-seed";
 
 export const DEMO_PROFILE_IDS = {
   PLATFORM_ADMIN: "demo-profile-platform-admin",
@@ -79,6 +84,7 @@ type DemoClass = {
   name: string;
   status: RecordStatus;
   nextPlayerNumber: number;
+  defaultContentSelection?: ContentSelection | null;
 };
 
 type DemoAssignment = {
@@ -106,7 +112,7 @@ export type DemoPlayerCredential = {
   revokedAt: string | null;
 };
 
-export type DemoGameSession = {
+export type DemoGameSession = SessionContentSnapshot & {
   id: string;
   classGroupId: string;
   status: GameSessionStatus;
@@ -308,6 +314,9 @@ export const demoAdultPortalSeed: DemoAdultPortalState = {
   gameSessions: [
     {
       id: "demo-session-third-a-ended",
+      contentManifestId: demoGameContentSeed()[0]!.id,
+      contentPolicy: resolvePolicy(null, demoGameContentSeed()[0]!.payload),
+      startedById: DEMO_PROFILE_IDS.TEACHER,
       classGroupId: DEMO_CLASS_IDS.THIRD_A,
       status: GameSessionStatus.ENDED,
       startedAt: "2026-09-18T13:00:00.000Z",
@@ -726,7 +735,24 @@ export class DemoAdultPortalStore
 export class DemoPlayerAccessStore
   implements PlayerAccessStore, PlayerAccessTransaction
 {
-  constructor(readonly state: DemoAdultPortalState = cloneSeed()) {}
+  constructor(
+    readonly state: DemoAdultPortalState = cloneSeed(),
+    private readonly currentManifest: () => Promise<StoredGameContentManifest | null> = async () =>
+      demoGameContentSeed()[0]!,
+  ) {}
+
+  getCurrentManifest() {
+    return this.currentManifest();
+  }
+
+  async setClassDefaultContent(
+    classGroupId: string,
+    selection: ContentSelection | null,
+  ) {
+    const row = this.state.classes.find((item) => item.id === classGroupId);
+    if (!row) throw new AdultPortalError("Turma não encontrada.", "NOT_FOUND");
+    row.defaultContentSelection = structuredClone(selection);
+  }
 
   async updateEncryptedCredential(
     playerSlotId: string,
@@ -789,6 +815,9 @@ export class DemoPlayerAccessStore
       organizationId: classGroup.organizationId,
       organizationStatus: organization.status,
       status: classGroup.status,
+      defaultContentSelection: structuredClone(
+        classGroup.defaultContentSelection ?? null,
+      ),
     };
   }
 
@@ -948,6 +977,7 @@ export class DemoPlayerAccessStore
   async createSession(
     classGroupId: string,
     startedAt: Date,
+    content: SessionContentSnapshot,
   ): Promise<GameSessionDto> {
     if (await this.getActiveSession(classGroupId)) {
       throw new AdultPortalError(
@@ -959,6 +989,7 @@ export class DemoPlayerAccessStore
       throw new AdultPortalError("Turma não encontrada.", "NOT_FOUND");
     }
     const session: DemoGameSession = {
+      ...structuredClone(content),
       id: demoId("game-session"),
       classGroupId,
       status: GameSessionStatus.ACTIVE,
@@ -1051,6 +1082,9 @@ export class DemoPlayerAccessStore
 
   private sessionDto(session: DemoGameSession): GameSessionDto {
     return {
+      contentManifestId: session.contentManifestId,
+      contentPolicy: structuredClone(session.contentPolicy),
+      startedById: session.startedById,
       id: session.id,
       classGroupId: session.classGroupId,
       status: session.status,
