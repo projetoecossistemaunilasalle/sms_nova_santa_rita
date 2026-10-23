@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 /**
- * Monta as pastas `public/portal/` e `public/jogo/` a partir dos builds
- * gerados pelos projetos irmaos (que permanecem com build e repositorio
- * independentes; nada de codigo-fonte e copiado, apenas o output):
+ * Monta a pasta `public/jogo/` a partir do build gerado pelo projeto irmao
+ * (que permanece com build e repositorio independentes; nada de codigo-fonte
+ * e copiado, apenas o output):
  *
- *   portal -> SMS_Portal/out            (npm run build:demo com
- *                                        DEMO_BASE_PATH=sms_nova_santa_rita/portal)
  *   jogo   -> Heroes_Trial/web-poc/dist (scripts/build-jogo.ps1)
+ *
+ * O portal dos profissionais nao e exportado aqui: ele e um link externo
+ * (PORTAL_URL, definido em build) ou a pagina "em breve" em src/pages/portal/.
  *
  * Os bundles ficam versionados neste repositorio porque os repositorios
  * irmaos sao privados e o workflow de deploy do Pages nao consegue
@@ -14,7 +15,6 @@
  * origem, rode:
  *
  *   node scripts/sync-bundles.mjs            # sincroniza o que existir
- *   node scripts/sync-bundles.mjs --portal   # exige o build do portal
  *   node scripts/sync-bundles.mjs --jogo     # exige o build do jogo
  *
  * O script substitui a pasta de destino inteira, evitando arquivos de
@@ -30,12 +30,6 @@ import { validarBundlePhaser, validarReleaseJogo } from "./jogo-bundle.mjs";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const BUNDLES = {
-  portal: {
-    label: "portal",
-    target: path.join(repoRoot, "public", "portal"),
-    source: path.join(repoRoot, "..", "SMS_Portal", "out"),
-    origin: "SMS_Portal (npm run build:demo)",
-  },
   jogo: {
     label: "jogo",
     target: path.join(repoRoot, "public", "jogo"),
@@ -49,7 +43,7 @@ for (const arg of process.argv.slice(2)) {
   const name = arg.replace(/^--/, "");
   if (!BUNDLES[name]) {
     console.error(`Argumento desconhecido: ${arg}`);
-    console.error("Uso: node scripts/sync-bundles.mjs [--portal] [--jogo]");
+    console.error("Uso: node scripts/sync-bundles.mjs [--jogo]");
     process.exit(1);
   }
   requested.push(name);

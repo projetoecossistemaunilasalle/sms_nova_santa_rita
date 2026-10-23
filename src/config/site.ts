@@ -31,19 +31,26 @@ export function withBase(path: string): string {
 /* ------------------------------------------------------------------ */
 
 /**
- * Entradas dos apps publicados junto com a landing page pelo mesmo
- * deploy do GitHub Pages. As pastas sao montadas por
- * scripts/sync-bundles.mjs a partir dos builds de cada projeto:
- *   - /portal/: export estatico do SMS_Portal (npm run build:demo,
- *     DEMO_BASE_PATH=sms_nova_santa_rita/portal);
- *   - /jogo/: build Phaser do Heroes_Trial/web-poc (scripts/build-jogo.ps1).
+ * Entradas dos apps linkados pela landing page.
+ *   - portal: URL externa do Portal dos profissionais, definida em build
+ *     pela variavel de ambiente PORTAL_URL (lida pelo Astro/Node no build).
+ *     Sem ela, o link aponta para a pagina "em breve" de src/pages/portal/
+ *     (a copia estatica antiga do SMS_Portal foi removida).
+ *   - jogo: build Phaser do Heroes_Trial/web-poc, publicado em public/jogo/
+ *     por scripts/sync-bundles.mjs (ver scripts/build-jogo.ps1).
+ *
+ * Por ser externa quando definida, a entrada `portal` ja vem com o base
+ * path resolvido: NAO passe por withBase().
  */
+// process.env e lido no build (Node), nao no navegador.
+const PORTAL_EXTERNO = (process.env.PORTAL_URL ?? "").trim();
+
 export const APPS = {
   // "index.html" explicito: o servidor de dev do Astro nao resolve a barra
   // final de pastas em public/ (so o Pages resolve). Assim o link funciona
   // tanto no dev quanto no deploy.
   jogo: "/jogo/index.html",
-  portal: "/portal/",
+  portal: PORTAL_EXTERNO || withBase("/portal/"),
 } as const;
 
 /* ------------------------------------------------------------------ */

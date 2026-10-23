@@ -98,9 +98,26 @@ test("external, protocol-relative and fragment links are ignored", (t) => {
 test("assembled verification reports missing game metadata and nested portal residue", (t) => {
   const root = fixture(t);
   fs.mkdirSync(path.join(root, "portal", "nested"), { recursive: true });
-  fs.writeFileSync(path.join(root, "portal", "index.html"), "portal");
+  fs.writeFileSync(path.join(root, "portal", "index.html"), "<p>Portal dos profissionais em breve</p>");
   fs.writeFileSync(path.join(root, "portal", "nested", "app.js"), 'const base = "/SMS_Portal/";');
   const errors = verificarDist({ distDir: root, basePath: "site" });
   assert.ok(errors.some((error) => /Bundle Phaser invalido/.test(error)));
   assert.ok(errors.some((error) => /base path antigo.*app.js/.test(error)));
+});
+
+test("assembled verification requires the coming-soon portal page, not a Next export", (t) => {
+  const root = fixture(t);
+  assert.ok(
+    verificarDist({ distDir: root }).some((error) => /portal.index\.html/.test(error)),
+    "pagina do portal ausente",
+  );
+  fs.mkdirSync(path.join(root, "portal"));
+  fs.writeFileSync(
+    path.join(root, "portal", "index.html"),
+    '<script src="/sms_nova_santa_rita/portal/_next/static/chunks/a.js"></script>',
+  );
+  assert.ok(
+    verificarDist({ distDir: root }).some((error) => /export antigo/.test(error)),
+    "export antigo do Next aceito",
+  );
 });

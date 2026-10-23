@@ -1,0 +1,49 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { SITE, withBase } from "../../config/site";
+---
+
+<BaseLayout titulo="Portal dos profissionais — em breve">
+  <main id="conteudo" class="secao em-breve">
+    <div class="container">
+      <p class="em-breve-selo">{SITE.programa}</p>
+      <h1>Portal dos profissionais — em breve</h1>
+      <p>
+        Estamos preparando o portal dos profissionais de saúde e educação.
+        Enquanto ele não está disponível, a página inicial reúne as informações
+        do programa e o jogo para as crianças.
+      </p>
+      <a class="botao contorno" href={withBase("/")}>Voltar para o início</a>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .em-breve {
+    min-height: 70vh;
+    display: grid;
+    align-items: center;
+  }
+
+  .em-breve .container {
+    max-width: 40rem;
+    display: grid;
+    gap: 1rem;
+    justify-items: start;
+  }
+
+  .em-breve-selo {
+    margin: 0;
+    font-weight: 700;
+    color: var(--verde, #3d9b4e);
+  }
+
+  .em-breve h1 {
+    margin: 0;
+  }
+
+  .em-breve p {
+    margin: 0;
+    line-height: 1.6;
+  }
+</style>

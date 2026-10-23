@@ -1,11 +1,10 @@
 name: Deploy to GitHub Pages
 
-# O site completo (landing + /portal/ + /jogo/) e montado a partir deste
-# repositorio: a landing e buildada pelo Astro e os bundles dos apps irmaos
-# ficam versionados em public/portal/ e public/jogo/ (os repositorios
-# SMS_Portal e Heroes_Trial sao privados e nao podem ser acessados daqui).
-# Para atualizar um bundle, rebuild o projeto de origem e rode
-# `node scripts/sync-bundles.mjs`.
+# O site completo (landing + /portal/ em breve + /jogo/) e montado a partir
+# deste repositorio: a landing e buildada pelo Astro e o bundle do jogo fica
+# versionado em public/jogo/ (o repositorio Heroes_Trial e privado e nao pode
+# ser acessado daqui). Para atualizar o jogo, rebuild o projeto de origem e
+# rode `node scripts/sync-bundles.mjs --jogo`.
 
 on:
   push:

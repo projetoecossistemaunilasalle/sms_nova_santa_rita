@@ -76,6 +76,14 @@ export function verificarDist({
     if (!fs.existsSync(path.join(distDir, required)))
       problems.push(`Arquivo obrigatorio ausente em dist/: ${required}`);
   }
+  // dist/portal/ deve vir da pagina "em breve" (src/pages/portal/), nunca de
+  // um export estatico do SMS_Portal (que geraria assets em _next/).
+  const portalPage = path.join(distDir, "portal", "index.html");
+  if (fs.existsSync(portalPage)) {
+    const html = fs.readFileSync(portalPage, "utf8");
+    if (html.includes("/_next/") || !html.includes("em breve"))
+      problems.push("dist/portal/index.html nao e a pagina 'em breve' da landing (export antigo?).");
+  }
   const landingFile = path.join(distDir, "index.html");
   if (fs.existsSync(landingFile))
     problems.push(
