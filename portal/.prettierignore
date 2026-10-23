@@ -1,6 +1,12 @@
 .next
 node_modules
 public/jogo-cliente/**
+.landing/**
+public/index.html
+public/_astro/**
+public/assets/**
+public/favicon.svg
+public/jogo/**
 src/generated
 package-lock.json
 contracts

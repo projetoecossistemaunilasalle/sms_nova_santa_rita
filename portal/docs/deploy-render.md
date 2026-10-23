@@ -1,13 +1,13 @@
 # Deploy the portal to Render
 
 Operator runbook for the SMS Portal, which lives in `portal/` of the landing repository
-(`projetoecossistemaunilasalle/sms_nova_santa_rita`). The landing itself stays on GitHub Pages.
+(`projetoecossistemaunilasalle/sms_nova_santa_rita`). The landing and portal share one origin.
 
 ## 1. Architecture
 
-- One Render **web service** (native Node runtime, region `virginia`, plan `starter` by default) defined in the repository-root `render.yaml` (`rootDir: portal`, build filter `portal/**`).
+- One Render **web service** (native Node runtime, region `virginia`, plan `starter` by default) defined in the repository-root `render.yaml` (`rootDir: portal`, build filter includes portal and landing inputs).
 - The service runs the Next.js 16 standalone portal:
-  - Build: `npm ci && npm run build:server`
+  - Build: `npm ci && npm run build:landing && npm run build:server`
   - Start: `npm run start -- --hostname 0.0.0.0` (Render sets `PORT=10000`)
 - The same origin also serves the game build committed at `public/jogo-cliente/`. No extra service is needed.
 - Database: Neon Postgres 17 with Neon Auth (Better Auth).
@@ -16,6 +16,23 @@ Operator runbook for the SMS Portal, which lives in `portal/` of the landing rep
 - Health check: `/api/health/ready` (queries the DB with a 2 s timeout; Render needs a 2xx within 5 s). `/api/health/live` is liveness only and does not check the DB.
 - Migrations: `preDeployCommand: npx prisma migrate deploy`, using `DIRECT_URL` (see `prisma.config.ts`). If it fails, the deploy aborts and the previous release keeps serving.
 - `autoDeployTrigger: off`. Deploys are manual until the team opts in.
+
+### Single-origin landing
+
+`build:landing` installs the repository-root dependencies with `npm ci`, builds Astro
+with base `/` and portal links `/entrar/`, then copies its output into portal `public/`.
+Locally, use `npm run build:landing -- --skip-install` when root dependencies already exist.
+`SITE_URL` overrides the canonical origin; otherwise `RENDER_EXTERNAL_URL` is used.
+The root landing `portal/` placeholder is never copied: Next owns `/entrar`, `/portal/*`,
+`/jogar`, `/api/*` and `/jogo-cliente/*`. Astro owns `/` and `/jogo/` (redirected to
+`/jogo/index.html` so the wrapper's relative runtime links resolve correctly).
+
+Inline-script CSP hashes are regenerated from all copied HTML on every landing build
+in `.landing/csp.json`. Next loads these static headers and compiles `LANDING_BUNDLED`
+into the proxy; landing requests never receive the authenticated portal's nonce CSP.
+Without the landing bundle, `/` retains the portal redirect to `/entrar/` and nonce CSP.
+Generated files and the ownership manifest are ignored by Git; collisions with portal
+public files fail the build rather than overwrite them.
 
 ## 2. Environment variables
 
@@ -52,7 +69,7 @@ Before starting, confirm:
 - [ ] The branch to deploy is merged and pushed (step 1).
 - [ ] `public/jogo-cliente/` is committed and matches the game commit in `bundle-info.json`.
 - [ ] You have the production Neon connection strings and the auth base URL ready.
-- [ ] After creation, note the service URL Render assigned (it may carry a random suffix): it is needed for the Neon Auth trusted domain and the landing `PORTAL_URL`.
+- [ ] After creation, note the service URL Render assigned (it may carry a random suffix): it is needed for the Neon Auth trusted domain and landing canonical URLs.
 - [ ] Someone is available to run the smoke test (step 6) right after the first deploy.
 
 Steps:
@@ -65,7 +82,7 @@ Steps:
    4. Add `https://<service>.onrender.com` as a Neon Auth **trusted domain**. Add the custom domain later.
 3. **Create the service from the Blueprint.** In Render: New > Blueprint, select the repo and branch, and fill every `sync: false` variable from section 2.
 4. **First deploy.** Watch, in order:
-   1. Build (`npm ci`, `build:server`).
+   1. Build (`npm ci`, `build:landing`, `build:server`).
    2. Pre-deploy `prisma migrate deploy`. Failure stops here.
    3. Health check on `/api/health/ready`.
 5. **Bootstrap the platform.**
@@ -78,7 +95,7 @@ Steps:
    3. Join from a tablet by scanning the QR code.
    4. Play one mission.
    5. Confirm the results show that mission.
-7. **Rebuild the landing page** with `PORTAL_URL=https://<service>.onrender.com` and push the landing repo.
+7. **Verify the landing** at `/`, its wrapper at `/jogo/`, and portal links to `/entrar/` on the same service.
 
 ## 4. Game updates
 
@@ -119,4 +136,4 @@ The game lives in the separate repo `Heroes_Trial` (checked out next to the land
 - **Tablets and Safari.** Real tablets and Safari are not tested yet. A separate WebKit E2E pass is in progress.
 - **Render prices.** Not checked. Confirm the current plan price before go-live.
 - **Deploy branch.** `render.yaml` does not name a branch. Confirm the Render service deploys `main` of the landing repository.
-- **Custom domain.** Not yet defined. When added, set `ALLOWED_ORIGINS` and `GAME_CLIENT_URL` explicitly, update, the Neon Auth trusted domains, and the landing `PORTAL_URL`.
+- **Custom domain.** Not yet defined. When added, set `ALLOWED_ORIGINS`, `GAME_CLIENT_URL` and `SITE_URL` explicitly, update the Neon Auth trusted domains, and rebuild.

@@ -1,5 +1,5 @@
 # Render Blueprint for the professional portal (server runtime), which lives
-# in portal/ of this repository; the landing itself stays on GitHub Pages.
+# in portal/ of this repository; Astro is bundled into the same service.
 # The portal also serves the game build committed under portal/public/jogo-cliente/
 # (same origin; see portal/docs/deploy-render.md). Migrations run as the pre-deploy
 # step, so a failed migration keeps the previous release serving.
@@ -8,15 +8,21 @@ services:
     name: sms-portal
     runtime: node
     rootDir: portal
-    # Landing-only commits never rebuild the portal.
+    # Rebuild when either the portal or landing inputs change.
     buildFilter:
       paths:
         - portal/**
+        - src/**
+        - public/**
+        - astro.config.mjs
+        - package.json
+        - package-lock.json
+        - tsconfig.json
     # No South America region exists; Virginia is the closest to Brazil.
     # Keep the production Neon project in AWS us-east-1 next to it.
     region: virginia
     plan: starter
-    buildCommand: npm ci && npm run build:server
+    buildCommand: npm ci && npm run build:landing && npm run build:server
     preDeployCommand: npx prisma migrate deploy
     # Next's standalone server binds to HOSTNAME; force all interfaces.
     startCommand: npm run start -- --hostname 0.0.0.0

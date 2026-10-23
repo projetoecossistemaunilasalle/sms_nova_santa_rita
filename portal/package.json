@@ -11,6 +11,7 @@
     "dev": "node scripts/next-target.mjs dev server",
     "dev:demo": "node scripts/next-target.mjs dev demo",
     "build": "npm run build:server",
+    "build:landing": "node scripts/build-landing.mjs",
     "build:demo": "node scripts/next-target.mjs build demo",
     "build:server": "node scripts/next-target.mjs build server",
     "bundle:game": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/bundle-game.ps1",

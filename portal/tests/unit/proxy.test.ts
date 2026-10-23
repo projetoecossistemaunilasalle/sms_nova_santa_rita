@@ -1,13 +1,85 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
+import { unstable_doesMiddlewareMatch } from "next/experimental/testing/server";
 
-import { proxy } from "@/proxy";
+import { config, proxy } from "@/proxy";
 
 afterEach(() => {
   vi.unstubAllEnvs();
 });
 
 describe("Proxy & Content Security Policy", () => {
+  it.each([
+    "/_astro/landing.js",
+    "/assets/logo.png",
+    "/assets/audio.mp3",
+    "/jogo",
+    "/jogo/",
+    "/jogo/index.html",
+    "/jogo/runtime/index.html",
+    "/jogo/runtime/service-worker.js",
+    "/index.html",
+    "/favicon.svg",
+    "/jogo-cliente/index.html",
+    "/jogo-cliente/service-worker.js",
+  ])("leaves static headers untouched by not matching %s", (url) => {
+    expect(unstable_doesMiddlewareMatch({ config, nextConfig: {}, url })).toBe(
+      false,
+    );
+  });
+
+  it.each([
+    "/",
+    "/entrar",
+    "/portal/home",
+    "/api/health/live",
+    "/jogar",
+    "/jogar/test",
+    "/jogo-other",
+    "/assets-other",
+    "/index.html-other",
+  ])("retains proxy coverage for %s", (url) => {
+    expect(unstable_doesMiddlewareMatch({ config, nextConfig: {}, url })).toBe(
+      true,
+    );
+  });
+
+  it("passes the landing root through without nonce or portal response headers", () => {
+    vi.stubEnv("LANDING_BUNDLED", "true");
+    const response = proxy(new NextRequest("https://portal.example/"));
+    expect(response.headers.get("x-middleware-next")).toBe("1");
+    for (const header of [
+      "Content-Security-Policy",
+      "X-Frame-Options",
+      "x-nonce",
+      "x-middleware-request-content-security-policy",
+    ]) {
+      expect(response.headers.has(header)).toBe(false);
+    }
+  });
+
+  it.each([undefined, "false"])(
+    "protects the fallback root when LANDING_BUNDLED is %s",
+    (flag) => {
+      vi.stubEnv("LANDING_BUNDLED", flag);
+      const response = proxy(new NextRequest("https://portal.example/"));
+      expect(response.headers.get("Content-Security-Policy")).toContain(
+        "'nonce-",
+      );
+      expect(response.headers.get("X-Frame-Options")).toBe("DENY");
+    },
+  );
+
+  it("keeps /jogar protected even with a bundled landing", () => {
+    vi.stubEnv("LANDING_BUNDLED", "true");
+    const response = proxy(new NextRequest("https://portal.example/jogar"));
+    expect(response.headers.get("Content-Security-Policy")).toContain(
+      "'nonce-",
+    );
+    expect(response.headers.get("X-Frame-Options")).toBe("DENY");
+    expect(response.headers.get("Referrer-Policy")).toBe("no-referrer");
+  });
+
   it("emits a valid CSP header without nonce in style-src", () => {
     const request = new NextRequest("http://localhost:3000/entrar");
     const response = proxy(request);

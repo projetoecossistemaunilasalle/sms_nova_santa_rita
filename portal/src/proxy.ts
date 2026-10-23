@@ -113,6 +113,13 @@ function contentSecurityPolicy(nonce: string, enforceHttps: boolean): string {
 }
 
 export function proxy(request: NextRequest): NextResponse {
+  if (
+    request.nextUrl.pathname === "/" &&
+    process.env.LANDING_BUNDLED === "true"
+  ) {
+    return NextResponse.next();
+  }
+
   const correlationId = correlationIdFromRequest(request);
   const nonce = createNonce();
   const enforceHttps =
@@ -159,9 +166,11 @@ export function proxy(request: NextRequest): NextResponse {
 }
 
 export const config = {
+  // Landing assets and jogo-cliente/ have static CSPs in next.config.ts.
+  // Match exact segments: /jogar must retain portal security headers.
   // jogo-cliente/ is the same-origin game build (static files). The portal's
   // nonce CSP and frame-ancestors 'none' would stop it from running inside the
   // /jogar iframe; next.config.ts gives it its own same-origin framing headers.
   matcher:
-    "/((?!_next|jogo-cliente/|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next|jogo-cliente/|(?:_astro|assets|jogo)(?:/|$)|index\\.html$|favicon\\.svg$|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
 };

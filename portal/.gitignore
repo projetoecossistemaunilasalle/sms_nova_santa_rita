@@ -35,3 +35,11 @@ Thumbs.db
 # bundle-game.ps1 working directories
 /.jogo-cliente.staging/
 /.jogo-cliente.previous/
+
+# Astro landing bundle (scripts/build-landing.mjs)
+/.landing/
+/public/index.html
+/public/_astro/
+/public/assets/
+/public/favicon.svg
+/public/jogo/
