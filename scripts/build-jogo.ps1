@@ -1,5 +1,6 @@
 $ErrorActionPreference = 'Stop'
-$game = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..\Heroes_Trial\web-poc'))
+$gameRoot = if ($env:GAME_PROJECT_ROOT) { $env:GAME_PROJECT_ROOT } else { Join-Path $PSScriptRoot '..\..\Heroes_Trial\web-poc' }
+$game = [IO.Path]::GetFullPath($gameRoot)
 . (Join-Path $game 'tools\build-lock.ps1')
 $mutex = Enter-MaintenanceBuildLock
 $previousBuildDirectory = $env:WEB_BUILD_DIR

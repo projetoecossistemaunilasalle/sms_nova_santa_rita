@@ -8,7 +8,7 @@
       "type": "image",
       "owner": "activity:lia_memory",
       "exclusive": true,
-      "bytes": 3620,
+      "bytes": 4208,
       "url": "/assets/activities/memory/card_back.webp",
       "logicalName": "Memory card paw back",
       "dimensions": {
@@ -20,8 +20,8 @@
       "provenance": {
         "source": "sprites/spr_memory_paw/66af8c35-0f90-4b25-afad-a34b37ac92d1.png",
         "sourceSha256": "2b9e6c640b5fc0704ef7500c63d60cb26d5813ce6e731730e52fbbd992eee8bf",
-        "generatedSha256": "5bc50afb222df3b791510fa1035ab66d3c74966ea03f2821494e7cabc0d1be00",
-        "transform": "scale=96:96",
+        "generatedSha256": "88c828e9bf8ec6babec4e56dbdb674dcfe4b94c0bdcf2cf8ee2b4f22edd867e4",
+        "transform": "scale=96:96:flags=lanczos",
         "alphaBounds": {
           "left": 6,
           "top": 9,
@@ -36,7 +36,7 @@
       "type": "image",
       "owner": "activity:pingpong_defense",
       "exclusive": true,
-      "bytes": 3132,
+      "bytes": 3658,
       "url": "/assets/activities/pingpong/ball.webp",
       "logicalName": "spr_mg_defesa_bola",
       "gmlName": "spr_mg_defesa_bola",
@@ -49,8 +49,8 @@
       "provenance": {
         "source": "sprites/spr_mg_defesa_bola/09ff9036-2276-4acf-8dae-1d43f4e1a558.png",
         "sourceSha256": "fc7c5ba55b062b23bc48b315899e0a36759b3bf77fb9cad06956275a977f36d1",
-        "generatedSha256": "793cff0b0d26cccf0ace37a7b044d82db55ccf55d574215542ea4a96b5daba76",
-        "transform": "scale=100:100",
+        "generatedSha256": "4fb0af823c725f84fb67d51dd2004ddbaa5382f9da06e241db6b0bd2da61ff61",
+        "transform": "scale=100:100:flags=lanczos",
         "alphaBounds": {
           "left": 6,
           "top": 4,
@@ -65,12 +65,12 @@
       "type": "image",
       "owner": "activity:pingpong_defense",
       "exclusive": true,
-      "bytes": 20888,
+      "bytes": 18820,
       "url": "/assets/activities/pingpong/child.webp",
       "logicalName": "spr_mg_defesa_crianca",
       "gmlName": "spr_mg_defesa_crianca",
       "dimensions": {
-        "width": 320,
+        "width": 270,
         "height": 480,
         "originX": 0.5,
         "originY": 0.5
@@ -78,12 +78,12 @@
       "provenance": {
         "source": "sprites/spr_mg_defesa_crianca/dc8705d5-7543-4909-a92b-08e0bc40cb6f.png",
         "sourceSha256": "805bef58ca748c3787a748bf08eac795238589f9684d7f29d3c5d736e19e42aa",
-        "generatedSha256": "fec3579520dcd44ed1449db664e6d6fcfc088e838b28db5acf6c9e2f4a04e649",
-        "transform": "scale=320:480",
+        "generatedSha256": "54a948343066562f2ac3fee462b8d2b0ce3de1989adc62cf37cee7f8fafb9c03",
+        "transform": "scale=270:480:flags=lanczos",
         "alphaBounds": {
           "left": 0,
           "top": 0,
-          "right": 319,
+          "right": 269,
           "bottom": 479
         }
       }
@@ -94,7 +94,7 @@
       "type": "image",
       "owner": "activity:pingpong_defense",
       "exclusive": true,
-      "bytes": 97686,
+      "bytes": 99688,
       "url": "/assets/activities/pingpong/field.webp",
       "logicalName": "Ball defense field with clear gameplay lane",
       "dimensions": {
@@ -106,8 +106,8 @@
       "provenance": {
         "source": "art_source/pingpong/field-clear.png",
         "sourceSha256": "e7975c069710e05fde0e5dc04c23cb52cdffd9cd31e240a0a4bc5f14ad67bfd1",
-        "generatedSha256": "076bb937e1daf48652c3a7d4821570c599bf06ba313587f4f900f8b9abbc4bb9",
-        "transform": "scale=768:1366"
+        "generatedSha256": "01f2739c9132fd216a7ed961f89f837f1ea4f444c09d176e5d96c2dc169c7fd5",
+        "transform": "scale=768:1366:flags=lanczos"
       }
     },
     "activity/pingpong/narrator": {
@@ -116,7 +116,7 @@
       "type": "image",
       "owner": "activity:pingpong_defense",
       "exclusive": true,
-      "bytes": 23432,
+      "bytes": 26690,
       "url": "/assets/activities/pingpong/narrator.webp",
       "logicalName": "Spr_caramelinho",
       "gmlName": "Spr_caramelinho",
@@ -129,8 +129,8 @@
       "provenance": {
         "source": "sprites/Spr_caramelinho/d9a8c598-9599-4a3b-8cc3-1cf214ec317a.png",
         "sourceSha256": "f5ac031ae79496d1bc0b3c808fb4c423ec72f2dbe5a87b1a6c92d80a413e962d",
-        "generatedSha256": "793596db1a7d526ad8a89897f93f92d650c14fef4795cce7b2c36e1ee2dd12d9",
-        "transform": "scale=320:430",
+        "generatedSha256": "a8c20daace4de9ea763a5ff9d08f75d33f2b62a72d5ed4102388b54004aeb9ba",
+        "transform": "scale=320:430:flags=lanczos",
         "alphaBounds": {
           "left": 60,
           "top": 4,
@@ -603,7 +603,7 @@
       "type": "image",
       "owner": "mission:when_play_stops_being_play",
       "exclusive": true,
-      "bytes": 14402,
+      "bytes": 17164,
       "url": "/assets/characters/bullying_commenter.webp",
       "logicalName": "spr_bullying_commenter",
       "gmlName": "spr_bullying_commenter",
@@ -616,8 +616,8 @@
       "provenance": {
         "source": "sprites/spr_bullying_commenter/22cd1dda-e4f0-4851-9c89-796de134f5ee.png",
         "sourceSha256": "a647a0e6a78bac98265643c850cbe31d9042c99787a0fc4255a31e35446e9b20",
-        "generatedSha256": "6f0eb1c9667f9b5d1db91aec363075f36a9520e37274a1ca63d817751563c1bb",
-        "transform": "scale=320:480",
+        "generatedSha256": "1b1c8d2fc678958fcc7494c83e901d003510460dd3d5c543b4d80ffc9c8380d3",
+        "transform": "scale=320:480:flags=lanczos",
         "alphaBounds": {
           "left": 38,
           "top": 25,
@@ -633,7 +633,7 @@
       "type": "image",
       "owner": "mission:when_play_stops_being_play",
       "exclusive": true,
-      "bytes": 14116,
+      "bytes": 16574,
       "url": "/assets/characters/bullying_hoodie.webp",
       "logicalName": "spr_bullying_hoodie",
       "gmlName": "spr_bullying_hoodie",
@@ -646,8 +646,8 @@
       "provenance": {
         "source": "sprites/spr_bullying_hoodie/7ed04c86-22d5-4da6-879a-79adbb7c5896.png",
         "sourceSha256": "9ab1211faa9147df824178c9e7d813b7faa5826860a5f49da9adbf19fd340b43",
-        "generatedSha256": "16598ebce2cb7e111e488689a5cbb186c20ff1014cf0db2b0a6c45ec88c6e18e",
-        "transform": "scale=320:480",
+        "generatedSha256": "597706d9890292077d97d6a4156801e9563e56a675e44594495fcd6574193bd0",
+        "transform": "scale=320:480:flags=lanczos",
         "alphaBounds": {
           "left": 73,
           "top": 15,
@@ -663,7 +663,7 @@
       "type": "image",
       "owner": "mission:when_play_stops_being_play",
       "exclusive": true,
-      "bytes": 16710,
+      "bytes": 19894,
       "url": "/assets/characters/bullying_witness.webp",
       "logicalName": "spr_bullying_witness",
       "gmlName": "spr_bullying_witness",
@@ -676,8 +676,8 @@
       "provenance": {
         "source": "sprites/spr_bullying_witness/b880c4d0-101a-48a1-9c1d-81923c60b49e.png",
         "sourceSha256": "fc2588c126e03eded51a498090d4be7142a808848ba2d64efe2f38fd9a7943f3",
-        "generatedSha256": "2d66410622bd480c96af1e06884636382c06d36155cb490d88690a51924bd57d",
-        "transform": "scale=320:480",
+        "generatedSha256": "f09e981f36967991a46ffef354490d766b245890ee851f5fdc264cca8af3a471",
+        "transform": "scale=320:480:flags=lanczos",
         "alphaBounds": {
           "left": 41,
           "top": 17,
@@ -1893,7 +1893,7 @@
       "type": "image",
       "owner": "mission:pingpong_soccer",
       "exclusive": true,
-      "bytes": 12988,
+      "bytes": 15314,
       "url": "/assets/cutscenes/pingpong_kid.webp",
       "logicalName": "spr_pingpong_kid",
       "gmlName": "spr_pingpong_kid",
@@ -1906,8 +1906,8 @@
       "provenance": {
         "source": "sprites/spr_pingpong_kid/75003299-3dbd-4e90-924c-25ffdeb67e8d.png",
         "sourceSha256": "d8d5abb320dbb7886c110d3aa1702362a41a916f9d3f186dcd878417227aac2e",
-        "generatedSha256": "d22beade58b05c418e8fb8a96464f0b838966eefb64663094e4942bd7830a06e",
-        "transform": "scale=320:480",
+        "generatedSha256": "28480429ce810705b218b8eac5c13cc9e623e9de545726f728b24a78096ba42d",
+        "transform": "scale=320:480:flags=lanczos",
         "alphaBounds": {
           "left": 62,
           "top": 37,
@@ -1923,7 +1923,7 @@
       "type": "image",
       "owner": "mission:pingpong_soccer",
       "exclusive": true,
-      "bytes": 24644,
+      "bytes": 27456,
       "url": "/assets/cutscenes/pingpong_teammate_1.webp",
       "logicalName": "spr_bully1",
       "gmlName": "spr_bully1",
@@ -1936,8 +1936,8 @@
       "provenance": {
         "source": "sprites/spr_bully1/902c9c88-97fa-43cc-b8b0-8abf978ec248.png",
         "sourceSha256": "9a830c2f55bdbe7586b286bf13397e9e32e2ebb72248d88388ccce6598afefa8",
-        "generatedSha256": "a3a80279f6b65f297f9d22874c35233d3a50e524e1bf5643a114d2302405ca50",
-        "transform": "scale=395:480",
+        "generatedSha256": "854cc401b4ff2d1e6c1fa665d95e8a5309d68ca0ba41ecdd68063b87ff6f513c",
+        "transform": "scale=395:480:flags=lanczos",
         "alphaBounds": {
           "left": 1,
           "top": 1,
@@ -1953,7 +1953,7 @@
       "type": "image",
       "owner": "mission:pingpong_soccer",
       "exclusive": true,
-      "bytes": 23476,
+      "bytes": 26186,
       "url": "/assets/cutscenes/pingpong_teammate_2.webp",
       "logicalName": "spr_bully2",
       "gmlName": "spr_bully2",
@@ -1966,8 +1966,8 @@
       "provenance": {
         "source": "sprites/spr_bully2/db14b83a-ae97-4b04-9869-0316a52bad51.png",
         "sourceSha256": "80ad07589d181ac39aa4e0890fa76556696bda9982f8d6bd4a16d08c7abfd391",
-        "generatedSha256": "95a886432ada2a4c6a864e6b86c5fc2dec159ccaee908b257209d6d02d6241ec",
-        "transform": "scale=412:480",
+        "generatedSha256": "c897ab1fdc39a589096bed430367041ff11072bd2748d435b501a3a30adb4104",
+        "transform": "scale=412:480:flags=lanczos",
         "alphaBounds": {
           "left": 64,
           "top": 8,
@@ -1988,7 +1988,7 @@
         "mission:when_play_stops_being_play"
       ],
       "exclusive": false,
-      "bytes": 10064,
+      "bytes": 11868,
       "url": "/assets/cutscenes/caramelito_idle.webp",
       "logicalName": "Caramelito cutscene portrait",
       "gmlName": "spr_cutscene_caramelito_idle",
@@ -2001,8 +2001,8 @@
       "provenance": {
         "source": "sprites/spr_cutscene_caramelito_idle/4905f870-e051-4dba-bd03-11c1e63edeb7.png",
         "sourceSha256": "7589561646afe91d776f0bbf59bb189cceb66aac22b715228f667891f81aa231",
-        "generatedSha256": "2876c1b2afa94de7c6710e0b02542da636558c63c1cf171b57d6d617a1f03340",
-        "transform": "scale=320:320",
+        "generatedSha256": "8836412158f6438678dbd4cdcb260d9c684a5ec83be614012ec57acd60fe7e3b",
+        "transform": "scale=320:320:flags=lanczos",
         "alphaBounds": {
           "left": 84,
           "top": 24,
@@ -2041,7 +2041,7 @@
       "type": "image",
       "owner": "mission:lia_memory",
       "exclusive": false,
-      "bytes": 20992,
+      "bytes": 24174,
       "url": "/assets/cutscenes/lia_speaking.webp",
       "logicalName": "Lia speaking portrait",
       "gmlName": "spr_cutscene_lia_speaking",
@@ -2054,8 +2054,8 @@
       "provenance": {
         "source": "sprites/spr_cutscene_lia_speaking/fd113a31-bf79-4d45-8c52-b46a0e193002.png",
         "sourceSha256": "98a234d31eded00c49b446ab34c04a45f7aee1fb0c4b5d7bcab9798e3e559769",
-        "generatedSha256": "dd029860392767f190206c6e405b7d33c73c408e3f9873898ab32ae5ed40888e",
-        "transform": "scale=320:480",
+        "generatedSha256": "a6770904f681c518a1dd0a6b4a652d775ef1b6e478f40a8ea2aed9b2c67169a2",
+        "transform": "scale=320:480:flags=lanczos",
         "alphaBounds": {
           "left": 23,
           "top": 14,
@@ -2071,7 +2071,7 @@
       "type": "image",
       "owner": "mission:lia_memory",
       "exclusive": false,
-      "bytes": 19712,
+      "bytes": 22300,
       "url": "/assets/cutscenes/lia_thoughtful.webp",
       "logicalName": "Lia thoughtful portrait",
       "gmlName": "spr_cutscene_lia_thoughtful",
@@ -2084,8 +2084,8 @@
       "provenance": {
         "source": "sprites/spr_cutscene_lia_thoughtful/e7a4d1b8-2c5e-46b9-9c56-4b40e625b001.png",
         "sourceSha256": "5571cff3ff7464fa33c6b53c397f317ed46716fbb9771afa05aa93c591444baa",
-        "generatedSha256": "79bf66469363d2b1d006cf9847ef3315d75277ae4bf3733a72100f090e396109",
-        "transform": "scale=320:480",
+        "generatedSha256": "a6517205bf0389f3dc4b8cf396721ba38453ad75ebbbd73a0e2924c8c7990ce2",
+        "transform": "scale=320:480:flags=lanczos",
         "alphaBounds": {
           "left": 40,
           "top": 19,
@@ -2132,7 +2132,7 @@
         "mission:when_play_stops_being_play"
       ],
       "exclusive": true,
-      "bytes": 68336,
+      "bytes": 70722,
       "url": "/assets/cutscenes/scene_patio_lia1.webp",
       "logicalName": "Shared school cutscene background",
       "gmlName": "spr_cutscene_scene_patio_lia1",
@@ -2145,8 +2145,8 @@
       "provenance": {
         "source": "sprites/spr_cutscene_scene_patio_lia1/0f865dcd-be94-4f6e-89c8-584c5f8301f6.png",
         "sourceSha256": "055d56ee82e45de994d397c062dece1dce5c66cb9a798899eb76aa30057c3e0e",
-        "generatedSha256": "597dd5b5adca2728c6075b28a22a70176490fa92bb049c925355f1c0672a38ba",
-        "transform": "scale=1280:720"
+        "generatedSha256": "f1246891eee3a7d03754f117e89ee280171324230ce05d3a1fda348fdad00f7f",
+        "transform": "scale=1280:720:flags=lanczos"
       }
     },
     "player/idle": {
@@ -2632,7 +2632,7 @@
       "type": "image",
       "owner": "mission:respect_also_cares",
       "exclusive": true,
-      "bytes": 17042,
+      "bytes": 20770,
       "url": "/assets/characters/respect_bia.webp",
       "logicalName": "spr_respect_bia",
       "gmlName": "spr_respect_bia",
@@ -2645,8 +2645,8 @@
       "provenance": {
         "source": "sprites/spr_respect_bia/83a79eb4-92b9-4cd8-8a8e-83f14c88c255.png",
         "sourceSha256": "05c30ffac0f449b05c3095b53774d9d16ac7920ce69c0dee1f5090426a711cef",
-        "generatedSha256": "f0ed02a8ae31fd6ab5324f2432fed567c760e4acbfd321c846e7eea2d6deb1d8",
-        "transform": "scale=320:480",
+        "generatedSha256": "3d8c0ee00ac27442f27ae3a33560e4ffffaa6229f5bbf1feb19f899318aa72a8",
+        "transform": "scale=320:480:flags=lanczos",
         "alphaBounds": {
           "left": 44,
           "top": 34,
@@ -2662,7 +2662,7 @@
       "type": "image",
       "owner": "mission:respect_also_cares",
       "exclusive": true,
-      "bytes": 13594,
+      "bytes": 16466,
       "url": "/assets/characters/respect_caio.webp",
       "logicalName": "spr_respect_caio",
       "gmlName": "spr_respect_caio",
@@ -2675,8 +2675,8 @@
       "provenance": {
         "source": "sprites/spr_respect_caio/77b65505-8410-497c-8a18-a7db1d6c2eb3.png",
         "sourceSha256": "f2e3f2958c3539c223fdc7ae79a13dfa9d69f9161335fd747c8fd56f8cf1ddcd",
-        "generatedSha256": "815b24d4f796e8b2ee4e85ce81862efe17b5ce12aa31259ee6ce2aa13a03134c",
-        "transform": "scale=320:480",
+        "generatedSha256": "b98147ae5b9c131f10eb8c55627c013e07409382f53a111b8fdbb474dc00b170",
+        "transform": "scale=320:480:flags=lanczos",
         "alphaBounds": {
           "left": 57,
           "top": 74,
@@ -2692,7 +2692,7 @@
       "type": "image",
       "owner": "mission:respect_also_cares",
       "exclusive": true,
-      "bytes": 17970,
+      "bytes": 21204,
       "url": "/assets/characters/respect_leo.webp",
       "logicalName": "spr_respect_leo",
       "gmlName": "spr_respect_leo",
@@ -2705,8 +2705,8 @@
       "provenance": {
         "source": "sprites/spr_respect_leo/bcb43c05-42a5-47b4-8c13-2fe1f42f6353.png",
         "sourceSha256": "ff8a32e5bbfc565c15b3b892ebc03fac0fd3f6a001958249ec40299dfcc46b92",
-        "generatedSha256": "940d162cbf7d84229cdf24b77f52ee679a31cb61c1bc08c3e4d6958540202211",
-        "transform": "scale=320:480",
+        "generatedSha256": "085410f096fd80f7cdb668fac985b78bcec2aace10c3eddae145cba17a6bf734",
+        "transform": "scale=320:480:flags=lanczos",
         "alphaBounds": {
           "left": 66,
           "top": 23,
@@ -2722,28 +2722,28 @@
       "type": "image",
       "owner": "mission:smile_kit",
       "exclusive": true,
-      "bytes": 75410,
+      "bytes": 20498,
       "url": "/assets/dental-world/spr_npc_kit_sorriso.webp",
       "logicalName": "smile-kit/child",
       "gmlName": "spr_npc_kit_sorriso",
       "dimensions": {
-        "width": 1086,
-        "height": 1448,
+        "width": 360,
+        "height": 480,
         "originX": 0.5,
         "originY": 0.9709944751381215
       },
       "provenance": {
         "source": "sprites/spr_npc_kit_sorriso/13b33265-6762-4d35-9880-7ba23cea7a77.png",
         "sourceSha256": "2a6542b9d5889defe799a958d0ab025d6db82dd819320b3c2c3db52a22527b59",
-        "generatedSha256": "9ec755d5149faa60e52396fe10926e5ed85e74fac4440066ad448ddc62a17996",
-        "transform": "scale=1086:1448",
+        "generatedSha256": "bbc2f46999a65d75131c85398e641f52bbd25b25cc62d7bc08c28471adbec674",
+        "transform": "scale=360:480:flags=lanczos",
         "alphaBounds": {
-          "left": 214,
-          "top": 34,
-          "right": 871,
-          "bottom": 1405
+          "left": 71,
+          "top": 11,
+          "right": 288,
+          "bottom": 465
         },
-        "baseline": 1406
+        "baseline": 466.0773480662983
       }
     },
     "ui/main_menu": {
@@ -8215,5 +8215,5 @@
       }
     }
   },
-  "totalBytes": 7622849
+  "totalBytes": 7608289
 }

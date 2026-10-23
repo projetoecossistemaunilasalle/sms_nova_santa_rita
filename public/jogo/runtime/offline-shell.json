@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "buildId": "78ad3922e8801c6713eca627",
+  "buildId": "af369104f9f783a1d27e58a1",
   "manifestVersion": "4.0.0-real",
   "shell": [
     {
-      "path": "assets/game-BEIZ7dke.js",
-      "bytes": 1914811,
-      "sha256": "25167d331e7fb6a1dfac59b90ffe97f0b2f6e8659de8607c787841ecd2ac3970"
+      "path": "assets/game-BJK2xB43.css",
+      "bytes": 6639,
+      "sha256": "a606efd530a98a1435470cfc845b018cb08fe9866f7903d915dc567583264719"
     },
     {
-      "path": "assets/game-B_Vxqlxd.css",
-      "bytes": 6015,
-      "sha256": "5a4448d6dacc1143c65451e1b21750c2181bb2a95dc9c29ec2707e1e6b6647bd"
+      "path": "assets/game-GdGU791c.js",
+      "bytes": 1977447,
+      "sha256": "b31e58b6721b7d6caa1bfa96346454c51250d3c847e8305e56a6dc7f83b2dde8"
     },
     {
       "path": "assets/loading-art-BcMeO0DY.webp",
@@ -20,8 +20,8 @@
     },
     {
       "path": "assets/manifest.generated.json",
-      "bytes": 315800,
-      "sha256": "02aa0660c72df8bb3deb926c10c976c824add7ebc3687e7da05331e9d20f5ccc"
+      "bytes": 316073,
+      "sha256": "26d76a8ca5a7f2395d3612880ef1f750a3b118359057760d75afd6a8dcc75752"
     },
     {
       "path": "assets/ui/buttons/cafeteria.webp",
@@ -140,45 +140,45 @@
     },
     {
       "path": "index.html",
-      "bytes": 17139,
-      "sha256": "37d938d8afa9ab617dcc5cc6f7e7cd2f7b350c17b81b4689195f256f462b7e1c"
+      "bytes": 20609,
+      "sha256": "65e039ccf222aa1e79dccfea048de6e3e070eaeaedddef7b799c9eae70fa9fdc"
     },
     {
       "path": "pages-source.json",
       "bytes": 271,
-      "sha256": "6f4d6bb50aaefbbbc20f7b56b242a1bf5c01cee1b153a02babcf3ab5ee06cf66"
+      "sha256": "b32c46973ca8a249f6c41f5ee9dcb30e4a7e91f7de5f2a43fc1b8e2545d2facd"
     }
   ],
   "content": [
     {
       "key": "activity/memory/card_back",
       "path": "assets/activities/memory/card_back.webp",
-      "bytes": 3620,
-      "sha256": "5bc50afb222df3b791510fa1035ab66d3c74966ea03f2821494e7cabc0d1be00"
+      "bytes": 4208,
+      "sha256": "88c828e9bf8ec6babec4e56dbdb674dcfe4b94c0bdcf2cf8ee2b4f22edd867e4"
     },
     {
       "key": "activity/pingpong/ball",
       "path": "assets/activities/pingpong/ball.webp",
-      "bytes": 3132,
-      "sha256": "793cff0b0d26cccf0ace37a7b044d82db55ccf55d574215542ea4a96b5daba76"
+      "bytes": 3658,
+      "sha256": "4fb0af823c725f84fb67d51dd2004ddbaa5382f9da06e241db6b0bd2da61ff61"
     },
     {
       "key": "activity/pingpong/child",
       "path": "assets/activities/pingpong/child.webp",
-      "bytes": 20888,
-      "sha256": "fec3579520dcd44ed1449db664e6d6fcfc088e838b28db5acf6c9e2f4a04e649"
+      "bytes": 18820,
+      "sha256": "54a948343066562f2ac3fee462b8d2b0ce3de1989adc62cf37cee7f8fafb9c03"
     },
     {
       "key": "activity/pingpong/field",
       "path": "assets/activities/pingpong/field.webp",
-      "bytes": 97686,
-      "sha256": "076bb937e1daf48652c3a7d4821570c599bf06ba313587f4f900f8b9abbc4bb9"
+      "bytes": 99688,
+      "sha256": "01f2739c9132fd216a7ed961f89f837f1ea4f444c09d176e5d96c2dc169c7fd5"
     },
     {
       "key": "activity/pingpong/narrator",
       "path": "assets/activities/pingpong/narrator.webp",
-      "bytes": 23432,
-      "sha256": "793596db1a7d526ad8a89897f93f92d650c14fef4795cce7b2c36e1ee2dd12d9"
+      "bytes": 26690,
+      "sha256": "a8c20daace4de9ea763a5ff9d08f75d33f2b62a72d5ed4102388b54004aeb9ba"
     },
     {
       "key": "activity/pingpong/shoe",
@@ -291,20 +291,20 @@
     {
       "key": "bullying/commenter",
       "path": "assets/characters/bullying_commenter.webp",
-      "bytes": 14402,
-      "sha256": "6f0eb1c9667f9b5d1db91aec363075f36a9520e37274a1ca63d817751563c1bb"
+      "bytes": 17164,
+      "sha256": "1b1c8d2fc678958fcc7494c83e901d003510460dd3d5c543b4d80ffc9c8380d3"
     },
     {
       "key": "bullying/hoodie",
       "path": "assets/characters/bullying_hoodie.webp",
-      "bytes": 14116,
-      "sha256": "16598ebce2cb7e111e488689a5cbb186c20ff1014cf0db2b0a6c45ec88c6e18e"
+      "bytes": 16574,
+      "sha256": "597706d9890292077d97d6a4156801e9563e56a675e44594495fcd6574193bd0"
     },
     {
       "key": "bullying/witness",
       "path": "assets/characters/bullying_witness.webp",
-      "bytes": 16710,
-      "sha256": "2d66410622bd480c96af1e06884636382c06d36155cb490d88690a51924bd57d"
+      "bytes": 19894,
+      "sha256": "f09e981f36967991a46ffef354490d766b245890ee851f5fdc264cca8af3a471"
     },
     {
       "key": "caramelito.armor.idle",
@@ -387,26 +387,26 @@
     {
       "key": "character/pingpong_kid",
       "path": "assets/cutscenes/pingpong_kid.webp",
-      "bytes": 12988,
-      "sha256": "d22beade58b05c418e8fb8a96464f0b838966eefb64663094e4942bd7830a06e"
+      "bytes": 15314,
+      "sha256": "28480429ce810705b218b8eac5c13cc9e623e9de545726f728b24a78096ba42d"
     },
     {
       "key": "character/pingpong_teammate_1",
       "path": "assets/cutscenes/pingpong_teammate_1.webp",
-      "bytes": 24644,
-      "sha256": "a3a80279f6b65f297f9d22874c35233d3a50e524e1bf5643a114d2302405ca50"
+      "bytes": 27456,
+      "sha256": "854cc401b4ff2d1e6c1fa665d95e8a5309d68ca0ba41ecdd68063b87ff6f513c"
     },
     {
       "key": "character/pingpong_teammate_2",
       "path": "assets/cutscenes/pingpong_teammate_2.webp",
-      "bytes": 23476,
-      "sha256": "95a886432ada2a4c6a864e6b86c5fc2dec159ccaee908b257209d6d02d6241ec"
+      "bytes": 26186,
+      "sha256": "c897ab1fdc39a589096bed430367041ff11072bd2748d435b501a3a30adb4104"
     },
     {
       "key": "cutscene/caramelito_idle",
       "path": "assets/cutscenes/caramelito_idle.webp",
-      "bytes": 10064,
-      "sha256": "2876c1b2afa94de7c6710e0b02542da636558c63c1cf171b57d6d617a1f03340"
+      "bytes": 11868,
+      "sha256": "8836412158f6438678dbd4cdcb260d9c684a5ec83be614012ec57acd60fe7e3b"
     },
     {
       "key": "cutscene/infirmary",
@@ -417,14 +417,14 @@
     {
       "key": "cutscene/lia_speaking",
       "path": "assets/cutscenes/lia_speaking.webp",
-      "bytes": 20992,
-      "sha256": "dd029860392767f190206c6e405b7d33c73c408e3f9873898ab32ae5ed40888e"
+      "bytes": 24174,
+      "sha256": "a6770904f681c518a1dd0a6b4a652d775ef1b6e478f40a8ea2aed9b2c67169a2"
     },
     {
       "key": "cutscene/lia_thoughtful",
       "path": "assets/cutscenes/lia_thoughtful.webp",
-      "bytes": 19712,
-      "sha256": "79bf66469363d2b1d006cf9847ef3315d75277ae4bf3733a72100f090e396109"
+      "bytes": 22300,
+      "sha256": "a6517205bf0389f3dc4b8cf396721ba38453ad75ebbbd73a0e2924c8c7990ce2"
     },
     {
       "key": "cutscene/patio",
@@ -435,8 +435,8 @@
     {
       "key": "cutscene/scene_patio_lia1",
       "path": "assets/cutscenes/scene_patio_lia1.webp",
-      "bytes": 68336,
-      "sha256": "597dd5b5adca2728c6075b28a22a70176490fa92bb049c925355f1c0672a38ba"
+      "bytes": 70722,
+      "sha256": "f1246891eee3a7d03754f117e89ee280171324230ce05d3a1fda348fdad00f7f"
     },
     {
       "key": "player/idle",
@@ -471,26 +471,26 @@
     {
       "key": "respect/bia",
       "path": "assets/characters/respect_bia.webp",
-      "bytes": 17042,
-      "sha256": "f0ed02a8ae31fd6ab5324f2432fed567c760e4acbfd321c846e7eea2d6deb1d8"
+      "bytes": 20770,
+      "sha256": "3d8c0ee00ac27442f27ae3a33560e4ffffaa6229f5bbf1feb19f899318aa72a8"
     },
     {
       "key": "respect/caio",
       "path": "assets/characters/respect_caio.webp",
-      "bytes": 13594,
-      "sha256": "815b24d4f796e8b2ee4e85ce81862efe17b5ce12aa31259ee6ce2aa13a03134c"
+      "bytes": 16466,
+      "sha256": "b98147ae5b9c131f10eb8c55627c013e07409382f53a111b8fdbb474dc00b170"
     },
     {
       "key": "respect/leo",
       "path": "assets/characters/respect_leo.webp",
-      "bytes": 17970,
-      "sha256": "940d162cbf7d84229cdf24b77f52ee679a31cb61c1bc08c3e4d6958540202211"
+      "bytes": 21204,
+      "sha256": "085410f096fd80f7cdb668fac985b78bcec2aace10c3eddae145cba17a6bf734"
     },
     {
       "key": "smile-kit/child",
       "path": "assets/dental-world/spr_npc_kit_sorriso.webp",
-      "bytes": 75410,
-      "sha256": "9ec755d5149faa60e52396fe10926e5ed85e74fac4440066ad448ddc62a17996"
+      "bytes": 20498,
+      "sha256": "bbc2f46999a65d75131c85398e641f52bbd25b25cc62d7bc08c28471adbec674"
     },
     {
       "key": "ui/reward_bone",

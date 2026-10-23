@@ -33,7 +33,9 @@ const BUNDLES = {
   jogo: {
     label: "jogo",
     target: path.join(repoRoot, "public", "jogo"),
-    source: path.join(repoRoot, "..", "Heroes_Trial", "web-poc", "dist"),
+    source: process.env.GAME_PROJECT_ROOT
+      ? path.join(process.env.GAME_PROJECT_ROOT, "dist")
+      : path.join(repoRoot, "..", "Heroes_Trial", "web-poc", "dist"),
     origin: "Heroes_Trial/web-poc (scripts/build-jogo.ps1)",
   },
 };

@@ -74,6 +74,9 @@ $env:GAME_EVIDENCE_DIR = '<absolute, new evidence directory>'
 npm run test:jogo:browser
 ```
 
+`GAME_PROJECT_ROOT` (absolute path to the game's `web-poc` folder) overrides the
+default sibling `../Heroes_Trial/web-poc` for `build:jogo` and `sync-bundles --jogo`.
+
 `GAME_DIST_DIR` can select an independently assembled release artifact, excluding
 unrelated working-tree edits. `GAME_PROJECT_ROOT` selects the maintained game's
 Playwright installation. Evidence contains screenshots and a result report with
