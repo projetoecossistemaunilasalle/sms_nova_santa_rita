@@ -65,6 +65,12 @@ export function buildPortalShell(
         icon: "users",
         mobile: true,
       },
+      {
+        href: "/portal/admin/versoes-do-jogo",
+        label: "Versões do jogo",
+        icon: "archive",
+        mobile: true,
+      },
     );
   } else if (effectiveRole === "organization_admin") {
     navigation.push(

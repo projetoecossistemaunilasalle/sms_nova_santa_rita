@@ -11,13 +11,71 @@ import {
   assignTeacherToClassAction,
   changeClassStatusAction,
   deactivateTeacherAssignmentAction,
+  setClassDefaultContentAction,
 } from "@/runtime/actions";
+import { ContentPicker } from "./content-picker";
+import { getContentSelectionSummary } from "./content-selection-model";
 import { AdultPortalForm } from "./adult-portal-form";
 import { recordStatusLabel } from "./adult-portal-helpers";
 import { PlayerAccessWorkflow } from "./player-access-workflow";
 import { StatusBadge } from "./status-badge";
 import { Icon } from "@/components/shared/icon";
 import styles from "./portal.module.css";
+
+function ClassDefaultContent({
+  classGroupId,
+  content,
+  readOnly,
+}: {
+  classGroupId: string;
+  content: ClassContentPageData | null;
+  readOnly: boolean;
+}) {
+  const manifest = content?.manifest ?? null;
+  const summary = getContentSelectionSummary(
+    manifest,
+    content?.defaultSelection ?? null,
+  );
+  return (
+    <details className={styles.classDefaultContent} id="conteudo-padrao">
+      <summary>
+        <span>
+          <strong>Conteúdo padrão</strong>
+          <small>{summary}</small>
+        </span>
+        <span className={styles.classDefaultContentAction}>
+          {readOnly ? "Ver conteúdo" : "Alterar"}
+        </span>
+      </summary>
+      <div className={styles.classDefaultContentBody}>
+        {manifest ? (
+          <>
+            <p className={styles.fieldHelp}>
+              {readOnly
+                ? "Somente quem opera a turma pode alterar o conteúdo padrão."
+                : "Usado quando você inicia uma sessão sem escolher o conteúdo."}
+            </p>
+            <ContentPicker
+              manifest={manifest}
+              classGroupId={classGroupId}
+              initialSelection={content?.defaultSelection ?? null}
+              action={setClassDefaultContentAction}
+              submitLabel="Salvar padrão"
+              pendingLabel="Salvando…"
+              showSaveAsDefault={false}
+              readOnly={readOnly}
+            />
+          </>
+        ) : (
+          <p className={styles.inlineEmpty}>
+            Nenhuma versão do jogo disponível. Peça a um administrador da
+            plataforma para importar o conteúdo.
+          </p>
+        )}
+      </div>
+    </details>
+  );
+}
 
 export function ClassDetailScreen({
   initialClass,
@@ -89,6 +147,14 @@ export function ClassDetailScreen({
         organizationName={classGroup.organizationName}
         runtimeMode={runtimeMode}
         workflow={workflow}
+      />
+      <ClassDefaultContent
+        classGroupId={classGroup.id}
+        content={initialContent}
+        // The server action only accepts users who can operate an active
+        // class (org admin or assigned professional); everyone else, and
+        // inactive classes, get the read-only view.
+        readOnly={classGroup.status !== RecordStatus.ACTIVE}
       />
       <div className={styles.classManagementGrid} id="profissionais">
         <section className={styles.detailPanel}>

@@ -325,6 +325,7 @@ const shellScopeCases: ShellScopeCase[] = [
       "/portal",
       "/portal/admin/organizacoes",
       "/portal/admin/equipe",
+      "/portal/admin/versoes-do-jogo",
     ],
   },
   {

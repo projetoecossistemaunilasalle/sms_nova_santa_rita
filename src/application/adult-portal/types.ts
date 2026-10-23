@@ -88,7 +88,7 @@ export type AdultRole = "platform_admin" | "organization_admin" | "teacher";
 export type NavigationItemDto = {
   href: string;
   label: string;
-  icon: "home" | "building" | "school" | "users" | "chart";
+  icon: "home" | "building" | "school" | "users" | "chart" | "archive";
   exact?: boolean;
   mobile?: boolean;
 };

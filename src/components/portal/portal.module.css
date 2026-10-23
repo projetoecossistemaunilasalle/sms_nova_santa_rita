@@ -3423,3 +3423,113 @@
     flex: 1 1 auto;
   }
 }
+
+/* Class default content (inline picker) */
+.classDefaultContent {
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+}
+
+.classDefaultContent > summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  min-height: 56px;
+  padding: 14px 20px;
+  cursor: pointer;
+}
+
+.classDefaultContent > summary::-webkit-details-marker {
+  display: none;
+}
+
+.classDefaultContent > summary > span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.classDefaultContent > summary strong {
+  font-family: var(--font-display);
+  font-size: var(--type-subtitle);
+}
+
+.classDefaultContent > summary small {
+  color: var(--text-muted);
+  font-size: var(--type-small);
+}
+
+.classDefaultContentAction {
+  flex: 0 0 auto;
+  color: var(--green-dark);
+  font-size: var(--type-small);
+  font-weight: 750;
+}
+
+.classDefaultContent[open] > summary {
+  border-bottom: 1px solid var(--border);
+}
+
+.classDefaultContentBody {
+  display: grid;
+  gap: 12px;
+  padding: 16px 20px 20px;
+}
+
+/* Game versions admin list */
+.gameVersionList {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gameVersionRow {
+  display: grid;
+  grid-template-columns: minmax(160px, 0.7fr) minmax(0, 2fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+}
+
+.gameVersionCurrent {
+  border-color: var(--green);
+}
+
+.gameVersionMain {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.gameVersionMeta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.gameVersionMeta dt {
+  color: var(--text-muted);
+  font-size: var(--type-compact);
+}
+
+.gameVersionMeta dd {
+  margin: 2px 0 0;
+  overflow-wrap: anywhere;
+  font-size: var(--type-small);
+}
+
+@media (max-width: 720px) {
+  .gameVersionRow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
