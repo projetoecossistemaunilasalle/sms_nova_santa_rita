@@ -14,7 +14,9 @@ services:
     preDeployCommand: npx prisma migrate deploy
     # Next's standalone server binds to HOSTNAME; force all interfaces.
     startCommand: npm run start -- --hostname 0.0.0.0
-    healthCheckPath: /api/health/live
+    # Readiness also queries the pooled DATABASE_URL (2 s timeout), so a deploy
+    # whose runtime connection is broken is rejected instead of going live.
+    healthCheckPath: /api/health/ready
     autoDeployTrigger: off
     envVars:
       - key: NODE_VERSION

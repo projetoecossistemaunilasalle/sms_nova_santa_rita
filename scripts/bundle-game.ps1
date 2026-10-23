@@ -75,12 +75,17 @@ try {
     $expected = $publicRoot + [IO.Path]::DirectorySeparatorChar
     if (!$target.StartsWith($expected, [StringComparison]::OrdinalIgnoreCase) -or (Split-Path $target -Leaf) -ne 'jogo-cliente') { throw 'Unsafe copy target.' }
     if ((Test-Path -LiteralPath $publicRoot) -and ((Get-Item -LiteralPath $publicRoot).Attributes -band [IO.FileAttributes]::ReparsePoint)) { throw 'Public directory cannot be a junction/symlink.' }
-    if (Test-Path -LiteralPath $target) {
-        if ((Get-Item -LiteralPath $target).Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Copy target cannot be a junction/symlink.' }
-        Remove-Item -LiteralPath $target -Recurse -Force
-    }
-    New-Item -ItemType Directory -Path $target | Out-Null
-    Get-ChildItem -LiteralPath $dist -Force | Copy-Item -Destination $target -Recurse -Force
+    if ((Test-Path -LiteralPath $target) -and ((Get-Item -LiteralPath $target).Attributes -band [IO.FileAttributes]::ReparsePoint)) { throw 'Copy target cannot be a junction/symlink.' }
+    # Stage outside public/ and swap at the end, so an interrupted copy never
+    # leaves a partial bundle that the next portal build would package.
+    $staging = Join-Path $portalRoot '.jogo-cliente.staging'
+    $backup = Join-Path $portalRoot '.jogo-cliente.previous'
+    foreach ($dir in @($staging, $backup)) { if (Test-Path -LiteralPath $dir) { Remove-Item -LiteralPath $dir -Recurse -Force } }
+    New-Item -ItemType Directory -Path $staging | Out-Null
+    Get-ChildItem -LiteralPath $dist -Force | Copy-Item -Destination $staging -Recurse -Force
+    $distCount = @(Get-ChildItem -LiteralPath $dist -Recurse -File -Force).Count
+    $stagedCount = @(Get-ChildItem -LiteralPath $staging -Recurse -File -Force).Count
+    if ($stagedCount -ne $distCount) { throw "Staged copy has $stagedCount files, build has $distCount." }
     $info = [ordered]@{
         source = 'Heroes_Trial/web-poc'
         commit = $commit
@@ -95,12 +100,20 @@ try {
     $keys = @($info.Keys)
     for ($index = 0; $index -lt $keys.Count; $index++) {
         $key = $keys[$index]
-        $value = ConvertTo-Json -InputObject $info[$key] -Compress -Depth 20
+        # Windows PowerShell 5.1 emits nothing for $null.
+        $value = if ($null -eq $info[$key]) { 'null' } else { ConvertTo-Json -InputObject $info[$key] -Compress -Depth 20 }
         $comma = if ($index -lt $keys.Count - 1) { ',' } else { '' }
         $lines += '  "' + $key + '": ' + $value + $comma
     }
     $lines += '}'
-    [IO.File]::WriteAllText((Join-Path $target 'bundle-info.json'), ($lines -join "`n") + "`n", (New-Object System.Text.UTF8Encoding($false)))
+    [IO.File]::WriteAllText((Join-Path $staging 'bundle-info.json'), ($lines -join "`n") + "`n", (New-Object System.Text.UTF8Encoding($false)))
+    if (Test-Path -LiteralPath $target) { Move-Item -LiteralPath $target -Destination $backup }
+    try { Move-Item -LiteralPath $staging -Destination $target }
+    catch {
+        if (Test-Path -LiteralPath $backup) { Move-Item -LiteralPath $backup -Destination $target }
+        throw
+    }
+    if (Test-Path -LiteralPath $backup) { Remove-Item -LiteralPath $backup -Recurse -Force }
     Write-Output "Game copied. After deploy, import public/jogo-cliente/content-manifest.json in `"Vers$([char]0x00F5)es do jogo`"."
 } finally {
     $env:VITE_PORTAL_ORIGINS = $oldOrigin

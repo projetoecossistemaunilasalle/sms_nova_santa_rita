@@ -31,3 +31,7 @@ Thumbs.db
 /src/runtime/readers.ts
 /src/runtime/client.ts
 /src/runtime/*.tmp
+
+# bundle-game.ps1 working directories
+/.jogo-cliente.staging/
+/.jogo-cliente.previous/
