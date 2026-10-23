@@ -505,13 +505,16 @@ describe("shared portal with server-side mock adapters", () => {
       form({ classGroupId: DEMO_CLASS_IDS.THIRD_A, count: "1" }),
     );
     expect(await getClassResultsPageData(DEMO_CLASS_IDS.THIRD_A)).toMatchObject(
-      { playerCount: 4, resultCount: 0 },
+      { playerCount: 4, resultCount: 2 },
     );
     const [filtered] = await getResultReportsPageData("saude_bucal");
     expect(filtered).toMatchObject({
       playerCount: 4,
-      resultCount: 0,
-      moduleTotals: [],
+      resultCount: 1,
+      totalActiveMs: 60_000,
+      moduleTotals: [
+        { moduleId: "saude_bucal", totalActiveMs: 60_000, resultCount: 1 },
+      ],
     });
     expect(
       await getClassResultsPageData(DEMO_CLASS_IDS.THIRD_A, "saude_bucal"),
@@ -523,7 +526,13 @@ describe("shared portal with server-side mock adapters", () => {
         {},
         "saude_bucal",
       ),
-    ).toMatchObject({ resultCount: 0, totalActiveMs: 0, moduleTotals: [] });
+    ).toMatchObject({
+      resultCount: 1,
+      totalActiveMs: 60_000,
+      moduleTotals: [
+        { moduleId: "saude_bucal", totalActiveMs: 60_000, resultCount: 1 },
+      ],
+    });
     await expect(
       getClassResultsPageData(DEMO_CLASS_IDS.FOURTH_A),
     ).rejects.toMatchObject({ code: "FORBIDDEN" });
