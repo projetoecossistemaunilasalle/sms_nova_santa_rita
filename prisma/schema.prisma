@@ -87,17 +87,18 @@ model OrganizationMembership {
 }
 
 model ClassGroup {
-  id                 String              @id @default(uuid()) @db.Uuid
-  organizationId     String              @map("organization_id") @db.Uuid
-  name               String              @db.VarChar(160)
-  status             RecordStatus        @default(ACTIVE)
-  createdAt          DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt          DateTime            @updatedAt @map("updated_at") @db.Timestamptz(3)
-  organization       Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  teacherAssignments TeacherAssignment[]
-  nextPlayerNumber   Int                 @default(1) @map("next_player_number")
-  playerSlots        PlayerSlot[]
-  gameSessions       GameSession[]
+  id                      String              @id @default(uuid()) @db.Uuid
+  organizationId          String              @map("organization_id") @db.Uuid
+  name                    String              @db.VarChar(160)
+  status                  RecordStatus        @default(ACTIVE)
+  createdAt               DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt               DateTime            @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization            Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  teacherAssignments      TeacherAssignment[]
+  nextPlayerNumber        Int                 @default(1) @map("next_player_number")
+  playerSlots             PlayerSlot[]
+  gameSessions            GameSession[]
+  defaultContentSelection Json?               @map("default_content_selection") @db.JsonB
 
   @@index([organizationId, status])
   @@map("class_groups")
@@ -134,18 +135,44 @@ model PlayerCredential {
   @@map("player_credentials")
 }
 
+// Payload and import metadata are immutable; only isCurrent may change.
+// migration.sql enforces one current row with a partial unique index on is_current.
+model GameContentManifest {
+  id             String        @id @default(uuid()) @db.Uuid
+  contentVersion String        @map("content_version") @db.VarChar(200)
+  buildId        String        @unique @map("build_id") @db.VarChar(100)
+  // release.json is optional; never invent provenance when it is absent.
+  sourceCommit   String?       @map("source_commit") @db.VarChar(64)
+  manifestHash   String        @map("manifest_hash") @db.Char(64)
+  payload        Json          @db.JsonB
+  importedAt     DateTime      @default(now()) @map("imported_at") @db.Timestamptz(3)
+  importedById   String?       @map("imported_by_id") @db.Uuid
+  isCurrent      Boolean       @default(false) @map("is_current")
+  gameSessions   GameSession[]
+
+  @@index([contentVersion])
+  @@map("game_content_manifests")
+}
+
 model GameSession {
-  id             String            @id @default(uuid()) @db.Uuid
-  classGroupId   String            @map("class_group_id") @db.Uuid
-  status         GameSessionStatus @default(ACTIVE)
-  startedAt      DateTime          @default(now()) @map("started_at") @db.Timestamptz(3)
-  endedAt        DateTime?         @map("ended_at") @db.Timestamptz(3)
-  createdAt      DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt      DateTime          @updatedAt @map("updated_at") @db.Timestamptz(3)
-  classGroup     ClassGroup        @relation(fields: [classGroupId], references: [id], onDelete: Restrict)
-  participations Participation[]
+  id                String               @id @default(uuid()) @db.Uuid
+  classGroupId      String               @map("class_group_id") @db.Uuid
+  status            GameSessionStatus    @default(ACTIVE)
+  startedAt         DateTime             @default(now()) @map("started_at") @db.Timestamptz(3)
+  endedAt           DateTime?            @map("ended_at") @db.Timestamptz(3)
+  createdAt         DateTime             @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime             @updatedAt @map("updated_at") @db.Timestamptz(3)
+  classGroup        ClassGroup           @relation(fields: [classGroupId], references: [id], onDelete: Restrict)
+  participations    Participation[]
+  // TODO(session start chunk): make contentManifestId/contentPolicy required in
+  // this schema AND the same unapplied v2_content_manifest migration.
+  contentManifestId String?              @map("content_manifest_id") @db.Uuid
+  contentPolicy     Json?                @map("content_policy") @db.JsonB
+  startedById       String?              @map("started_by_id") @db.Uuid
+  contentManifest   GameContentManifest? @relation(fields: [contentManifestId], references: [id], onDelete: Restrict)
 
   @@index([classGroupId, status])
+  @@index([contentManifestId])
   @@map("game_sessions")
 }
 
@@ -185,6 +212,8 @@ model ResultEvent {
   requestId       String        @map("request_id") @db.VarChar(200)
   activityId      String        @map("activity_id") @db.VarChar(100)
   missionId       String        @map("mission_id") @db.VarChar(100)
+  moduleId        String?       @map("module_id") @db.VarChar(64)
+  presetId        String?       @map("preset_id") @db.VarChar(64)
   attemptId       String        @map("attempt_id") @db.VarChar(200)
   resultState     String        @map("result_state") @db.VarChar(32)
   durationMs      BigInt        @map("duration_ms")
@@ -195,6 +224,7 @@ model ResultEvent {
 
   @@index([participationId, receivedAt])
   @@index([activityId, receivedAt])
+  @@index([moduleId, receivedAt])
   @@map("result_events")
 }
 
@@ -205,6 +235,8 @@ model ActiveTimeEvent {
   requestId       String        @map("request_id") @db.VarChar(200)
   activeMs        Int           @map("active_ms")
   mode            String        @db.VarChar(20)
+  missionId       String?       @map("mission_id") @db.VarChar(100)
+  moduleId        String?       @map("module_id") @db.VarChar(64)
   receivedAt      DateTime      @default(now()) @map("received_at") @db.Timestamptz(3)
   participation   Participation @relation(fields: [participationId], references: [id], onDelete: Restrict)
 

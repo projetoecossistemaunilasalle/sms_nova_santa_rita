@@ -3,6 +3,7 @@ import { createHash, randomBytes } from "node:crypto";
 import type { AdultPortalTransaction } from "@/application/adult-portal/ports";
 import type { PlayerAccessTransaction } from "@/application/player-access/ports";
 import { SecurePlayerCredentialCipher } from "@/server/security/player-credential-cipher";
+import { DemoGameContentStore } from "./game-content-store";
 import {
   DemoAdultPortalStore,
   DemoPlayerAccessStore,
@@ -20,6 +21,11 @@ export class MockDatabase {
     randomBytes(32).toString("base64url"),
   );
   readonly state: DemoAdultPortalState = structuredClone(demoAdultPortalSeed);
+  readonly gameContentStore = new DemoGameContentStore(
+    this.state,
+    undefined,
+    (work) => this.transaction(work),
+  );
   resetVersion = 0;
   private pending: Promise<unknown> = Promise.resolve();
 
@@ -59,6 +65,7 @@ export class MockDatabase {
       this.refreshCredentials(draft);
     });
     this.resetVersion += 1;
+    await this.gameContentStore.reset();
   }
 }
 
