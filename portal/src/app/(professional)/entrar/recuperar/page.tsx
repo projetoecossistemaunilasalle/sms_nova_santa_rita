@@ -1,17 +1,11 @@
-"use client";
-
 import Link from "next/link";
-import { useState } from "react";
 
+import { RequestResetForm } from "@/components/auth/password-reset-forms";
 import styles from "@/components/marketing/marketing.module.css";
+import { getRuntimeMode } from "@/runtime/mode";
 
 export default function RecoverAccessPage() {
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitted(true);
-  };
+  const demo = getRuntimeMode() === "demo";
 
   return (
     <main className={styles.authPage}>
@@ -44,49 +38,7 @@ export default function RecoverAccessPage() {
             Informe seu e-mail profissional para receber as próximas instruções.
           </p>
 
-          {submitted ? (
-            <div style={{ marginTop: "1rem" }}>
-              <p
-                role="status"
-                style={{
-                  margin: "0 0 16px",
-                  color: "var(--green-dark, #26713a)",
-                  fontWeight: 600,
-                  fontSize: "0.95rem",
-                }}
-              >
-                Demonstração: se o e-mail existisse, as instruções seriam
-                enviadas.
-              </p>
-              <Link
-                className={styles.submit}
-                href="/entrar"
-                style={{
-                  display: "inline-block",
-                  textAlign: "center",
-                  textDecoration: "none",
-                }}
-              >
-                Voltar para o início
-              </Link>
-            </div>
-          ) : (
-            <form className={styles.form} onSubmit={handleSubmit}>
-              <label className={styles.field}>
-                E-mail profissional
-                <input
-                  type="email"
-                  name="email"
-                  autoComplete="email"
-                  placeholder="profissional@exemplo.gov.br"
-                  required
-                />
-              </label>
-              <button className={styles.submit} type="submit">
-                Enviar instruções
-              </button>
-            </form>
-          )}
+          <RequestResetForm demo={demo} />
 
           <p className={styles.authHelp}>
             <Link href="/entrar">← Voltar para o login</Link>
