@@ -132,5 +132,9 @@ export function proxy(request: NextRequest): NextResponse {
 }
 
 export const config = {
-  matcher: "/((?!_next|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  // jogo-cliente/ is the same-origin game build (static files). The portal's
+  // nonce CSP and frame-ancestors 'none' would stop it from running inside the
+  // /jogar iframe; next.config.ts gives it its own same-origin framing headers.
+  matcher:
+    "/((?!_next|jogo-cliente/|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
 };

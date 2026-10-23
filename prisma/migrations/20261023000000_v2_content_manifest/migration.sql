@@ -47,3 +47,9 @@ CREATE INDEX "result_events_module_id_received_at_idx" ON "result_events"("modul
 
 -- AddForeignKey
 ALTER TABLE "game_sessions" ADD CONSTRAINT "game_sessions_content_manifest_id_fkey" FOREIGN KEY ("content_manifest_id") REFERENCES "game_content_manifests"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- V2 game state: protocol 2 with V3 snapshots (no V1 rows exist; no retrocompat).
+ALTER TABLE "game_states" DROP CONSTRAINT "game_states_protocol_version_check";
+ALTER TABLE "game_states" ADD CONSTRAINT "game_states_protocol_version_check" CHECK ("protocol_version" = 2);
+ALTER TABLE "game_states" DROP CONSTRAINT "game_states_schema_version_check";
+ALTER TABLE "game_states" ADD CONSTRAINT "game_states_schema_version_check" CHECK ("schema_version" = 3);

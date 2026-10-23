@@ -25,6 +25,30 @@ const nextConfig: NextConfig = {
     APP_RUNTIME_MODE: runtimeMode,
     APP_BASE_PATH: "",
   },
+  // Same-origin game build copied to public/jogo-cliente/ (local E2E and any
+  // host without a reverse proxy in front). Embeddable only by this origin.
+  // The game is static and self-contained, so its CSP needs no nonce.
+  headers() {
+    return Promise.resolve([
+      {
+        source: "/jogo-cliente/:path*",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value:
+              "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self'; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'",
+          },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "no-referrer" },
+        ],
+      },
+      {
+        source: "/jogo-cliente/:file(service-worker\\.js|offline-shell\\.json)",
+        headers: [{ key: "Cache-Control", value: "no-cache" }],
+      },
+    ]);
+  },
 };
 
 export default nextConfig;
