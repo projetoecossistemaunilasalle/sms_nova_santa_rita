@@ -1,3 +1,4 @@
+import { isIP } from "node:net";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
@@ -40,8 +41,27 @@ function gameClientOrigin(): string | undefined {
 function isLoopbackRequest(request: NextRequest): boolean {
   // Prefer Host: a reverse proxy may use a loopback URL for a public request.
   // Match the whole authority, not a substring or client-supplied scheme hint.
-  const host = request.headers.get("host") ?? request.nextUrl.host;
-  return /^(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/i.test(host);
+  const authority = (
+    request.headers.get("host") ?? request.nextUrl.host
+  ).toLowerCase();
+  const match = /^(\[[0-9a-f:.]+\]|[^:[\]]+)(?::\d+)?$/.exec(authority);
+  const host = match?.[1];
+  if (!host) return false;
+  if (host.startsWith("[")) {
+    if (isIP(host.slice(1, -1)) !== 6) return false;
+    // URL serializes expanded and IPv4-mapped IPv6 into canonical hex form.
+    const canonical = new URL(`http://${host}`).hostname;
+    return (
+      canonical === "[::1]" ||
+      /^\[::ffff:7f[0-9a-f]{2}:[0-9a-f]{1,4}\]$/.test(canonical)
+    );
+  }
+
+  const hostname = host.replace(/\.$/, "");
+  return (
+    hostname === "localhost" ||
+    (isIP(hostname) === 4 && hostname.startsWith("127."))
+  );
 }
 
 function contentSecurityPolicy(nonce: string, enforceHttps: boolean): string {

@@ -72,21 +72,33 @@ describe("Proxy & Content Security Policy", () => {
     ).toBe(csp);
   });
 
-  it.each(["localhost:3000", "LOCALHOST:3001", "127.0.0.1:80", "[::1]:8080"])(
-    "recognizes a loopback Host header %s",
-    (host) => {
-      vi.stubEnv("NODE_ENV", "production");
-      const response = proxy(
-        new NextRequest("http://internal.example/entrar", {
-          headers: { host, "x-forwarded-proto": "https" },
-        }),
-      );
-      expect(response.headers.get("Content-Security-Policy")).not.toContain(
-        "upgrade-insecure-requests",
-      );
-      expect(response.headers.has("Strict-Transport-Security")).toBe(false);
-    },
-  );
+  it.each([
+    "localhost:3000",
+    "LOCALHOST:3001",
+    "localhost.",
+    "LOCALHOST.:3000",
+    "127.0.0.1:80",
+    "127.12.34.56:8080",
+    "127.255.255.255",
+    "127.0.0.0",
+    "[::1]:8080",
+    "[0:0:0:0:0:0:0:1]",
+    "[0000:0000:0000:0000:0000:0000:0000:0001]:3000",
+    "[::ffff:127.0.0.1]",
+    "[0:0:0:0:0:FFFF:127.255.255.255]:8080",
+    "[::FFFF:7F00:1]:80",
+  ])("recognizes a loopback Host header %s", (host) => {
+    vi.stubEnv("NODE_ENV", "production");
+    const response = proxy(
+      new NextRequest("http://internal.example/entrar", {
+        headers: { host, "x-forwarded-proto": "https" },
+      }),
+    );
+    expect(response.headers.get("Content-Security-Policy")).not.toContain(
+      "upgrade-insecure-requests",
+    );
+    expect(response.headers.has("Strict-Transport-Security")).toBe(false);
+  });
 
   it.each([
     "https://sms-portal.onrender.com/entrar",
@@ -113,7 +125,22 @@ describe("Proxy & Content Security Policy", () => {
     ).toBe(csp);
   });
 
-  it.each(["sms-portal.onrender.com", "localhost.example:3000", "[::2]:8080"])(
+  it.each([
+    "sms-portal.onrender.com",
+    "PUBLIC.EXAMPLE.:443",
+    "localhost.example:3000",
+    "localhost..:3000",
+    "localhost.:3000@public.example",
+    "[localhost]:3000",
+    "127.0.0.1.example.:8080",
+    "126.255.255.255",
+    "128.0.0.1",
+    "[::2]:8080",
+    "[::ffff:192.168.1.1]",
+    "[::ffff:128.0.0.1]",
+    "[2001:db8::7f00:1]",
+    "[::127.0.0.1]",
+  ])(
     "keeps HTTPS headers behind an internal loopback URL with Host %s",
     (host) => {
       vi.stubEnv("NODE_ENV", "production");
