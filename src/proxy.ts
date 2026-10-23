@@ -37,7 +37,14 @@ function gameClientOrigin(): string | undefined {
   }
 }
 
-function contentSecurityPolicy(nonce: string): string {
+function isLoopbackRequest(request: NextRequest): boolean {
+  // Prefer Host: a reverse proxy may use a loopback URL for a public request.
+  // Match the whole authority, not a substring or client-supplied scheme hint.
+  const host = request.headers.get("host") ?? request.nextUrl.host;
+  return /^(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/i.test(host);
+}
+
+function contentSecurityPolicy(nonce: string, enforceHttps: boolean): string {
   const connectSources = [
     "'self'",
     "https://*.neon.tech",
@@ -79,9 +86,7 @@ function contentSecurityPolicy(nonce: string): string {
     "base-uri 'self'",
     "form-action 'self'",
     "frame-ancestors 'none'",
-    process.env.NODE_ENV === "production"
-      ? "upgrade-insecure-requests"
-      : undefined,
+    enforceHttps ? "upgrade-insecure-requests" : undefined,
   ]
     .filter(Boolean)
     .join("; ");
@@ -90,7 +95,9 @@ function contentSecurityPolicy(nonce: string): string {
 export function proxy(request: NextRequest): NextResponse {
   const correlationId = correlationIdFromRequest(request);
   const nonce = createNonce();
-  const csp = contentSecurityPolicy(nonce);
+  const enforceHttps =
+    process.env.NODE_ENV === "production" && !isLoopbackRequest(request);
+  const csp = contentSecurityPolicy(nonce, enforceHttps);
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set(CORRELATION_HEADER, correlationId);
   requestHeaders.set("x-nonce", nonce);
@@ -121,7 +128,7 @@ export function proxy(request: NextRequest): NextResponse {
     "camera=(), microphone=(), geolocation=(), payment=()",
   );
 
-  if (process.env.NODE_ENV === "production") {
+  if (enforceHttps) {
     response.headers.set(
       "Strict-Transport-Security",
       "max-age=63072000; includeSubDomains; preload",
