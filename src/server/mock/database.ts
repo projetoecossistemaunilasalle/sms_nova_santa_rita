@@ -85,7 +85,14 @@ export class MockAdultPortalStore extends DemoAdultPortalStore {
 
 export class MockPlayerAccessStore extends DemoPlayerAccessStore {
   constructor(private readonly database: MockDatabase) {
-    super(database.state, () => database.gameContentStore.current());
+    super(
+      database.state,
+      () => database.gameContentStore.current(),
+      async (id) =>
+        (await database.gameContentStore.list()).find(
+          (item) => item.id === id,
+        ) ?? null,
+    );
   }
 
   override transaction<T>(
@@ -93,8 +100,13 @@ export class MockPlayerAccessStore extends DemoPlayerAccessStore {
   ): Promise<T> {
     return this.database.transaction((draft) =>
       work(
-        new DemoPlayerAccessStore(draft, () =>
-          this.database.gameContentStore.current(),
+        new DemoPlayerAccessStore(
+          draft,
+          () => this.database.gameContentStore.current(),
+          async (id) =>
+            (await this.database.gameContentStore.list()).find(
+              (item) => item.id === id,
+            ) ?? null,
         ),
       ),
     );

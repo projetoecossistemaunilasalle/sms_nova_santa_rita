@@ -79,6 +79,9 @@ class FakePlayerAccessStore
   async getCurrentManifest() {
     return demoGameContentSeed()[0]!;
   }
+  async getManifest(manifestId: string) {
+    return demoGameContentSeed().find((item) => item.id === manifestId) ?? null;
+  }
   async setClassDefaultContent(
     classGroupId: string,
     selection: ContentSelection | null,

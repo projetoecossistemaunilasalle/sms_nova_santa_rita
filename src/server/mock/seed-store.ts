@@ -739,10 +739,18 @@ export class DemoPlayerAccessStore
     readonly state: DemoAdultPortalState = cloneSeed(),
     private readonly currentManifest: () => Promise<StoredGameContentManifest | null> = async () =>
       demoGameContentSeed()[0]!,
+    private readonly findManifest: (
+      id: string,
+    ) => Promise<StoredGameContentManifest | null> = async (id) =>
+      demoGameContentSeed().find((item) => item.id === id) ?? null,
   ) {}
 
   getCurrentManifest() {
     return this.currentManifest();
+  }
+
+  getManifest(manifestId: string) {
+    return this.findManifest(manifestId);
   }
 
   async setClassDefaultContent(

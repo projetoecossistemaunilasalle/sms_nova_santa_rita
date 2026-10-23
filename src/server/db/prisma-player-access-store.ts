@@ -351,6 +351,13 @@ class PrismaPlayerAccessTransaction
     return row ? { ...row, payload: validateManifest(row.payload) } : null;
   }
 
+  async getManifest(manifestId: string) {
+    const row = await this.db.gameContentManifest.findUnique({
+      where: { id: manifestId },
+    });
+    return row ? { ...row, payload: validateManifest(row.payload) } : null;
+  }
+
   async setClassDefaultContent(
     classGroupId: string,
     selection: ContentSelection | null,

@@ -19,5 +19,10 @@ export {
   rotatePlayerCredentialAction,
   showClassPlayerCredentialsAction,
   startClassSessionAction,
+  setClassDefaultContentAction,
 } from "@/app/(professional)/portal/player-access-actions";
+export {
+  importGameManifestAction,
+  setCurrentGameManifestAction,
+} from "@/app/(professional)/portal/game-content-actions";
 export { resolvePlayerEntryAction } from "@/app/(public-play)/jogar/actions";

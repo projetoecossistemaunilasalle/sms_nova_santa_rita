@@ -6,6 +6,7 @@ import { z } from "zod";
 import { AdultPortalError } from "@/application/adult-portal/errors";
 import {
   allocatePlayerSlotsSchema,
+  classDefaultContentSchema,
   classSessionSchema,
   rotatePlayerCredentialSchema,
 } from "@/application/player-access/schemas";
@@ -23,10 +24,18 @@ function formObject(formData: FormData) {
 }
 
 function validationError(error: z.ZodError): PlayerAccessActionResult {
+  const fieldErrors: Record<string, string[]> = error.flatten().fieldErrors;
+  if (fieldErrors.selection) {
+    fieldErrors.selection = [
+      error.issues.find(
+        (issue) => issue.path[0] === "selection" && issue.code === "custom",
+      )?.message ?? "Seleção de conteúdo inválida.",
+    ];
+  }
   return {
     ...initialError,
-    message: "Revise os campos informados.",
-    fieldErrors: error.flatten().fieldErrors,
+    message: fieldErrors.selection?.[0] ?? "Revise os campos informados.",
+    fieldErrors,
   };
 }
 
@@ -139,7 +148,12 @@ export async function startClassSessionAction(
   try {
     await (
       await getPlayerAccessService()
-    ).startSession(await actorProfileId(), parsed.data.classGroupId);
+    ).startSession(
+      await actorProfileId(),
+      parsed.data.classGroupId,
+      parsed.data.selection,
+      parsed.data.saveAsClassDefault,
+    );
     revalidateClass(parsed.data.classGroupId);
     return { ok: true, message: "Sessão da turma iniciada." };
   } catch (error) {
@@ -159,6 +173,27 @@ export async function endClassSessionAction(
     ).endSession(await actorProfileId(), parsed.data.classGroupId);
     revalidateClass(parsed.data.classGroupId);
     return { ok: true, message: "Sessão da turma encerrada." };
+  } catch (error) {
+    return operationError(error);
+  }
+}
+
+export async function setClassDefaultContentAction(
+  _previous: PlayerAccessActionResult,
+  formData: FormData,
+): Promise<PlayerAccessActionResult> {
+  const parsed = classDefaultContentSchema.safeParse(formObject(formData));
+  if (!parsed.success) return validationError(parsed.error);
+  try {
+    await (
+      await getPlayerAccessService()
+    ).setClassDefaultContent(
+      await actorProfileId(),
+      parsed.data.classGroupId,
+      parsed.data.selection,
+    );
+    revalidateClass(parsed.data.classGroupId);
+    return { ok: true, message: "Conteúdo padrão da turma atualizado." };
   } catch (error) {
     return operationError(error);
   }

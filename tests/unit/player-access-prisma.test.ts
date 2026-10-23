@@ -12,6 +12,26 @@ import { resolvePolicy } from "@/application/game-content/policy";
 import { demoGameContentSeed } from "@/server/mock/content-seed";
 
 describe("PrismaPlayerAccessStore", () => {
+  it("reads a session's immutable manifest by id, independently of current", async () => {
+    const manifest = { ...demoGameContentSeed()[0]!, isCurrent: false };
+    const tx = {
+      gameContentManifest: { findUnique: vi.fn(async () => manifest) },
+    };
+    const store = new PrismaPlayerAccessStore({
+      $transaction: async <T>(work: (db: unknown) => Promise<T>) => work(tx),
+    } as never);
+    await expect(
+      store.transaction((transaction) => transaction.getManifest(manifest.id)),
+    ).resolves.toEqual(manifest);
+    expect(tx.gameContentManifest.findUnique).toHaveBeenCalledWith({
+      where: { id: manifest.id },
+    });
+    tx.gameContentManifest.findUnique.mockResolvedValueOnce(null as never);
+    await expect(
+      store.transaction((transaction) => transaction.getManifest("missing")),
+    ).resolves.toBeNull();
+  });
+
   it("reads the current manifest and creates the frozen session inside the same transaction", async () => {
     const manifest = demoGameContentSeed()[0]!;
     const snapshot = {

@@ -75,6 +75,7 @@ export interface PlayerAccessReader {
 
 export interface PlayerAccessTransaction extends PlayerAccessReader {
   getCurrentManifest(): Promise<StoredGameContentManifest | null>;
+  getManifest(manifestId: string): Promise<StoredGameContentManifest | null>;
   setClassDefaultContent(
     classGroupId: string,
     selection: ContentSelection | null,

@@ -82,6 +82,31 @@ export class PlayerAccessService {
     return { slots, activeSession };
   }
 
+  async getClassContent(profileId: string, classGroupId: string) {
+    return this.store.transaction(async (transaction) => {
+      const classGroup = await this.requireClassAccess(
+        profileId,
+        classGroupId,
+        transaction,
+        true,
+      );
+      const manifest = await transaction.getCurrentManifest();
+      const activeSession = await transaction.getActiveSession(classGroupId);
+      const activeManifest = activeSession
+        ? await transaction.getManifest(activeSession.contentManifestId)
+        : null;
+      if (activeSession && !activeManifest) {
+        return fail("CONFLICT", "A versão desta sessão não está disponível.");
+      }
+      return {
+        manifest,
+        defaultSelection: classGroup.defaultContentSelection ?? null,
+        activeSession,
+        activeManifest,
+      };
+    });
+  }
+
   async allocateSlots(
     profileId: string,
     classGroupId: string,
@@ -186,6 +211,7 @@ export class PlayerAccessService {
     profileId: string,
     classGroupId: string,
     selection?: ContentSelection | null,
+    saveAsClassDefault = false,
   ) {
     return this.store.transaction(async (transaction) => {
       const classGroup = await this.requireClassAccess(
@@ -199,12 +225,18 @@ export class PlayerAccessService {
       const manifest = await transaction.getCurrentManifest();
       if (!manifest)
         return fail("CONFLICT", "Nenhuma versão do jogo importada");
-      const contentPolicy = resolvePolicy(
+      const effectiveSelection =
         selection === undefined
           ? (classGroup.defaultContentSelection ?? null)
-          : selection,
-        manifest.payload,
-      );
+          : selection;
+      const contentPolicy = resolvePolicy(effectiveSelection, manifest.payload);
+      // Save and start atomically: a failed or duplicate start must not edit defaults.
+      if (saveAsClassDefault) {
+        await transaction.setClassDefaultContent(
+          classGroupId,
+          effectiveSelection,
+        );
+      }
       return transaction.createSession(classGroupId, this.now(), {
         contentManifestId: manifest.id,
         contentPolicy,
