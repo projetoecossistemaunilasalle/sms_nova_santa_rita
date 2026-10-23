@@ -106,3 +106,59 @@ The contract tests register both formats, in addition to the generated patterns.
 The checked-in ready, acknowledgement, local-durability, and typed-error field names
 are canonical V1. An incompatible rename requires protocol version 2; implementations
 must not silently change these V1 envelopes.
+
+## V2 Contracts
+
+[`v2/`](v2) contains all 19 entries of `contractSchemasV2` from
+[`src/contracts/v2`](../../src/contracts/v2), including session content policy and
+content manifest. Run `npm run contracts:generate` to regenerate only V2 files with
+`z.toJSONSchema(schema, { target: "draft-2020-12", reused: "ref" })`; V1 is untouched.
+The script uses Vite already installed with Vitest, without another dependency.
+[`../fixtures/v2`](../fixtures/v2) is the shared game/portal transport oracle;
+`npm run test:contracts:v2` checks schema parity, fixture acceptance/rejection, and
+the generated refinement constraints with Ajv and Zod.
+
+Protocol V2 accepts `protocol_version: 2` and opaque game state with
+`schema_version: 3`. Policy and manifest have independent versions, both `1`.
+The game owns `content_version`, the content catalog, metric declarations, snapshot
+structure, migrations, and gameplay semantics. There is no portal-owned V2 content
+version constant. The portal owns session content selection, persistence, revisions,
+transport validation, and durable delivery; it never repairs or interprets snapshots.
+Returning bootstrap and conflict messages carry `stored_content_version`; only an
+explicit new-player bootstrap carries null state and null stored content version.
+
+State is a plain JSON object, allows arbitrary game-owned fields, accepts only
+finite numbers, has maximum depth 32 (root depth zero), and is limited to 262,144
+compact serialized UTF-8 bytes. The manifest is limited to 131,072 serialized UTF-8
+bytes. Neither limit is a character count or pretty-printed file-size limit.
+Snapshot gameplay validity remains game-owned, not a portal field-by-field schema.
+
+Session policy is closed, has bounded unique module/mission lists (at most 256
+strings of 1-100 characters each), optional nonempty preset values, and optional
+boolean/string options. The game-compatible optional maps also allow null. Empty
+mission lists are transport-valid for testing `POLICY_EMPTY`, but the portal must
+not send an empty effective selection. Unknown content IDs and presets are resolved
+by the game and reported in `game.bootstrap_applied.v2`.
+
+Result `metricas` is a generic plain record of at most 32 finite numeric values;
+metric keys and labels come from the game manifest, not hard-coded portal activity
+schemas. The backend may validate keys against the manifest. Initialization errors
+still require zero duration and empty metrics. Context adds the stable `id_preset`;
+active-time events optionally carry `mission_id`. V2 additionally supports
+`POLICY_INVALID`, `POLICY_EMPTY`, `CONTENT_UPGRADE_REQUIRED`, `INTERNAL_ERROR`, and
+`LOAD_FAILED`. `portal.configure.v2` remains reserved and is not defined.
+
+As in V1, JSON Schema consumers must register UUID/ULID formats. V2 generation also
+preserves refinement constraints via standard `uniqueItems`, `maxProperties`, and
+nonblank-text patterns, plus these required custom keywords:
+
+- `x-state-max-serialized-utf8-bytes`: compact serialized state byte limit.
+- `x-state-max-depth`: maximum depth of all JSON values, including scalar leaves.
+- `x-manifest-max-serialized-utf8-bytes`: compact serialized manifest byte limit.
+- `x-uniqueBy`: each named event property must be unique independently in its array.
+
+Register these keywords rather than silently ignoring them, and reject non-finite
+numbers (Ajv: `strictNumbers: true`). Parity tests compare the Zod-generated core
+and separately exercise these additions; schema-only validation without the custom
+keywords is insufficient. Non-JSON JavaScript inputs (cycles, accessors, class
+instances) must be rejected before transport, as they are by the Zod state preflight.

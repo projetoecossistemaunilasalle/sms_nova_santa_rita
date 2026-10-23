@@ -1,0 +1,14 @@
+{
+  "type": "portal.local_durable.v2",
+  "record_type": "active_time",
+  "events": [
+    {
+      "request_id": "time-1",
+      "client_event_id": "event-time-1"
+    },
+    {
+      "request_id": "time-2",
+      "client_event_id": "event-time-2"
+    }
+  ]
+}

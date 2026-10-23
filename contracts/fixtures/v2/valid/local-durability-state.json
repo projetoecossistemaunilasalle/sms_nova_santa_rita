@@ -1,0 +1,5 @@
+{
+  "type": "portal.local_durable.v2",
+  "record_type": "state",
+  "request_id": "save-1"
+}

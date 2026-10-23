@@ -24,6 +24,8 @@
     "typecheck": "npm run typecheck:server && npm run typecheck:demo",
     "test": "node scripts/next-target.mjs gen demo && vitest run",
     "test:contracts": "vitest run tests/unit/v1-contracts.test.ts",
+    "test:contracts:v2": "vitest run tests/unit/v2-contracts.test.ts",
+    "contracts:generate": "node scripts/generate-contract-schemas.mjs",
     "test:watch": "node scripts/next-target.mjs gen demo && vitest",
     "check": "npm run format:check && npm run lint && npm run prisma:validate && npm run prisma:generate && npm run typecheck && npm test",
     "prisma:generate": "prisma generate",

@@ -1,0 +1,28 @@
+{
+  "type": "game.result.v2",
+  "request_id": "result-5",
+  "activity_id": "smile_kit_selection",
+  "mission_id": "smile_kit",
+  "context": {
+    "id_tentativa": "0190a444-1111-4111-8111-000000000005",
+    "id_atividade": "smile_kit_selection",
+    "id_mecanica": "daily_dental_care_selection",
+    "id_preset": "padrao",
+    "versao_atividade": 1,
+    "id_casa": 0,
+    "sequencia_tentativa": 5,
+    "numero_tentativa_atividade": 1,
+    "semente": 1234,
+    "dificuldade": 1,
+    "parametros": {}
+  },
+  "result": {
+    "estado": "sucesso",
+    "duracao_ms": 12000,
+    "metricas": {
+      "acertos": 4,
+      "erros": 1
+    }
+  },
+  "client_event_id": "event-result-5"
+}

@@ -1,0 +1,6 @@
+{
+  "type": "protocol.error.v2",
+  "code": "POLICY_EMPTY",
+  "message": "Fixture: POLICY_EMPTY",
+  "request_id": "bootstrap-1"
+}

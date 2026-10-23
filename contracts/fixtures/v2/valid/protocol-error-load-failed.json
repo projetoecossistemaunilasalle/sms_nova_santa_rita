@@ -1,0 +1,6 @@
+{
+  "type": "protocol.error.v2",
+  "code": "LOAD_FAILED",
+  "message": "Fixture: LOAD_FAILED",
+  "request_id": "bootstrap-1"
+}

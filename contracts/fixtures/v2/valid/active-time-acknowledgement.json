@@ -1,0 +1,7 @@
+{
+  "type": "portal.active_time_ack.v2",
+  "acknowledged_event_ids": [
+    "event-time-1",
+    "event-time-2"
+  ]
+}

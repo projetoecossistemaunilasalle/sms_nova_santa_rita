@@ -1,0 +1,210 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "const": "game.result.v2"
+    },
+    "request_id": {
+      "$ref": "#/$defs/__schema0"
+    },
+    "activity_id": {
+      "$ref": "#/$defs/__schema0"
+    },
+    "mission_id": {
+      "$ref": "#/$defs/__schema0"
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "id_tentativa": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            {
+              "type": "string",
+              "format": "ulid",
+              "pattern": "^[0-9A-HJKMNP-TV-Za-hjkmnp-tv-z]{26}$"
+            }
+          ]
+        },
+        "id_atividade": {
+          "$ref": "#/$defs/__schema0"
+        },
+        "id_mecanica": {
+          "$ref": "#/$defs/__schema0"
+        },
+        "id_preset": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]{1,64}$"
+        },
+        "versao_atividade": {
+          "$ref": "#/$defs/__schema1"
+        },
+        "id_casa": {
+          "$ref": "#/$defs/__schema2"
+        },
+        "sequencia_tentativa": {
+          "$ref": "#/$defs/__schema1"
+        },
+        "numero_tentativa_atividade": {
+          "$ref": "#/$defs/__schema1"
+        },
+        "semente": {
+          "$ref": "#/$defs/__schema1"
+        },
+        "dificuldade": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "parametros": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema3"
+          }
+        }
+      },
+      "required": [
+        "id_tentativa",
+        "id_atividade",
+        "id_mecanica",
+        "id_preset",
+        "versao_atividade",
+        "id_casa",
+        "sequencia_tentativa",
+        "numero_tentativa_atividade",
+        "semente",
+        "dificuldade",
+        "parametros"
+      ],
+      "additionalProperties": false
+    },
+    "result": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "estado": {
+              "type": "string",
+              "enum": [
+                "sucesso",
+                "falha",
+                "cancelado",
+                "tempo_esgotado"
+              ]
+            },
+            "duracao_ms": {
+              "$ref": "#/$defs/__schema2"
+            },
+            "metricas": {
+              "$ref": "#/$defs/__schema4",
+              "maxProperties": 32
+            }
+          },
+          "required": [
+            "estado",
+            "duracao_ms",
+            "metricas"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "estado": {
+              "type": "string",
+              "const": "erro_inicializacao"
+            },
+            "duracao_ms": {
+              "type": "number",
+              "const": 0
+            },
+            "metricas": {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": false,
+              "maxProperties": 32
+            }
+          },
+          "required": [
+            "estado",
+            "duracao_ms",
+            "metricas"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "required": [
+    "type",
+    "request_id",
+    "activity_id",
+    "mission_id",
+    "context",
+    "result"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "__schema0": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "__schema1": {
+      "type": "integer",
+      "exclusiveMinimum": 0,
+      "maximum": 9007199254740991
+    },
+    "__schema2": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "__schema3": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "maxItems": 256,
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/__schema3"
+          }
+        },
+        {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema3"
+          }
+        }
+      ]
+    },
+    "__schema4": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "number"
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "game.active_time.v2",
+  "events": [
+    {
+      "request_id": "time-1",
+      "client_event_id": "event-time-1",
+      "active_ms": 15000,
+      "mode": "activity",
+      "mission_id": "brushing_teeth"
+    },
+    {
+      "request_id": "time-2",
+      "client_event_id": "event-time-2",
+      "active_ms": 5000,
+      "mode": "exploration"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "type": "portal.local_durable.v2",
+  "record_type": "result",
+  "events": [
+    {
+      "request_id": "result-1",
+      "client_event_id": "event-result-1"
+    }
+  ]
+}

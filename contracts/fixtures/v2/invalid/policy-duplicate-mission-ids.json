@@ -1,0 +1,18 @@
+{
+  "policy_version": 1,
+  "authored_content_version": "heroes_trial_school_2026_10",
+  "enabled_module_ids": [
+    "saude_bucal"
+  ],
+  "enabled_mission_ids": [
+    "brushing_teeth",
+    "brushing_teeth"
+  ],
+  "activity_presets": {
+    "brushing_teeth_practice": "padrao",
+    "smile_kit_selection": "padrao"
+  },
+  "options": {
+    "skin_shop": false
+  }
+}

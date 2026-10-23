@@ -1,0 +1,6 @@
+{
+  "type": "protocol.error.v2",
+  "code": "INTERNAL_ERROR",
+  "message": "Fixture: INTERNAL_ERROR",
+  "request_id": "bootstrap-1"
+}

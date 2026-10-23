@@ -1,0 +1,6 @@
+{
+  "type": "protocol.error.v2",
+  "code": "CONTENT_UPGRADE_REQUIRED",
+  "message": "Fixture: CONTENT_UPGRADE_REQUIRED",
+  "request_id": "bootstrap-1"
+}

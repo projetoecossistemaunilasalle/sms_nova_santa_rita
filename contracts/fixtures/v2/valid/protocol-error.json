@@ -1,0 +1,6 @@
+{
+  "type": "protocol.error.v2",
+  "code": "VALIDATION_FAILED",
+  "message": "Fixture: VALIDATION_FAILED",
+  "request_id": "bootstrap-1"
+}

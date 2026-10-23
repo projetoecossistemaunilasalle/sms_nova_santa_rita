@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "const": "portal.visibility.v2"
+    },
+    "visible": {
+      "type": "boolean"
+    },
+    "focused": {
+      "type": "boolean"
+    },
+    "online": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "type",
+    "visible",
+    "focused",
+    "online"
+  ],
+  "additionalProperties": false
+}
