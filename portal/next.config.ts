@@ -1,3 +1,4 @@
+import path from "node:path";
 import type { NextConfig } from "next";
 import { z } from "zod";
 
@@ -19,6 +20,11 @@ if (runtimeMode === "server") {
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // This app lives in portal/ of a repository whose root has its own
+  // package-lock.json; without an explicit root Next picks the repository root
+  // and nests the standalone server under .next/standalone/portal/.
+  outputFileTracingRoot: path.join(__dirname),
+  turbopack: { root: path.join(__dirname) },
   poweredByHeader: false,
   reactStrictMode: true,
   env: {
