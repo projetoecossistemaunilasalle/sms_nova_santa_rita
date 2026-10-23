@@ -1,7 +1,11 @@
 .page {
+  --game-host-chrome-offset: 204px;
   position: relative;
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  overflow-x: hidden;
+  min-height: 100dvh;
+  overflow: hidden;
   background: linear-gradient(
     180deg,
     var(--sky),
@@ -101,10 +105,12 @@
   z-index: 2;
   display: flex;
   width: min(1100px, calc(100% - 32px));
-  min-height: 78px;
+  min-height: 52px;
   align-items: center;
   justify-content: space-between;
   margin-inline: auto;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
 }
 
 .brand {
@@ -120,8 +126,8 @@
 
 .brandMark {
   display: grid;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   place-items: center;
   border: 2px solid rgb(255 255 255 / 70%);
   border-radius: var(--radius-brand);
@@ -135,11 +141,14 @@
   position: relative;
   z-index: 1;
   display: grid;
-  width: min(980px, calc(100% - 32px));
+  flex: 1 1 auto;
+  width: min(1100px, calc(100% - 32px));
   min-height: calc(100vh - 150px);
+  min-height: calc(100dvh - 150px);
   place-items: center;
   margin-inline: auto;
-  padding: 35px 0 70px;
+  padding: 6px env(safe-area-inset-right, 0px)
+    max(10px, env(safe-area-inset-bottom, 0px)) env(safe-area-inset-left, 0px);
 }
 
 .primary {
@@ -169,28 +178,54 @@
 }
 
 .gameHost {
-  width: min(1160px, 100%);
+  width: min(
+    1160px,
+    100%,
+    calc((100vh - var(--game-host-chrome-offset, 204px)) * 16 / 9 + 8px)
+  );
+  width: min(
+    1160px,
+    100%,
+    calc((100dvh - var(--game-host-chrome-offset, 204px)) * 16 / 9 + 8px)
+  );
+  margin-inline: auto;
 }
 
 .gameHostHeader {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 24px;
+  gap: 12px 24px;
+  padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
+}
+
+.gameHostHeader > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+}
+
+.gameHostHeader .entryStatus {
+  margin-top: 0;
 }
 
 .gameHostHeader h1 {
-  margin: 12px 0 0;
+  margin: 0;
   font-family: var(--font-display);
-  font-size: var(--type-hero);
-  line-height: 0.98;
+  font-size: clamp(1.25rem, 2.4vw, 2rem);
+  line-height: 1.02;
   letter-spacing: -0.04em;
 }
 
 .gameHostHeader p {
-  max-width: 54ch;
-  margin: 12px 0 0;
+  flex-basis: 100%;
+  width: 100%;
+  max-width: 68ch;
+  margin: 2px 0 0;
   color: var(--text-muted);
+  font-size: var(--type-body-small);
+  line-height: 1.35;
 }
 
 .gameConnection {
@@ -226,8 +261,8 @@
 
 .gameHostAlert {
   width: 100%;
-  margin: 20px 0 -10px;
-  padding: 13px 16px;
+  margin: 10px 0 0;
+  padding: 10px 14px;
   border: 1px solid color-mix(in srgb, var(--orange) 35%, white);
   border-radius: var(--radius-control);
   color: var(--orange-dark);
@@ -244,9 +279,9 @@
 
 .gameHostFrame {
   width: 100%;
-  margin-top: 24px;
+  margin-top: 10px;
   overflow: hidden;
-  border: 6px solid var(--surface);
+  border: 4px solid var(--surface);
   border-radius: var(--radius-feature);
   background: var(--surface-game);
   box-shadow: 0 24px 58px rgb(29 79 138 / 15%);
@@ -255,18 +290,21 @@
 .gameHostIframe {
   display: block;
   width: 100%;
-  min-height: min(70vh, 700px);
-  aspect-ratio: 16 / 10;
+  max-height: calc(100vh - var(--game-host-chrome-offset, 204px));
+  max-height: calc(100dvh - var(--game-host-chrome-offset, 204px));
+  aspect-ratio: 16 / 9;
+  margin-inline: auto;
   border: 0;
   background: var(--surface-game);
 }
 
 .gameHostUnavailable {
   display: grid;
-  min-height: min(62vh, 620px);
+  min-height: min(50vh, 500px);
+  min-height: min(50dvh, 500px);
   justify-items: center;
   align-content: center;
-  padding: clamp(26px, 6vw, 66px);
+  padding: clamp(20px, 4vw, 48px);
   color: var(--surface);
   text-align: center;
   background:
@@ -306,8 +344,10 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 10px 18px;
-  padding: 13px 4px 0;
+  gap: 8px 18px;
+  padding: 8px max(4px, env(safe-area-inset-right, 0px))
+    max(4px, env(safe-area-inset-bottom, 0px))
+    max(4px, env(safe-area-inset-left, 0px));
   color: var(--text-muted);
   font-size: var(--type-compact);
 }
@@ -335,9 +375,10 @@
 
 .demoGame {
   display: grid;
-  min-height: min(70vh, 700px);
+  min-height: min(46vh, 460px);
+  min-height: min(46dvh, 460px);
   place-items: center;
-  padding: clamp(20px, 5vw, 64px);
+  padding: clamp(14px, 3vw, 32px);
   background:
     radial-gradient(ellipse at 100% 0%, rgb(46 111 183 / 18%), transparent 37%),
     linear-gradient(145deg, #1d4f8a, #15271c 75%);
@@ -345,7 +386,7 @@
 
 .demoGameScene {
   width: min(100%, 620px);
-  padding: clamp(24px, 5vw, 48px);
+  padding: clamp(18px, 3vw, 30px);
   border: 5px solid var(--surface);
   border-radius: var(--radius-feature) 10px var(--radius-feature)
     var(--radius-feature);
@@ -368,25 +409,26 @@
 
 .demoGameScene h2 {
   max-width: 16ch;
-  margin: 17px 0 0;
+  margin: 12px 0 0;
   font-family: var(--font-display);
-  font-size: clamp(1.8rem, 4vw, 2.65rem);
+  font-size: clamp(1.5rem, 3vw, 2rem);
   line-height: 0.98;
   letter-spacing: -0.04em;
 }
 
 .demoGameScene > p {
   max-width: 55ch;
-  margin: 14px 0 0;
+  margin: 10px 0 0;
   color: var(--text-muted);
+  font-size: var(--type-body-small);
 }
 
 .demoStepReadout {
   display: flex;
   align-items: center;
   gap: 14px;
-  margin: 25px 0 0;
-  padding: 14px;
+  margin: 16px 0 0;
+  padding: 11px 14px;
   border: 1px solid var(--border);
   border-radius: var(--radius-panel);
   background: var(--surface);
@@ -418,7 +460,7 @@
 }
 
 .demoGameScene .primary {
-  margin-top: 20px;
+  margin-top: 14px;
 }
 
 .demoGameScene .primary:disabled {
@@ -445,11 +487,12 @@
   position: relative;
   display: flex;
   width: min(100%, 680px);
-  min-height: 490px;
+  min-height: min(440px, calc(100vh - 140px));
+  min-height: min(440px, calc(100dvh - 140px));
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: clamp(34px, 6vw, 58px);
+  padding: clamp(24px, 4vw, 48px);
   overflow: hidden;
   border: 7px solid var(--surface);
   border-radius: var(--radius-feature);
@@ -474,9 +517,9 @@
   position: relative;
   z-index: 1;
   max-width: 15ch;
-  margin: 20px 0 0;
+  margin: 16px 0 0;
   font-family: var(--font-display);
-  font-size: var(--type-hero);
+  font-size: var(--type-headline);
   line-height: 0.96;
   letter-spacing: -0.04em;
   text-wrap: balance;
@@ -486,7 +529,7 @@
   position: relative;
   z-index: 1;
   max-width: 54ch;
-  margin: 16px 0 0;
+  margin: 12px 0 0;
   color: var(--text-muted);
   font-size: var(--type-body);
 }
@@ -494,7 +537,7 @@
 .entryCard .primary {
   position: relative;
   z-index: 1;
-  margin-top: 28px;
+  margin-top: 22px;
 }
 
 .entryDemoMark {
@@ -514,8 +557,8 @@
   position: relative;
   z-index: 1;
   display: grid;
-  width: 112px;
-  height: 112px;
+  width: 96px;
+  height: 96px;
   place-items: center;
   border-radius: var(--radius-feature);
   color: var(--blue-dark);
@@ -532,7 +575,7 @@
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  margin-top: 18px;
+  margin-top: 14px;
   padding: 5px 9px;
   border-radius: var(--radius-pill);
   color: var(--green-dark);
@@ -598,17 +641,17 @@
 @media (max-width: 520px) {
   .main {
     width: min(100% - 20px, 460px);
-    padding-top: 20px;
+    padding-top: 8px;
   }
 
   .gameHostHeader {
     align-items: flex-start;
     flex-direction: column;
-    gap: 14px;
+    gap: 10px;
   }
 
   .gameHostHeader h1 {
-    font-size: var(--font-size-feature);
+    font-size: var(--type-display-small);
   }
 
   .gameConnection {
@@ -616,39 +659,43 @@
   }
 
   .gameHostFrame {
-    margin-top: 18px;
+    margin-top: 10px;
     border-width: 4px;
     border-radius: var(--radius-panel);
   }
 
   .gameHostIframe {
-    min-height: 58vh;
-    aspect-ratio: 9 / 14;
+    max-height: 58vh;
+    max-height: 58dvh;
+    aspect-ratio: 16 / 9;
   }
 
   .gameHostUnavailable {
-    min-height: 56vh;
+    min-height: 48vh;
+    min-height: 48dvh;
   }
 
   .demoGame {
-    min-height: 58vh;
-    padding: 18px;
+    min-height: 48vh;
+    min-height: 48dvh;
+    padding: 16px;
   }
 
   .demoGameScene {
-    padding: 25px 20px;
+    padding: 20px 18px;
     border-width: 4px;
   }
 
   .entryCard {
-    min-height: 480px;
-    padding: 34px 23px;
+    min-height: min(420px, calc(100vh - 120px));
+    min-height: min(420px, calc(100dvh - 120px));
+    padding: 28px 20px;
     border-width: 5px;
   }
 
   .entryPlayerNumber {
-    width: 92px;
-    height: 92px;
+    width: 84px;
+    height: 84px;
     border-radius: var(--radius-feature);
     font-size: var(--type-feature);
   }
