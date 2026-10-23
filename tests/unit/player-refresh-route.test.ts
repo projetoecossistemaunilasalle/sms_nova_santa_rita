@@ -19,12 +19,12 @@ vi.mock("@/server/observability/logger", () => ({
 vi.mock("@/server/services/player-access-container", () => ({
   getPlayerAccessService: async () => ({ renewEntry: mocks.renew }),
 }));
-import { POST } from "@/app/api/v1/player/refresh/route";
+import { POST } from "@/app/api/v2/player/refresh/route";
 import { verifyLaunchToken } from "@/server/security/launch-token";
 const playerSlotId = "00000000-0000-4000-8000-000000000001";
 const gameSessionId = "00000000-0000-4000-8000-000000000002";
 const request = (body: unknown) =>
-  new NextRequest("http://localhost/api/v1/player/refresh", {
+  new NextRequest("http://localhost/api/v2/player/refresh", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),

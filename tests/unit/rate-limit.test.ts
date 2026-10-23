@@ -84,7 +84,7 @@ describe("shared database rate limits", () => {
     );
     for (const bearer of [token, second])
       await enforcePlayerRateLimit(
-        new NextRequest("http://localhost/api/v1/player/results", {
+        new NextRequest("http://localhost/api/v2/player/results", {
           headers: { Authorization: `Bearer ${bearer}` },
         }),
       );

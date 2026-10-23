@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import { IDBFactory } from "fake-indexeddb";
-import type { PlayerBootstrapV1, StateSaveRequestV1 } from "@/contracts/v1";
+import type { PlayerBootstrapV2, StateSaveRequestV2 } from "@/contracts/v2";
 import { openGameOfflineStore } from "@/runtime/offline/sync-engine";
 import {
   openDatabase,
@@ -17,14 +17,14 @@ import type { GameOfflineTransport } from "@/runtime/offline/types";
 
 const fixture = <T>(name: string): T =>
   JSON.parse(
-    readFileSync(resolve("contracts/fixtures/v1/valid", name), "utf8"),
+    readFileSync(resolve("contracts/fixtures/v2/valid", name), "utf8"),
   ) as T;
-const bootstrap = fixture<PlayerBootstrapV1>("returning-player-bootstrap.json");
-const request = fixture<StateSaveRequestV1>("state-save-request.json");
+const bootstrap = fixture<PlayerBootstrapV2>("returning-player-bootstrap.json");
+const request = fixture<StateSaveRequestV2>("state-save-request.json");
 const player = bootstrap.player_id;
 const accepted: GameOfflineTransport = {
   saveState: async (queued) => ({
-    type: "portal.save_ok.v1",
+    type: "portal.save_ok.v2",
     request_id: queued.request_id,
     revision: queued.expected_revision + 1,
   }),
@@ -63,13 +63,14 @@ describe("owned offline state branches", () => {
         status: 403,
       });
       await persistence.blockState(player, {
-        type: "portal.save_conflict.v1",
+        type: "portal.save_conflict.v2",
         request_id: request.request_id,
         revision: 100,
+        stored_content_version: request.content_version,
         state: request.state,
       });
       expect((await persistence.status(player)).stateBlocked).toBe(false);
-      expect((await persistence.getBootstrap(player))?.revision).toBe(42);
+      expect((await persistence.getBootstrap(player))?.revision).toBe(7);
       expect(
         (await persistence.listStates(player)).map((state) => state.requestId),
       ).toEqual(["replacement"]);
@@ -99,7 +100,7 @@ describe("owned offline state branches", () => {
           return accepted.saveState(queued);
         },
       });
-      expect(revisions).toEqual([42, 43]);
+      expect(revisions).toEqual([7, 8]);
       await first.enqueueState(player, {
         ...request,
         request_id: "after-sync",
@@ -107,7 +108,7 @@ describe("owned offline state branches", () => {
       await first.sync(player, {
         ...accepted,
         saveState: async (queued) => {
-          expect(queued.expected_revision).toBe(44);
+          expect(queued.expected_revision).toBe(9);
           return accepted.saveState(queued);
         },
       });
@@ -146,13 +147,13 @@ describe("owned offline state branches", () => {
       const persistence = new IndexedDbGameOfflinePersistence(db);
       const generation = await persistence.reserveBootstrapGeneration(player);
       await persistence.cacheBootstrap(
-        { ...bootstrap, revision: 43 },
+        { ...bootstrap, revision: 8 },
         generation,
       );
       expect(
         (await persistence.enqueueState(player, request)).request
           .expected_revision,
-      ).toBe(42);
+      ).toBe(7);
     } finally {
       db.close();
     }
@@ -170,7 +171,7 @@ describe("owned offline state branches", () => {
         request_id: "second-bootstrap",
       });
       await first.sync(player, accepted);
-      expect((await second.getBootstrap(player))?.revision).toBe(42);
+      expect((await second.getBootstrap(player))?.revision).toBe(7);
       await second.enqueueState(player, {
         ...request,
         request_id: "other-save",
@@ -178,11 +179,11 @@ describe("owned offline state branches", () => {
       const report = await second.sync(player, {
         ...accepted,
         saveState: async (queued) => {
-          expect(queued.expected_revision).toBe(42);
+          expect(queued.expected_revision).toBe(7);
           return {
-            type: "portal.save_conflict.v1",
+            type: "portal.save_conflict.v2",
             request_id: queued.request_id,
-            revision: 43,
+            revision: 8,
             state: request.state,
           };
         },
@@ -258,7 +259,7 @@ describe("owned offline state branches", () => {
       expect(success).toHaveBeenCalledWith(
         expect.objectContaining({
           request_id: "new-save",
-          expected_revision: 42,
+          expected_revision: 7,
         }),
         "next-session",
       );

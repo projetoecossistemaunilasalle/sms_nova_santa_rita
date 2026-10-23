@@ -1,4 +1,0 @@
-{
-  "type": "game.active_time.v1",
-  "events": [{ "request_id": "request-time-too-long", "client_event_id": "event-time-too-long", "active_ms": 30001, "mode": "activity" }]
-}

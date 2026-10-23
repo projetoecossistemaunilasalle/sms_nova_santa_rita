@@ -1,1 +1,0 @@
-{ "type": "portal.active_time_ack.v1", "acknowledged_event_ids": ["event-time-001", "event-time-002", "event-time-003"] }

@@ -56,7 +56,7 @@ export function createGameOfflineTransport(
     if (pending) return pending;
     const operation = (async () => {
       const { response, payload } = await fetchGameJson(
-        "/api/v1/player/refresh",
+        "/api/v2/player/refresh",
         {
           method: "POST",
           cache: "no-store",
@@ -122,7 +122,7 @@ export function createGameOfflineTransport(
           payload &&
           typeof payload === "object" &&
           "type" in payload &&
-          payload.type === "portal.save_conflict.v1"
+          payload.type === "portal.save_conflict.v2"
         )
       )
         throw new GameTransportError(
@@ -137,11 +137,11 @@ export function createGameOfflineTransport(
   function forSession(gameSessionId: string): GameOfflineTransport {
     return {
       saveState: (request, sessionId = gameSessionId) =>
-        post("/api/v1/player/state", request, sessionId),
+        post("/api/v2/player/state", request, sessionId),
       uploadResult: (event, sessionId = gameSessionId) =>
-        post("/api/v1/player/results", event, sessionId, true),
+        post("/api/v2/player/results", event, sessionId, true),
       uploadActiveTime: (batch, sessionId = gameSessionId) =>
-        post("/api/v1/player/active-time", batch, sessionId, true),
+        post("/api/v2/player/active-time", batch, sessionId, true),
       includePreviousSessions: true,
     };
   }

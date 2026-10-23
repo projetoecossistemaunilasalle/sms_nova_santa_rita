@@ -1,7 +1,0 @@
-{
-  "type": "game.active_time.v1",
-  "events": [
-    { "request_id": "request-time-001", "client_event_id": "event-time-duplicate", "active_ms": 1000, "mode": "exploration" },
-    { "request_id": "request-time-002", "client_event_id": "event-time-duplicate", "active_ms": 2000, "mode": "dialogue" }
-  ]
-}

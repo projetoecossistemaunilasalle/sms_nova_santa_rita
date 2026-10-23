@@ -1,21 +1,21 @@
 import {
-  activeTimeAcknowledgementV1Schema,
-  activeTimeBatchV1Schema,
-  activeTimeSubmissionV1Schema,
-  parsePlayerBootstrapV1,
-  parseResultAcknowledgementV1,
-  parseResultEventV1,
-  parseResultSubmissionV1,
-  parseStateSaveRequestV1,
-  parseStateSaveSuccessV1,
-  type ActiveTimeSubmissionV1,
-  type LocalDurabilityAcknowledgementV1,
-  type PlayerBootstrapV1,
-  type ResultSubmissionV1,
-  type StateSaveConflictV1,
-  type StateSaveRequestV1,
-  type StateSaveSuccessV1,
-} from "@/contracts/v1";
+  activeTimeAcknowledgementV2Schema,
+  activeTimeBatchV2Schema,
+  activeTimeSubmissionV2Schema,
+  parsePlayerBootstrapV2,
+  parseResultAcknowledgementV2,
+  parseResultEventV2,
+  parseResultSubmissionV2,
+  parseStateSaveRequestV2,
+  parseStateSaveSuccessV2,
+  type ActiveTimeSubmissionV2,
+  type LocalDurabilityAcknowledgementV2,
+  type PlayerBootstrapV2,
+  type ResultSubmissionV2,
+  type StateSaveConflictV2,
+  type StateSaveRequestV2,
+  type StateSaveSuccessV2,
+} from "@/contracts/v2";
 
 import { eventRequestIdentity, parseStateConflictResponse } from "./canonical";
 import {
@@ -47,10 +47,10 @@ export class GameOfflineStore {
   }
 
   async cacheBootstrap(
-    input: PlayerBootstrapV1,
+    input: PlayerBootstrapV2,
     generation?: number,
-  ): Promise<PlayerBootstrapV1 | null> {
-    const bootstrap = parsePlayerBootstrapV1(input);
+  ): Promise<PlayerBootstrapV2 | null> {
+    const bootstrap = parsePlayerBootstrapV2(input);
     const reservedGeneration =
       generation ??
       (await this.persistence.reserveBootstrapGeneration(bootstrap.player_id));
@@ -74,7 +74,7 @@ export class GameOfflineStore {
     return this.persistence.reserveBootstrapGeneration(playerId);
   }
 
-  getBootstrap(playerId: string): Promise<PlayerBootstrapV1 | null> {
+  getBootstrap(playerId: string): Promise<PlayerBootstrapV2 | null> {
     return this.persistence.getBootstrap(playerId);
   }
 
@@ -93,10 +93,10 @@ export class GameOfflineStore {
 
   async enqueueState(
     playerId: string,
-    input: StateSaveRequestV1,
+    input: StateSaveRequestV2,
     classSessionId?: string,
-  ): Promise<LocalDurabilityAcknowledgementV1> {
-    const request = parseStateSaveRequestV1(input);
+  ): Promise<LocalDurabilityAcknowledgementV2> {
+    const request = parseStateSaveRequestV2(input);
     const branch = this.branches.get(playerId);
     if (!branch) throw new OfflineBranchChangedError();
     const queued = await this.persistence.enqueueState(
@@ -106,7 +106,7 @@ export class GameOfflineStore {
       branch,
     );
     return {
-      type: "portal.local_durable.v1",
+      type: "portal.local_durable.v2",
       record_type: "state",
       request_id: queued.request.request_id,
     };
@@ -114,16 +114,16 @@ export class GameOfflineStore {
 
   async enqueueResult(
     playerId: string,
-    input: ResultSubmissionV1,
+    input: ResultSubmissionV2,
     classSessionId?: string,
-  ): Promise<LocalDurabilityAcknowledgementV1> {
-    const submission = parseResultSubmissionV1(input);
+  ): Promise<LocalDurabilityAcknowledgementV2> {
+    const submission = parseResultSubmissionV2(input);
     const bootstrap = await this.persistence.getBootstrap(playerId);
     if (!bootstrap) throw new OfflineBootstrapMissingError();
     if (classSessionId && bootstrap.class_session_id !== classSessionId) {
       throw new OfflineSessionMismatchError();
     }
-    const event = parseResultEventV1({
+    const event = parseResultEventV2({
       ...submission,
       client_event_id: this.createEventId(),
     });
@@ -134,7 +134,7 @@ export class GameOfflineStore {
       await eventRequestIdentity(event),
     );
     return {
-      type: "portal.local_durable.v1",
+      type: "portal.local_durable.v2",
       record_type: "result",
       events: [
         {
@@ -147,10 +147,10 @@ export class GameOfflineStore {
 
   async enqueueActiveTime(
     playerId: string,
-    input: ActiveTimeSubmissionV1,
+    input: ActiveTimeSubmissionV2,
     classSessionId?: string,
-  ): Promise<LocalDurabilityAcknowledgementV1> {
-    const submission = activeTimeSubmissionV1Schema.parse(input);
+  ): Promise<LocalDurabilityAcknowledgementV2> {
+    const submission = activeTimeSubmissionV2Schema.parse(input);
     const bootstrap = await this.persistence.getBootstrap(playerId);
     if (!bootstrap) throw new OfflineBootstrapMissingError();
     if (classSessionId && bootstrap.class_session_id !== classSessionId) {
@@ -171,7 +171,7 @@ export class GameOfflineStore {
       }),
     );
     return {
-      type: "portal.local_durable.v1",
+      type: "portal.local_durable.v2",
       record_type: "active_time",
       events: events.map(({ requestId, clientEventId }) => ({
         request_id: requestId,
@@ -197,7 +197,7 @@ export class GameOfflineStore {
   async sync(
     playerId: string,
     transport: GameOfflineTransport,
-    onStateConflict?: (conflict: StateSaveConflictV1) => void | Promise<void>,
+    onStateConflict?: (conflict: StateSaveConflictV2) => void | Promise<void>,
     expectedClassSessionId?: string,
   ): Promise<GameOfflineSyncReport> {
     return withPlayerLock(playerId, () =>
@@ -213,7 +213,7 @@ export class GameOfflineStore {
   private async syncUnlocked(
     playerId: string,
     transport: GameOfflineTransport,
-    onStateConflict?: (conflict: StateSaveConflictV1) => void | Promise<void>,
+    onStateConflict?: (conflict: StateSaveConflictV2) => void | Promise<void>,
     expectedClassSessionId?: string,
   ): Promise<GameOfflineSyncReport> {
     const bootstrap = await this.persistence.getBootstrap(playerId);
@@ -228,7 +228,7 @@ export class GameOfflineStore {
     let savedStates = 0;
     let uploadedResults = 0;
     let uploadedActiveTimeEvents = 0;
-    const stateAcknowledgements: StateSaveSuccessV1[] = [];
+    const stateAcknowledgements: StateSaveSuccessV2[] = [];
     const eventAcknowledgements: GameOfflineSyncReport["eventAcknowledgements"] =
       [];
     let failedStream: GameOfflineSyncReport["failedStream"];
@@ -289,9 +289,9 @@ export class GameOfflineStore {
           );
           break;
         }
-        let success: StateSaveSuccessV1;
+        let success: StateSaveSuccessV2;
         try {
-          success = parseStateSaveSuccessV1(response);
+          success = parseStateSaveSuccessV2(response);
           if (
             success.request_id !== queued.request.request_id ||
             success.revision !== queued.request.expected_revision + 1
@@ -331,7 +331,7 @@ export class GameOfflineStore {
       if (!first) break;
       try {
         if (first.kind === "result") {
-          const acknowledgement = parseResultAcknowledgementV1(
+          const acknowledgement = parseResultAcknowledgementV2(
             await transport.uploadResult(first.event, first.classSessionId),
           );
           if (acknowledgement.client_event_id !== first.event.client_event_id) {
@@ -357,11 +357,11 @@ export class GameOfflineStore {
               break;
             consecutive.push(item);
           }
-          const batch = activeTimeBatchV1Schema.parse({
-            type: "game.active_time.v1",
+          const batch = activeTimeBatchV2Schema.parse({
+            type: "game.active_time.v2",
             events: consecutive.map(({ event }) => event),
           });
-          const acknowledgement = activeTimeAcknowledgementV1Schema.parse(
+          const acknowledgement = activeTimeAcknowledgementV2Schema.parse(
             await transport.uploadActiveTime(batch, first.classSessionId),
           );
           const sentIds = new Set(
@@ -433,8 +433,8 @@ export class GameOfflineStore {
 
   private async persistAndNotifyConflict(
     playerId: string,
-    conflict: StateSaveConflictV1,
-    notify?: (conflict: StateSaveConflictV1) => void | Promise<void>,
+    conflict: StateSaveConflictV2,
+    notify?: (conflict: StateSaveConflictV2) => void | Promise<void>,
   ): Promise<void> {
     try {
       await this.persistence.blockState(playerId, conflict);

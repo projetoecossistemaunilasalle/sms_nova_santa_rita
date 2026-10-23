@@ -28,26 +28,26 @@ import type {
   StateRejection,
 } from "@/runtime/offline/types";
 import type {
-  ActiveTimeSubmissionV1,
-  PlayerBootstrapV1,
-  ResultEventV1,
-  ResultSubmissionV1,
-  StateSaveConflictV1,
-  StateSaveRequestV1,
-  StateSaveSuccessV1,
-} from "@/contracts/v1";
+  ActiveTimeSubmissionV2,
+  PlayerBootstrapV2,
+  ResultEventV2,
+  ResultSubmissionV2,
+  StateSaveConflictV2,
+  StateSaveRequestV2,
+  StateSaveSuccessV2,
+} from "@/contracts/v2";
 
 const fixture = <T>(name: string): T =>
   JSON.parse(
     readFileSync(
-      resolve(process.cwd(), "contracts", "fixtures", "v1", "valid", name),
+      resolve(process.cwd(), "contracts", "fixtures", "v2", "valid", name),
       "utf8",
     ),
   ) as T;
 
 class MemoryOfflinePersistence implements GameOfflinePersistence {
   private nextSequence = 1;
-  private bootstraps = new Map<string, PlayerBootstrapV1>();
+  private bootstraps = new Map<string, PlayerBootstrapV2>();
   private bootstrapGenerations = new Map<string, number>();
   private states: QueuedStateSave[] = [];
   private events: QueuedEvent[] = [];
@@ -55,7 +55,7 @@ class MemoryOfflinePersistence implements GameOfflinePersistence {
     string,
     { fingerprint: string; clientEventId: string }
   >();
-  private conflicts = new Map<string, StateSaveConflictV1>();
+  private conflicts = new Map<string, StateSaveConflictV2>();
   private rejections = new Map<string, StateRejection>();
 
   async getBootstrap(playerId: string) {
@@ -68,7 +68,7 @@ class MemoryOfflinePersistence implements GameOfflinePersistence {
     return generation;
   }
 
-  async cacheBootstrap(bootstrap: PlayerBootstrapV1, generation: number) {
+  async cacheBootstrap(bootstrap: PlayerBootstrapV2, generation: number) {
     const existing = this.bootstraps.get(bootstrap.player_id);
     if (
       generation < (this.bootstrapGenerations.get(bootstrap.player_id) ?? 0)
@@ -95,7 +95,7 @@ class MemoryOfflinePersistence implements GameOfflinePersistence {
 
   async enqueueState(
     playerId: string,
-    request: StateSaveRequestV1,
+    request: StateSaveRequestV2,
     classSessionId?: string,
   ) {
     const existing = this.states.find(
@@ -141,16 +141,18 @@ class MemoryOfflinePersistence implements GameOfflinePersistence {
   async acknowledgeState(
     playerId: string,
     queued: QueuedStateSave,
-    success: StateSaveSuccessV1,
+    success: StateSaveSuccessV2,
   ) {
     const bootstrap = this.bootstraps.get(playerId);
     if (bootstrap && bootstrap.revision <= success.revision) {
       this.bootstraps.set(playerId, {
-        type: "portal.bootstrap.v1",
+        type: "portal.bootstrap.v2",
         request_id: queued.request.request_id,
         protocol_version: bootstrap.protocol_version,
         player_id: bootstrap.player_id,
         class_session_id: bootstrap.class_session_id,
+        content_policy: bootstrap.content_policy,
+        stored_content_version: queued.request.content_version,
         revision: success.revision,
         new_player: false,
         state: queued.request.state,
@@ -159,15 +161,17 @@ class MemoryOfflinePersistence implements GameOfflinePersistence {
     this.states = this.states.filter((item) => item.id !== queued.id);
   }
 
-  async blockState(playerId: string, conflict: StateSaveConflictV1) {
+  async blockState(playerId: string, conflict: StateSaveConflictV2) {
     const bootstrap = this.bootstraps.get(playerId);
     if (bootstrap && bootstrap.revision <= conflict.revision) {
       this.bootstraps.set(playerId, {
-        type: "portal.bootstrap.v1",
+        type: "portal.bootstrap.v2",
         request_id: conflict.request_id,
         protocol_version: bootstrap.protocol_version,
         player_id: bootstrap.player_id,
         class_session_id: bootstrap.class_session_id,
+        content_policy: bootstrap.content_policy,
+        stored_content_version: conflict.stored_content_version,
         revision: conflict.revision,
         new_player: false,
         state: conflict.state,
@@ -196,7 +200,7 @@ class MemoryOfflinePersistence implements GameOfflinePersistence {
   async enqueueResult(
     playerId: string,
     classSessionId: string,
-    event: ResultEventV1,
+    event: ResultEventV2,
     identity: EventRequestIdentity,
   ) {
     const key = JSON.stringify([
@@ -305,10 +309,10 @@ describe("GameOfflineStore", () => {
   it("queues state saves at sequential revisions and keeps local acknowledgements stable", async () => {
     const persistence = new MemoryOfflinePersistence();
     const offline = new GameOfflineStore(persistence, () => "unused-event-id");
-    const bootstrap = fixture<PlayerBootstrapV1>(
+    const bootstrap = fixture<PlayerBootstrapV2>(
       "returning-player-bootstrap.json",
     );
-    const request = fixture<StateSaveRequestV1>("state-save-request.json");
+    const request = fixture<StateSaveRequestV2>("state-save-request.json");
     await offline.cacheBootstrap(bootstrap);
 
     const firstAck = await offline.enqueueState(bootstrap.player_id, request);
@@ -319,22 +323,22 @@ describe("GameOfflineStore", () => {
     const retryAck = await offline.enqueueState(bootstrap.player_id, request);
 
     expect(firstAck).toEqual({
-      type: "portal.local_durable.v1",
+      type: "portal.local_durable.v2",
       record_type: "state",
       request_id: request.request_id,
     });
     expect(secondAck).toEqual({
-      type: "portal.local_durable.v1",
+      type: "portal.local_durable.v2",
       record_type: "state",
       request_id: "request-save-002",
     });
     expect(retryAck).toEqual(firstAck);
-    expect(await offline.getNextExpectedRevision(bootstrap.player_id)).toBe(44);
+    expect(await offline.getNextExpectedRevision(bootstrap.player_id)).toBe(9);
     expect(
       (await persistence.listStates(bootstrap.player_id)).map(
         (item) => item.request.expected_revision,
       ),
-    ).toEqual([42, 43]);
+    ).toEqual([7, 8]);
   });
 
   it("allocates stable event IDs and does not reuse a request ID for changed content", async () => {
@@ -344,17 +348,17 @@ describe("GameOfflineStore", () => {
       persistence,
       () => `event-generated-${++eventNumber}`,
     );
-    const bootstrap = fixture<PlayerBootstrapV1>(
+    const bootstrap = fixture<PlayerBootstrapV2>(
       "returning-player-bootstrap.json",
     );
     await offline.cacheBootstrap(bootstrap);
-    const result = fixture<ResultSubmissionV1>("result-submission.json");
+    const result = fixture<ResultSubmissionV2>("result-submission.json");
     const resultAck = await offline.enqueueResult(bootstrap.player_id, result);
     const resultRetry = await offline.enqueueResult(
       bootstrap.player_id,
       result,
     );
-    const time = fixture<ActiveTimeSubmissionV1>("active-time-submission.json");
+    const time = fixture<ActiveTimeSubmissionV2>("active-time-submission.json");
     const timeAck = await offline.enqueueActiveTime(bootstrap.player_id, time);
     const timeRetry = await offline.enqueueActiveTime(
       bootstrap.player_id,
@@ -373,16 +377,12 @@ describe("GameOfflineStore", () => {
       record_type: "active_time",
       events: [
         {
-          request_id: "request-time-001",
+          request_id: "time-1",
           client_event_id: "event-generated-3",
         },
         {
-          request_id: "request-time-002",
+          request_id: "time-2",
           client_event_id: "event-generated-4",
-        },
-        {
-          request_id: "request-time-003",
-          client_event_id: "event-generated-5",
         },
       ],
     });
@@ -400,11 +400,11 @@ describe("GameOfflineStore", () => {
       persistence,
       () => `event-generated-${++eventNumber}`,
     );
-    const bootstrap = fixture<PlayerBootstrapV1>(
+    const bootstrap = fixture<PlayerBootstrapV2>(
       "returning-player-bootstrap.json",
     );
-    const result = fixture<ResultSubmissionV1>("result-submission.json");
-    const activeTime = fixture<ActiveTimeSubmissionV1>(
+    const result = fixture<ResultSubmissionV2>("result-submission.json");
+    const activeTime = fixture<ActiveTimeSubmissionV2>(
       "active-time-submission.json",
     );
     await offline.cacheBootstrap(bootstrap);
@@ -419,18 +419,18 @@ describe("GameOfflineStore", () => {
         throw new Error("unused");
       },
       uploadResult: async (event) => ({
-        type: "portal.result_ack.v1",
+        type: "portal.result_ack.v2",
         client_event_id: event.client_event_id,
       }),
       uploadActiveTime: async (batch) => ({
-        type: "portal.active_time_ack.v1",
+        type: "portal.active_time_ack.v2",
         acknowledged_event_ids: batch.events.map(
           (event) => event.client_event_id,
         ),
       }),
     });
     expect(syncReport.uploadedResults).toBe(1);
-    expect(syncReport.uploadedActiveTimeEvents).toBe(3);
+    expect(syncReport.uploadedActiveTimeEvents).toBe(2);
     expect(
       await persistence.listEvents(
         bootstrap.player_id,
@@ -470,13 +470,13 @@ describe("GameOfflineStore", () => {
       persistence,
       () => "event-old-session",
     );
-    const bootstrap = fixture<PlayerBootstrapV1>(
+    const bootstrap = fixture<PlayerBootstrapV2>(
       "returning-player-bootstrap.json",
     );
     await offline.cacheBootstrap(bootstrap);
     await offline.enqueueResult(
       bootstrap.player_id,
-      fixture<ResultSubmissionV1>("result-submission.json"),
+      fixture<ResultSubmissionV2>("result-submission.json"),
     );
     await offline.cacheBootstrap({
       ...bootstrap,
@@ -520,7 +520,7 @@ describe("GameOfflineStore", () => {
       persistence,
       () => `event-session-${++eventId}`,
     );
-    const bootstrap = fixture<PlayerBootstrapV1>(
+    const bootstrap = fixture<PlayerBootstrapV2>(
       "returning-player-bootstrap.json",
     );
     const oldGeneration = await offline.reserveBootstrapGeneration(
@@ -528,8 +528,8 @@ describe("GameOfflineStore", () => {
     );
     await offline.cacheBootstrap(bootstrap, oldGeneration);
 
-    const oldResult = fixture<ResultSubmissionV1>("result-submission.json");
-    const oldActiveTime = fixture<ActiveTimeSubmissionV1>(
+    const oldResult = fixture<ResultSubmissionV2>("result-submission.json");
+    const oldActiveTime = fixture<ActiveTimeSubmissionV2>(
       "active-time-submission.json",
     );
     await offline.enqueueResult(
@@ -569,7 +569,7 @@ describe("GameOfflineStore", () => {
     await expect(
       offline.enqueueState(
         bootstrap.player_id,
-        fixture<StateSaveRequestV1>("state-save-request.json"),
+        fixture<StateSaveRequestV2>("state-save-request.json"),
         bootstrap.class_session_id,
       ),
     ).rejects.toBeInstanceOf(OfflineSessionMismatchError);
@@ -590,7 +590,7 @@ describe("GameOfflineStore", () => {
         uploadResult: async (event) => {
           uploaded.push(event.request_id);
           return {
-            type: "portal.result_ack.v1",
+            type: "portal.result_ack.v2",
             client_event_id: event.client_event_id,
           };
         },
@@ -635,15 +635,15 @@ describe("GameOfflineStore", () => {
       persistence,
       () => `event-generated-${++eventNumber}`,
     );
-    const bootstrap = fixture<PlayerBootstrapV1>(
+    const bootstrap = fixture<PlayerBootstrapV2>(
       "returning-player-bootstrap.json",
     );
-    const save = fixture<StateSaveRequestV1>("state-save-request.json");
-    const result = fixture<ResultSubmissionV1>("result-submission.json");
-    const activeTime = fixture<ActiveTimeSubmissionV1>(
+    const save = fixture<StateSaveRequestV2>("state-save-request.json");
+    const result = fixture<ResultSubmissionV2>("result-submission.json");
+    const activeTime = fixture<ActiveTimeSubmissionV2>(
       "active-time-submission.json",
     );
-    const conflict = fixture<StateSaveConflictV1>(
+    const conflict = fixture<StateSaveConflictV2>(
       "stale-revision-conflict.json",
     );
     await offline.cacheBootstrap(bootstrap);
@@ -658,11 +658,11 @@ describe("GameOfflineStore", () => {
         return conflict;
       },
       uploadResult: async (event) => ({
-        type: "portal.result_ack.v1",
+        type: "portal.result_ack.v2",
         client_event_id: event.client_event_id,
       }),
       uploadActiveTime: async (batch) => ({
-        type: "portal.active_time_ack.v1",
+        type: "portal.active_time_ack.v2",
         acknowledged_event_ids: batch.events.map(
           (event) => event.client_event_id,
         ),
@@ -670,10 +670,10 @@ describe("GameOfflineStore", () => {
     });
 
     expect(report.state).toBe("blocked");
-    expect(report.conflict?.revision).toBe(44);
+    expect(report.conflict?.revision).toBe(9);
     expect(report.uploadedResults).toBe(1);
-    expect(report.uploadedActiveTimeEvents).toBe(3);
-    expect(report.eventAcknowledgements).toHaveLength(4);
+    expect(report.uploadedActiveTimeEvents).toBe(2);
+    expect(report.eventAcknowledgements).toHaveLength(3);
     expect(stateAttempts).toBe(1);
     expect(await persistence.listStates(bootstrap.player_id)).toHaveLength(1);
     expect(
@@ -687,9 +687,9 @@ describe("GameOfflineStore", () => {
       saveState: async () => {
         stateAttempts += 1;
         return {
-          type: "portal.save_ok.v1",
+          type: "portal.save_ok.v2",
           request_id: save.request_id,
-          revision: 43,
+          revision: 8,
         };
       },
       uploadResult: async () => {
@@ -703,7 +703,7 @@ describe("GameOfflineStore", () => {
     expect(stateAttempts).toBe(1);
 
     await offline.discardConflictedStateBranch(bootstrap.player_id);
-    expect(await offline.getNextExpectedRevision(bootstrap.player_id)).toBe(44);
+    expect(await offline.getNextExpectedRevision(bootstrap.player_id)).toBe(9);
     expect((await offline.getBootstrap(bootstrap.player_id))?.state).toEqual(
       conflict.state,
     );
@@ -715,17 +715,17 @@ describe("GameOfflineStore", () => {
       persistence,
       () => "event-generated-1",
     );
-    const bootstrap = fixture<PlayerBootstrapV1>(
+    const bootstrap = fixture<PlayerBootstrapV2>(
       "returning-player-bootstrap.json",
     );
     await offline.cacheBootstrap(bootstrap);
     await offline.enqueueState(
       bootstrap.player_id,
-      fixture<StateSaveRequestV1>("state-save-request.json"),
+      fixture<StateSaveRequestV2>("state-save-request.json"),
     );
     await offline.enqueueResult(
       bootstrap.player_id,
-      fixture<ResultSubmissionV1>("result-submission.json"),
+      fixture<ResultSubmissionV2>("result-submission.json"),
     );
 
     const report = await offline.sync(bootstrap.player_id, {
@@ -733,7 +733,7 @@ describe("GameOfflineStore", () => {
         throw new Error("temporarily offline");
       },
       uploadResult: async (event) => ({
-        type: "portal.result_ack.v1",
+        type: "portal.result_ack.v2",
         client_event_id: event.client_event_id,
       }),
       uploadActiveTime: async () => {
@@ -751,20 +751,115 @@ describe("GameOfflineStore", () => {
 });
 
 describe("offline persistence lifecycle (IndexedDB)", () => {
+  it("opens an isolated V2 database without replaying or deleting V1 queues", async () => {
+    const factory = new IDBFactory();
+    const legacy = await new Promise<IDBDatabase>((resolve, reject) => {
+      const open = factory.open("missoes-caramelito-game-v1", 1);
+      open.onupgradeneeded = () => open.result.createObjectStore("stateQueue");
+      open.onsuccess = () => resolve(open.result);
+      open.onerror = () => reject(open.error);
+    });
+    const write = legacy.transaction("stateQueue", "readwrite");
+    write.objectStore("stateQueue").put({ type: "game.save.v1" }, "old-save");
+    await new Promise<void>((resolve) => {
+      write.oncomplete = () => resolve();
+    });
+    const store = await openGameOfflineStore({ indexedDB: factory });
+    const database = await openDatabase(factory);
+    try {
+      expect(database.name).toBe("missoes-caramelito-game-v2");
+      expect(await store.getBootstrap("fixture-player")).toBeNull();
+      expect(await store.getSyncStatus("fixture-player")).toMatchObject({
+        queuedStates: 0,
+        queuedResults: 0,
+        queuedActiveTime: 0,
+      });
+      const old = legacy
+        .transaction("stateQueue")
+        .objectStore("stateQueue")
+        .get("old-save");
+      expect(
+        await new Promise((resolve) => {
+          old.onsuccess = () => resolve(old.result);
+        }),
+      ).toEqual({ type: "game.save.v1" });
+    } finally {
+      store.close();
+      database.close();
+      legacy.close();
+    }
+  });
+
+  it("preserves the frozen policy and content versions after durable saves and conflicts", async () => {
+    const factory = new IDBFactory();
+    const store = await openGameOfflineStore({ indexedDB: factory });
+    const bootstrap = fixture<PlayerBootstrapV2>(
+      "returning-player-bootstrap.json",
+    );
+    const request = fixture<StateSaveRequestV2>("state-save-request.json");
+    const persistence = new IndexedDbGameOfflinePersistence(
+      await openDatabase(factory),
+    );
+    try {
+      await store.cacheBootstrap(bootstrap);
+      const durable = await store.enqueueState(bootstrap.player_id, request);
+      expect(durable).toEqual({
+        type: "portal.local_durable.v2",
+        record_type: "state",
+        request_id: request.request_id,
+      });
+      await expect(
+        store.enqueueState(bootstrap.player_id, {
+          ...request,
+          content_version: "different-content",
+        }),
+      ).rejects.toBeInstanceOf(OfflineRequestReuseError);
+      const queued = (await persistence.listStates(bootstrap.player_id))[0]!;
+      await persistence.acknowledgeState(bootstrap.player_id, queued, {
+        type: "portal.save_ok.v2",
+        request_id: request.request_id,
+        revision: 8,
+      });
+      expect(await store.getBootstrap(bootstrap.player_id)).toMatchObject({
+        content_policy: bootstrap.content_policy,
+        stored_content_version: request.content_version,
+        revision: 8,
+      });
+      await store.enqueueState(bootstrap.player_id, {
+        ...request,
+        request_id: "conflict-save",
+        expected_revision: 8,
+      });
+      await persistence.blockState(bootstrap.player_id, {
+        ...fixture<StateSaveConflictV2>("stale-revision-conflict.json"),
+        request_id: "conflict-save",
+        stored_content_version: "authoritative-version",
+      });
+      expect(await store.getBootstrap(bootstrap.player_id)).toMatchObject({
+        content_policy: bootstrap.content_policy,
+        stored_content_version: "authoritative-version",
+        revision: 9,
+      });
+    } finally {
+      store.close();
+      persistence.close();
+    }
+  });
+
   it("fences a stale game instance instead of upgrading its revision", async () => {
     const factory = new IDBFactory();
     const first = await openGameOfflineStore({ indexedDB: factory });
     const second = await openGameOfflineStore({ indexedDB: factory });
-    const bootstrap = fixture<PlayerBootstrapV1>(
+    const bootstrap = fixture<PlayerBootstrapV2>(
       "returning-player-bootstrap.json",
     );
-    const request = fixture<StateSaveRequestV1>("state-save-request.json");
+    const request = fixture<StateSaveRequestV2>("state-save-request.json");
     try {
       await first.cacheBootstrap(bootstrap);
       await second.cacheBootstrap({
         ...bootstrap,
         request_id: "tab-b-bootstrap",
-        revision: 43,
+        revision: 8,
       });
       await expect(
         first.enqueueState(bootstrap.player_id, {
@@ -774,7 +869,7 @@ describe("offline persistence lifecycle (IndexedDB)", () => {
       ).rejects.toBeInstanceOf(OfflineBranchChangedError);
       await second.enqueueState(bootstrap.player_id, {
         ...request,
-        expected_revision: 43,
+        expected_revision: 8,
         request_id: "tab-b",
       });
       const revisions: number[] = [];
@@ -782,7 +877,7 @@ describe("offline persistence lifecycle (IndexedDB)", () => {
         saveState: async (queued) => {
           revisions.push(queued.expected_revision);
           return {
-            type: "portal.save_ok.v1",
+            type: "portal.save_ok.v2",
             request_id: queued.request_id,
             revision: queued.expected_revision + 1,
           };
@@ -794,7 +889,7 @@ describe("offline persistence lifecycle (IndexedDB)", () => {
           throw new Error("unused");
         },
       });
-      expect(revisions).toEqual([43]);
+      expect(revisions).toEqual([8]);
     } finally {
       first.close();
       second.close();
@@ -804,10 +899,10 @@ describe("offline persistence lifecycle (IndexedDB)", () => {
   it("preserves discarded state in a local backup and does not overwrite it on a repeated acknowledgement", async () => {
     const factory = new IDBFactory();
     const store = await openGameOfflineStore({ indexedDB: factory });
-    const bootstrap = fixture<PlayerBootstrapV1>(
+    const bootstrap = fixture<PlayerBootstrapV2>(
       "returning-player-bootstrap.json",
     );
-    const request = fixture<StateSaveRequestV1>("state-save-request.json");
+    const request = fixture<StateSaveRequestV2>("state-save-request.json");
     await store.cacheBootstrap(bootstrap);
     await store.enqueueState(bootstrap.player_id, request);
     await store.discardConflictedStateBranch(bootstrap.player_id);
@@ -838,12 +933,12 @@ describe("offline persistence lifecycle (IndexedDB)", () => {
 
   it("migrates V3 saves without losing their original session association", async () => {
     const factory = new IDBFactory();
-    const bootstrap = fixture<PlayerBootstrapV1>(
+    const bootstrap = fixture<PlayerBootstrapV2>(
       "returning-player-bootstrap.json",
     );
-    const request = fixture<StateSaveRequestV1>("state-save-request.json");
+    const request = fixture<StateSaveRequestV2>("state-save-request.json");
     const legacy = await new Promise<IDBDatabase>((resolve, reject) => {
-      const open = factory.open("missoes-caramelito-game-v1", 3);
+      const open = factory.open("missoes-caramelito-game-v2", 3);
       open.onupgradeneeded = () => {
         open.result.createObjectStore("bootstraps", { keyPath: "playerId" });
         const states = open.result.createObjectStore("stateQueue", {
@@ -889,10 +984,10 @@ describe("offline persistence lifecycle (IndexedDB)", () => {
     }
   });
   it("persists a queued state save across close and reopen through the production store", async () => {
-    const bootstrap = fixture<PlayerBootstrapV1>(
+    const bootstrap = fixture<PlayerBootstrapV2>(
       "returning-player-bootstrap.json",
     );
-    const request = fixture<StateSaveRequestV1>("state-save-request.json");
+    const request = fixture<StateSaveRequestV2>("state-save-request.json");
     const factory = new IDBFactory();
 
     const store = await openGameOfflineStore({ indexedDB: factory });
@@ -902,7 +997,7 @@ describe("offline persistence lifecycle (IndexedDB)", () => {
       request,
     );
     expect(acknowledgement).toEqual({
-      type: "portal.local_durable.v1",
+      type: "portal.local_durable.v2",
       record_type: "state",
       request_id: request.request_id,
     });

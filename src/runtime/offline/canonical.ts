@@ -1,18 +1,18 @@
 import {
-  stateSaveConflictV1Schema,
-  type StateSaveConflictV1,
-} from "@/contracts/v1";
+  stateSaveConflictV2Schema,
+  type StateSaveConflictV2,
+} from "@/contracts/v2";
 
 import type { EventRequestIdentity } from "./types";
 
 export function parseStateConflictResponse(
   error: unknown,
-): StateSaveConflictV1 | null {
+): StateSaveConflictV2 | null {
   const candidate =
     error && typeof error === "object" && "response" in error
       ? (error as { response?: unknown }).response
       : error;
-  const parsed = stateSaveConflictV1Schema.safeParse(candidate);
+  const parsed = stateSaveConflictV2Schema.safeParse(candidate);
   return parsed.success ? parsed.data : null;
 }
 

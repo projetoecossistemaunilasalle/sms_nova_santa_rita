@@ -26,8 +26,8 @@ export function withHttpContext(handler: RouteHandler) {
 
     try {
       if (
-        request.nextUrl.pathname.startsWith("/api/v1/player/") &&
-        request.nextUrl.pathname !== "/api/v1/player/refresh"
+        request.nextUrl.pathname.startsWith("/api/v2/player/") &&
+        request.nextUrl.pathname !== "/api/v2/player/refresh"
       )
         await enforcePlayerRateLimit(request);
       const response = await handler(request, { correlationId });

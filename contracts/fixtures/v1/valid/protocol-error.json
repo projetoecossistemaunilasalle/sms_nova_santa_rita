@@ -1,1 +1,0 @@
-{ "type": "protocol.error.v1", "code": "VALIDATION_FAILED", "message": "Payload does not match the V1 contract.", "request_id": "request-save-001", "path": "state.missions" }

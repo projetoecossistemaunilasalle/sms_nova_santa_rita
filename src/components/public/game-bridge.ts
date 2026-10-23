@@ -1,45 +1,45 @@
 import {
-  safeParseActiveTimeSubmissionV1,
-  safeParseBootstrapAppliedV1,
-  safeParseGameReadyV1,
-  safeParseProtocolErrorV1,
-  safeParseResultSubmissionV1,
-  safeParseStateSaveRequestV1,
-  type ActiveTimeSubmissionV1,
-  type BootstrapAppliedV1,
-  type GameReadyV1,
-  type ProtocolErrorV1,
-  type ResultSubmissionV1,
-  type StateSaveRequestV1,
-} from "@/contracts/v1";
+  safeParseActiveTimeSubmissionV2,
+  safeParseBootstrapAppliedV2,
+  safeParseGameReadyV2,
+  safeParseProtocolErrorV2,
+  safeParseResultSubmissionV2,
+  safeParseStateSaveRequestV2,
+  type ActiveTimeSubmissionV2,
+  type BootstrapAppliedV2,
+  type GameReadyV2,
+  type ProtocolErrorV2,
+  type ResultSubmissionV2,
+  type StateSaveRequestV2,
+} from "@/contracts/v2";
 
 export type GameBridgeMessage =
-  | GameReadyV1
-  | BootstrapAppliedV1
-  | StateSaveRequestV1
-  | ResultSubmissionV1
-  | ActiveTimeSubmissionV1
-  | ProtocolErrorV1;
+  | GameReadyV2
+  | BootstrapAppliedV2
+  | StateSaveRequestV2
+  | ResultSubmissionV2
+  | ActiveTimeSubmissionV2
+  | ProtocolErrorV2;
 
 export function parseGameBridgeMessage(
   value: unknown,
 ): GameBridgeMessage | null {
-  const ready = safeParseGameReadyV1(value);
+  const ready = safeParseGameReadyV2(value);
   if (ready.success) return ready.data;
 
-  const bootstrapApplied = safeParseBootstrapAppliedV1(value);
+  const bootstrapApplied = safeParseBootstrapAppliedV2(value);
   if (bootstrapApplied.success) return bootstrapApplied.data;
 
-  const stateSave = safeParseStateSaveRequestV1(value);
+  const stateSave = safeParseStateSaveRequestV2(value);
   if (stateSave.success) return stateSave.data;
 
-  const result = safeParseResultSubmissionV1(value);
+  const result = safeParseResultSubmissionV2(value);
   if (result.success) return result.data;
 
-  const activeTime = safeParseActiveTimeSubmissionV1(value);
+  const activeTime = safeParseActiveTimeSubmissionV2(value);
   if (activeTime.success) return activeTime.data;
 
-  const protocolError = safeParseProtocolErrorV1(value);
+  const protocolError = safeParseProtocolErrorV2(value);
   if (protocolError.success) return protocolError.data;
 
   return null;

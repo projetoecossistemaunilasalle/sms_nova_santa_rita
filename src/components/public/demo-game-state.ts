@@ -1,12 +1,12 @@
 import {
-  gameStateV1Schema,
-  type GameStateV1,
-  type StateSaveRequestV1,
-} from "@/contracts/v1";
+  gameStateV2Schema,
+  type GameStateV2,
+  type StateSaveRequestV2,
+} from "@/contracts/v2";
 
 export type DemoGameSnapshot = {
   revision: number;
-  state: GameStateV1;
+  state: GameStateV2;
 };
 
 export type DemoSnapshotRead =
@@ -31,7 +31,7 @@ export function readDemoGameSnapshot(raw: string | null): DemoSnapshotRead {
       return { status: "invalid" };
     }
 
-    const state = gameStateV1Schema.safeParse(value.state);
+    const state = gameStateV2Schema.safeParse(value.state);
     if (!state.success) return { status: "invalid" };
 
     return {
@@ -43,74 +43,18 @@ export function readDemoGameSnapshot(raw: string | null): DemoSnapshotRead {
   }
 }
 
-export function initialDemoGameState(): GameStateV1 {
-  const missions = {
-    when_play_stops_being_play: "available",
-    lia_memory: "available",
-    pingpong_soccer: "available",
-    respect_also_cares: "available",
-  } as const;
-
-  return {
-    schema_version: 1,
-    content_version: "heroes_trial_school_v1",
-    missions: {
-      when_play_stops_being_play: {
-        status: missions.when_play_stops_being_play,
-        stage_id: "demo_entry",
-        checkpoints: {},
-        data: { demo_steps: 0 },
-      },
-      lia_memory: {
-        status: missions.lia_memory,
-        stage_id: "demo_entry",
-        checkpoints: {},
-        data: {},
-      },
-      pingpong_soccer: {
-        status: missions.pingpong_soccer,
-        stage_id: "demo_entry",
-        checkpoints: {},
-        data: {},
-      },
-      respect_also_cares: {
-        status: missions.respect_also_cares,
-        stage_id: "demo_entry",
-        checkpoints: {},
-        data: {},
-      },
-    },
-    progression: {
-      coins: 0,
-      stars: 0,
-      challenges: {},
-      rewards: {},
-    },
-  };
+export function initialDemoGameState(): GameStateV2 {
+  return { schema_version: 3, demo_steps: 0 };
 }
 
-export function advanceDemoGameState(state: GameStateV1): GameStateV1 {
-  const current = state.missions.when_play_stops_being_play.data.demo_steps;
-  const steps = typeof current === "number" ? current : 0;
-
-  return gameStateV1Schema.parse({
-    ...state,
-    missions: {
-      ...state.missions,
-      when_play_stops_being_play: {
-        ...state.missions.when_play_stops_being_play,
-        data: {
-          ...state.missions.when_play_stops_being_play.data,
-          demo_steps: steps + 1,
-        },
-      },
-    },
-  });
+export function advanceDemoGameState(state: GameStateV2): GameStateV2 {
+  const steps = typeof state.demo_steps === "number" ? state.demo_steps : 0;
+  return gameStateV2Schema.parse({ ...state, demo_steps: steps + 1 });
 }
 
 export function saveDemoGameState(
   current: DemoGameSnapshot | null,
-  request: StateSaveRequestV1,
+  request: StateSaveRequestV2,
 ):
   | { status: "saved"; snapshot: DemoGameSnapshot }
   | { status: "conflict"; snapshot: DemoGameSnapshot } {
@@ -126,7 +70,7 @@ export function saveDemoGameState(
 
   const snapshot = {
     revision: currentRevision + 1,
-    state: gameStateV1Schema.parse(request.state),
+    state: gameStateV2Schema.parse(request.state),
   };
 
   return { status: "saved", snapshot };

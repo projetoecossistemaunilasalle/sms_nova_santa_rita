@@ -4,19 +4,19 @@ import { useEffect, useRef, useState } from "react";
 
 import {
   PROTOCOL_VERSION,
-  STATE_SCHEMA_VERSION,
-  hostVisibilityV1Schema,
-  protocolErrorV1Schema,
-  activeTimeAcknowledgementV1Schema,
-  resultAcknowledgementV1Schema,
-  safeParsePlayerBootstrapV1,
-  stateSaveConflictV1Schema,
-  stateSaveSuccessV1Schema,
-  type PlayerBootstrapV1,
-  type ProtocolErrorV1,
-  type StateSaveConflictV1,
-  type StateSaveRequestV1,
-} from "@/contracts/v1";
+  SUPPORTED_STATE_SCHEMA_VERSIONS,
+  hostVisibilityV2Schema,
+  protocolErrorV2Schema,
+  activeTimeAcknowledgementV2Schema,
+  resultAcknowledgementV2Schema,
+  safeParsePlayerBootstrapV2,
+  stateSaveConflictV2Schema,
+  stateSaveSuccessV2Schema,
+  type PlayerBootstrapV2,
+  type ProtocolErrorV2,
+  type StateSaveConflictV2,
+  type StateSaveRequestV2,
+} from "@/contracts/v2";
 import type { PlayerEntryActionResult } from "@/application/player-access/types";
 import type { RuntimeMode } from "@/runtime/mode";
 import {
@@ -38,6 +38,8 @@ import {
 import { readDemoGameSnapshot, saveDemoGameState } from "./demo-game-state";
 import {
   applyProgressToBootstrap,
+  contentErrorRecovery,
+  DEMO_CONTENT_VERSION,
   demoStorageKey,
   newBootstrap,
   type HostAlert,
@@ -72,11 +74,14 @@ export function GameHost({
   > | null>(null);
   const retryScheduler = useRef<GameSyncRetryScheduler | null>(null);
   const bootstrapStarted = useRef(false);
-  const bootstrapRef = useRef<PlayerBootstrapV1 | null>(null);
+  const bootstrapRef = useRef<PlayerBootstrapV2 | null>(null);
   const inFlightSaves = useRef(new Set<string>());
   const savedReplies = useRef(new Map<string, unknown>());
   const handledConflicts = useRef(new Set<string>());
   const pendingConflict = useRef<string | null>(null);
+  const upgradeRetried = useRef(false);
+  const [frameGeneration, setFrameGeneration] = useState(0);
+  const [contentFailure, setContentFailure] = useState<string | null>(null);
   const branchReady = useRef(false);
   const offlineStorePromise = useRef<Promise<GameOfflineStore> | null>(null);
   const syncPromise = useRef<Promise<void> | null>(null);
@@ -85,7 +90,7 @@ export function GameHost({
   const receiveRef = useRef<(message: unknown) => void>(() => {});
   const [phase, setPhase] = useState<HostPhase>("connecting");
   const [alert, setAlert] = useState<HostAlert>(null);
-  const [bootstrap, setBootstrap] = useState<PlayerBootstrapV1 | null>(null);
+  const [bootstrap, setBootstrap] = useState<PlayerBootstrapV2 | null>(null);
   const [lastHostMessage, setLastHostMessage] = useState<unknown>(null);
   const [syncState, setSyncState] = useState<HostSyncState>("pending");
   const [queuedCount, setQueuedCount] = useState(0);
@@ -96,12 +101,12 @@ export function GameHost({
   const gameOrigin = gameClientUrl ? expectedGameOrigin(gameClientUrl) : null;
 
   function showProtocolError(
-    code: ProtocolErrorV1["code"],
+    code: ProtocolErrorV2["code"],
     message: string,
     requestId?: string,
   ) {
-    const error = protocolErrorV1Schema.parse({
-      type: "protocol.error.v1",
+    const error = protocolErrorV2Schema.parse({
+      type: "protocol.error.v2",
       code,
       message,
       ...(requestId ? { request_id: requestId } : {}),
@@ -133,7 +138,7 @@ export function GameHost({
     return offlineStorePromise.current;
   }
 
-  function installBootstrap(value: PlayerBootstrapV1) {
+  function installBootstrap(value: PlayerBootstrapV2) {
     branchReady.current = false;
     bootstrapRef.current = value;
     setBootstrap(value);
@@ -142,12 +147,12 @@ export function GameHost({
     postToGame(value);
   }
 
-  function updateCurrentBootstrap(value: PlayerBootstrapV1) {
+  function updateCurrentBootstrap(value: PlayerBootstrapV2) {
     bootstrapRef.current = value;
     setBootstrap(value);
   }
 
-  function deliverConflict(conflict: StateSaveConflictV1) {
+  function deliverConflict(conflict: StateSaveConflictV2) {
     branchReady.current = false;
     if (handledConflicts.current.has(conflict.request_id)) return;
     handledConflicts.current.add(conflict.request_id);
@@ -156,7 +161,12 @@ export function GameHost({
     const current = bootstrapRef.current;
     if (current && conflict.state) {
       updateCurrentBootstrap(
-        applyProgressToBootstrap(current, conflict.revision, conflict.state),
+        applyProgressToBootstrap(
+          current,
+          conflict.revision,
+          conflict.state,
+          conflict.stored_content_version,
+        ),
       );
     }
     replyToRequest(conflict.request_id, conflict);
@@ -227,8 +237,8 @@ export function GameHost({
         for (const acknowledgement of report.eventAcknowledgements) {
           if (acknowledgement.record_type === "result") {
             postToGame(
-              resultAcknowledgementV1Schema.parse({
-                type: "portal.result_ack.v1",
+              resultAcknowledgementV2Schema.parse({
+                type: "portal.result_ack.v2",
                 client_event_id: acknowledgement.client_event_id,
               }),
             );
@@ -239,8 +249,8 @@ export function GameHost({
           .map(({ client_event_id }) => client_event_id);
         for (let offset = 0; offset < activeTimeIds.length; offset += 100) {
           postToGame(
-            activeTimeAcknowledgementV1Schema.parse({
-              type: "portal.active_time_ack.v1",
+            activeTimeAcknowledgementV2Schema.parse({
+              type: "portal.active_time_ack.v2",
               acknowledged_event_ids: activeTimeIds.slice(offset, offset + 100),
             }),
           );
@@ -304,17 +314,17 @@ export function GameHost({
   async function queueResultOrActiveTime(
     message: Extract<
       ReturnType<typeof parseGameBridgeMessage>,
-      { type: "game.result.v1" | "game.active_time.v1" }
+      { type: "game.result.v2" | "game.active_time.v2" }
     >,
   ) {
     try {
       const store = await getOfflineStore();
       const requestIds =
-        message.type === "game.result.v1"
+        message.type === "game.result.v2"
           ? [message.request_id]
           : message.events.map(({ request_id }) => request_id);
       const acknowledgement =
-        message.type === "game.result.v1"
+        message.type === "game.result.v2"
           ? await store.enqueueResult(
               entry.playerSlotId,
               message,
@@ -387,13 +397,13 @@ export function GameHost({
     }
     const requestId = createBridgeRequestId();
     const payload = await getTransport().post(
-      "/api/v1/player/bootstrap",
+      "/api/v2/player/bootstrap",
       {
         request_id: requestId,
       },
       entry.gameSessionId,
     );
-    const result = safeParsePlayerBootstrapV1(payload);
+    const result = safeParsePlayerBootstrapV2(payload);
 
     if (!result.success) {
       throw new Error("Não foi possível carregar o progresso do jogador.");
@@ -444,7 +454,7 @@ export function GameHost({
     }
   }
 
-  async function saveDemoState(request: StateSaveRequestV1) {
+  async function saveDemoState(request: StateSaveRequestV2) {
     try {
       const key = demoStorageKey(entry.playerSlotId);
       const current = readDemoGameSnapshot(window.localStorage.getItem(key));
@@ -458,8 +468,8 @@ export function GameHost({
       );
       if (result.status === "saved") {
         window.localStorage.setItem(key, JSON.stringify(result.snapshot));
-        const reply = stateSaveSuccessV1Schema.parse({
-          type: "portal.save_ok.v1",
+        const reply = stateSaveSuccessV2Schema.parse({
+          type: "portal.save_ok.v2",
           request_id: request.request_id,
           revision: result.snapshot.revision,
         });
@@ -470,6 +480,7 @@ export function GameHost({
               currentBootstrap,
               result.snapshot.revision,
               result.snapshot.state,
+              DEMO_CONTENT_VERSION,
             ),
           );
         }
@@ -478,11 +489,12 @@ export function GameHost({
         return;
       }
 
-      const reply = stateSaveConflictV1Schema.parse({
-        type: "portal.save_conflict.v1",
+      const reply = stateSaveConflictV2Schema.parse({
+        type: "portal.save_conflict.v2",
         request_id: request.request_id,
         revision: result.snapshot.revision,
         state: result.snapshot.state,
+        stored_content_version: DEMO_CONTENT_VERSION,
       });
       updateCurrentBootstrap(
         applyProgressToBootstrap(
@@ -493,6 +505,7 @@ export function GameHost({
             }),
           result.snapshot.revision,
           result.snapshot.state,
+          DEMO_CONTENT_VERSION,
         ),
       );
       replyToRequest(request.request_id, reply);
@@ -512,7 +525,7 @@ export function GameHost({
     }
   }
 
-  async function saveServerState(request: StateSaveRequestV1) {
+  async function saveServerState(request: StateSaveRequestV2) {
     try {
       const store = await getOfflineStore();
       const durable = await store.enqueueState(
@@ -564,12 +577,12 @@ export function GameHost({
       });
       showProtocolError(
         "VALIDATION_FAILED",
-        "The host rejected a message that does not match protocol V1.",
+        "The host rejected a message that does not match protocol V2.",
       );
       return;
     }
 
-    if (message.type === "game.ready.v1") {
+    if (message.type === "game.ready.v2") {
       if (!message.supported_protocol_versions.includes(PROTOCOL_VERSION)) {
         bootstrapStarted.current = false;
         setPhase("error");
@@ -580,12 +593,14 @@ export function GameHost({
         });
         showProtocolError(
           "PROTOCOL_VERSION_UNSUPPORTED",
-          "The portal requires protocol version 1.",
+          "The portal requires protocol version 2.",
         );
         return;
       }
       if (
-        !message.supported_state_schema_versions.includes(STATE_SCHEMA_VERSION)
+        !SUPPORTED_STATE_SCHEMA_VERSIONS.some((version) =>
+          message.supported_state_schema_versions.includes(version),
+        )
       ) {
         bootstrapStarted.current = false;
         setPhase("error");
@@ -596,44 +611,35 @@ export function GameHost({
         });
         showProtocolError(
           "STATE_SCHEMA_VERSION_UNSUPPORTED",
-          `The portal requires state schema version ${STATE_SCHEMA_VERSION}.`,
+          `The portal requires state schema version ${SUPPORTED_STATE_SCHEMA_VERSIONS.join(", ")}.`,
         );
         return;
       }
-      void beginBootstrap();
+      if (pendingConflict.current && runtimeMode === "server") {
+        void recoverState();
+      } else {
+        void beginBootstrap();
+      }
       return;
     }
 
-    if (message.type === "game.bootstrap_applied.v1") {
-      if (pendingConflict.current === message.request_id) {
-        pendingConflict.current = null;
-        void getOfflineStore()
-          .then(async (store) => {
-            await store.discardConflictedStateBranch(
-              entry.playerSlotId,
-              message.request_id,
-            );
-            bootstrapStarted.current = false;
-            await beginBootstrap();
-          })
-          .catch(() => {
-            pendingConflict.current = message.request_id;
-            setAlert({
-              tone: "error",
-              message:
-                "O progresso do servidor foi aplicado, mas a fila local ainda precisa ser recuperada.",
-            });
-          });
-        return;
-      }
+    if (message.type === "game.bootstrap_applied.v2") {
       if (message.request_id !== bootstrapRef.current?.request_id) return;
       branchReady.current = true;
+      postToGame(
+        hostVisibilityV2Schema.parse({
+          type: "portal.visibility.v2",
+          visible: document.visibilityState === "visible",
+          focused: document.hasFocus(),
+          online: navigator.onLine,
+        }),
+      );
       setPhase("playing");
       setAlert(null);
       return;
     }
 
-    if (message.type === "game.save.v1") {
+    if (message.type === "game.save.v2") {
       if (!branchReady.current) return;
       const saved = savedReplies.current.get(message.request_id);
       if (saved) {
@@ -657,9 +663,10 @@ export function GameHost({
     }
 
     if (
-      message.type === "game.result.v1" ||
-      message.type === "game.active_time.v1"
+      message.type === "game.result.v2" ||
+      message.type === "game.active_time.v2"
     ) {
+      if (!branchReady.current) return;
       if (runtimeMode === "demo") {
         setAlert({
           tone: "warning",
@@ -672,7 +679,27 @@ export function GameHost({
       return;
     }
 
-    if (message.type === "protocol.error.v1") {
+    if (message.type === "protocol.error.v2") {
+      branchReady.current = false;
+      const recovery = contentErrorRecovery(
+        message.code,
+        upgradeRetried.current,
+      );
+      if (recovery) {
+        setAlert({
+          tone: recovery.reload ? "warning" : "error",
+          message: recovery.message,
+        });
+        if (recovery.reload) {
+          upgradeRetried.current = true;
+          setPhase("updating");
+          setFrameGeneration((generation) => generation + 1);
+        } else {
+          setPhase("error");
+          setContentFailure(recovery.message);
+        }
+        return;
+      }
       setPhase("error");
       setAlert({
         tone: "error",
@@ -705,8 +732,8 @@ export function GameHost({
     function sendVisibility() {
       const target = frameRef.current?.contentWindow;
       if (!target) return;
-      const visibility = hostVisibilityV1Schema.parse({
-        type: "portal.visibility.v1",
+      const visibility = hostVisibilityV2Schema.parse({
+        type: "portal.visibility.v2",
         visible: document.visibilityState === "visible",
         focused: document.hasFocus(),
         online: navigator.onLine,
@@ -769,12 +796,10 @@ export function GameHost({
     branchReady.current = false;
     try {
       await syncPromise.current;
-      if (recoveryRequest) {
+      const requestId = pendingConflict.current ?? recoveryRequest;
+      if (requestId) {
         const store = await getOfflineStore();
-        await store.discardConflictedStateBranch(
-          entry.playerSlotId,
-          recoveryRequest,
-        );
+        await store.discardConflictedStateBranch(entry.playerSlotId, requestId);
       }
       setRecoveryRequest(null);
       setReloadRequired(false);
@@ -816,6 +841,8 @@ export function GameHost({
         </button>
       )}
       <GameHostFrame
+        frameGeneration={frameGeneration}
+        contentFailure={contentFailure}
         bootstrap={bootstrap}
         frameRef={frameRef}
         gameClientUrl={gameClientUrl}

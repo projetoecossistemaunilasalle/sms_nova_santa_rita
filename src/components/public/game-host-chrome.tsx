@@ -1,6 +1,6 @@
 "use client";
 
-import type { PlayerBootstrapV1 } from "@/contracts/v1";
+import type { PlayerBootstrapV2 } from "@/contracts/v2";
 import type { RuntimeMode } from "@/runtime/mode";
 import { DemoGameAdapter } from "./demo-game-adapter";
 import type { HostAlert, HostPhase, HostSyncState } from "./game-host-model";
@@ -9,6 +9,7 @@ import styles from "./public.module.css";
 
 const phaseCopy: Record<HostPhase, string> = {
   connecting: "Preparando o jogo",
+  updating: "Atualizando o jogo",
   waiting: "Aguardando o jogo",
   bootstrapping: "Carregando o progresso",
   applying: "Preparando sua jornada",
@@ -60,6 +61,8 @@ export function GameHostAlert({ alert }: { alert: NonNullable<HostAlert> }) {
 }
 
 export function GameHostFrame({
+  frameGeneration,
+  contentFailure,
   bootstrap,
   frameRef,
   gameClientUrl,
@@ -70,7 +73,9 @@ export function GameHostFrame({
   onMessage,
   runtimeMode,
 }: {
-  bootstrap: PlayerBootstrapV1 | null;
+  frameGeneration: number;
+  contentFailure: string | null;
+  bootstrap: PlayerBootstrapV2 | null;
   frameRef: { current: HTMLIFrameElement | null };
   gameClientUrl: string | null;
   gameOrigin: string | null;
@@ -82,7 +87,12 @@ export function GameHostFrame({
 }) {
   return (
     <div className={styles.gameHostFrame}>
-      {runtimeMode === "demo" ? (
+      {contentFailure ? (
+        <div className={styles.gameHostUnavailable} role="alert">
+          <h2>Chame o professor</h2>
+          <p>{contentFailure}</p>
+        </div>
+      ) : runtimeMode === "demo" ? (
         <DemoGameAdapter
           bootstrap={bootstrap}
           isSaving={isSaving}
@@ -91,7 +101,7 @@ export function GameHostFrame({
         />
       ) : gameClientUrl && gameOrigin ? (
         <iframe
-          key={gameClientUrl}
+          key={`${gameClientUrl}:${frameGeneration}`}
           allow="autoplay; fullscreen; gamepad"
           allowFullScreen
           className={styles.gameHostIframe}
@@ -123,7 +133,7 @@ export function GameHostFooter({
   runtimeMode,
   syncState,
 }: {
-  bootstrap: PlayerBootstrapV1 | null;
+  bootstrap: PlayerBootstrapV2 | null;
   queuedCount: number;
   runtimeMode: RuntimeMode;
   syncState: HostSyncState;

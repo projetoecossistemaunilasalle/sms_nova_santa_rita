@@ -1,11 +1,11 @@
 import {
-  parseStateSaveRequestV1,
-  type PlayerBootstrapV1,
-  type ResultEventV1,
-  type StateSaveConflictV1,
-  type StateSaveRequestV1,
-  type StateSaveSuccessV1,
-} from "@/contracts/v1";
+  parseStateSaveRequestV2,
+  type PlayerBootstrapV2,
+  type ResultEventV2,
+  type StateSaveConflictV2,
+  type StateSaveRequestV2,
+  type StateSaveSuccessV2,
+} from "@/contracts/v2";
 
 import { sameJson, stableJson } from "./canonical";
 import {
@@ -28,7 +28,7 @@ import type {
   StateRejection,
 } from "./types";
 
-const DATABASE_NAME = "missoes-caramelito-game-v1";
+const DATABASE_NAME = "missoes-caramelito-game-v2";
 const DATABASE_VERSION = 5;
 const BOOTSTRAP_STORE = "bootstraps";
 const STATE_QUEUE_STORE = "stateQueue";
@@ -40,12 +40,12 @@ const ARCHIVE_STORE = "stateBranchArchives";
 
 type StoredBootstrap = {
   playerId: string;
-  bootstrap?: PlayerBootstrapV1;
+  bootstrap?: PlayerBootstrapV2;
   generation?: number;
 };
 type StoredControl = {
   playerId: string;
-  conflict: StateSaveConflictV1 | null;
+  conflict: StateSaveConflictV2 | null;
   rejection?: StateRejection;
 };
 type StoredEventRequest = {
@@ -162,7 +162,7 @@ export class IndexedDbGameOfflinePersistence implements GameOfflinePersistence {
     this.db.close();
   }
 
-  async getBootstrap(playerId: string): Promise<PlayerBootstrapV1 | null> {
+  async getBootstrap(playerId: string): Promise<PlayerBootstrapV2 | null> {
     const stored = await this.read<StoredBootstrap | undefined>(
       BOOTSTRAP_STORE,
       (store, succeed, fail) => {
@@ -198,10 +198,10 @@ export class IndexedDbGameOfflinePersistence implements GameOfflinePersistence {
   }
 
   cacheBootstrap(
-    bootstrap: PlayerBootstrapV1,
+    bootstrap: PlayerBootstrapV2,
     generation: number,
-  ): Promise<PlayerBootstrapV1 | null> {
-    return this.write<PlayerBootstrapV1 | null>(
+  ): Promise<PlayerBootstrapV2 | null> {
+    return this.write<PlayerBootstrapV2 | null>(
       [BOOTSTRAP_STORE],
       (transaction, succeed, fail) => {
         const store = transaction.objectStore(BOOTSTRAP_STORE);
@@ -251,7 +251,7 @@ export class IndexedDbGameOfflinePersistence implements GameOfflinePersistence {
 
   async enqueueState(
     playerId: string,
-    request: StateSaveRequestV1,
+    request: StateSaveRequestV2,
     classSessionId?: string,
     branch?: StateBranch,
   ): Promise<QueuedStateSave> {
@@ -292,7 +292,10 @@ export class IndexedDbGameOfflinePersistence implements GameOfflinePersistence {
             (item) => item.request.request_id === request.request_id,
           );
           if (existing) {
-            if (!sameJson(existing.request.state, request.state))
+            if (
+              existing.request.content_version !== request.content_version ||
+              !sameJson(existing.request.state, request.state)
+            )
               return fail(new OfflineRequestReuseError());
             succeed(existing);
             return;
@@ -314,7 +317,7 @@ export class IndexedDbGameOfflinePersistence implements GameOfflinePersistence {
               request.expected_revision > nextRevision)
           )
             return fail(new OfflineBranchChangedError());
-          const normalized = parseStateSaveRequestV1({
+          const normalized = parseStateSaveRequestV2({
             ...request,
             // Only an instance that loaded this branch may allocate its next revision.
             expected_revision: branch
@@ -376,7 +379,7 @@ export class IndexedDbGameOfflinePersistence implements GameOfflinePersistence {
   async acknowledgeState(
     playerId: string,
     queued: QueuedStateSave,
-    success: StateSaveSuccessV1,
+    success: StateSaveSuccessV2,
   ): Promise<void> {
     await this.write(
       [BOOTSTRAP_STORE, STATE_QUEUE_STORE],
@@ -393,12 +396,14 @@ export class IndexedDbGameOfflinePersistence implements GameOfflinePersistence {
             (!queued.classSessionId ||
               queued.classSessionId === stored.bootstrap.class_session_id)
           ) {
-            const next: PlayerBootstrapV1 = {
-              type: "portal.bootstrap.v1",
+            const next: PlayerBootstrapV2 = {
+              type: "portal.bootstrap.v2",
               request_id: queued.request.request_id,
               protocol_version: stored.bootstrap.protocol_version,
               player_id: stored.bootstrap.player_id,
               class_session_id: stored.bootstrap.class_session_id,
+              content_policy: stored.bootstrap.content_policy,
+              stored_content_version: queued.request.content_version,
               revision: success.revision,
               new_player: false,
               state: queued.request.state,
@@ -423,7 +428,7 @@ export class IndexedDbGameOfflinePersistence implements GameOfflinePersistence {
 
   async blockState(
     playerId: string,
-    conflict: StateSaveConflictV1,
+    conflict: StateSaveConflictV2,
   ): Promise<void> {
     await this.write(
       [BOOTSTRAP_STORE, CONTROL_STORE, STATE_QUEUE_STORE],
@@ -445,12 +450,14 @@ export class IndexedDbGameOfflinePersistence implements GameOfflinePersistence {
             ) {
               if (!existing?.bootstrap)
                 return fail(new OfflineBootstrapMissingError());
-              const next: PlayerBootstrapV1 = {
-                type: "portal.bootstrap.v1",
+              const next: PlayerBootstrapV2 = {
+                type: "portal.bootstrap.v2",
                 request_id: conflict.request_id,
                 protocol_version: existing.bootstrap.protocol_version,
                 player_id: existing.bootstrap.player_id,
                 class_session_id: existing.bootstrap.class_session_id,
+                content_policy: existing.bootstrap.content_policy,
+                stored_content_version: conflict.stored_content_version,
                 revision: conflict.revision,
                 new_player: false,
                 state: conflict.state,
@@ -474,7 +481,7 @@ export class IndexedDbGameOfflinePersistence implements GameOfflinePersistence {
     );
   }
 
-  getStateConflict(playerId: string): Promise<StateSaveConflictV1 | null> {
+  getStateConflict(playerId: string): Promise<StateSaveConflictV2 | null> {
     return this.read<StoredControl | undefined>(
       CONTROL_STORE,
       (store, succeed, fail) => {
@@ -590,7 +597,7 @@ export class IndexedDbGameOfflinePersistence implements GameOfflinePersistence {
   enqueueResult(
     playerId: string,
     classSessionId: string,
-    event: ResultEventV1,
+    event: ResultEventV2,
     identity: EventRequestIdentity,
   ): Promise<EventRequestReceipt> {
     const record: NewQueuedResult = {

@@ -3,10 +3,10 @@ import { resolve } from "node:path";
 import { IDBFactory } from "fake-indexeddb";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type {
-  PlayerBootstrapV1,
-  ResultSubmissionV1,
-  StateSaveRequestV1,
-} from "@/contracts/v1";
+  PlayerBootstrapV2,
+  ResultSubmissionV2,
+  StateSaveRequestV2,
+} from "@/contracts/v2";
 import { createGameOfflineTransport } from "@/components/public/game-offline-transport";
 import { recoverOfflinePlayerQueue } from "@/components/public/recover-offline-queue";
 import { openGameOfflineStore } from "@/runtime/offline/sync-engine";
@@ -19,7 +19,7 @@ import {
 const fixture = <T>(name: string): T =>
   JSON.parse(
     readFileSync(
-      resolve(process.cwd(), "contracts", "fixtures", "v1", "valid", name),
+      resolve(process.cwd(), "contracts", "fixtures", "v2", "valid", name),
       "utf8",
     ),
   );
@@ -50,12 +50,12 @@ function mockServer(playerSlotId: string, refuse?: string) {
     return Response.json(
       path.endsWith("/state")
         ? {
-            type: "portal.save_ok.v1",
+            type: "portal.save_ok.v2",
             request_id: body.request_id,
             revision: body.expected_revision + 1,
           }
         : {
-            type: "portal.result_ack.v1",
+            type: "portal.result_ack.v2",
             client_event_id: body.client_event_id,
           },
     );
@@ -142,10 +142,10 @@ describe("offline transport reliability", () => {
 
   it("flushes results from multiple historical sessions using each original session token", async () => {
     const store = await openGameOfflineStore({ indexedDB: new IDBFactory() });
-    const bootstrap = fixture<PlayerBootstrapV1>(
+    const bootstrap = fixture<PlayerBootstrapV2>(
       "returning-player-bootstrap.json",
     );
-    const result = fixture<ResultSubmissionV1>("result-submission.json");
+    const result = fixture<ResultSubmissionV2>("result-submission.json");
     const { uploads } = mockServer(bootstrap.player_id);
     try {
       await store.cacheBootstrap(bootstrap);
@@ -177,10 +177,10 @@ describe("offline transport reliability", () => {
 
   it("retains records past the flush deadline without blocking valid newer-session events", async () => {
     const store = await openGameOfflineStore({ indexedDB: new IDBFactory() });
-    const bootstrap = fixture<PlayerBootstrapV1>(
+    const bootstrap = fixture<PlayerBootstrapV2>(
       "returning-player-bootstrap.json",
     );
-    const result = fixture<ResultSubmissionV1>("result-submission.json");
+    const result = fixture<ResultSubmissionV2>("result-submission.json");
     mockServer(bootstrap.player_id, bootstrap.class_session_id);
     try {
       await store.cacheBootstrap(bootstrap);
@@ -211,18 +211,18 @@ describe("offline transport reliability", () => {
     const factory = new IDBFactory();
     vi.stubGlobal("indexedDB", factory);
     const store = await openGameOfflineStore({ indexedDB: factory });
-    const bootstrap = fixture<PlayerBootstrapV1>(
+    const bootstrap = fixture<PlayerBootstrapV2>(
       "returning-player-bootstrap.json",
     );
     const { uploads } = mockServer(bootstrap.player_id);
     await store.cacheBootstrap(bootstrap);
     await store.enqueueState(
       bootstrap.player_id,
-      fixture<StateSaveRequestV1>("state-save-request.json"),
+      fixture<StateSaveRequestV2>("state-save-request.json"),
     );
     await store.enqueueResult(
       bootstrap.player_id,
-      fixture<ResultSubmissionV1>("result-submission.json"),
+      fixture<ResultSubmissionV2>("result-submission.json"),
     );
     store.close();
     const recovered = await recoverOfflinePlayerQueue(
