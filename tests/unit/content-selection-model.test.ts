@@ -3,11 +3,13 @@ import { describe, expect, it } from "vitest";
 import { validateManifest } from "@/application/game-content/manifest";
 import { resolvePolicy } from "@/application/game-content/policy";
 import {
+  buildContentSelection,
   getContentAdjustments,
   getContentModules,
   getContentSelectionLiveSummary,
   getContentSelectionSummary,
   getModuleSelectionState,
+  getSelectedMissionIds,
   getSessionContentChips,
   hasContentAdjustments,
 } from "@/components/portal/content-selection-model";
@@ -173,5 +175,33 @@ describe("content selection view models", () => {
     });
     expect(hasContentAdjustments(future, dental)).toBe(true);
     expect(manifest.session_options).toEqual([]);
+  });
+
+  it("builds the submitted selection from picker state", () => {
+    const all = new Set(manifest.missions.map((item) => item.mission_id));
+    expect(buildContentSelection(manifest, { missionIds: all })).toBeNull();
+    expect(
+      buildContentSelection(manifest, {
+        missionIds: new Set(["brushing_teeth", "smile_kit"]),
+      }),
+    ).toEqual({ enabled_module_ids: ["saude_bucal"] });
+    expect(
+      buildContentSelection(manifest, {
+        missionIds: new Set(["brushing_teeth"]),
+      }),
+    ).toEqual({ enabled_mission_ids: ["brushing_teeth"] });
+    expect(
+      buildContentSelection(manifest, {
+        missionIds: all,
+        options: { skin_shop: false },
+      }),
+    ).toMatchObject({ options: { skin_shop: false } });
+    expect(getSelectedMissionIds(manifest, dental).sort()).toEqual([
+      "brushing_teeth",
+      "smile_kit",
+    ]);
+    expect(getSelectedMissionIds(manifest, null)).toHaveLength(
+      manifest.missions.length,
+    );
   });
 });

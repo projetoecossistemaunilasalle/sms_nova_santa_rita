@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { ClassDetailDto } from "@/application/adult-portal/types";
 import type { ClassWorkflowDto } from "@/application/player-access/types";
 import type { RuntimeMode } from "@/runtime/mode";
+import type { ClassContentPageData } from "@/runtime/readers";
 import { RecordStatus } from "@/generated/prisma/enums";
 import {
   assignTeacherToClassAction,
@@ -20,10 +21,12 @@ import styles from "./portal.module.css";
 
 export function ClassDetailScreen({
   initialClass,
+  initialContent,
   initialWorkflow,
   runtimeMode,
 }: {
   initialClass: ClassDetailDto;
+  initialContent: ClassContentPageData | null;
   initialWorkflow: ClassWorkflowDto;
   runtimeMode: RuntimeMode;
 }) {
@@ -81,6 +84,7 @@ export function ClassDetailScreen({
       <PlayerAccessWorkflow
         classGroupId={classGroup.id}
         className={classGroup.name}
+        content={initialContent}
         disabled={classGroup.status !== RecordStatus.ACTIVE}
         organizationName={classGroup.organizationName}
         runtimeMode={runtimeMode}

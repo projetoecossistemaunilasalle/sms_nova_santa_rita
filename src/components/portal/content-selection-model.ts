@@ -161,3 +161,53 @@ export function hasContentAdjustments(
   const adjustments = getContentAdjustments(manifest, selection);
   return adjustments.activities.length > 0 || adjustments.options.length > 0;
 }
+
+export function getSelectedMissionIds(
+  manifest: ContentManifestV1,
+  selection: ContentSelection | null,
+): string[] {
+  return selectedMissions(manifest, selection).map((item) => item.mission_id);
+}
+
+export type ContentDraft = {
+  missionIds: ReadonlySet<string>;
+  presets?: Readonly<Record<string, string>>;
+  options?: Readonly<Record<string, boolean | string>>;
+};
+
+/**
+ * Turns the picker state into the selection the actions accept. Returns null
+ * ("everything") when all missions are ticked and nothing is adjusted, so a
+ * saved class default keeps following the full manifest.
+ */
+export function buildContentSelection(
+  manifest: ContentManifestV1,
+  draft: ContentDraft,
+): ContentSelection | null {
+  const modules = getContentModules(manifest);
+  const moduleIds: string[] = [];
+  const missionIds: string[] = [];
+  for (const contentModule of modules) {
+    const ids = contentModule.mission_ids;
+    const count = ids.filter((id) => draft.missionIds.has(id)).length;
+    if (count === 0) continue;
+    if (count === ids.length) moduleIds.push(contentModule.module_id);
+    else missionIds.push(...ids.filter((id) => draft.missionIds.has(id)));
+  }
+  const presets = draft.presets ?? {};
+  const options = draft.options ?? {};
+  const adjusted =
+    Object.keys(presets).length > 0 || Object.keys(options).length > 0;
+  const everything =
+    manifest.missions.length > 0 &&
+    manifest.missions.every((item) => draft.missionIds.has(item.mission_id));
+  if (everything && !adjusted) return null;
+  return {
+    ...(moduleIds.length ? { enabled_module_ids: moduleIds } : {}),
+    ...(missionIds.length ? { enabled_mission_ids: missionIds } : {}),
+    ...(Object.keys(presets).length
+      ? { activity_presets: { ...presets } }
+      : {}),
+    ...(Object.keys(options).length ? { options: { ...options } } : {}),
+  };
+}

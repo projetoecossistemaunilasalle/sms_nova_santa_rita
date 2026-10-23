@@ -10,6 +10,7 @@ import type {
 } from "@/application/player-access/types";
 import { PlayerCredentialStatus, RecordStatus } from "@/generated/prisma/enums";
 import type { RuntimeMode } from "@/runtime/mode";
+import type { ClassContentPageData } from "@/runtime/readers";
 import {
   allocatePlayerSlotsAction,
   endClassSessionAction,
@@ -22,6 +23,9 @@ import { printablePlayerCredentials } from "./player-credential-printing";
 import { matchesPlayerNumber } from "./portal-filters";
 import { usePortalFilters } from "./use-portal-filters";
 
+import { ActionMessage } from "./action-message";
+import { ContentPicker } from "./content-picker";
+import { getContentSelectionSummary } from "./content-selection-model";
 import { PlayerCredentialPrintSheet } from "./player-credential-print-sheet";
 import styles from "./portal.module.css";
 
@@ -29,18 +33,6 @@ const initialActionState: PlayerAccessActionResult = { ok: false, message: "" };
 
 function playerLabel(playerNumber: number): string {
   return `Jogador ${String(playerNumber).padStart(2, "0")}`;
-}
-
-function ActionMessage({ state }: { state: PlayerAccessActionResult }) {
-  if (!state.message) return null;
-  return (
-    <p
-      className={state.ok ? styles.formSuccess : styles.formError}
-      role={state.ok ? "status" : "alert"}
-    >
-      {state.message}
-    </p>
-  );
 }
 
 function AllocatePlayers({
@@ -364,26 +356,38 @@ function RotateCredential({
 
 function SessionControl({
   classGroupId,
+  content,
   disabled,
   workflow,
 }: {
   classGroupId: string;
+  content: ClassContentPageData | null;
   disabled: boolean;
   workflow: ClassWorkflowDto;
 }) {
   const confirmationId = useId();
+  const chooserId = useId();
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const chooserTriggerRef = useRef<HTMLButtonElement>(null);
   const confirmationDialogRef = useRef<HTMLDialogElement>(null);
+  const chooserDialogRef = useRef<HTMLDialogElement>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [chooserOpen, setChooserOpen] = useState(false);
+  const [chooserRevision, setChooserRevision] = useState(0);
+  const [startedFromChooser, setStartedFromChooser] = useState(false);
   const active = workflow.activeSession;
   const hasReadyPlayers = workflow.slots.some(
     (slot) =>
       slot.status === RecordStatus.ACTIVE &&
       slot.credentialStatus === PlayerCredentialStatus.ACTIVE,
   );
-  const action = active ? endClassSessionAction : startClassSessionAction;
+  // One stable action: a conditional action would go stale after a start/end
+  // cycle without a remount, so the end form says what it wants instead.
   const [state, formAction, pending] = useActionState(
-    action,
+    (previous: PlayerAccessActionResult, formData: FormData) =>
+      formData.get("intent") === "end"
+        ? endClassSessionAction(previous, formData)
+        : startClassSessionAction(previous, formData),
     initialActionState,
   );
   function openConfirmation() {
@@ -399,6 +403,23 @@ function SessionControl({
     setDialogOpen(false);
     triggerRef.current?.focus();
   }
+
+  function openChooser() {
+    const dialog = chooserDialogRef.current;
+    if (!dialog || dialog.open) return;
+    dialog.showModal();
+    setChooserOpen(true);
+  }
+
+  function closeChooser() {
+    const dialog = chooserDialogRef.current;
+    if (dialog?.open) dialog.close();
+    setChooserOpen(false);
+    chooserTriggerRef.current?.focus();
+  }
+
+  const manifest = content?.manifest ?? null;
+  const sessionBlocked = disabled || pending || !hasReadyPlayers;
 
   return (
     <section
@@ -416,7 +437,26 @@ function SessionControl({
               ? "Inicie quando os tablets estiverem prontos. Antes disso, os jogadores verão uma tela de espera."
               : "Prepare pelo menos um jogador com QR ativo antes de iniciar a sessão."}
         </p>
-        <ActionMessage state={state} />
+        {active && content?.activeSession?.chips.length ? (
+          <ul className={styles.contentChips} aria-label="Conteúdo da sessão">
+            {content.activeSession.chips.map((chip) => (
+              <li key={chip.id} className={styles.contentChip}>
+                {chip.id === "all"
+                  ? chip.label
+                  : `${chip.label} · ${chip.missionCount} ${
+                      chip.missionCount === 1 ? "missão" : "missões"
+                    }`}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        <ActionMessage
+          state={
+            active && startedFromChooser
+              ? { ok: true, message: "Sessão da turma iniciada." }
+              : state
+          }
+        />
       </div>
       <div className={styles.sessionControlActions}>
         {active ? (
@@ -434,17 +474,44 @@ function SessionControl({
             {pending ? "Encerrando…" : "Encerrar sessão"}
           </button>
         ) : (
-          <form action={formAction}>
-            <input type="hidden" name="classGroupId" value={classGroupId} />
-            <button
-              className={styles.button}
-              type="submit"
-              disabled={disabled || pending || !hasReadyPlayers}
-            >
-              <Icon name="play" />
-              {pending ? "Iniciando…" : "Iniciar sessão"}
-            </button>
-          </form>
+          <>
+            <form action={formAction}>
+              <input type="hidden" name="classGroupId" value={classGroupId} />
+              <button
+                className={styles.button}
+                type="submit"
+                disabled={sessionBlocked}
+              >
+                <Icon name="play" />
+                {pending ? "Iniciando…" : "Iniciar sessão"}
+              </button>
+            </form>
+            {manifest && (
+              <>
+                <p className={styles.sessionContentSummary}>
+                  <span>Conteúdo</span>
+                  <strong>
+                    {getContentSelectionSummary(
+                      manifest,
+                      content?.defaultSelection ?? null,
+                    )}
+                  </strong>
+                </p>
+                <button
+                  ref={chooserTriggerRef}
+                  className={styles.buttonSecondary}
+                  type="button"
+                  aria-haspopup="dialog"
+                  aria-expanded={chooserOpen}
+                  aria-controls={chooserId}
+                  onClick={openChooser}
+                  disabled={sessionBlocked}
+                >
+                  Escolher conteúdo
+                </button>
+              </>
+            )}
+          </>
         )}
         <dialog
           ref={confirmationDialogRef}
@@ -465,6 +532,7 @@ function SessionControl({
           </p>
           <form action={formAction} onSubmit={closeConfirmation}>
             <input type="hidden" name="classGroupId" value={classGroupId} />
+            <input type="hidden" name="intent" value="end" />
             <div className={styles.confirmationDialogActions}>
               <button
                 className={styles.buttonGhost}
@@ -485,6 +553,51 @@ function SessionControl({
             </div>
           </form>
         </dialog>
+        {manifest && !active && (
+          <dialog
+            ref={chooserDialogRef}
+            className={`${styles.confirmationDialog} ${styles.contentPickerDialog}`}
+            id={chooserId}
+            aria-modal="true"
+            aria-labelledby={`${chooserId}-title`}
+            aria-describedby={`${chooserId}-description`}
+            onCancel={() => setChooserOpen(false)}
+            onClose={() => {
+              setChooserOpen(false);
+              // Remount while closed so the next open starts from the default.
+              setChooserRevision((revision) => revision + 1);
+              chooserTriggerRef.current?.focus();
+            }}
+          >
+            <div className={styles.contentPickerHeader}>
+              <h2 id={`${chooserId}-title`}>Escolher conteúdo</h2>
+              <p id={`${chooserId}-description`}>
+                Marque os módulos ou as missões que os jogadores verão nesta
+                sessão.
+              </p>
+            </div>
+            <ContentPicker
+              key={chooserRevision}
+              manifest={manifest}
+              classGroupId={classGroupId}
+              initialSelection={content?.defaultSelection ?? null}
+              action={startClassSessionAction}
+              submitLabel="Iniciar sessão"
+              showSaveAsDefault
+              disabled={sessionBlocked}
+              disabledReason={
+                hasReadyPlayers
+                  ? undefined
+                  : "Prepare pelo menos um jogador com QR ativo."
+              }
+              onCancel={closeChooser}
+              onSuccess={() => {
+                setStartedFromChooser(true);
+                closeChooser();
+              }}
+            />
+          </dialog>
+        )}
       </div>
     </section>
   );
@@ -493,6 +606,7 @@ function SessionControl({
 export function PlayerAccessWorkflow({
   classGroupId,
   className,
+  content,
   disabled,
   organizationName,
   runtimeMode,
@@ -500,6 +614,7 @@ export function PlayerAccessWorkflow({
 }: {
   classGroupId: string;
   className: string;
+  content: ClassContentPageData | null;
   disabled: boolean;
   organizationName: string;
   runtimeMode: RuntimeMode;
@@ -534,6 +649,7 @@ export function PlayerAccessWorkflow({
     <div className={styles.playerWorkflow}>
       <SessionControl
         classGroupId={classGroupId}
+        content={content}
         disabled={disabled}
         workflow={workflow}
       />

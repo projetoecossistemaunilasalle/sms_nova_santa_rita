@@ -3,7 +3,11 @@ import { notFound, redirect } from "next/navigation";
 import { AdultPortalError } from "@/application/adult-portal/errors";
 import { ClassDetailScreen } from "@/components/portal/class-detail-screen";
 import { getRuntimeMode } from "@/runtime/mode";
-import { getClassPageData, getPlayerAccessPageData } from "@/runtime/readers";
+import {
+  getClassContentPageData,
+  getClassPageData,
+  getPlayerAccessPageData,
+} from "@/runtime/readers";
 
 export const metadata = { title: "Detalhe da turma" };
 
@@ -15,10 +19,12 @@ export default async function ClassGroupDetailPage({
   const { id } = await params;
   let classGroup;
   let playerAccess;
+  let content;
   try {
-    [classGroup, playerAccess] = await Promise.all([
+    [classGroup, playerAccess, content] = await Promise.all([
       getClassPageData(id),
       getPlayerAccessPageData(id),
+      getClassContentPageData(id),
     ]);
   } catch (error) {
     if (error instanceof AdultPortalError) {
@@ -30,6 +36,7 @@ export default async function ClassGroupDetailPage({
   return (
     <ClassDetailScreen
       initialClass={classGroup}
+      initialContent={content}
       initialWorkflow={playerAccess}
       runtimeMode={getRuntimeMode()}
     />
