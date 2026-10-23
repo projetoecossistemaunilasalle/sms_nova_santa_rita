@@ -1,6 +1,6 @@
 # Missoes do Caramelito Portal and Game Host
 
-This workspace contains the authenticated professional/admin portal, the low-friction player entry surface, and backend integration for one existing GameMaker experience.
+This workspace contains the authenticated professional/admin portal, the low-friction player entry surface, and backend integration for the maintained Phaser game (`Heroes_Trial/web-poc`).
 
 There is no marketing landing page.
 
@@ -27,7 +27,7 @@ Materials/content management is deferred beyond V1.
 
 The portal/backend owns adult access, organizational structure, classes, player credentials, session context, persistence services, reporting, and integration boundaries.
 
-The existing GameMaker project owns gameplay content, activities/minigames, game rules, world behavior, progression semantics, cosmetics, rewards, and other gameplay logic.
+The maintained Phaser game owns gameplay content, activities/minigames, game rules, world behavior, progression semantics, cosmetics, rewards, and other gameplay logic. The portal selects content, never authors it. V2 imports the game's content manifest, freezes a resolved content policy and manifest reference per session, and serves the game through `/api/v2/player/{bootstrap,state,results,active-time}`.
 
 The portal must not become a minigame catalog or game editor.
 
@@ -51,10 +51,10 @@ src/
   app/
     (professional)/ authenticated professional/admin portal routes
     (public-play)/   player entry surface (/jogar)
-    api/v1/          player bootstrap, state, results, and active-time route handlers
+    api/v2/          player bootstrap, state, results, and active-time route handlers
   components/
     portal/          professional/admin shell and workflow components
-    public/          player entry and GameMaker game-host components
+    public/          player entry and Phaser game-host components
     shared/          cross-surface primitives
   runtime/           shared server entry points and offline modules
   server/
@@ -244,6 +244,6 @@ The local mock exercises portal authorization, organizations, memberships,
 classes, teacher assignments, numbered players, credential rotation, and class
 sessions through the production application code. Reports reflect the current
 mock roster and participation but do not invent game results. Neon authentication,
-durable database behavior, cross-device QR access, and GameMaker synchronization
+durable database behavior, cross-device QR access, and Phaser synchronization
 still require real integration testing. The mock is single-process development
 infrastructure, not a production or multi-instance persistence solution.

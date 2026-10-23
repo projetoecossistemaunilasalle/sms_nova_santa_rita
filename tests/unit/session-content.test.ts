@@ -175,61 +175,81 @@ describe("session content freezing", () => {
     ).toBeUndefined();
   });
 
-  it("bootstraps the exact policy stored on the participation's session row", async () => {
-    const { database, service } = setup();
-    const session = await service.startSession(teacher, classId, {
-      enabled_mission_ids: ["lia_memory"],
-    });
-    const row = database.state.gameSessions.find(
-      (item) => item.id === session.id,
-    )!;
-    await service.setClassDefaultContent(teacher, classId, {
-      enabled_module_ids: ["saude_bucal"],
-    });
-    const context = {
-      playerSlotId: "player",
-      gameSessionId: row.id,
-      participationId: "participation",
-      credentialId: "credential",
-    };
-    const db = {
-      $queryRaw: vi.fn(async () => [{ id: "locked" }]),
-      participation: {
-        findUnique: vi.fn(async () => ({
-          playerSlotId: context.playerSlotId,
-          gameSessionId: row.id,
-          gameSession: {
-            ...row,
-            contentPolicy: structuredClone(row.contentPolicy),
-          },
-          playerSlot: {
-            status: RecordStatus.ACTIVE,
-            classGroupId: classId,
-            classGroup: {
-              status: RecordStatus.ACTIVE,
-              organization: { status: RecordStatus.ACTIVE },
+  it.each(["all", "class-default", "explicit"])(
+    "bootstraps the exact %s policy stored on the participation's session row",
+    async (selection) => {
+      const { database, service } = setup();
+      if (selection === "class-default") {
+        await service.setClassDefaultContent(teacher, classId, {
+          enabled_mission_ids: ["lia_memory"],
+        });
+      }
+      const session =
+        selection === "explicit"
+          ? await service.startSession(teacher, classId, {
+              enabled_mission_ids: ["lia_memory"],
+            })
+          : await service.startSession(teacher, classId);
+      const row = database.state.gameSessions.find(
+        (item) => item.id === session.id,
+      )!;
+      await service.setClassDefaultContent(teacher, classId, {
+        enabled_module_ids: ["saude_bucal"],
+      });
+      const context = {
+        playerSlotId: "player",
+        gameSessionId: row.id,
+        participationId: "participation",
+        credentialId: "credential",
+      };
+      const db = {
+        $queryRaw: vi.fn(async () => [{ id: "locked" }]),
+        participation: {
+          findUnique: vi.fn(async () => ({
+            playerSlotId: context.playerSlotId,
+            gameSessionId: row.id,
+            gameSession: {
+              ...row,
+              contentPolicy: structuredClone(row.contentPolicy),
             },
-          },
-        })),
-      },
-      playerCredential: {
-        findUnique: vi.fn(async () => ({
-          playerSlotId: context.playerSlotId,
-          status: PlayerCredentialStatus.ACTIVE,
-        })),
-      },
-      gameState: { findUnique: vi.fn(async () => null) },
-      $transaction: async <T>(work: (client: unknown) => Promise<T>) =>
-        work(db),
-    };
-    const state = new GameStateService(
-      new PrismaGameStateStore(db as never),
-      () => ({ valid: true, payload: context }),
-    );
-    expect(await state.bootstrap("launch", "bootstrap")).toMatchObject({
-      type: "portal.bootstrap.v2",
-      content_policy: row.contentPolicy,
-      stored_content_version: null,
-    });
-  });
+            playerSlot: {
+              status: RecordStatus.ACTIVE,
+              classGroupId: classId,
+              classGroup: {
+                status: RecordStatus.ACTIVE,
+                organization: { status: RecordStatus.ACTIVE },
+              },
+            },
+          })),
+        },
+        playerCredential: {
+          findUnique: vi.fn(async () => ({
+            playerSlotId: context.playerSlotId,
+            status: PlayerCredentialStatus.ACTIVE,
+          })),
+        },
+        gameState: { findUnique: vi.fn(async () => null) },
+        $transaction: async <T>(work: (client: unknown) => Promise<T>) =>
+          work(db),
+      };
+      const state = new GameStateService(
+        new PrismaGameStateStore(db as never),
+        () => ({ valid: true, payload: context }),
+      );
+      const bootstrap = await state.bootstrap("launch", "bootstrap");
+      expect(bootstrap).toMatchObject({
+        type: "portal.bootstrap.v2",
+        content_policy: row.contentPolicy,
+        stored_content_version: null,
+      });
+      expect(bootstrap.content_policy).toEqual(row.contentPolicy);
+      const manifest = (await database.gameContentStore.current())!;
+      expect(row.contentPolicy).toEqual(
+        resolvePolicy(
+          selection === "all" ? null : { enabled_mission_ids: ["lia_memory"] },
+          manifest.payload,
+        ),
+      );
+    },
+  );
 });

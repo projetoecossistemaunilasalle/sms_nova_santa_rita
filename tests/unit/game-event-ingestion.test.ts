@@ -395,7 +395,50 @@ describe("game event reporting authorization", () => {
     await expect(service.listClassReports("teacher-profile")).resolves.toEqual([
       { classGroupId: "visible-class" },
     ]);
-    expect(reports.listClassReports).toHaveBeenCalledWith(["visible-class"]);
+    expect(reports.listClassReports).toHaveBeenCalledWith(
+      ["visible-class"],
+      undefined,
+    );
+  });
+
+  it("forwards optional module filters and player pages after authorization", async () => {
+    const reports = {
+      listClassReports: vi.fn(async () => [{ classGroupId: "visible-class" }]),
+      getPlayerReport: vi.fn(async () => ({ playerSlotId: "player" })),
+    };
+    const access = vi.fn(async () => {});
+    const service = new GameEventReportService(
+      reports as never,
+      access,
+      async () => [{ id: "visible-class" }],
+    );
+    await service.listClassReports("teacher", "module");
+    await service.getClassReport("teacher", "visible-class", "module");
+    const page = { sessionPage: 2, resultPage: 3 };
+    await service.getPlayerReport(
+      "teacher",
+      "visible-class",
+      "player",
+      page,
+      "module",
+    );
+    expect(reports.listClassReports).toHaveBeenNthCalledWith(
+      1,
+      ["visible-class"],
+      "module",
+    );
+    expect(reports.listClassReports).toHaveBeenNthCalledWith(
+      2,
+      ["visible-class"],
+      "module",
+    );
+    expect(reports.getPlayerReport).toHaveBeenCalledWith(
+      "visible-class",
+      "player",
+      page,
+      "module",
+    );
+    expect(access).toHaveBeenCalledWith("teacher", "visible-class");
   });
 
   it("does not query a class report when the adult access check denies it", async () => {

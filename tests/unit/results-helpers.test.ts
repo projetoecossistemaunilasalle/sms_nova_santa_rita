@@ -13,6 +13,7 @@ const players: PlayerClassReport[] = [1, 7, 17].map((playerNumber) => ({
   participationCount: playerNumber === 7 ? 0 : 1,
   totalActiveMs: 0,
   resultCount: 0,
+  moduleTotals: [],
   lastPlayedAt: null,
 }));
 

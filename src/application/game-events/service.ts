@@ -158,14 +158,24 @@ export class GameEventReportService {
     ) => Promise<readonly { id: string }[]>,
   ) {}
 
-  async listClassReports(profileId: string) {
+  async listClassReports(profileId: string, moduleId?: string) {
     const classes = await this.listReadableClasses(profileId);
-    return this.reports.listClassReports(classes.map(({ id }) => id));
+    return this.reports.listClassReports(
+      classes.map(({ id }) => id),
+      moduleId,
+    );
   }
 
-  async getClassReport(profileId: string, classGroupId: string) {
+  async getClassReport(
+    profileId: string,
+    classGroupId: string,
+    moduleId?: string,
+  ) {
     await this.canReadClass(profileId, classGroupId);
-    const [report] = await this.reports.listClassReports([classGroupId]);
+    const [report] = await this.reports.listClassReports(
+      [classGroupId],
+      moduleId,
+    );
     if (!report) {
       throw new AdultPortalError("Turma não encontrada.", "NOT_FOUND");
     }
@@ -177,12 +187,14 @@ export class GameEventReportService {
     classGroupId: string,
     playerSlotId: string,
     page?: PlayerHistoryPage,
+    moduleId?: string,
   ) {
     await this.canReadClass(profileId, classGroupId);
     const report = await this.reports.getPlayerReport(
       classGroupId,
       playerSlotId,
       page,
+      moduleId,
     );
     if (!report) {
       throw new AdultPortalError("Jogador não encontrado.", "NOT_FOUND");

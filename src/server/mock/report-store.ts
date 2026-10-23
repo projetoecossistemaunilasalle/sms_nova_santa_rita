@@ -16,7 +16,10 @@ export class MockGameEventReportStore implements GameEventReportStore {
 
   async listClassReports(
     classGroupIds: readonly string[],
+    moduleId?: string,
   ): Promise<ClassReport[]> {
+    // No game events are seeded, so every module filter has zero event totals.
+    void moduleId;
     return this.state.classes
       .filter((classGroup) => classGroupIds.includes(classGroup.id))
       .map((classGroup) => {
@@ -34,6 +37,7 @@ export class MockGameEventReportStore implements GameEventReportStore {
             participationCount: entries.length,
             totalActiveMs: 0,
             resultCount: 0,
+            moduleTotals: [],
             lastPlayedAt: entries.length
               ? new Date(
                   Math.max(
@@ -61,6 +65,7 @@ export class MockGameEventReportStore implements GameEventReportStore {
           ).size,
           totalActiveMs: 0,
           resultCount: 0,
+          moduleTotals: [],
           players,
         };
       });
@@ -70,8 +75,9 @@ export class MockGameEventReportStore implements GameEventReportStore {
     classGroupId: string,
     playerSlotId: string,
     page: PlayerHistoryPage = {},
+    moduleId?: string,
   ): Promise<PlayerReport | null> {
-    const [report] = await this.listClassReports([classGroupId]);
+    const [report] = await this.listClassReports([classGroupId], moduleId);
     const player = report?.players.find(
       (item) => item.playerSlotId === playerSlotId,
     );
@@ -97,6 +103,7 @@ export class MockGameEventReportStore implements GameEventReportStore {
                 activeTimeEventCount: 0,
                 resultCount: 0,
                 results: [],
+                moduleTotals: [],
               },
             ]
           : [];
@@ -117,6 +124,7 @@ export class MockGameEventReportStore implements GameEventReportStore {
       participationCount: player.participationCount,
       totalActiveMs: player.totalActiveMs,
       resultCount: player.resultCount,
+      moduleTotals: [],
       participations: participations.slice(sessionPage - 1, sessionPage),
       history: { sessionPage, sessionPages, resultPage: 1, resultPages: 1 },
     };

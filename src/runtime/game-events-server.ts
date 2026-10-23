@@ -14,20 +14,28 @@ async function profileId(): Promise<string> {
   return session.actor.profileId;
 }
 
-export async function getResultReportsPageData() {
+export async function getResultReportsPageData(moduleId?: string) {
   const id = await profileId();
-  return (await getGameEventReportService()).listClassReports(id);
+  return (await getGameEventReportService()).listClassReports(id, moduleId);
 }
 
-export async function getClassResultsPageData(classGroupId: string) {
+export async function getClassResultsPageData(
+  classGroupId: string,
+  moduleId?: string,
+) {
   const id = await profileId();
-  return (await getGameEventReportService()).getClassReport(id, classGroupId);
+  return (await getGameEventReportService()).getClassReport(
+    id,
+    classGroupId,
+    moduleId,
+  );
 }
 
 export async function getPlayerResultsPageData(
   classGroupId: string,
   playerSlotId: string,
   page?: PlayerHistoryPage,
+  moduleId?: string,
 ) {
   const id = await profileId();
   return (await getGameEventReportService()).getPlayerReport(
@@ -35,5 +43,6 @@ export async function getPlayerResultsPageData(
     classGroupId,
     playerSlotId,
     page,
+    moduleId,
   );
 }

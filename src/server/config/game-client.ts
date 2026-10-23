@@ -6,8 +6,8 @@ export type GameClientResolution =
 const allowedProtocols = new Set(["http:", "https:"]);
 
 /**
- * Resolve the browser GameMaker build at request time without exposing the
- * environment variable to the client bundle.
+ * Resolve the maintained Phaser game (Heroes_Trial/web-poc) at request time
+ * without exposing the environment variable to the client bundle.
  */
 export function resolveGameClientUrl(
   value = process.env.GAME_CLIENT_URL,

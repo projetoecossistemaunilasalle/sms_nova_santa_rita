@@ -45,14 +45,24 @@ export type EventReportResult = {
   id: string;
   activityId: string;
   missionId: string;
+  moduleId: string | null;
+  presetId: string | null;
   attemptId: string;
   state: string;
   durationMs: number;
   metrics: Record<string, number>;
+  metricLabels: Record<string, string>;
   receivedAt: Date;
 };
 
+export type ModuleReportTotals = {
+  moduleId: string | null;
+  totalActiveMs: number;
+  resultCount: number;
+};
+
 export type PlayerClassReport = {
+  moduleTotals: ModuleReportTotals[];
   playerSlotId: string;
   playerNumber: number;
   playerStatus: RecordStatus;
@@ -63,6 +73,7 @@ export type PlayerClassReport = {
 };
 
 export type ClassReport = {
+  moduleTotals: ModuleReportTotals[];
   classGroupId: string;
   className: string;
   playerCount: number;
@@ -74,6 +85,7 @@ export type ClassReport = {
 };
 
 export type PlayerParticipationReport = {
+  moduleTotals: ModuleReportTotals[];
   gameSessionId: string;
   sessionStartedAt: Date;
   sessionEndedAt: Date | null;
@@ -85,6 +97,7 @@ export type PlayerParticipationReport = {
 };
 
 export type PlayerReport = {
+  moduleTotals: ModuleReportTotals[];
   history: {
     sessionPage: number;
     sessionPages: number;
@@ -103,11 +116,17 @@ export type PlayerReport = {
 };
 
 export interface GameEventReportReader {
-  listClassReports(classGroupIds: readonly string[]): Promise<ClassReport[]>;
+  // Filters event totals/history, not roster, session or participation counts.
+  // Null module IDs in totals retain unattributed (e.g. free-play) time.
+  listClassReports(
+    classGroupIds: readonly string[],
+    moduleId?: string,
+  ): Promise<ClassReport[]>;
   getPlayerReport(
     classGroupId: string,
     playerSlotId: string,
     page?: PlayerHistoryPage,
+    moduleId?: string,
   ): Promise<PlayerReport | null>;
 }
 

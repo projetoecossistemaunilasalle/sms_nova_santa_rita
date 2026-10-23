@@ -14,13 +14,13 @@ Missões do Caramelito has three connected runtime surfaces:
 
 1. the authenticated professional/admin portal;
 2. the player entry/context-resolution surface;
-3. the existing external GameMaker runtime.
+3. the maintained external Phaser runtime (`Heroes_Trial/web-poc`).
 
 There is no marketing or institutional landing page. The root route redirects to the professional sign-in surface.
 
 The portal and backend own organizational context, adult access, classes, numbered player access, persistence services, session context, result ingestion, and reporting.
 
-The existing GameMaker project owns the single gameplay experience, including activities/minigames, gameplay rules, world behavior, progression meaning, and game-specific state semantics.
+The maintained Phaser game owns the single gameplay experience, including activities/minigames, gameplay rules, world behavior, progression meaning, and game-specific state semantics. The portal selects content, never authors it. V2 imports the game's content manifest and freezes a resolved content policy and manifest reference per session; later defaults or manifest imports cannot change that session's bootstrap policy.
 
 ## Adult authorization model
 
@@ -103,9 +103,9 @@ Preferred V1 flow:
 1. teacher starts or selects the current class session/context;
 2. child scans their player QR;
 3. backend resolves player plus class/session context;
-4. GameMaker receives the required context.
+4. Phaser receives the required context and frozen session policy through `/api/v2/player/bootstrap`.
 
-The final entry sequence may be adjusted to fit the GameMaker contract, but the child must not be forced through a conventional username/password login.
+The final entry sequence may be adjusted to fit the Phaser contract, but the child must not be forced through a conventional username/password login.
 
 ## Game-state persistence
 
@@ -113,9 +113,9 @@ Cross-device continuation is a V1 requirement.
 
 The authoritative game state must be persisted server-side. Browser storage may cache synchronized state for offline operation but is not the source of truth.
 
-GameMaker owns the state schema semantics. The portal/backend provides durable storage and synchronization through a versioned contract.
+The Phaser game owns the state schema semantics. The portal/backend provides durable storage and synchronization through a versioned contract.
 
-State can include game-owned concepts such as progression, cosmetics, currencies, rewards, checkpoints, or other values defined by GameMaker.
+State can include game-owned concepts such as progression, cosmetics, currencies, rewards, checkpoints, or other values defined by the Phaser game.
 
 ## Results and active time
 
@@ -196,8 +196,8 @@ Important invariants:
 | `/portal/admin/equipe` | Administrators | Adult profiles and memberships |
 | `/portal/turmas`, `/portal/turmas/[id]` | Organization admins and teachers | Classes; the class detail page hosts the session control, numbered players, and QR credentials |
 | `/portal/resultados`, `/portal/resultados/[classGroupId]`, `/portal/resultados/[classGroupId]/players/[playerSlotId]` | Authorized adults | Class and per-player reports |
-| `/jogar` | Players | Credential entry through the `?cred=` parameter carried by the printed QR, then handoff to the GameMaker client |
-| `/api/v1/player/{bootstrap,state,results,active-time}` | Browser game host | Versioned transport contract endpoints |
+| `/jogar` | Players | Credential entry through the `?cred=` parameter carried by the printed QR, then handoff to the Phaser client |
+| `/api/v2/player/{bootstrap,state,results,active-time}` | Browser game host | V2 transport contract endpoints |
 
 There is no `/health` route; the former liveness and readiness handlers were
 removed and have not been reintroduced.
@@ -209,21 +209,21 @@ Materials is explicitly deferred beyond V1.
 The Materials navigation entry has been removed from the portal, and no V1
 backend, authorization, or acceptance criterion depends on Materials.
 
-## GameMaker contract
+## Phaser contract
 
-The frozen V1 transport contract (JSON Schemas in
-[`../contracts/schemas/v1`](../contracts/schemas/v1) with runtime Zod authority and
+The V2 transport contract (JSON Schemas in
+[`../contracts/schemas/v2`](../contracts/schemas/v2) with runtime Zod authority and
 parity fixtures; protocol rules in
 [`../contracts/schemas/README.md`](../contracts/schemas/README.md)) covers at least:
 
-### Backend to GameMaker
+### Backend to Phaser
 
 - resolved player context;
 - class/session context;
 - current game state or state reference;
 - schema/protocol version.
 
-### GameMaker to backend
+### Phaser to backend
 
 - updated persistent game state;
 - result events;
@@ -241,7 +241,7 @@ The portal must not create a second model for minigames, progression rules, cosm
 - Player state is persistent and therefore must be handled as a durable record even when no name is stored.
 - The product should describe the model as data-minimized, not automatically fully anonymous.
 - Authorization must enforce organization/class boundaries for adult result access.
-- GameMaker URLs and integration origins must remain allowlisted/configured.
+- Phaser game URLs and integration origins must remain allowlisted/configured.
 
 ## Cross-year continuity
 
@@ -297,7 +297,7 @@ The server target validates `DATABASE_URL`, `NEON_AUTH_BASE_URL`,
 `NEON_AUTH_COOKIE_SECRET`, and `APPLICATION_SECRET` at configuration load.
 Additional variables cover `DIRECT_URL` (Prisma CLI migrations),
 `ALLOWED_ORIGINS` (browser origins accepted by cookie-authenticated routes),
-`GAME_CLIENT_URL` (the browser GameMaker build URL), and the opt-in
+`GAME_CLIENT_URL` (the browser Phaser build URL), and the opt-in
 `AUTH_DEV_BYPASS` development flag, which is rejected in a production server
 runtime. `.env.example` documents example values; final production values are
 set at deployment, and integration origins remain allowlisted rather than
@@ -314,7 +314,7 @@ IndexedDB queue; the server remains the authoritative state source.
 
 These implementations are not yet a production-verified V1. The single baseline
 migration (`prisma/migrations/0_init`) has not been applied to a real Neon
-environment; `.env.example` ships example hosts. The real GameMaker HTML5 build,
+environment; `.env.example` ships example hosts. The maintained Phaser HTML5 build,
 two-device state continuity, reconnection, and school-tablet QR flow still need
 end-to-end validation. See the implementation roadmap for slice-level status.
 

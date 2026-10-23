@@ -86,6 +86,7 @@ import {
 import {
   getResultReportsPageData,
   getClassResultsPageData,
+  getPlayerResultsPageData,
 } from "@/runtime/game-events-server";
 import { getPlayerAccessPageData } from "@/runtime/player-access-server";
 import { getAuthGateway } from "@/server/auth/gateway";
@@ -506,6 +507,23 @@ describe("shared portal with server-side mock adapters", () => {
     expect(await getClassResultsPageData(DEMO_CLASS_IDS.THIRD_A)).toMatchObject(
       { playerCount: 4, resultCount: 0 },
     );
+    const [filtered] = await getResultReportsPageData("saude_bucal");
+    expect(filtered).toMatchObject({
+      playerCount: 4,
+      resultCount: 0,
+      moduleTotals: [],
+    });
+    expect(
+      await getClassResultsPageData(DEMO_CLASS_IDS.THIRD_A, "saude_bucal"),
+    ).toEqual(filtered);
+    expect(
+      await getPlayerResultsPageData(
+        DEMO_CLASS_IDS.THIRD_A,
+        filtered!.players[0]!.playerSlotId,
+        {},
+        "saude_bucal",
+      ),
+    ).toMatchObject({ resultCount: 0, totalActiveMs: 0, moduleTotals: [] });
     await expect(
       getClassResultsPageData(DEMO_CLASS_IDS.FOURTH_A),
     ).rejects.toMatchObject({ code: "FORBIDDEN" });

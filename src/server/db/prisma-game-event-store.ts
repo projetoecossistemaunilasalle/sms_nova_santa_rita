@@ -14,6 +14,7 @@ import type {
   GameEventTransaction,
   PlayerReport,
   ClassReport,
+  ModuleReportTotals,
 } from "@/application/game-events/ports";
 import { GameEventError } from "@/application/game-events/service";
 import {
@@ -64,8 +65,65 @@ type ClassReportRow = {
   lastPlayedAt: Date | null;
 };
 
+function combineModuleTotals(
+  totals: ModuleReportTotals[],
+): ModuleReportTotals[] {
+  const modules = new Map<string | null, ModuleReportTotals>();
+  for (const total of totals) {
+    const previous = modules.get(total.moduleId);
+    modules.set(total.moduleId, {
+      moduleId: total.moduleId,
+      totalActiveMs: (previous?.totalActiveMs ?? 0) + total.totalActiveMs,
+      resultCount: (previous?.resultCount ?? 0) + total.resultCount,
+    });
+  }
+  return [...modules.values()];
+}
+
 class PrismaGameEventReader {
   constructor(protected readonly db: DatabaseClient) {}
+
+  private async readModuleTotals(scope: Prisma.Sql, moduleId?: string) {
+    const filter =
+      moduleId === undefined
+        ? Prisma.empty
+        : Prisma.sql`AND e."module_id" = ${moduleId}`;
+    // UNION ALL keeps independent event streams from multiplying each other.
+    const rows = await this.db.$queryRaw<
+      Array<{
+        playerSlotId: string;
+        moduleId: string | null;
+        totalActiveMs: bigint;
+        resultCount: bigint;
+      }>
+    >(Prisma.sql`
+      WITH events AS (
+        SELECT p."player_slot_id", e."module_id", 0::bigint AS active_ms, COUNT(*) AS results
+        FROM "result_events" e
+        JOIN "participations" p ON p."id" = e."participation_id"
+        JOIN "player_slots" s ON s."id" = p."player_slot_id"
+        WHERE ${scope} ${filter}
+        GROUP BY p."player_slot_id", e."module_id"
+        UNION ALL
+        SELECT p."player_slot_id", e."module_id", SUM(e."active_ms") AS active_ms, 0::bigint AS results
+        FROM "active_time_events" e
+        JOIN "participations" p ON p."id" = e."participation_id"
+        JOIN "player_slots" s ON s."id" = p."player_slot_id"
+        WHERE ${scope} ${filter}
+        GROUP BY p."player_slot_id", e."module_id"
+      )
+      SELECT "player_slot_id" AS "playerSlotId", "module_id" AS "moduleId",
+        SUM(active_ms)::bigint AS "totalActiveMs", SUM(results)::bigint AS "resultCount"
+      FROM events GROUP BY "player_slot_id", "module_id"
+      ORDER BY "player_slot_id", "module_id" NULLS LAST
+    `);
+    return rows.map((row) => ({
+      playerSlotId: row.playerSlotId,
+      moduleId: row.moduleId,
+      totalActiveMs: Number(row.totalActiveMs),
+      resultCount: Number(row.resultCount),
+    }));
+  }
 
   async getLaunchScope(
     context: LaunchTokenContext,
@@ -132,8 +190,12 @@ class PrismaGameEventReader {
     };
   }
 
-  async listClassReports(classGroupIds: readonly string[]) {
+  async listClassReports(classGroupIds: readonly string[], moduleId?: string) {
     if (classGroupIds.length === 0) return [];
+    const filter =
+      moduleId === undefined
+        ? Prisma.empty
+        : Prisma.sql`WHERE e."module_id" = ${moduleId}`;
     // Aggregate streams independently before joining: joining raw event tables
     // together would multiply results by active-time rows and corrupt totals.
     const rows = await this.db.$queryRaw<ClassReportRow[]>(Prisma.sql`
@@ -147,10 +209,12 @@ class PrismaGameEventReader {
       ), results AS (
         SELECT e."participation_id", COUNT(*) AS count, MAX(e."received_at") AS latest
         FROM "result_events" e JOIN participations p ON p."id" = e."participation_id"
+        ${filter}
         GROUP BY e."participation_id"
       ), active_time AS (
         SELECT e."participation_id", SUM(e."active_ms") AS total, MAX(e."received_at") AS latest
         FROM "active_time_events" e JOIN participations p ON p."id" = e."participation_id"
+        ${filter}
         GROUP BY e."participation_id"
       ), totals AS (
         SELECT p."player_slot_id", COUNT(*) AS participations,
@@ -177,6 +241,16 @@ class PrismaGameEventReader {
       LEFT JOIN sessions g ON g."class_group_id" = c."id"
       ORDER BY c."name", c."id", s."player_number"
     `);
+    const moduleTotals = await this.readModuleTotals(
+      Prisma.sql`s."class_group_id" IN (${Prisma.join(classGroupIds.map((id) => Prisma.sql`${id}::uuid`))})`,
+      moduleId,
+    );
+    const modulesByPlayer = new Map<string, ModuleReportTotals[]>();
+    for (const { playerSlotId, ...total } of moduleTotals) {
+      const totals = modulesByPlayer.get(playerSlotId) ?? [];
+      totals.push(total);
+      modulesByPlayer.set(playerSlotId, totals);
+    }
     const reports = new Map<string, ClassReport>();
     for (const row of rows) {
       let report = reports.get(row.classGroupId);
@@ -189,6 +263,7 @@ class PrismaGameEventReader {
           participatingPlayerCount: 0,
           totalActiveMs: 0,
           resultCount: 0,
+          moduleTotals: [],
           players: [],
         };
         reports.set(row.classGroupId, report);
@@ -206,6 +281,7 @@ class PrismaGameEventReader {
         participationCount: Number(row.participationCount),
         totalActiveMs: Number(row.totalActiveMs),
         resultCount: Number(row.resultCount),
+        moduleTotals: modulesByPlayer.get(row.playerSlotId) ?? [],
         lastPlayedAt: row.lastPlayedAt,
       };
       report.players.push(player);
@@ -214,13 +290,19 @@ class PrismaGameEventReader {
       report.totalActiveMs += player.totalActiveMs;
       report.resultCount += player.resultCount;
     }
-    return [...reports.values()];
+    return [...reports.values()].map((report) => ({
+      ...report,
+      moduleTotals: combineModuleTotals(
+        report.players.flatMap((player) => player.moduleTotals),
+      ),
+    }));
   }
 
   async getPlayerReport(
     classGroupId: string,
     playerSlotId: string,
     page: PlayerHistoryPage = {},
+    moduleId?: string,
   ): Promise<PlayerReport | null> {
     const player = await this.db.playerSlot.findFirst({
       where: { id: playerSlotId, classGroupId },
@@ -236,26 +318,45 @@ class PrismaGameEventReader {
 
     const sessionPages = Math.max(1, player._count.participations);
     const sessionPage = reportPage(page.sessionPage, sessionPages);
-    const [totalActive, resultCount, sessions] = await Promise.all([
-      this.db.activeTimeEvent.aggregate({
-        where: { participation: { playerSlotId } },
-        _sum: { activeMs: true },
-      }),
-      this.db.resultEvent.count({ where: { participation: { playerSlotId } } }),
-      this.db.participation.findMany({
-        where: { playerSlotId },
-        orderBy: [{ joinedAt: "desc" }, { id: "desc" }],
-        skip: sessionPage - 1,
-        take: 1,
-        select: {
-          id: true,
-          gameSessionId: true,
-          joinedAt: true,
-          gameSession: { select: { startedAt: true, endedAt: true } },
-          _count: { select: { resultEvents: true, activeTimeEvents: true } },
-        },
-      }),
-    ]);
+    const eventFilter = moduleId === undefined ? {} : { moduleId };
+    const [totalActive, resultCount, sessions, moduleTotals] =
+      await Promise.all([
+        this.db.activeTimeEvent.aggregate({
+          where: { participation: { playerSlotId }, ...eventFilter },
+          _sum: { activeMs: true },
+        }),
+        this.db.resultEvent.count({
+          where: { participation: { playerSlotId }, ...eventFilter },
+        }),
+        this.db.participation.findMany({
+          where: { playerSlotId },
+          orderBy: [{ joinedAt: "desc" }, { id: "desc" }],
+          skip: sessionPage - 1,
+          take: 1,
+          select: {
+            id: true,
+            gameSessionId: true,
+            joinedAt: true,
+            gameSession: {
+              select: {
+                startedAt: true,
+                endedAt: true,
+                contentManifest: { select: { payload: true } },
+              },
+            },
+            _count: {
+              select: {
+                resultEvents: { where: eventFilter },
+                activeTimeEvents: { where: eventFilter },
+              },
+            },
+          },
+        }),
+        this.readModuleTotals(
+          Prisma.sql`s."id" = ${playerSlotId}::uuid AND s."class_group_id" = ${classGroupId}::uuid`,
+          moduleId,
+        ),
+      ]);
     const participation = sessions[0];
     const resultPages = Math.max(
       1,
@@ -266,13 +367,16 @@ class PrismaGameEventReader {
     const resultPage = reportPage(page.resultPage, resultPages);
     const participations: PlayerReport["participations"] = [];
     if (participation) {
-      const [active, events] = await Promise.all([
+      const manifest = parseContentManifestV1(
+        participation.gameSession.contentManifest.payload,
+      );
+      const [active, events, sessionModuleTotals] = await Promise.all([
         this.db.activeTimeEvent.aggregate({
-          where: { participationId: participation.id },
+          where: { participationId: participation.id, ...eventFilter },
           _sum: { activeMs: true },
         }),
         this.db.resultEvent.findMany({
-          where: { participationId: participation.id },
+          where: { participationId: participation.id, ...eventFilter },
           orderBy: [{ receivedAt: "desc" }, { id: "desc" }],
           skip: (resultPage - 1) * PLAYER_RESULTS_PAGE_SIZE,
           take: PLAYER_RESULTS_PAGE_SIZE,
@@ -280,6 +384,8 @@ class PrismaGameEventReader {
             id: true,
             activityId: true,
             missionId: true,
+            moduleId: true,
+            presetId: true,
             attemptId: true,
             resultState: true,
             durationMs: true,
@@ -287,6 +393,10 @@ class PrismaGameEventReader {
             receivedAt: true,
           },
         }),
+        this.readModuleTotals(
+          Prisma.sql`p."id" = ${participation.id}::uuid AND s."class_group_id" = ${classGroupId}::uuid`,
+          moduleId,
+        ),
       ]);
       participations.push({
         gameSessionId: participation.gameSessionId,
@@ -296,14 +406,32 @@ class PrismaGameEventReader {
         activeTimeMs: Number(active._sum.activeMs ?? 0),
         activeTimeEventCount: participation._count.activeTimeEvents,
         resultCount: participation._count.resultEvents,
+        moduleTotals: sessionModuleTotals.map(
+          ({ moduleId, totalActiveMs, resultCount }) => ({
+            moduleId,
+            totalActiveMs,
+            resultCount,
+          }),
+        ),
         results: events.map((event) => ({
           id: event.id,
           activityId: event.activityId,
           missionId: event.missionId,
+          moduleId: event.moduleId,
+          presetId: event.presetId,
           attemptId: event.attemptId,
           state: event.resultState,
           durationMs: Number(event.durationMs),
           metrics: metricsDto(event.metrics),
+          metricLabels: Object.fromEntries(
+            (
+              manifest.activities.find(
+                (activity) =>
+                  activity.activity_id === event.activityId &&
+                  activity.mission_id === event.missionId,
+              )?.metrics ?? []
+            ).map((metric) => [metric.key, metric.label]),
+          ),
           receivedAt: event.receivedAt,
         })),
       });
@@ -318,6 +446,13 @@ class PrismaGameEventReader {
       participationCount: player._count.participations,
       totalActiveMs: Number(totalActive._sum.activeMs ?? 0),
       resultCount,
+      moduleTotals: moduleTotals.map(
+        ({ moduleId, totalActiveMs, resultCount }) => ({
+          moduleId,
+          totalActiveMs,
+          resultCount,
+        }),
+      ),
       history: { sessionPage, sessionPages, resultPage, resultPages },
       participations,
     };

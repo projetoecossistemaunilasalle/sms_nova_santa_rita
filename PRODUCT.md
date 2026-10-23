@@ -8,9 +8,9 @@ web
 
 ## Product purpose
 
-Missões do Caramelito combines an authenticated professional/admin portal with a low-friction player entry flow for one existing GameMaker experience.
+Missões do Caramelito combines an authenticated professional/admin portal with a low-friction player entry flow for the maintained Phaser game (`Heroes_Trial/web-poc`).
 
-V1 is focused on making the full portal-to-game workflow work in production conditions. The portal prepares organizations, classes, adult permissions, player access, game context, persistence, and reporting. The existing GameMaker project remains the single gameplay runtime and source of truth for gameplay content and behavior.
+The portal prepares organizations, classes, adult permissions, player access, game context, persistence, and reporting. The maintained Phaser game remains the single gameplay runtime and source of truth for gameplay content and behavior. The portal selects content, never authors it: V2 imports the game's content manifest, freezes a resolved policy and manifest reference per session, and integrates through `/api/v2/player`.
 
 The current implementation reference is
 [docs/refactor-dossier/IMPLEMENTATION-READY.md](docs/refactor-dossier/IMPLEMENTATION-READY.md),
@@ -83,7 +83,7 @@ The game must support continuation across different school tablets.
 
 Server-side persistence is authoritative for player game state. Browser storage may support temporary offline operation, but must not be the only copy of world/progression state.
 
-GameMaker owns the meaning and rules of game state, including gameplay progression, cosmetics, rewards, currencies, and other game-owned values. The portal/backend stores and synchronizes the state through a versioned integration contract.
+Phaser owns the meaning and rules of game state, including gameplay progression, cosmetics, rewards, currencies, and other game-owned values. The portal/backend stores and synchronizes the state through a versioned integration contract.
 
 ## Results and usage
 
@@ -129,7 +129,7 @@ V1 has three connected surfaces:
 
 1. the authenticated professional/admin portal;
 2. the player entry and context-resolution surface;
-3. the existing GameMaker runtime.
+3. the maintained Phaser runtime.
 
 ### Portal/backend owns
 
@@ -144,7 +144,7 @@ V1 has three connected surfaces:
 - result ingestion and reporting;
 - active-play metrics.
 
-### GameMaker owns
+### Phaser game owns
 
 - gameplay;
 - activities and minigames inside the game;
@@ -158,8 +158,8 @@ The portal must not become a game editor, minigame catalog, or second source of 
 
 ## Integration principles
 
-- The GameMaker integration uses versioned contracts.
-- Portal releases and GameMaker releases should remain independently deployable where possible.
+- The Phaser integration uses versioned contracts.
+- Portal releases and Phaser game releases should remain independently deployable where possible.
 - Player credentials and session context are separate concepts.
 - Game state must not be keyed only by browser or device.
 - Public/player credentials must be opaque and excluded from public discovery.
@@ -202,8 +202,8 @@ Materials is excluded.
 
 ## Evidence and legacy documents
 
-- The existing GameMaker project is the reference for gameplay behavior and game-owned state.
-- `contracts/schemas/` contains the versioned, fixture-tested V1 transport contracts shared by the route handlers, the browser host, and GameMaker; see `contracts/schemas/README.md`.
+- The maintained Phaser project is the reference for gameplay behavior and game-owned state.
+- `contracts/schemas/v2/` contains the versioned, fixture-tested V2 transport contracts shared by the route handlers, the browser host, and Phaser; see `contracts/schemas/README.md`.
 - [docs/v1-game-integration-dossier.md](docs/v1-game-integration-dossier.md) is retained as a historical planning record; the current references are [docs/refactor-dossier/IMPLEMENTATION-READY.md](docs/refactor-dossier/IMPLEMENTATION-READY.md) and [docs/current-architecture.md](docs/current-architecture.md).
 - [docs/current-architecture.md](docs/current-architecture.md) describes the current web/technical boundary.
 - `portal-v1-specification.md`, older phase plans, and earlier aggregate-only/link-only assumptions are retained as historical research where they conflict with the current V1 direction.
