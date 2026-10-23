@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "policy_version": {
+      "type": "number",
+      "const": 1
+    },
+    "authored_content_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "enabled_module_ids": {
+      "$ref": "#/$defs/__schema0",
+      "uniqueItems": true
+    },
+    "enabled_mission_ids": {
+      "$ref": "#/$defs/__schema0",
+      "uniqueItems": true
+    },
+    "activity_presets": {
+      "anyOf": [
+        {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "options": {
+      "anyOf": [
+        {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "policy_version",
+    "authored_content_version",
+    "enabled_module_ids",
+    "enabled_mission_ids"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "__schema0": {
+      "maxItems": 256,
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/__schema1"
+      }
+    },
+    "__schema1": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    }
+  }
+}

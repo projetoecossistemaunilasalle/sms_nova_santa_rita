@@ -1,0 +1,19 @@
+{
+  "type": "game.bootstrap_applied.v2",
+  "request_id": "bootstrap-1",
+  "effective_mission_ids": [
+    "brushing_teeth",
+    "smile_kit"
+  ],
+  "ignored": {
+    "mission_ids": [
+      "future_mission"
+    ],
+    "presets": {
+      "future_activity": "future_preset"
+    },
+    "options": [
+      "future_option"
+    ]
+  }
+}

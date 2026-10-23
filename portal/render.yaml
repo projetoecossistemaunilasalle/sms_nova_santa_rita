@@ -1,0 +1,52 @@
+# Render Blueprint for the professional portal (server runtime).
+# The portal also serves the game build committed under public/jogo-cliente/
+# (same origin; see docs/deploy-render.md). Migrations run as the pre-deploy
+# step, so a failed migration keeps the previous release serving.
+services:
+  - type: web
+    name: sms-portal
+    runtime: node
+    # No South America region exists; Virginia is the closest to Brazil.
+    # Keep the production Neon project in AWS us-east-1 next to it.
+    region: virginia
+    plan: starter
+    buildCommand: npm ci && npm run build:server
+    preDeployCommand: npx prisma migrate deploy
+    # Next's standalone server binds to HOSTNAME; force all interfaces.
+    startCommand: npm run start -- --hostname 0.0.0.0
+    # Readiness also queries the pooled DATABASE_URL (2 s timeout), so a deploy
+    # whose runtime connection is broken is rejected instead of going live.
+    healthCheckPath: /api/health/ready
+    autoDeployTrigger: off
+    envVars:
+      - key: NODE_VERSION
+        value: 24.19.0
+      - key: APP_RUNTIME_MODE
+        value: server
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: NEON_AUTH_BASE_URL
+        sync: false
+      - key: NEON_AUTH_COOKIE_SECRET
+        generateValue: true
+      # Also derives rate-limit keys and player launch signatures. Never
+      # regenerate it once credentials exist (see .env.example key ring).
+      - key: APPLICATION_SECRET
+        generateValue: true
+      - key: PLAYER_CREDENTIAL_KEY_ID
+        value: default
+      - key: OFFLINE_FLUSH_WINDOW_SECONDS
+        value: "86400"
+      - key: LOG_LEVEL
+        value: info
+      - key: AUTH_DEV_BYPASS
+        value: "false"
+      # Not set on purpose:
+      # - ALLOWED_ORIGINS / GAME_CLIENT_URL: scripts/start.mjs derives them from
+      #   RENDER_EXTERNAL_URL. Set both explicitly when adding a custom domain.
+      # - RATE_LIMIT_CLIENT_IP_HEADER: Render does not document that its proxy
+      #   strips client-supplied forwarding headers, so IP limits stay off.
+      # - NEON_AUTH_ADMIN_EMAIL / NEON_AUTH_ADMIN_PASSWORD: add in the
+      #   dashboard once the provisioning identity exists ("Equipe > Criar conta").

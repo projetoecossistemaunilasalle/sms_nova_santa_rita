@@ -1,0 +1,13 @@
+.next
+node_modules
+public/jogo-cliente/**
+src/generated
+package-lock.json
+contracts
+docs
+portal-v1-specification.md
+prisma/schema.prisma
+REFACTOR_PLAN.md
+src/runtime/actions.ts
+src/runtime/readers.ts
+src/runtime/client.ts

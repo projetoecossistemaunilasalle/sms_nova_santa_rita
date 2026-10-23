@@ -1,0 +1,29 @@
+{
+  "type": "game.result.v2",
+  "request_id": "result-4",
+  "activity_id": "brushing_teeth_practice",
+  "mission_id": "brushing_teeth",
+  "context": {
+    "id_tentativa": "0190a444-1111-4111-8111-000000000004",
+    "id_atividade": "brushing_teeth_practice",
+    "id_mecanica": "brush_drag_regions",
+    "id_preset": "padrao",
+    "versao_atividade": 1,
+    "id_casa": 0,
+    "sequencia_tentativa": 4,
+    "numero_tentativa_atividade": 1,
+    "semente": 1234,
+    "dificuldade": 1,
+    "parametros": {}
+  },
+  "result": {
+    "estado": "sucesso",
+    "duracao_ms": 12000,
+    "metricas": {
+      "regioes_limpas": 6,
+      "limpeza": 0.95,
+      "distancia_escovada": 120.5
+    }
+  },
+  "client_event_id": "event-result-4"
+}

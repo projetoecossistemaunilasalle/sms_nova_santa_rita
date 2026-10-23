@@ -1,0 +1,312 @@
+{
+  "type": "game.save.v2",
+  "request_id": "save-1",
+  "expected_revision": 7,
+  "content_version": "heroes_trial_school_2026_10",
+  "state": {
+    "schema_version": 3,
+    "history": {
+      "schema_version": 2,
+      "catalog_missions": [
+        "lia_memory",
+        "pingpong_soccer",
+        "respect_also_cares",
+        "when_play_stops_being_play",
+        "brushing_teeth",
+        "smile_kit"
+      ],
+      "mission_accounting": {
+        "lia_memory": {
+          "initial_stage": "cutscene",
+          "stages": {
+            "cutscene": {
+              "kind": "cutscene"
+            },
+            "choice": {
+              "kind": "choice"
+            },
+            "consequence": {
+              "kind": "dialogue"
+            },
+            "activity": {
+              "kind": "activity"
+            },
+            "complete": {
+              "kind": "complete"
+            }
+          },
+          "checkpoints": {},
+          "completion": {
+            "coins": 10,
+            "stars": 1
+          }
+        },
+        "pingpong_soccer": {
+          "initial_stage": "cutscene",
+          "stages": {
+            "cutscene": {
+              "kind": "cutscene"
+            },
+            "choice": {
+              "kind": "choice"
+            },
+            "consequence": {
+              "kind": "dialogue"
+            },
+            "activity": {
+              "kind": "activity"
+            },
+            "complete": {
+              "kind": "complete"
+            }
+          },
+          "checkpoints": {},
+          "completion": {
+            "coins": 10,
+            "stars": 1
+          }
+        },
+        "respect_also_cares": {
+          "initial_stage": "greeting",
+          "stages": {
+            "greeting": {
+              "kind": "dialogue"
+            },
+            "greeting_choice": {
+              "kind": "choice"
+            },
+            "group_scene": {
+              "kind": "cutscene"
+            },
+            "respect_limit": {
+              "kind": "choice"
+            },
+            "comfort_intro": {
+              "kind": "cutscene"
+            },
+            "comfort_activity": {
+              "kind": "activity"
+            },
+            "seek_help": {
+              "kind": "choice"
+            },
+            "final_dialogue": {
+              "kind": "cutscene"
+            },
+            "complete": {
+              "kind": "complete"
+            }
+          },
+          "checkpoints": {
+            "greeting_complete": {
+              "coins": 2,
+              "stars": 0
+            },
+            "limit_respected": {
+              "coins": 2,
+              "stars": 0
+            },
+            "comfort_classified": {
+              "coins": 2,
+              "stars": 0
+            },
+            "help_requested": {
+              "coins": 2,
+              "stars": 0
+            }
+          },
+          "completion": {
+            "coins": 10,
+            "stars": 1
+          }
+        },
+        "when_play_stops_being_play": {
+          "initial_stage": "intro",
+          "stages": {
+            "intro": {
+              "kind": "cutscene"
+            },
+            "find_commenter": {
+              "kind": "dialogue"
+            },
+            "find_witness": {
+              "kind": "dialogue"
+            },
+            "return_hoodie": {
+              "kind": "dialogue"
+            },
+            "choice": {
+              "kind": "choice"
+            },
+            "help_guidance": {
+              "kind": "dialogue"
+            },
+            "final_dialogue": {
+              "kind": "cutscene"
+            },
+            "complete": {
+              "kind": "complete"
+            }
+          },
+          "checkpoints": {
+            "seek_help_decision": {
+              "coins": 2,
+              "stars": 0
+            }
+          },
+          "completion": {
+            "coins": 10,
+            "stars": 1
+          }
+        },
+        "brushing_teeth": {
+          "initial_stage": "intro",
+          "stages": {
+            "intro": {
+              "kind": "cutscene"
+            },
+            "activity": {
+              "kind": "activity"
+            },
+            "thanks": {
+              "kind": "cutscene"
+            },
+            "complete": {
+              "kind": "complete"
+            }
+          },
+          "checkpoints": {
+            "brushing_practice_complete": {
+              "coins": 0,
+              "stars": 0
+            }
+          },
+          "completion": {
+            "coins": 10,
+            "stars": 1
+          }
+        },
+        "smile_kit": {
+          "initial_stage": "intro",
+          "stages": {
+            "intro": {
+              "kind": "dialogue"
+            },
+            "activity": {
+              "kind": "activity"
+            },
+            "complete": {
+              "kind": "complete"
+            }
+          },
+          "checkpoints": {
+            "smile_kit_complete": {
+              "coins": 0,
+              "stars": 0
+            }
+          },
+          "completion": {
+            "coins": 10,
+            "stars": 1
+          }
+        }
+      },
+      "missions": {
+        "lia_memory": {
+          "status": "complete",
+          "stage_id": "complete",
+          "checkpoints": {},
+          "data": {}
+        },
+        "pingpong_soccer": {
+          "status": "complete",
+          "stage_id": "complete",
+          "checkpoints": {},
+          "data": {}
+        },
+        "respect_also_cares": {
+          "status": "complete",
+          "stage_id": "complete",
+          "checkpoints": {
+            "greeting_complete": true,
+            "limit_respected": true,
+            "comfort_classified": true,
+            "help_requested": true
+          },
+          "data": {}
+        },
+        "when_play_stops_being_play": {
+          "status": "complete",
+          "stage_id": "complete",
+          "checkpoints": {
+            "seek_help_decision": true
+          },
+          "data": {}
+        },
+        "brushing_teeth": {
+          "status": "available",
+          "stage_id": "intro",
+          "checkpoints": {},
+          "data": {}
+        },
+        "smile_kit": {
+          "status": "available",
+          "stage_id": "intro",
+          "checkpoints": {},
+          "data": {}
+        }
+      },
+      "progression": {
+        "coins": 50,
+        "stars": 4,
+        "challenges": {
+          "lia_memory": true,
+          "pingpong_soccer": true,
+          "respect_also_cares": true,
+          "when_play_stops_being_play": true
+        },
+        "rewards": {
+          "challenge:lia_memory": true,
+          "challenge:pingpong_soccer": true,
+          "mission:respect_also_cares:checkpoint:greeting_complete": true,
+          "mission:respect_also_cares:checkpoint:limit_respected": true,
+          "mission:respect_also_cares:checkpoint:comfort_classified": true,
+          "mission:respect_also_cares:checkpoint:help_requested": true,
+          "challenge:respect_also_cares": true,
+          "mission:when_play_stops_being_play:checkpoint:seek_help_decision": true,
+          "challenge:when_play_stops_being_play": true
+        }
+      },
+      "recovery": {
+        "missions": {},
+        "progression": {
+          "challenges": {},
+          "rewards": {}
+        }
+      },
+      "archived": {
+        "coins": 0,
+        "stars": 0,
+        "rewards": {},
+        "challenges": {},
+        "residual": {
+          "coins": 0,
+          "stars": 0
+        }
+      },
+      "archived_missions": {},
+      "session": {
+        "id": "current-product-fixture",
+        "started_at": 100,
+        "revision": 1
+      }
+    },
+    "skins": {
+      "owned": {
+        "default": 0,
+        "medieval_armor": 20
+      },
+      "equipped": "medieval_armor"
+    }
+  }
+}

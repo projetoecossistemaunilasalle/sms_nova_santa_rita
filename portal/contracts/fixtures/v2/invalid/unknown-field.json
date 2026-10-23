@@ -1,0 +1,11 @@
+{
+  "type": "game.ready.v2",
+  "supported_protocol_versions": [
+    2
+  ],
+  "supported_state_schema_versions": [
+    3
+  ],
+  "content_version": "heroes_trial_school_2026_10",
+  "unknown": true
+}

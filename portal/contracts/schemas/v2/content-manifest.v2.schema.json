@@ -1,0 +1,271 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "manifest_version": {
+      "$ref": "#/$defs/__schema0"
+    },
+    "content_version": {
+      "$ref": "#/$defs/__schema1"
+    },
+    "modules": {
+      "$ref": "#/$defs/__schema2"
+    },
+    "missions": {
+      "$ref": "#/$defs/__schema6"
+    },
+    "activities": {
+      "$ref": "#/$defs/__schema8"
+    },
+    "session_options": {
+      "$ref": "#/$defs/__schema9"
+    }
+  },
+  "required": [
+    "manifest_version",
+    "content_version",
+    "modules",
+    "missions",
+    "activities",
+    "session_options"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "__schema0": {
+      "type": "number",
+      "const": 1
+    },
+    "__schema1": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]{1,200}$"
+    },
+    "__schema2": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "module_id": {
+            "$ref": "#/$defs/__schema3"
+          },
+          "title": {
+            "$ref": "#/$defs/__schema4",
+            "pattern": "\\S"
+          },
+          "summary": {
+            "$ref": "#/$defs/__schema4",
+            "pattern": "\\S"
+          },
+          "order": {
+            "$ref": "#/$defs/__schema5"
+          },
+          "mission_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/__schema3"
+            }
+          }
+        },
+        "required": [
+          "module_id",
+          "title",
+          "summary",
+          "order",
+          "mission_ids"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "__schema3": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]{1,64}$"
+    },
+    "__schema4": {
+      "type": "string"
+    },
+    "__schema5": {
+      "type": "integer",
+      "exclusiveMinimum": 0,
+      "maximum": 9007199254740991
+    },
+    "__schema6": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "mission_id": {
+            "$ref": "#/$defs/__schema3"
+          },
+          "module_id": {
+            "$ref": "#/$defs/__schema3"
+          },
+          "title": {
+            "$ref": "#/$defs/__schema4",
+            "pattern": "\\S"
+          },
+          "summary": {
+            "$ref": "#/$defs/__schema4",
+            "pattern": "\\S"
+          },
+          "activity_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/__schema3"
+            }
+          },
+          "completion_reward": {
+            "type": "object",
+            "properties": {
+              "coins": {
+                "$ref": "#/$defs/__schema7"
+              },
+              "stars": {
+                "$ref": "#/$defs/__schema7"
+              }
+            },
+            "required": [
+              "coins",
+              "stars"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "mission_id",
+          "module_id",
+          "title",
+          "summary",
+          "activity_ids",
+          "completion_reward"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "__schema7": {
+      "type": "number",
+      "minimum": 0
+    },
+    "__schema8": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "activity_id": {
+            "$ref": "#/$defs/__schema3"
+          },
+          "mission_id": {
+            "$ref": "#/$defs/__schema3"
+          },
+          "content_id": {
+            "$ref": "#/$defs/__schema3"
+          },
+          "mechanic_id": {
+            "$ref": "#/$defs/__schema3"
+          },
+          "activity_version": {
+            "$ref": "#/$defs/__schema5"
+          },
+          "title": {
+            "$ref": "#/$defs/__schema4",
+            "pattern": "\\S"
+          },
+          "presets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "preset_id": {
+                  "$ref": "#/$defs/__schema3"
+                },
+                "label": {
+                  "$ref": "#/$defs/__schema4",
+                  "pattern": "\\S"
+                },
+                "default": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "preset_id",
+                "label",
+                "default"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "metrics": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "$ref": "#/$defs/__schema3"
+                },
+                "label": {
+                  "$ref": "#/$defs/__schema4",
+                  "pattern": "\\S"
+                },
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "count",
+                    "score",
+                    "ratio",
+                    "duration_ms",
+                    "measure"
+                  ]
+                }
+              },
+              "required": [
+                "key",
+                "label",
+                "kind"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "activity_id",
+          "mission_id",
+          "content_id",
+          "mechanic_id",
+          "activity_version",
+          "title",
+          "presets",
+          "metrics"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "__schema9": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "option_id": {
+            "$ref": "#/$defs/__schema3"
+          },
+          "type": {
+            "type": "string",
+            "const": "boolean"
+          },
+          "default": {
+            "type": "boolean"
+          },
+          "label": {
+            "$ref": "#/$defs/__schema4",
+            "pattern": "\\S"
+          }
+        },
+        "required": [
+          "option_id",
+          "type",
+          "default",
+          "label"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "x-manifest-max-serialized-utf8-bytes": 131072
+}

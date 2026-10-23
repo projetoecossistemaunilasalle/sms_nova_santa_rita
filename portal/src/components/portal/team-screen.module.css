@@ -1,0 +1,215 @@
+.serverProvisioningGuide {
+  margin: 16px 20px;
+  padding: 17px 20px;
+  border: 1px solid color-mix(in srgb, var(--blue) 20%, var(--border) 80%);
+  border-radius: var(--radius-large);
+  color: var(--text);
+  background: var(--surface-sky);
+}
+
+.serverProvisioningGuide > summary {
+  cursor: pointer;
+  min-height: 44px;
+  align-content: center;
+  font-weight: 750;
+}
+
+.serverProvisioningGuide[open] > summary {
+  margin-bottom: 12px;
+}
+
+.memberHeader,
+.memberRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 72px minmax(
+      160px,
+      0.8fr
+    );
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  font-size: var(--type-small);
+}
+
+.memberHeader {
+  color: var(--text-muted);
+  background: var(--green-light);
+  font-weight: 750;
+}
+
+.memberRow + .memberRow {
+  border-top: 1px solid var(--border);
+}
+
+.memberRow > :first-child strong,
+.memberRow > :first-child small {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.memberRole {
+  color: var(--text-muted);
+}
+
+.teamSummary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-block: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.teamSummary p {
+  margin: 0 0 6px;
+  color: var(--text-muted);
+  font-size: var(--type-small);
+}
+
+.teamSummary strong {
+  font-family: var(--font-display);
+  font-size: var(--type-display-small);
+  font-variant-numeric: tabular-nums;
+}
+
+.memberRow > :nth-child(3) {
+  justify-self: start;
+}
+
+@media (max-width: 1120px) {
+  .memberHeader {
+    display: none;
+  }
+
+  .memberRow {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px 16px;
+  }
+
+  .memberRole {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .memberRow > :nth-child(3) {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .memberRow > :last-child {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+}
+
+.serverProvisioningGuide h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--type-title);
+}
+
+.serverProvisioningGuide p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--type-small);
+}
+
+.serverProvisioningGuide ol {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-column: 1 / -1;
+  gap: 8px 22px;
+  margin: 0;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--border);
+  list-style: none;
+}
+
+.serverProvisioningGuide li {
+  color: var(--text-muted);
+  font-size: var(--type-small);
+}
+
+.serverProvisioningGuide li strong {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--text);
+}
+
+.demoAccountNotice {
+  margin: 16px 20px;
+  padding: 12px 16px;
+  border: 1px solid color-mix(in srgb, var(--yellow) 55%, var(--border) 45%);
+  border-radius: var(--radius-large);
+  color: var(--yellow-dark);
+  background: var(--yellow-light);
+  font-size: var(--type-small);
+}
+
+.accountCreationPanel {
+  margin-bottom: 16px;
+}
+
+.accountCreationPanel h2 {
+  margin: 0;
+  font-family: var(--font-display);
+}
+
+.accountCreationPanel > div > p {
+  max-width: 40ch;
+  margin: 6px 0 0;
+  color: var(--text-muted);
+  font-size: var(--type-small);
+}
+
+.accountForm {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+
+.accountForm > :global(button) {
+  grid-column: 1 / -1;
+  justify-self: end;
+  margin-bottom: 5px;
+}
+
+.accountForm > :global(p) {
+  grid-column: 1 / -1;
+}
+
+.existingMemberForm > .membershipSubmit {
+  margin-bottom: 5px;
+}
+
+.membershipSubmit {
+  white-space: nowrap;
+}
+
+@media (max-width: 980px) {
+  .serverProvisioningGuide {
+    grid-template-columns: 1fr;
+  }
+
+  .accountForm > :global(button) {
+    justify-self: start;
+    margin-bottom: 0;
+  }
+
+  .existingMemberForm > .membershipSubmit {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 680px) {
+  .serverProvisioningGuide ol {
+    grid-template-columns: 1fr;
+  }
+
+  .accountForm {
+    grid-template-columns: 1fr;
+  }
+
+  .accountForm > :global(button) {
+    width: 100%;
+  }
+}

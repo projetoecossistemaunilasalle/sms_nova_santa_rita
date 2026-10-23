@@ -1,0 +1,241 @@
+{
+  "manifest_version": 1,
+  "content_version": "heroes_trial_school_2026_10",
+  "modules": [
+    {
+      "module_id": "convivencia",
+      "title": "Convivência e respeito",
+      "summary": "Inclusão, limites de cada um e o que fazer diante do bullying.",
+      "order": 1,
+      "mission_ids": [
+        "lia_memory",
+        "pingpong_soccer",
+        "respect_also_cares",
+        "when_play_stops_being_play"
+      ]
+    },
+    {
+      "module_id": "saude_bucal",
+      "title": "Saúde bucal",
+      "summary": "Escovação e cuidados diários com os dentes.",
+      "order": 2,
+      "mission_ids": ["brushing_teeth", "smile_kit"]
+    }
+  ],
+  "missions": [
+    {
+      "mission_id": "lia_memory",
+      "module_id": "convivencia",
+      "title": "Atitudes positivas",
+      "summary": "Ajudar a Lia a reconhecer atitudes positivas.",
+      "activity_ids": ["lia_memory"],
+      "completion_reward": {
+        "coins": 10,
+        "stars": 1
+      }
+    },
+    {
+      "mission_id": "pingpong_soccer",
+      "module_id": "convivencia",
+      "title": "Futebol no pátio",
+      "summary": "Incluir no futebol do pátio quem ficou de fora.",
+      "activity_ids": ["pingpong_defense"],
+      "completion_reward": {
+        "coins": 10,
+        "stars": 1
+      }
+    },
+    {
+      "mission_id": "respect_also_cares",
+      "module_id": "convivencia",
+      "title": "Respeitar também é cuidar",
+      "summary": "Perceber e respeitar o conforto e os limites dos colegas.",
+      "activity_ids": ["comfort_traffic_light"],
+      "completion_reward": {
+        "coins": 10,
+        "stars": 1
+      }
+    },
+    {
+      "mission_id": "when_play_stops_being_play",
+      "module_id": "convivencia",
+      "title": "Quando a brincadeira deixa de ser brincadeira?",
+      "summary": "Investigar quando a brincadeira vira bullying e buscar ajuda.",
+      "activity_ids": [],
+      "completion_reward": {
+        "coins": 10,
+        "stars": 1
+      }
+    },
+    {
+      "mission_id": "brushing_teeth",
+      "module_id": "saude_bucal",
+      "title": "Escovando com Nico",
+      "summary": "Praticar a escovação dos dentes com o Nico.",
+      "activity_ids": ["brushing_teeth_practice"],
+      "completion_reward": {
+        "coins": 10,
+        "stars": 1
+      }
+    },
+    {
+      "mission_id": "smile_kit",
+      "module_id": "saude_bucal",
+      "title": "Kit do Sorriso",
+      "summary": "Montar o kit de cuidados diários com os dentes.",
+      "activity_ids": ["smile_kit_selection"],
+      "completion_reward": {
+        "coins": 10,
+        "stars": 1
+      }
+    }
+  ],
+  "activities": [
+    {
+      "activity_id": "lia_memory",
+      "mission_id": "lia_memory",
+      "content_id": "atitudes_positivas",
+      "mechanic_id": "memory_pairs",
+      "activity_version": 1,
+      "title": "Memória das atitudes",
+      "presets": [
+        {
+          "preset_id": "padrao",
+          "label": "Padrão",
+          "default": true
+        }
+      ],
+      "metrics": [
+        {
+          "key": "pares",
+          "label": "Pares encontrados",
+          "kind": "count"
+        },
+        {
+          "key": "jogadas",
+          "label": "Jogadas",
+          "kind": "count"
+        }
+      ]
+    },
+    {
+      "activity_id": "pingpong_defense",
+      "mission_id": "pingpong_soccer",
+      "content_id": "inclusao_no_recreio",
+      "mechanic_id": "defesa_bolas",
+      "activity_version": 1,
+      "title": "Defesa de bolas",
+      "presets": [
+        {
+          "preset_id": "padrao",
+          "label": "Padrão",
+          "default": true
+        }
+      ],
+      "metrics": [
+        {
+          "key": "bolas_bloqueadas",
+          "label": "Bolas defendidas",
+          "kind": "count"
+        },
+        {
+          "key": "bolas_perdidas",
+          "label": "Bolas perdidas",
+          "kind": "count"
+        },
+        {
+          "key": "trocas_concluidas",
+          "label": "Trocas concluídas",
+          "kind": "count"
+        },
+        {
+          "key": "pontuacao_local",
+          "label": "Pontuação",
+          "kind": "score"
+        }
+      ]
+    },
+    {
+      "activity_id": "comfort_traffic_light",
+      "mission_id": "respect_also_cares",
+      "content_id": "comfort_traffic_light_content",
+      "mechanic_id": "comfort_traffic_light_drag",
+      "activity_version": 1,
+      "title": "Semáforo do conforto",
+      "presets": [
+        {
+          "preset_id": "padrao",
+          "label": "Padrão",
+          "default": true
+        }
+      ],
+      "metrics": [
+        {
+          "key": "situacoes_classificadas",
+          "label": "Situações classificadas",
+          "kind": "count"
+        }
+      ]
+    },
+    {
+      "activity_id": "brushing_teeth_practice",
+      "mission_id": "brushing_teeth",
+      "content_id": "brushing_teeth_practice",
+      "mechanic_id": "brush_drag_regions",
+      "activity_version": 1,
+      "title": "Escovação guiada",
+      "presets": [
+        {
+          "preset_id": "padrao",
+          "label": "Padrão",
+          "default": true
+        }
+      ],
+      "metrics": [
+        {
+          "key": "regioes_limpas",
+          "label": "Regiões limpas",
+          "kind": "count"
+        },
+        {
+          "key": "limpeza",
+          "label": "Limpeza",
+          "kind": "ratio"
+        },
+        {
+          "key": "distancia_escovada",
+          "label": "Distância escovada",
+          "kind": "measure"
+        }
+      ]
+    },
+    {
+      "activity_id": "smile_kit_selection",
+      "mission_id": "smile_kit",
+      "content_id": "smile_kit_selection",
+      "mechanic_id": "daily_dental_care_selection",
+      "activity_version": 1,
+      "title": "Montar o kit",
+      "presets": [
+        {
+          "preset_id": "padrao",
+          "label": "Padrão",
+          "default": true
+        }
+      ],
+      "metrics": [
+        {
+          "key": "acertos",
+          "label": "Itens certos",
+          "kind": "count"
+        },
+        {
+          "key": "erros",
+          "label": "Erros",
+          "kind": "count"
+        }
+      ]
+    }
+  ],
+  "session_options": []
+}

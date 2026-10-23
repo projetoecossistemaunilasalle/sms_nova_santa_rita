@@ -1,0 +1,6 @@
+{
+  "type": "protocol.error.v2",
+  "code": "POLICY_INVALID",
+  "message": "Fixture: POLICY_INVALID",
+  "request_id": "bootstrap-1"
+}

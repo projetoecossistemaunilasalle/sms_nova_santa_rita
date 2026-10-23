@@ -1,0 +1,29 @@
+{
+  "type": "portal.bootstrap.v2",
+  "request_id": "bootstrap-1",
+  "protocol_version": 2,
+  "player_id": "fixture-player",
+  "class_session_id": "fixture-class-session",
+  "revision": 0,
+  "content_policy": {
+    "policy_version": 1,
+    "authored_content_version": "heroes_trial_school_2026_10",
+    "enabled_module_ids": [
+      "saude_bucal"
+    ],
+    "enabled_mission_ids": [
+      "brushing_teeth",
+      "smile_kit"
+    ],
+    "activity_presets": {
+      "brushing_teeth_practice": "padrao",
+      "smile_kit_selection": "padrao"
+    },
+    "options": {
+      "skin_shop": false
+    }
+  },
+  "new_player": true,
+  "state": null,
+  "stored_content_version": null
+}

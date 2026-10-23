@@ -1,0 +1,17 @@
+# Keep LF in working trees on Windows (core.autocrlf=true) so Prettier checks pass.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.webp binary
+*.ico binary
+*.woff2 binary
+*.ogg binary
+*.mp3 binary
+*.m4a binary
+*.wav binary
+*.woff binary
+*.ttf binary
+*.webm binary
+*.mp4 binary
+*.gif binary
+public/jogo-cliente/** -diff linguist-generated=true

@@ -1,0 +1,37 @@
+# dependencies
+/node_modules
+
+# Next.js
+/.next
+/.next-demo-dev
+/out
+
+# production
+/build
+
+# local environment
+.env
+.env.*
+!.env.example
+
+# tests and tooling
+/coverage
+*.tsbuildinfo
+
+# logs and operating systems
+*.log
+.DS_Store
+Thumbs.db
+
+# Prisma generated client
+/src/generated/prisma
+
+# Generated runtime target entries (node scripts/next-target.mjs gen <target>)
+/src/runtime/actions.ts
+/src/runtime/readers.ts
+/src/runtime/client.ts
+/src/runtime/*.tmp
+
+# bundle-game.ps1 working directories
+/.jogo-cliente.staging/
+/.jogo-cliente.previous/

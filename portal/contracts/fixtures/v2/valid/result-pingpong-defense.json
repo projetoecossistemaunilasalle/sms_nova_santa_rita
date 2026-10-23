@@ -1,0 +1,30 @@
+{
+  "type": "game.result.v2",
+  "request_id": "result-2",
+  "activity_id": "pingpong_defense",
+  "mission_id": "pingpong_soccer",
+  "context": {
+    "id_tentativa": "0190a444-1111-4111-8111-000000000002",
+    "id_atividade": "inclusao_no_recreio",
+    "id_mecanica": "defesa_bolas",
+    "id_preset": "padrao",
+    "versao_atividade": 1,
+    "id_casa": 0,
+    "sequencia_tentativa": 2,
+    "numero_tentativa_atividade": 1,
+    "semente": 1234,
+    "dificuldade": 1,
+    "parametros": {}
+  },
+  "result": {
+    "estado": "sucesso",
+    "duracao_ms": 12000,
+    "metricas": {
+      "bolas_bloqueadas": 8,
+      "bolas_perdidas": 2,
+      "trocas_concluidas": 3,
+      "pontuacao_local": 80
+    }
+  },
+  "client_event_id": "event-result-2"
+}
