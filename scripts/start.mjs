@@ -44,14 +44,39 @@ const runtimeEnv = {
 // On Render the public URL only exists once the service does, so default the
 // browser origin and the same-origin game URL to it. Explicit values win
 // (custom domains list every origin in ALLOWED_ORIGINS).
-const renderUrl =
-  process.env.RENDER_EXTERNAL_URL ||
-  (process.env.RENDER_EXTERNAL_HOSTNAME &&
-    `https://${process.env.RENDER_EXTERNAL_HOSTNAME}`);
-if (!demo && renderUrl) {
-  const origin = new URL(renderUrl).origin;
-  runtimeEnv.ALLOWED_ORIGINS ||= origin;
-  runtimeEnv.GAME_CLIENT_URL ||= `${origin}/jogo-cliente/index.html`;
+if (!demo && (!runtimeEnv.ALLOWED_ORIGINS || !runtimeEnv.GAME_CLIENT_URL)) {
+  const candidates = [
+    { value: process.env.RENDER_EXTERNAL_URL, hostname: false },
+    { value: process.env.RENDER_EXTERNAL_HOSTNAME, hostname: true },
+  ].filter(({ value }) => value);
+  let origin;
+  for (const { value, hostname } of candidates) {
+    try {
+      const url = new URL(hostname ? `https://${value}` : value);
+      if (
+        (url.protocol !== "http:" && url.protocol !== "https:") ||
+        url.username ||
+        url.password ||
+        (hostname && (url.pathname !== "/" || url.search || url.hash))
+      ) {
+        continue;
+      }
+      origin = url.origin;
+      break;
+    } catch {
+      // A malformed external URL can still fall back to Render's hostname.
+    }
+  }
+  if (candidates.length && !origin) {
+    console.error(
+      "Invalid Render configuration: set RENDER_EXTERNAL_URL to a valid HTTP(S) URL or RENDER_EXTERNAL_HOSTNAME to a valid hostname.",
+    );
+    process.exit(1);
+  }
+  if (origin) {
+    runtimeEnv.ALLOWED_ORIGINS ||= origin;
+    runtimeEnv.GAME_CLIENT_URL ||= `${origin}/jogo-cliente/index.html`;
+  }
 }
 
 if (demo) {
