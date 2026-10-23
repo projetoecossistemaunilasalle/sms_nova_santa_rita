@@ -178,6 +178,8 @@ try {
       }
     }
     if (touch) {
+      // The menu tap precedes the world's input listeners; exercise touch in the game too.
+      await game.locator("canvas").tap();
       await expect(game.locator(".poc-touch-controls")).toBeVisible();
     }
     assert.equal(
