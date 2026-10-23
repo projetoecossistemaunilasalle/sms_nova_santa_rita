@@ -29,8 +29,8 @@ Set in `render.yaml` / `.env.example`. `sync: false` means you fill the value in
 | `NEON_AUTH_BASE_URL` | you (sync false) | Auth base URL of the production branch. |
 | `NEON_AUTH_COOKIE_SECRET` | Render generates once | Do not regenerate casually; it signs auth cookies. |
 | `APPLICATION_SECRET` | Render generates once | **Never regenerate or rotate** without the key-ring procedure in `.env.example`. It encrypts player credentials and signs player launches. |
-| `ALLOWED_ORIGINS` | you (sync false) | `https://<service>.onrender.com`, plus the custom domain later, comma-separated. |
-| `GAME_CLIENT_URL` | you (sync false) | `https://<service>.onrender.com/jogo-cliente/index.html` |
+| `ALLOWED_ORIGINS` | derived (unset) | `scripts/start.mjs` defaults it to `RENDER_EXTERNAL_URL`. Set it explicitly (all origins, comma-separated) once a custom domain exists. |
+| `GAME_CLIENT_URL` | derived (unset) | Defaults to `<RENDER_EXTERNAL_URL>/jogo-cliente/index.html`. Set explicitly with a custom domain. |
 | `PLAYER_CREDENTIAL_KEY_ID` | value `default` | Key IDs are immutable. |
 | `OFFLINE_FLUSH_WINDOW_SECONDS` | value `86400` | Offline records may flush for 24 h after session end. |
 | `LOG_LEVEL` | value `info` | |
@@ -51,7 +51,7 @@ Before starting, confirm:
 - [ ] The branch to deploy is merged and pushed (step 1).
 - [ ] `public/jogo-cliente/` is committed and matches the game commit in `bundle-info.json`.
 - [ ] You have the production Neon connection strings and the auth base URL ready.
-- [ ] You know the Render service name, because it fixes the `onrender.com` hostname used in `ALLOWED_ORIGINS` and `GAME_CLIENT_URL`.
+- [ ] After creation, note the service URL Render assigned (it may carry a random suffix): it is needed for the Neon Auth trusted domain and the landing `PORTAL_URL`.
 - [ ] Someone is available to run the smoke test (step 6) right after the first deploy.
 
 Steps:
@@ -118,4 +118,4 @@ The game lives in the sibling repo `Heroes_Trial`. Its build output is committed
 - **Tablets and Safari.** Real tablets and Safari are not tested yet. A separate WebKit E2E pass is in progress.
 - **Render prices.** Not checked. Confirm the current plan price before go-live.
 - **Deploy branch.** `render.yaml` does not name a branch. Confirm the branch set in the Render dashboard is `main` after the merge.
-- **Custom domain.** Not yet defined. When added, update `ALLOWED_ORIGINS`, the Neon Auth trusted domains, and the landing `PORTAL_URL`.
+- **Custom domain.** Not yet defined. When added, set `ALLOWED_ORIGINS` and `GAME_CLIENT_URL` explicitly, update, the Neon Auth trusted domains, and the landing `PORTAL_URL`.

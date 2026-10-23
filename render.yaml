@@ -35,12 +35,6 @@ services:
       # regenerate it once credentials exist (see .env.example key ring).
       - key: APPLICATION_SECRET
         generateValue: true
-      # https://<service>.onrender.com, plus any custom domain, comma-separated.
-      - key: ALLOWED_ORIGINS
-        sync: false
-      # https://<service>.onrender.com/jogo-cliente/index.html
-      - key: GAME_CLIENT_URL
-        sync: false
       - key: PLAYER_CREDENTIAL_KEY_ID
         value: default
       - key: OFFLINE_FLUSH_WINDOW_SECONDS
@@ -50,6 +44,8 @@ services:
       - key: AUTH_DEV_BYPASS
         value: "false"
       # Not set on purpose:
+      # - ALLOWED_ORIGINS / GAME_CLIENT_URL: scripts/start.mjs derives them from
+      #   RENDER_EXTERNAL_URL. Set both explicitly when adding a custom domain.
       # - RATE_LIMIT_CLIENT_IP_HEADER: Render does not document that its proxy
       #   strips client-supplied forwarding headers, so IP limits stay off.
       # - NEON_AUTH_ADMIN_EMAIL / NEON_AUTH_ADMIN_PASSWORD: add in the

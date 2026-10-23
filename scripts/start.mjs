@@ -41,6 +41,19 @@ const runtimeEnv = {
   APP_RUNTIME_MODE: demo ? "demo" : "server",
 };
 
+// On Render the public URL only exists once the service does, so default the
+// browser origin and the same-origin game URL to it. Explicit values win
+// (custom domains list every origin in ALLOWED_ORIGINS).
+const renderUrl =
+  process.env.RENDER_EXTERNAL_URL ||
+  (process.env.RENDER_EXTERNAL_HOSTNAME &&
+    `https://${process.env.RENDER_EXTERNAL_HOSTNAME}`);
+if (!demo && renderUrl) {
+  const origin = new URL(renderUrl).origin;
+  runtimeEnv.ALLOWED_ORIGINS ||= origin;
+  runtimeEnv.GAME_CLIENT_URL ||= `${origin}/jogo-cliente/index.html`;
+}
+
 if (demo) {
   for (const name of [
     "DATABASE_URL",
