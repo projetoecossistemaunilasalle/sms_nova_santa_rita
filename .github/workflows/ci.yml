@@ -1,0 +1,37 @@
+name: Landing tests
+
+# The landing is built and deployed by Render (portal/scripts/build-landing.mjs);
+# these checks used to run inside the GitHub Pages workflow.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build for the single-origin release
+        run: npm run build
+        env:
+          PAGES_BASE_PATH: ""
+          PORTAL_URL: /entrar/

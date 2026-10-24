@@ -1,14 +1,17 @@
-name: Deploy to GitHub Pages
+name: Redirect GitHub Pages to Render
 
-# O site completo (landing + /portal/ em breve + /jogo/) e montado a partir
-# deste repositorio: a landing e buildada pelo Astro e o bundle do jogo fica
-# versionado em public/jogo/ (o repositorio Heroes_Trial e privado e nao pode
-# ser acessado daqui). Para atualizar o jogo, rebuild o projeto de origem e
-# rode `node scripts/sync-bundles.mjs --jogo`.
+# O site completo (landing + /jogo/ + portal) agora é servido pelo serviço do
+# Render (render.yaml, rootDir portal). O GitHub Pages só publica um
+# redirecionamento para que links e QR codes antigos continuem funcionando:
+# pages-redirect/index.html vira também o 404.html, então qualquer caminho
+# antigo /sms_nova_santa_rita/... vai para o mesmo caminho no Render.
 
 on:
   push:
     branches: [main]
+    paths:
+      - "pages-redirect/**"
+      - ".github/workflows/deploy.yml"
   workflow_dispatch:
 
 permissions:
@@ -27,23 +30,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run tests
-        run: npm test
-
-      - name: Build
-        run: npm run build
-
-      - name: Verify assembled site
-        run: node scripts/verify-dist.mjs
+      - name: Assemble redirect site
+        run: |
+          mkdir -p redirect-site
+          cp pages-redirect/index.html redirect-site/index.html
+          cp pages-redirect/index.html redirect-site/404.html
+          touch redirect-site/.nojekyll
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -51,7 +43,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: ./redirect-site
 
   deploy:
     needs: build
