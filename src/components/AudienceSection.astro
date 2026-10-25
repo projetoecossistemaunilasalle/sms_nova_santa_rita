@@ -6,11 +6,10 @@ import Icon from "./Icon.astro";
 <section class="secao para-quem" id="para-quem" aria-labelledby="titulo-para-quem">
   <div class="container">
     <div class="cabecalho-secao centrado">
-      <span class="kicker"><Icon name="respeito" size={15} /> Para quem</span>
       <h2 class="titulo-secao" id="titulo-para-quem">Feito para quem cuida das nossas crianças</h2>
       <p class="subtitulo-secao">
-        O projeto acompanha a criança em todos os lugares e dá suporte a todos os adultos que
-        fazem parte dessa jornada.
+        O projeto acompanha a criança em todos os lugares e dá suporte a todos os adultos que fazem
+        parte dessa jornada.
       </p>
     </div>
 
@@ -44,11 +43,9 @@ import Icon from "./Icon.astro";
 
   .cartao-publico {
     background: var(--nuvem);
-    border: 1.5px solid var(--linha);
-    border-radius: var(--raio-l);
+    border-radius: 16px;
     padding: 1.8rem 1.6rem;
-    text-align: center;
-    box-shadow: var(--sombra-card);
+    text-align: left;
   }
 
   .cartao-publico h3 {
@@ -87,8 +84,24 @@ import Icon from "./Icon.astro";
   @media (max-width: 48rem) {
     .grade-publico {
       grid-template-columns: 1fr;
-      max-width: 26rem;
-      margin-inline: auto;
+    }
+    .cartao-publico {
+      display: grid;
+      grid-template-columns: 3.25rem minmax(0, 1fr);
+      gap: 0 1rem;
+      padding: 1.5rem;
+    }
+    .publico-icone {
+      width: 3.25rem;
+      height: 3.25rem;
+      border-radius: 1rem;
+      grid-row: span 2;
+    }
+    .cartao-publico h3 {
+      margin-top: 0;
+    }
+    .cartao-publico p {
+      grid-column: 2;
     }
   }
 </style>

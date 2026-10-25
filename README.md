@@ -17,6 +17,10 @@ URL pública: `https://projetoecossistemaunilasalle.github.io/sms_nova_santa_rit
 - `npm run dev`: servidor de desenvolvimento do Astro
 - `npm run build`: build estático em `dist/` (inclui os bundles em `public/`)
 - `npm test`: testes (`node --test`)
+- `npm run test:landing:browser`: após o build, verifica seis tamanhos de tela,
+  navegação por teclado, menu, galeria, movimento reduzido e acessibilidade da
+  landing. Usa Playwright de `Heroes_Trial/web-poc`, axe-core de `SMS_Portal`
+  e Edge; grava capturas em `../.preview/landing/`.
 - `npm run verify:dist`: valida o artefato montado (entradas, base path,
   resíduos de caminhos antigos)
 - `npm run sync:bundles`: sincroniza `public/portal/` e `public/jogo/`

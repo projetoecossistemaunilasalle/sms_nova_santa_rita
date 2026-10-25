@@ -16,23 +16,12 @@ import MascotGuide from "./solid/MascotGuide";
 
   <div class="container heroi-grade">
     <div class="heroi-texto">
-      <span class="selo-dev">
-        <Icon name="brilho" size={15} />
-        Demonstração disponível. Jogue no navegador
-      </span>
-
       <h1 id="titulo-heroi">
         <span class="titulo-programa">Programa Saúde na Escola</span>
         <span class="titulo-slogan">{SITE.slogan}</span>
       </h1>
 
       <p class="heroi-descricao">{SITE.descricao}</p>
-
-      <ul class="heroi-selos" aria-label="Compromissos do projeto">
-        <li><Icon name="escudo" size={17} /> Sem anúncios</li>
-        <li><Icon name="cadeado" size={17} /> Dados protegidos</li>
-        <li><Icon name="maos" size={17} /> Mediação de adultos</li>
-      </ul>
 
       <div class="heroi-acoes">
         <a class="botao primario" href={withBase(APPS.jogo)}>
@@ -48,6 +37,14 @@ import MascotGuide from "./solid/MascotGuide";
           <Icon name="seta" size={16} />
         </a>
       </div>
+
+      <p class="heroi-disponibilidade">Demonstração disponível. Jogue no navegador.</p>
+
+      <ul class="heroi-selos" aria-label="Compromissos do projeto">
+        <li><Icon name="escudo" size={17} /> Sem anúncios</li>
+        <li><Icon name="cadeado" size={17} /> Dados protegidos</li>
+        <li><Icon name="maos" size={17} /> Mediação de adultos</li>
+      </ul>
 
       <p class="juntos-por">
         <strong>Juntos por:</strong>
@@ -73,7 +70,7 @@ import MascotGuide from "./solid/MascotGuide";
     position: relative;
     overflow: clip;
     background: linear-gradient(180deg, var(--ceu) 0%, #edf7fd 62%, var(--papel) 100%);
-    padding-block: clamp(2.5rem, 6vw, 5rem) clamp(4rem, 8vw, 6rem);
+    padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3rem, 6vw, 5rem);
   }
 
   /* --- Cenario CSS --- */
@@ -153,27 +150,35 @@ import MascotGuide from "./solid/MascotGuide";
     gap: clamp(1.5rem, 4vw, 3rem);
   }
 
-  .heroi-texto .selo-dev {
-    margin-top: -0.75rem;
-    margin-bottom: 0.75rem;
+  .heroi-texto {
+    position: relative;
+    z-index: 40;
+    min-width: 0;
+  }
+
+  .heroi-disponibilidade {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--tinta-suave);
   }
 
   .titulo-programa {
     display: block;
-    font-size: clamp(0.95rem, 1.8vw, 1.2rem);
+    font-size: clamp(0.875rem, 1.3vw, 1rem);
     font-weight: 800;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--azul-escuro);
-    margin-bottom: 0.4rem;
+    margin-bottom: 1rem;
   }
 
   .titulo-slogan {
     display: block;
-    font-size: clamp(2.1rem, 5.4vw, 3.6rem);
+    font-size: clamp(2.35rem, 4.8vw, 4rem);
+    line-height: 1.08;
     font-weight: 900;
     color: var(--tinta);
-    max-width: 14ch;
+    max-width: 15ch;
   }
 
   .heroi-descricao {
@@ -186,28 +191,23 @@ import MascotGuide from "./solid/MascotGuide";
   .heroi-selos {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.55rem;
+    gap: 0.65rem 1.15rem;
     list-style: none;
     padding: 0;
-    margin-top: 1.4rem;
+    margin-top: 1.5rem;
   }
 
   .heroi-selos li {
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    background: var(--nuvem);
-    border: 1.5px solid var(--linha);
     color: var(--tinta);
     font-size: 0.88rem;
     font-weight: 700;
-    padding: 0.45rem 0.9rem;
-    border-radius: var(--raio-pilula);
-    box-shadow: 0 2px 0 var(--linha);
   }
 
   .heroi-selos svg {
-    color: var(--verde);
+    color: var(--verde-escuro);
     flex: none;
   }
 
@@ -224,6 +224,7 @@ import MascotGuide from "./solid/MascotGuide";
     align-items: center;
     gap: 0.4rem;
     padding: 0.4rem 0.5rem;
+    min-height: 44px;
     border-radius: var(--raio-pilula);
     font-weight: 700;
     font-size: 0.95rem;
@@ -241,36 +242,32 @@ import MascotGuide from "./solid/MascotGuide";
     flex-wrap: wrap;
     align-items: center;
     gap: 0.4rem;
-    margin-top: 1.9rem;
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgb(35 64 46 / 0.14);
     font-size: 0.92rem;
     color: var(--tinta-suave);
   }
 
   .jp {
     font-weight: 800;
-    padding: 0.15rem 0.7rem;
-    border-radius: var(--raio-pilula);
+    padding: 0.15rem 0.35rem;
     font-size: 0.85rem;
   }
   .jp-0 {
     color: var(--verde-escuro);
-    background: var(--verde-claro);
   }
   .jp-1 {
     color: var(--azul-escuro);
-    background: var(--azul-claro);
   }
   .jp-2 {
     color: var(--laranja-escuro);
-    background: var(--laranja-claro);
   }
   .jp-3 {
     color: var(--roxo-escuro);
-    background: var(--roxo-claro);
   }
   .jp-4 {
     color: var(--agua-escuro);
-    background: var(--agua-claro);
   }
 
   /* --- Mascote --- */
@@ -279,8 +276,8 @@ import MascotGuide from "./solid/MascotGuide";
     justify-self: center;
     width: 100%;
     aspect-ratio: 1;
-    max-width: min(21rem, 78%);
-    animation: boiar 5.5s ease-in-out infinite;
+    max-width: 25rem;
+    margin-top: 4rem;
   }
 
   .heroi-mascote astro-island {
@@ -289,13 +286,14 @@ import MascotGuide from "./solid/MascotGuide";
 
   .balao {
     position: absolute;
-    top: -0.5rem;
-    right: 88%;
-    width: max-content;
-    max-width: 15rem;
+    top: -4rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(100%, 17rem);
+    text-align: center;
     background: var(--nuvem);
-    border: 2px solid var(--verde);
-    border-radius: 18px 18px 4px 18px;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-m);
     padding: 0.8rem 1rem;
     font-size: 0.9rem;
     font-weight: 700;
@@ -306,24 +304,14 @@ import MascotGuide from "./solid/MascotGuide";
   .balao::after {
     content: "";
     position: absolute;
-    right: -0.55rem;
-    bottom: 0.9rem;
+    right: 3rem;
+    bottom: -0.5rem;
     width: 0.9rem;
     height: 0.9rem;
     background: var(--nuvem);
-    border-right: 2px solid var(--verde);
-    border-bottom: 2px solid var(--verde);
-    transform: rotate(-45deg);
-  }
-
-  @keyframes boiar {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-0.7rem);
-    }
+    border-right: 1px solid var(--linha);
+    border-bottom: 1px solid var(--linha);
+    transform: rotate(45deg);
   }
 
   @media (max-width: 56rem) {
@@ -341,17 +329,41 @@ import MascotGuide from "./solid/MascotGuide";
       justify-content: center;
     }
     .heroi-mascote {
-      max-width: min(16rem, 64%);
-      margin-top: 0.5rem;
+      max-width: 17rem;
+      margin-top: 0;
     }
     .balao {
       display: none; /* balao fica pequeno demais no mobile; a fala segue no alt */
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
+  @media (max-width: 30rem) {
+    .n1 {
+      left: -5rem;
+      top: 3rem;
+    }
+    .n2 {
+      right: -6rem;
+      top: 12rem;
+    }
+    .n3 {
+      display: none;
+    }
+    .heroi-acoes {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+    .heroi-acoes .botao {
+      width: 100%;
+    }
+    .acao-ancora {
+      justify-content: center;
+    }
+    .juntos-por {
+      font-size: 0.85rem;
+    }
     .heroi-mascote {
-      animation: none;
+      max-width: 14rem;
     }
   }
 </style>

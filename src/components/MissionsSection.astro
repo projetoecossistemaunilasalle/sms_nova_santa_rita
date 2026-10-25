@@ -1,5 +1,5 @@
 ---
-import { MISSOES } from "../config/site";
+import { MISSOES, TOTAL_MINIGAMES } from "../config/site";
 import Icon from "./Icon.astro";
 ---
 
@@ -10,34 +10,37 @@ import Icon from "./Icon.astro";
 <section class="secao missoes" id="missoes" aria-labelledby="titulo-missoes">
   <div class="container">
     <div class="cabecalho-secao centrado">
-      <span class="kicker azul"><Icon name="estrela" size={15} /> Missões do jogo</span>
-      <h2 class="titulo-secao" id="titulo-missoes">Seis missões pela escola</h2>
+      <h2 class="titulo-secao" id="titulo-missoes">{MISSOES.length} missões pela escola</h2>
       <p class="subtitulo-secao">
-        Cada missão do jogo é uma história do dia a dia escolar: cuidar do corpo, das emoções e das
-        amizades, conversando, escolhendo e jogando junto.
+        Histórias sobre cuidar do corpo, das emoções e das amizades. Explore a escola, converse com
+        os colegas e descubra {TOTAL_MINIGAMES} minigames, além de uma missão de escuta e reflexão sobre
+        bullying.
       </p>
     </div>
 
     <ul class="grade-missoes">
       {
         MISSOES.map((m) => (
-          <li class={`missao cor-${m.cor}`}>
-            <span class="missao-icone">
-              <Icon name={m.icone} size={30} />
-            </span>
-            <span class="missao-lugar">{m.lugar}</span>
+          <li class={`missao cor-${m.cor}`} data-mission-id={m.id}>
+            <div class="missao-cabecalho">
+              <span class="missao-icone">
+                <Icon name={m.icone} size={30} />
+              </span>
+              <span class="missao-lugar">{m.lugar}</span>
+            </div>
             <h3>{m.titulo}</h3>
             <p>{m.texto}</p>
+            <span class="missao-atividade">{m.atividade}</span>
           </li>
         ))
       }
-      <!-- Cartao extra: convite institucional -->
-      <li class="missao cor-extra">
-        <span class="missao-icone"><Icon name="patinha" size={28} /></span>
-        <h3>E muito mais</h3>
-        <p>Novas missões e conteúdos estão sendo preparados com carinho.</p>
-      </li>
     </ul>
+    <p class="missoes-nota">
+      <Icon name="patinha" size={20} />
+      <span
+        ><strong>E muito mais.</strong> Novas missões e conteúdos estão sendo preparados com carinho.</span
+      >
+    </p>
   </div>
 </section>
 
@@ -49,40 +52,34 @@ import Icon from "./Icon.astro";
 
   .grade-missoes {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1.1rem;
     list-style: none;
     padding: 0;
   }
 
   .missao {
+    display: flex;
+    flex-direction: column;
     background: var(--nuvem);
     border: 1.5px solid var(--linha);
-    border-radius: var(--raio-m);
-    padding: 1.35rem 1.2rem;
-    box-shadow: var(--sombra-card);
-    transition:
-      transform 0.2s ease,
-      box-shadow 0.2s ease;
-  }
-
-  .missao:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--sombra-levantada);
+    border-radius: 16px;
+    padding: 1.5rem;
   }
 
   .missao h3 {
-    font-size: 1.06rem;
+    font-size: 1.25rem;
     margin-top: 0.85rem;
   }
 
   .missao p {
     margin-top: 0.4rem;
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: var(--tinta-suave);
   }
 
   .missao-icone {
+    flex: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -93,12 +90,26 @@ import Icon from "./Icon.astro";
 
   .missao-lugar {
     display: inline-block;
-    margin-top: 0.7rem;
-    font-size: 0.72rem;
+    vertical-align: middle;
+    font-size: 0.75rem;
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--tinta-suave);
+  }
+
+  .missao-cabecalho {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .missao-atividade {
+    margin-top: auto;
+    padding-top: 1rem;
+    color: var(--verde-escuro);
+    font-size: 0.875rem;
+    font-weight: 700;
   }
 
   .cor-verde .missao-icone {
@@ -130,13 +141,17 @@ import Icon from "./Icon.astro";
     color: var(--missao-laranja-fg);
   }
 
-  .cor-extra {
-    border-style: dashed;
-    border-color: rgb(240 140 46 / 0.55);
-    background: var(--laranja-claro);
+  .missoes-nota {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    margin-top: 1.75rem;
+    color: var(--tinta-suave);
+    font-size: 0.95rem;
   }
-  .cor-extra .missao-icone {
-    background: var(--nuvem);
+  .missoes-nota svg {
+    flex: none;
     color: var(--laranja-escuro);
   }
 
@@ -146,15 +161,9 @@ import Icon from "./Icon.astro";
     }
   }
 
-  @media (max-width: 30rem) {
+  @media (max-width: 38rem) {
     .grade-missoes {
       grid-template-columns: 1fr;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .missao:hover {
-      transform: none;
     }
   }
 </style>
