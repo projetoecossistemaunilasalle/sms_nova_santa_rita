@@ -19,6 +19,10 @@
  * `base` em astro.config.mjs; todo caminho absoluto do site precisa
  * passar por withBase() para funcionar sob o prefixo do Pages.
  */
+import { MISSOES, TOTAL_MINIGAMES } from "./missions";
+export { MISSOES, TOTAL_MINIGAMES } from "./missions";
+export type { Missao } from "./missions";
+
 export const BASE_PATH = (import.meta.env.BASE_URL ?? "").replace(/\/+$/, "");
 
 /** Prefixa um caminho absoluto com o base path do GitHub Pages. */
@@ -82,8 +86,10 @@ export const ASSETS = {
     escolha: withBase("/assets/jogo/escolha-acolher.webp"),
     /** Cutscene ilustrada da missao "Futebol no patio". */
     cutscene: withBase("/assets/jogo/historia-patio.webp"),
-    /** Minigame de defesas (vertical). */
-    minigame: withBase("/assets/jogo/minigame-defesas.webp"),
+    /** Captura atual do Phaser: somente o minigame, sem controles de depuracao. */
+    minigame: withBase("/assets/jogo/minigame-defesas-atual.webp"),
+    minigameWidth: 448,
+    minigameHeight: 800,
   },
   /**
    * [PLACEHOLDER] Logotipo oficial do PSE e brasao da Prefeitura.
@@ -148,73 +154,6 @@ export const NAV = [
 ] as const;
 
 /* ------------------------------------------------------------------ */
-/* Missoes (conforme o material oficial)                               */
-/* ------------------------------------------------------------------ */
-
-export interface Missao {
-  titulo: string;
-  texto: string;
-  /** Onde a missao acontece no jogo. */
-  lugar: string;
-  /** Chave de cor definida em global.css (--missao-*). */
-  cor: "verde" | "azul" | "roxo" | "amarelo" | "coral" | "agua" | "laranja";
-  /** Chave do icone em components/Icon.astro. */
-  icone: "sorriso" | "maos" | "mente" | "respeito" | "alunos" | "coracao";
-}
-
-/** Missoes reais do jogo Heroes_Trial (conteudo ja implementado). */
-export const MISSOES: Missao[] = [
-  {
-    titulo: "Escovando com Nico",
-    texto:
-      "O Nico está aprendendo a cuidar dos dentes: ajude-o a escovar direitinho, arrastando a escova sobre cada manchinha.",
-    lugar: "Enfermaria",
-    cor: "azul",
-    icone: "sorriso",
-  },
-  {
-    titulo: "Kit do Sorriso",
-    texto:
-      "Monte com o Cauã o Kit do Sorriso escolhendo os três objetos que cuidam dos dentes todos os dias.",
-    lugar: "Cantina",
-    cor: "agua",
-    icone: "maos",
-  },
-  {
-    titulo: "Quando a brincadeira deixa de ser brincadeira?",
-    texto:
-      "Perceba quando uma brincadeira magoa, ouça quem esteve ali e ajude a procurar um adulto de confiança.",
-    lugar: "Pátio",
-    cor: "roxo",
-    icone: "mente",
-  },
-  {
-    titulo: "Atitudes positivas",
-    texto:
-      "Com a Lia, lembre as atitudes que acolhem, que são ouvir, incluir e respeitar, e encontre os pares no jogo da memória.",
-    lugar: "Pátio",
-    cor: "verde",
-    icone: "respeito",
-  },
-  {
-    titulo: "Futebol no pátio",
-    texto:
-      "Um colega ficou de fora da partida: escolha como acolhê-lo e depois defenda o treino de chutes e bolas na quadra.",
-    lugar: "Pátio",
-    cor: "amarelo",
-    icone: "alunos",
-  },
-  {
-    titulo: "Respeitar também é cuidar",
-    texto:
-      "Com Caio, Leo e Bia, perceba o que cada um sente e respeite os limites no desafio do Semáforo do Conforto.",
-    lugar: "Corredor",
-    cor: "coral",
-    icone: "coracao",
-  },
-];
-
-/* ------------------------------------------------------------------ */
 /* Como o jogo funciona (fluxo real das missoes)                        */
 /* ------------------------------------------------------------------ */
 
@@ -223,12 +162,12 @@ export const COMO_FUNCIONA = [
   {
     titulo: "Explore a escola",
     texto:
-      "Caminhe pelo pátio, corredor, cantina, sala de aula e enfermaria. O ponto de exclamação mostra quem precisa de ajuda.",
+      "Visite o pátio central, parquinho, corredor, sala de aula, refeitório e banheiro. O ponto de exclamação mostra quem precisa de ajuda.",
   },
   {
     titulo: "Converse e escute",
     texto:
-      "Cada missão começa com uma história em cenas ilustradas e diálogos com os colegas, cada um com o seu jeito de falar e sentir.",
+      "Conheça as histórias em cenas ilustradas e diálogos. Na missão sobre bullying, visite diferentes espaços para ouvir os colegas.",
   },
   {
     titulo: "Escolha com atenção",
@@ -238,7 +177,7 @@ export const COMO_FUNCIONA = [
   {
     titulo: "Jogue minigames",
     texto:
-      "Defenda chutes na quadra, encontre pares no jogo da memória, escove os dentinhos e monte o Kit do Sorriso.",
+      "Encontre pares, defenda bolas, pratique o Semáforo do Conforto, escove os dentes e monte o Kit do Sorriso. São cinco atividades diferentes.",
   },
   {
     titulo: "Comemore",
@@ -250,7 +189,7 @@ export const COMO_FUNCIONA = [
 /** O que a demonstracao disponivel no navegador ja oferece. */
 export const DESTAQUES = [
   "Jogue direto no navegador, sem instalar nada",
-  "Seis missões com histórias, escolhas e minigames",
+  `${MISSOES.length} missões e ${TOTAL_MINIGAMES} minigames sobre cuidado e convivência`,
   "Ossinhos e biscoitos ao concluir cada desafio",
   "Personagens diversos, como são de verdade as nossas salas de aula",
   "Conteúdo alinhado às competências socioemocionais da BNCC",

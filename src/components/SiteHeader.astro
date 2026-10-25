@@ -18,30 +18,48 @@ import Icon from "./Icon.astro";
       </span>
     </a>
 
-    <nav aria-label="Navegação principal" class="nav-principal">
-      <ul>
-        {
-          NAV.map((item) => (
-            <li>
-              <a href={item.href}>{item.label}</a>
-            </li>
-          ))
-        }
-      </ul>
-    </nav>
-
-    <div class="header-acoes">
-      <a
-        class="acao-app professor"
-        href={APPS.portal}
+    <button
+      class="menu-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="menu-principal"
+      hidden
+    >
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"></path></svg
       >
-        <Icon name="professores" size={15} />
-        Área do professor
-      </a>
-      <a class="acao-app jogar" href={withBase(APPS.jogo)}>
-        <Icon name="patinha" size={15} />
-        Jogar
-      </a>
+      Menu
+    </button>
+
+    <div class="header-menu" id="menu-principal">
+      <nav aria-label="Navegação principal" class="nav-principal">
+        <ul>
+          {
+            NAV.map((item) => (
+              <li>
+                <a href={item.href}>{item.label}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="header-acoes">
+        <a class="acao-app professor" href={APPS.portal}>
+          <Icon name="professores" size={15} />
+          Área do professor
+        </a>
+        <a class="acao-app jogar" href={withBase(APPS.jogo)}>
+          <Icon name="patinha" size={15} />
+          Jogar
+        </a>
+      </div>
     </div>
   </div>
 </header>
@@ -54,8 +72,7 @@ import Icon from "./Icon.astro";
     min-height: var(--header-h);
     display: flex;
     align-items: center;
-    background: rgb(255 253 246 / 0.92);
-    backdrop-filter: blur(8px);
+    background: var(--papel);
     border-bottom: 1px solid var(--linha);
   }
 
@@ -73,6 +90,7 @@ import Icon from "./Icon.astro";
     gap: 0.7rem;
     text-decoration: none;
     color: var(--tinta);
+    flex-shrink: 0;
   }
 
   .marca-sigla {
@@ -85,7 +103,6 @@ import Icon from "./Icon.astro";
     border: 2px solid var(--linha);
     border-radius: 14px;
     padding: 0.3rem 0.55rem;
-    box-shadow: 0 3px 0 var(--linha);
   }
 
   .letra-p {
@@ -118,7 +135,6 @@ import Icon from "./Icon.astro";
 
   .nav-principal ul {
     display: flex;
-    flex-wrap: wrap;
     gap: 0.2rem;
     list-style: none;
     padding: 0;
@@ -126,7 +142,9 @@ import Icon from "./Icon.astro";
 
   .nav-principal a {
     display: inline-block;
-    padding: 0.55rem 0.85rem;
+    padding: 0.65rem 0.6rem;
+    min-height: 44px;
+    white-space: nowrap;
     border-radius: var(--raio-pilula);
     text-decoration: none;
     font-weight: 700;
@@ -137,7 +155,8 @@ import Icon from "./Icon.astro";
       color 0.15s ease;
   }
 
-  .nav-principal a:hover {
+  .nav-principal a:hover,
+  .nav-principal a[aria-current="location"] {
     background: var(--verde-claro);
     color: var(--verde-escuro);
   }
@@ -145,7 +164,6 @@ import Icon from "./Icon.astro";
   .header-acoes {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
     gap: 0.5rem;
   }
 
@@ -160,6 +178,7 @@ import Icon from "./Icon.astro";
     font-weight: 800;
     font-size: 0.88rem;
     white-space: nowrap;
+    min-height: 44px;
     transition:
       transform 0.15s ease,
       background-color 0.15s ease,
@@ -167,9 +186,8 @@ import Icon from "./Icon.astro";
   }
 
   .acao-app.jogar {
-    background: var(--verde);
+    background: var(--verde-escuro);
     color: #fff;
-    box-shadow: 0 3px 0 var(--verde-escuro);
   }
 
   .acao-app.jogar:hover {
@@ -181,7 +199,6 @@ import Icon from "./Icon.astro";
     background: var(--nuvem);
     color: var(--azul-escuro);
     border-color: var(--azul);
-    box-shadow: 0 3px 0 rgb(46 111 183 / 0.25);
   }
 
   .acao-app.professor:hover {
@@ -189,24 +206,144 @@ import Icon from "./Icon.astro";
     transform: translateY(-1px);
   }
 
-  @media (max-width: 56rem) {
-    .site-header {
-      position: static;
-    }
+  .header-menu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .menu-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-s);
+    background: var(--nuvem);
+    color: var(--tinta);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  @media (max-width: 74rem) {
     .header-interno {
-      flex-direction: column;
-      align-items: flex-start;
+      flex-wrap: wrap;
       gap: 0.5rem;
     }
+    .header-menu {
+      width: 100%;
+      flex-direction: column;
+      align-items: stretch;
+      padding-block: 0.75rem;
+      border-top: 1px solid var(--linha);
+    }
+    .site-header[data-enhanced] .menu-toggle {
+      display: inline-flex;
+    }
+    .site-header[data-enhanced] .header-menu:not(.is-open) {
+      display: none;
+    }
     .nav-principal ul {
-      gap: 0;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.25rem;
     }
     .nav-principal a {
-      padding: 0.5rem 0.65rem;
-      font-size: 0.86rem;
+      display: block;
     }
     .header-acoes {
-      width: 100%;
+      flex-wrap: wrap;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--linha);
+    }
+    .acao-app {
+      justify-content: center;
+      flex: 1 1 auto;
+    }
+    .header-menu.is-open {
+      max-height: calc(100dvh - var(--header-h));
+      overflow-y: auto;
+    }
+  }
+
+  @media (max-width: 24rem) {
+    .marca-texto strong {
+      font-size: 0.85rem;
+    }
+    .marca-texto small {
+      max-width: 7rem;
+      font-size: 0.65rem;
+    }
+    .menu-toggle {
+      padding-inline: 0.5rem;
+      font-size: 0.875rem;
+    }
+    .marca {
+      gap: 0.45rem;
+    }
+    .marca-sigla {
+      font-size: 1.4rem;
     }
   }
 </style>
+
+<script>
+  const header = document.querySelector<HTMLElement>(".site-header");
+  const toggle = header?.querySelector<HTMLButtonElement>(".menu-toggle");
+  const menu = header?.querySelector<HTMLElement>(".header-menu");
+
+  if (header && toggle && menu) {
+    header.dataset.enhanced = "true";
+    toggle.hidden = false;
+    const closeMenu = (restoreFocus = false) => {
+      toggle.setAttribute("aria-expanded", "false");
+      menu.classList.remove("is-open");
+      if (restoreFocus) toggle.focus();
+    };
+    toggle.addEventListener("click", () => {
+      const open = toggle.getAttribute("aria-expanded") !== "true";
+      toggle.setAttribute("aria-expanded", String(open));
+      menu.classList.toggle("is-open", open);
+    });
+    menu.addEventListener("click", (event) => {
+      const link = (event.target as Element).closest<HTMLAnchorElement>("a");
+      if (!link) return;
+      closeMenu();
+      if (link.hash) {
+        const target = document.querySelector<HTMLElement>(link.hash);
+        target?.setAttribute("tabindex", "-1");
+        target?.focus({ preventScroll: true });
+      }
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && toggle.getAttribute("aria-expanded") === "true")
+        closeMenu(true);
+    });
+    document.addEventListener("click", (event) => {
+      if (!header.contains(event.target as Node)) closeMenu();
+    });
+    window.matchMedia("(max-width: 74rem)").addEventListener("change", () => closeMenu());
+
+    const links = [...menu.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')];
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            links.forEach((link) => {
+              if (link.hash === `#${entry.target.id}`)
+                link.setAttribute("aria-current", "location");
+              else link.removeAttribute("aria-current");
+            });
+          }
+        },
+        { rootMargin: "-15% 0px -65% 0px" },
+      );
+      document
+        .querySelectorAll("main > section[id]")
+        .forEach((section) => observer.observe(section));
+    }
+  }
+</script>

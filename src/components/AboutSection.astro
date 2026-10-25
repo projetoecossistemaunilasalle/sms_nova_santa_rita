@@ -6,7 +6,6 @@ import Icon from "./Icon.astro";
 <section class="secao sobre" id="projeto" aria-labelledby="titulo-projeto">
   <div class="container">
     <div class="cabecalho-secao">
-      <span class="kicker"><Icon name="coracao" size={15} /> O projeto</span>
       <h2 class="titulo-secao" id="titulo-projeto">Educação e saúde de mãos dadas</h2>
       <p class="subtitulo-secao">
         O {SITE.nome} é uma iniciativa municipal do {SITE.programa} que leva cuidado, prevenção e bem-estar
@@ -71,11 +70,8 @@ import Icon from "./Icon.astro";
   }
 
   .pilar {
-    background: var(--nuvem);
-    border: 1.5px solid var(--linha);
-    border-radius: var(--raio-l);
-    padding: 1.6rem 1.5rem;
-    box-shadow: var(--sombra-card);
+    border-top: 1px solid var(--linha);
+    padding: 1.5rem 1rem 0 0;
   }
 
   .pilar h3 {
@@ -113,16 +109,25 @@ import Icon from "./Icon.astro";
   .chamada-experiencia {
     margin-top: 2.5rem;
     border-radius: var(--raio-l);
-    background:
-      radial-gradient(circle at 12% 20%, rgb(247 201 72 / 0.25), transparent 45%),
-      linear-gradient(135deg, var(--verde) 0%, var(--agua) 100%);
+    background: var(--verde-escuro);
     color: #fff;
     padding: clamp(1.8rem, 4vw, 3rem);
     box-shadow: var(--sombra-levantada);
   }
 
   .chamada-texto {
-    max-width: 44rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 2.5rem;
+    align-items: center;
+  }
+
+  .chamada-texto > :not(.botao) {
+    grid-column: 1;
+  }
+
+  .chamada-texto .selo-dev {
+    justify-self: start;
   }
 
   .chamada-texto h3 {
@@ -136,7 +141,8 @@ import Icon from "./Icon.astro";
   }
 
   .chamada-texto .botao {
-    margin-top: 1.4rem;
+    grid-column: 2;
+    grid-row: 2 / 4;
   }
 
   .chamada-experiencia .selo-dev {
@@ -146,6 +152,26 @@ import Icon from "./Icon.astro";
   @media (max-width: 48rem) {
     .pilares {
       grid-template-columns: 1fr;
+    }
+    .pilar {
+      display: grid;
+      grid-template-columns: 3.6rem minmax(0, 1fr);
+      gap: 0 1rem;
+    }
+    .pilar-icone {
+      grid-row: span 2;
+    }
+    .pilar h3 {
+      margin-top: 0;
+    }
+    .pilar p {
+      grid-column: 2;
+    }
+    .chamada-texto {
+      display: block;
+    }
+    .chamada-texto .botao {
+      margin-top: 1.5rem;
     }
   }
 </style>

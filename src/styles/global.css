@@ -3,6 +3,14 @@
    Paleta inspirada no material oficial do Programa Saúde na Escola.
    ============================================================ */
 
+@font-face {
+  font-family: "Nunito";
+  font-style: normal;
+  font-weight: 700 900;
+  font-display: swap;
+  src: url("../assets/fonts/nunito-latin.woff2") format("woff2");
+}
+
 :root {
   /* Cores principais da identidade */
   --verde: #3d9b4e;
@@ -12,10 +20,10 @@
   --azul-escuro: #1d4f8a;
   --azul-claro: #e7f0fa;
   --amarelo: #f7c948;
-  --amarelo-escuro: #b8860b;
+  --amarelo-escuro: #795a08;
   --amarelo-claro: #fdf3d7;
   --laranja: #f08c2e;
-  --laranja-escuro: #c96a10;
+  --laranja-escuro: #99500c;
   --laranja-claro: #fdeede;
   --roxo: #8a63b8;
   --roxo-escuro: #6a4794;
@@ -24,7 +32,7 @@
   --coral-escuro: #b23a2c;
   --coral-claro: #fbe9e6;
   --agua: #2ba8a0;
-  --agua-escuro: #1c7c76;
+  --agua-escuro: #176b66;
   --agua-claro: #e2f4f3;
 
   /* Neutros */
@@ -52,16 +60,17 @@
   --missao-laranja-bg: var(--laranja-claro);
   --missao-laranja-fg: var(--laranja-escuro);
 
-  /* Tipografia: pilha do sistema, sem fontes externas */
+  /* Titulos locais; texto de leitura usa a pilha do sistema. */
   --fonte: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --fonte-titulo: "Nunito", var(--fonte);
 
   /* Raios e sombras */
   --raio-s: 12px;
   --raio-m: 20px;
   --raio-l: 28px;
   --raio-pilula: 999px;
-  --sombra-card: 0 6px 24px rgb(35 64 46 / 0.1);
-  --sombra-levantada: 0 14px 40px rgb(35 64 46 / 0.16);
+  --sombra-card: 0 4px 16px rgb(35 64 46 / 0.06);
+  --sombra-levantada: 0 12px 32px rgb(35 64 46 / 0.12);
 
   /* Ritmo */
   --container: 72rem;
@@ -86,6 +95,16 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: calc(var(--header-h) + 1rem);
   -webkit-text-size-adjust: 100%;
+  scrollbar-color: var(--verde-escuro) var(--verde-claro);
+}
+
+::selection {
+  background: var(--amarelo);
+  color: var(--tinta);
+}
+
+html.galeria-aberta {
+  overflow: hidden;
 }
 
 body {
@@ -118,6 +137,15 @@ a {
 button,
 a {
   touch-action: manipulation;
+}
+
+button {
+  font: inherit;
+}
+
+a svg,
+button svg {
+  flex-shrink: 0;
 }
 
 /* Foco visivel em todo elemento interativo */
@@ -190,37 +218,10 @@ body.mascot-scroll-active .mascote-dock {
   text-align: center;
 }
 
-.kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.85rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--verde-escuro);
-  background: var(--verde-claro);
-  border: 1px solid rgb(61 155 78 / 0.35);
-  padding: 0.35rem 0.9rem;
-  border-radius: var(--raio-pilula);
-  margin-bottom: 1rem;
-}
-
-.kicker.azul {
-  color: var(--azul-escuro);
-  background: var(--azul-claro);
-  border-color: rgb(46 111 183 / 0.35);
-}
-
-.kicker.laranja {
-  color: var(--laranja-escuro);
-  background: var(--laranja-claro);
-  border-color: rgb(240 140 46 / 0.4);
-}
-
 h1,
 h2,
 h3 {
+  font-family: var(--fonte-titulo);
   line-height: 1.15;
   letter-spacing: -0.01em;
   text-wrap: balance;
@@ -249,7 +250,7 @@ h3 {
   text-transform: uppercase;
   color: var(--amarelo-escuro);
   background: var(--amarelo-claro);
-  border: 1.5px dashed var(--amarelo);
+  border: 1px solid var(--amarelo);
   padding: 0.4rem 0.85rem;
   border-radius: var(--raio-pilula);
 }
@@ -278,27 +279,27 @@ h3 {
 }
 
 .botao.primario {
-  background: var(--verde);
+  background: var(--verde-escuro);
   color: #fff;
-  box-shadow: 0 6px 0 var(--verde-escuro);
+  box-shadow: 0 4px 12px rgb(38 113 58 / 0.18);
 }
 
 .botao.primario:hover {
-  background: var(--verde-escuro);
+  background: var(--tinta);
   transform: translateY(-2px);
-  box-shadow: 0 8px 0 rgb(38 113 58 / 0.85);
+  box-shadow: 0 6px 18px rgb(38 113 58 / 0.22);
 }
 
 .botao.primario:active {
   transform: translateY(2px);
-  box-shadow: 0 3px 0 var(--verde-escuro);
+  box-shadow: none;
 }
 
 .botao.contorno {
   background: var(--nuvem);
   color: var(--azul-escuro);
   border-color: var(--azul);
-  box-shadow: 0 6px 0 rgb(46 111 183 / 0.25);
+  box-shadow: none;
 }
 
 .botao.contorno:hover {
@@ -308,7 +309,7 @@ h3 {
 
 .botao.contorno:active {
   transform: translateY(2px);
-  box-shadow: 0 3px 0 rgb(46 111 183 / 0.25);
+  box-shadow: none;
 }
 
 /* ------------------------------------------------------------ */

@@ -12,6 +12,7 @@
     "sync:bundles": "node scripts/sync-bundles.mjs",
     "build:jogo": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-jogo.ps1",
     "test:jogo:browser": "node scripts/test-jogo-browser.mjs",
+    "test:landing:browser": "node scripts/test-landing-browser.mjs",
     "verify:dist": "node scripts/verify-dist.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check ."

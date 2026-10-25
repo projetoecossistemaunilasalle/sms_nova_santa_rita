@@ -34,8 +34,8 @@ import { NAV, SITE } from "../config/site";
     </nav>
 
     <p class="footer-nota">
-      {SITE.selo} · Projeto em desenvolvimento. Esta página apresenta a
-      iniciativa e será atualizada com novidades.
+      {SITE.selo} · Projeto em desenvolvimento. Esta página apresenta a iniciativa e será atualizada com
+      novidades.
     </p>
   </div>
 </footer>
@@ -50,11 +50,11 @@ import { NAV, SITE } from "../config/site";
   }
 
   .footer-grade {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     align-items: center;
     gap: 1.4rem;
-    text-align: center;
+    text-align: left;
   }
 
   .footer-marca {
@@ -84,13 +84,20 @@ import { NAV, SITE } from "../config/site";
     padding: 0.35rem 0.6rem;
   }
 
-  .letra-p { color: #7fca8d; }
-  .letra-s { color: #7fb0e4; }
-  .letra-e { color: #f5b877; }
+  .letra-p {
+    color: #7fca8d;
+  }
+  .letra-s {
+    color: #7fb0e4;
+  }
+  .letra-e {
+    color: #f5b877;
+  }
 
   .footer-frase {
     font-weight: 800;
     font-size: 1.05rem;
+    text-align: right;
   }
 
   .footer-frase span {
@@ -102,13 +109,16 @@ import { NAV, SITE } from "../config/site";
   .footer-nav ul {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 0.3rem 0.8rem;
     list-style: none;
     padding: 0;
   }
 
   .footer-nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     color: #d4e4d9;
     font-size: 0.9rem;
     text-decoration: none;
@@ -122,10 +132,23 @@ import { NAV, SITE } from "../config/site";
   }
 
   .footer-nota {
-    max-width: 40rem;
+    grid-column: 1 / -1;
     font-size: 0.8rem;
     color: #9db8a5;
     border-top: 1px solid rgb(255 255 255 / 0.14);
     padding-top: 1.2rem;
+  }
+
+  .footer-nav {
+    grid-column: 1 / -1;
+  }
+
+  @media (max-width: 48rem) {
+    .footer-grade {
+      grid-template-columns: 1fr;
+    }
+    .footer-frase {
+      text-align: left;
+    }
   }
 </style>

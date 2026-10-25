@@ -3,20 +3,13 @@ import { SEGURANCA } from "../config/site";
 import Icon from "./Icon.astro";
 ---
 
-<section
-  class="secao seguranca"
-  id="seguranca"
-  aria-labelledby="titulo-seguranca"
->
+<section class="secao seguranca" id="seguranca" aria-labelledby="titulo-seguranca">
   <div class="container">
     <div class="cabecalho-secao">
-      <span class="kicker"><Icon name="escudo" size={15} /> Segurança e cuidado</span>
-      <h2 class="titulo-secao" id="titulo-seguranca">
-        Um ambiente pensado para proteger
-      </h2>
+      <h2 class="titulo-secao" id="titulo-seguranca">Um ambiente pensado para proteger</h2>
       <p class="subtitulo-secao">
-        Por ser um projeto público feito para crianças, cada detalhe está
-        sendo planejado com responsabilidade, transparência e carinho.
+        Por ser um projeto público feito para crianças, cada detalhe está sendo planejado com
+        responsabilidade, transparência e carinho.
       </p>
     </div>
 
@@ -46,7 +39,7 @@ import Icon from "./Icon.astro";
   .grade-seguranca {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.1rem;
+    gap: 0 2.5rem;
     list-style: none;
     padding: 0;
   }
@@ -55,12 +48,8 @@ import Icon from "./Icon.astro";
     display: flex;
     gap: 1rem;
     align-items: flex-start;
-    background: var(--nuvem);
-    border: 1.5px solid var(--linha);
-    border-left: 6px solid var(--verde);
-    border-radius: var(--raio-m);
-    padding: 1.3rem 1.4rem;
-    box-shadow: var(--sombra-card);
+    border-top: 1px solid var(--linha);
+    padding-block: 1.5rem;
   }
 
   .seg-icone {
@@ -76,12 +65,12 @@ import Icon from "./Icon.astro";
   }
 
   .item-seguranca h3 {
-    font-size: 1.08rem;
+    font-size: 1.2rem;
   }
 
   .item-seguranca p {
     margin-top: 0.3rem;
-    font-size: 0.92rem;
+    font-size: 1rem;
     color: var(--tinta-suave);
   }
 

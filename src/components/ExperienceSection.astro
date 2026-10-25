@@ -1,5 +1,13 @@
 ---
-import { APPS, ASSETS, COMO_FUNCIONA, DESTAQUES, withBase } from "../config/site";
+import {
+  APPS,
+  ASSETS,
+  COMO_FUNCIONA,
+  DESTAQUES,
+  MISSOES,
+  TOTAL_MINIGAMES,
+  withBase,
+} from "../config/site";
 import Icon from "./Icon.astro";
 ---
 
@@ -8,7 +16,9 @@ import Icon from "./Icon.astro";
   <div class="ceu-decor" aria-hidden="true">
     <svg class="sol" viewBox="0 0 104 104" width="86" height="86">
       <g stroke="#f2b90d" stroke-width="5.5" stroke-linecap="round">
-        <path d="M52 16V4M52 88v12M88 52h12M16 52H4M77.5 26.5l8.4-8.4M26.5 26.5l-8.4-8.4M77.5 77.5l8.4 8.4M26.5 77.5l-8.4 8.4"></path>
+        <path
+          d="M52 16V4M52 88v12M88 52h12M16 52H4M77.5 26.5l8.4-8.4M26.5 26.5l-8.4-8.4M77.5 77.5l8.4 8.4M26.5 77.5l-8.4 8.4"
+        ></path>
       </g>
       <circle cx="52" cy="52" r="23" fill="#f7c948"></circle>
     </svg>
@@ -40,14 +50,13 @@ import Icon from "./Icon.astro";
 
   <div class="container experiencia-ceu">
     <div class="cabecalho-secao">
-      <span class="kicker laranja"><Icon name="patinha" size={15} /> O jogo</span>
       <h2 class="titulo-secao" id="titulo-experiencia">
         Uma escola para explorar, histórias para viver
       </h2>
       <p class="subtitulo-secao">
         No jogo do {`PSE Nova Santa Rita`}, o Caramelito percorre a escola e ajuda os colegas em
-        seis missões. Cada uma começa com uma história, passa por escolhas do dia a dia e termina
-        em um minigame divertido.
+        {MISSOES.length} missões. Histórias e escolhas do dia a dia convidam a cuidar de si e dos outros,
+        com {TOTAL_MINIGAMES} minigames e uma missão de exploração e diálogo sobre bullying.
       </p>
     </div>
 
@@ -67,7 +76,7 @@ import Icon from "./Icon.astro";
                   preserveAspectRatio="none"
                   aria-hidden="true"
                 >
-                  <path d="M2 0 C 2 58, 98 42, 98 100"></path>
+                  <path d="M2 0 C 2 58, 98 42, 98 100" />
                 </svg>
               )}
               <div class="casa-texto">
@@ -87,19 +96,23 @@ import Icon from "./Icon.astro";
       <!-- Tela do jogo + acoes -->
       <div class="experiencia-lado">
         <figure class="minigame" data-mascot-curtain="paper-in">
-          <div class="minigame-tela">
+          <a
+            class="minigame-tela minigame-ampliar"
+            href={ASSETS.jogo.minigame}
+            aria-label="Ampliar: Defesa de bolas"
+          >
             <img
               src={ASSETS.jogo.minigame}
-              alt="Captura do jogo: no minigame da quadra, as crianças chutam bolas de futebol e o jogador arrasta um tênis gigante para defendê-las"
-              width="448"
-              height="798"
+              alt="Defesa de bolas: um tênis vermelho protege o campo, com controles de setas, pausa e saída na parte inferior"
+              width={ASSETS.jogo.minigameWidth}
+              height={ASSETS.jogo.minigameHeight}
               loading="lazy"
               decoding="async"
             />
-          </div>
+          </a>
           <figcaption>
             <Icon name="brilho" size={14} />
-            Minigame da quadra: defenda as bolas!
+            Defesa de bolas · Ampliar imagem
           </figcaption>
         </figure>
 
@@ -177,42 +190,84 @@ import Icon from "./Icon.astro";
       </div>
       <div class="galeria">
         <figure>
-          <img
-            src={ASSETS.jogo.patio}
-            alt="Captura do jogo: o Caramelito no pátio da escola, cercado por colegas com pontos de exclamação, em vista de cima"
-            width="1278"
-            height="718"
-            loading="lazy"
-            decoding="async"
-          />
+          <a
+            class="galeria-ampliar"
+            href={ASSETS.jogo.patio}
+            aria-label="Ampliar: Explorando o pátio da escola"
+          >
+            <img
+              src={ASSETS.jogo.patio}
+              alt="Captura do jogo: o Caramelito no pátio da escola, cercado por colegas com pontos de exclamação, em vista de cima"
+              width="1278"
+              height="718"
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="galeria-zoom" aria-hidden="true"
+              >Ampliar <Icon name="seta" size={16} /></span
+            >
+          </a>
           <figcaption>Explorando o pátio da escola</figcaption>
         </figure>
         <figure data-mascot-curtain="paper-out">
-          <img
-            src={ASSETS.jogo.cutscene}
-            alt="Captura do jogo: cena ilustrada do pátio com o Caramelito diante da Escola Amizade durante a história de abertura da missão"
-            width="1278"
-            height="718"
-            loading="lazy"
-            decoding="async"
-          />
+          <a
+            class="galeria-ampliar"
+            href={ASSETS.jogo.cutscene}
+            aria-label="Ampliar: Cenas ilustradas contam cada história"
+          >
+            <img
+              src={ASSETS.jogo.cutscene}
+              alt="Captura do jogo: cena ilustrada do pátio com o Caramelito diante da Escola Amizade durante a história de abertura da missão"
+              width="1278"
+              height="718"
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="galeria-zoom" aria-hidden="true"
+              >Ampliar <Icon name="seta" size={16} /></span
+            >
+          </a>
           <figcaption>Cenas ilustradas contam cada história</figcaption>
         </figure>
         <figure>
-          <img
-            src={ASSETS.jogo.escolha}
-            alt="Captura do jogo: tela de escolha da missão Futebol no Pátio, com quatro opções de como acolher o colega"
-            width="1278"
-            height="718"
-            loading="lazy"
-            decoding="async"
-          />
+          <a
+            class="galeria-ampliar"
+            href={ASSETS.jogo.escolha}
+            aria-label="Ampliar: Escolhas que convidam à reflexão"
+          >
+            <img
+              src={ASSETS.jogo.escolha}
+              alt="Captura do jogo: tela de escolha da missão Futebol no Pátio, com quatro opções de como acolher o colega"
+              width="1278"
+              height="718"
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="galeria-zoom" aria-hidden="true"
+              >Ampliar <Icon name="seta" size={16} /></span
+            >
+          </a>
           <figcaption>Escolhas que convidam à reflexão</figcaption>
         </figure>
       </div>
     </div>
   </div>
 </section>
+
+<dialog class="galeria-dialog" aria-labelledby="galeria-legenda">
+  <div class="galeria-dialog-barra">
+    <p id="galeria-legenda"></p>
+    <form method="dialog">
+      <button class="galeria-fechar" autofocus>Fechar <span aria-hidden="true">×</span></button>
+    </form>
+  </div>
+  <img
+    class="galeria-dialog-imagem"
+    src={ASSETS.jogo.patio}
+    alt="O pátio da escola no jogo"
+    loading="lazy"
+  />
+</dialog>
 
 <style>
   /* O mundo do jogo: ceu, sol, nuvens, colinas e gramado. */
@@ -369,10 +424,10 @@ import Icon from "./Icon.astro";
   }
 
   .casa:nth-child(5n + 1) .casa-numero {
-    background: var(--verde);
+    background: var(--verde-escuro);
   }
   .casa:nth-child(5n + 2) .casa-numero {
-    background: var(--laranja);
+    background: var(--laranja-escuro);
   }
   .casa:nth-child(5n + 3) .casa-numero {
     background: var(--azul);
@@ -389,7 +444,7 @@ import Icon from "./Icon.astro";
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    font-size: 1.12rem;
+    font-size: 1.25rem;
     color: var(--tinta);
   }
 
@@ -400,24 +455,23 @@ import Icon from "./Icon.astro";
 
   .casa-texto p {
     margin-top: 0.25rem;
-    font-size: 0.92rem;
+    font-size: 1rem;
     color: var(--tinta-jogo-suave);
   }
 
   /* Momento autoral: cada passo surge, em sequencia, ao entrar na tela.
      Sem JavaScript (ou com movimento reduzido) os passos ficam visiveis. */
-  .casa-espera {
-    opacity: 0;
-    translate: 0 22px;
+  .casa-visivel {
+    animation: revelar-passo 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
-  .casa-visivel {
-    opacity: 1;
-    translate: 0 0;
-    transition:
-      opacity 0.55s ease-out,
-      translate 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-    transition-delay: calc(var(--n, 0) * 70ms);
+  @keyframes revelar-passo {
+    from {
+      translate: 0 12px;
+    }
+    to {
+      translate: 0 0;
+    }
   }
 
   /* --- Tela do jogo, com aro como nos paineis do proprio jogo --- */
@@ -430,14 +484,15 @@ import Icon from "./Icon.astro";
 
   .minigame {
     width: 100%;
-    max-width: 24rem;
+    max-width: 20rem;
     background: var(--tela-navy);
     border-radius: 26px;
     padding: 10px;
-    box-shadow: 0 18px 44px rgb(23 52 82 / 0.38);
+    box-shadow: 0 14px 32px rgb(23 52 82 / 0.2);
   }
 
   .minigame-tela {
+    display: block;
     border-radius: 17px;
     overflow: hidden;
   }
@@ -446,8 +501,7 @@ import Icon from "./Icon.astro";
     display: block;
     width: 100%;
     height: auto;
-    aspect-ratio: 9 / 16;
-    object-fit: cover;
+    object-fit: contain;
     object-position: top;
   }
 
@@ -603,33 +657,14 @@ import Icon from "./Icon.astro";
     border-radius: 18px;
     padding: 10px 10px 0;
     box-shadow: var(--sombra-card);
-    rotate: -1.6deg;
-    transition:
-      rotate 0.28s ease,
-      translate 0.28s ease,
-      box-shadow 0.28s ease;
-  }
-
-  .galeria figure:nth-child(2) {
-    rotate: 1.1deg;
-  }
-
-  .galeria figure:nth-child(3) {
-    rotate: -0.7deg;
-  }
-
-  .galeria figure:hover {
-    rotate: 0deg;
-    translate: 0 -5px;
-    box-shadow: var(--sombra-levantada);
   }
 
   .galeria img {
     display: block;
     width: 100%;
     height: auto;
-    aspect-ratio: 2 / 1;
-    object-fit: cover;
+    aspect-ratio: 1278 / 718;
+    object-fit: contain;
     border-radius: 10px;
   }
 
@@ -641,14 +676,89 @@ import Icon from "./Icon.astro";
     text-align: center;
   }
 
+  .galeria-ampliar {
+    display: block;
+    position: relative;
+    border-radius: 10px;
+  }
+
+  .galeria-zoom {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    background: var(--tinta);
+    color: var(--nuvem);
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .galeria-ampliar:hover .galeria-zoom {
+    background: var(--azul-escuro);
+  }
+
+  .galeria-dialog {
+    position: fixed;
+    margin: auto;
+    width: min(72rem, calc(100% - 2rem));
+    max-height: calc(100dvh - 2rem);
+    padding: 1rem;
+    border: 0;
+    border-radius: 16px;
+    background: var(--papel);
+    color: var(--tinta);
+    box-shadow: var(--sombra-levantada);
+  }
+
+  .galeria-dialog::backdrop {
+    background: rgb(18 35 28 / 0.8);
+  }
+
+  .galeria-dialog[data-orientation="portrait"] {
+    width: min(34rem, calc(100% - 2rem));
+  }
+
+  .galeria-dialog-barra {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.75rem;
+    font-weight: 700;
+  }
+
+  .galeria-fechar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
+    background: var(--nuvem);
+    color: var(--tinta);
+    border: 1px solid var(--linha);
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .galeria-fechar:hover {
+    background: var(--verde-claro);
+  }
+
+  .galeria-dialog-imagem {
+    width: 100%;
+    max-height: calc(100dvh - 9rem);
+    object-fit: contain;
+    border-radius: 8px;
+  }
+
   /* --- Responsivo --- */
   @media (max-width: 56rem) {
     .experiencia-grade {
       grid-template-columns: 1fr;
-    }
-
-    .minigame {
-      max-width: 20rem;
     }
 
     .destaques ul {
@@ -666,15 +776,23 @@ import Icon from "./Icon.astro";
 
   @media (min-width: 40rem) and (max-width: 56rem) {
     .galeria {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-
-    .galeria figcaption {
-      font-size: 0.82rem;
+    .galeria figure:last-child {
+      grid-column: 1 / -1;
+      max-width: calc(50% - 0.7rem);
+      justify-self: center;
     }
   }
 
   @media (max-width: 40rem) {
+    .sol {
+      width: 3rem;
+      height: 3rem;
+      top: 0.35rem;
+      right: 1rem;
+    }
+
     .trilha {
       --zig: 0px;
     }
@@ -702,7 +820,10 @@ import Icon from "./Icon.astro";
   // Revela os passos da trilha conforme entram na tela, com um leve atraso
   // em cascata. Sem observador (ou sem JS), os passos seguem visiveis.
   const passos = document.querySelectorAll<HTMLElement>("#jogo .casa");
-  if ("IntersectionObserver" in window) {
+  if (
+    "IntersectionObserver" in window &&
+    !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  ) {
     const observador = new IntersectionObserver(
       (entradas) => {
         for (const entrada of entradas) {
@@ -715,8 +836,45 @@ import Icon from "./Icon.astro";
       { threshold: 0.3 },
     );
     passos.forEach((passo) => {
-      passo.classList.add("casa-espera");
       observador.observe(passo);
+    });
+  }
+
+  const dialog = document.querySelector<HTMLDialogElement>(".galeria-dialog");
+  const expandedImage = dialog?.querySelector<HTMLImageElement>(".galeria-dialog-imagem");
+  const caption = dialog?.querySelector<HTMLElement>("#galeria-legenda");
+  if (dialog && expandedImage && caption) {
+    document
+      .querySelectorAll<HTMLAnchorElement>(".galeria-ampliar, .minigame-ampliar")
+      .forEach((link) => {
+        link.addEventListener("click", (event) => {
+          if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+          const image = link.querySelector("img");
+          if (!image) return;
+          event.preventDefault();
+          expandedImage.src = link.href;
+          expandedImage.alt = image.alt;
+          dialog.dataset.orientation =
+            image.naturalHeight > image.naturalWidth ? "portrait" : "landscape";
+          caption.textContent =
+            link.closest("figure")?.querySelector("figcaption")?.textContent ?? "";
+          dialog.showModal();
+          document.documentElement.classList.add("galeria-aberta");
+        });
+      });
+    dialog.addEventListener("close", () =>
+      document.documentElement.classList.remove("galeria-aberta"),
+    );
+    dialog.addEventListener("click", (event) => {
+      const bounds = dialog.getBoundingClientRect();
+      if (
+        event.target === dialog &&
+        (event.clientX < bounds.left ||
+          event.clientX > bounds.right ||
+          event.clientY < bounds.top ||
+          event.clientY > bounds.bottom)
+      )
+        dialog.close();
     });
   }
 </script>
