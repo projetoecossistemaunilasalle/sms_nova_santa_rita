@@ -113,14 +113,14 @@ The game lives in the separate repo `Heroes_Trial` (checked out next to the land
 
 ## 5. Deploy and verify
 
-1. Render dashboard > `sms-portal` > Manual Deploy > Deploy latest commit.
+1. Render dashboard > `missoesdocaramelito` > Manual Deploy > Deploy latest commit.
 2. Watch the build log and the pre-deploy step. A pre-deploy failure means no new release is live.
 3. Confirm `https://<service>.onrender.com/api/health/ready` returns 2xx.
 4. Run the smoke test from section 3, step 6.
 
 ## 6. Rollback
 
-1. Render dashboard > `sms-portal` > Events (or Deploys) > select the previous successful deploy > **Rollback**.
+1. Render dashboard > `missoesdocaramelito` > Events (or Deploys) > select the previous successful deploy > **Rollback**.
 2. Migrations are forward-only. Before rolling back across a migration, check that the older code works with the current schema. If it does not, do not roll back the code. Fix forward instead.
 3. Check `/api/health/ready` after the rollback.
 
