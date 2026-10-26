@@ -5,7 +5,9 @@
 # step, so a failed migration keeps the previous release serving.
 services:
   - type: web
-    name: sms-portal
+    # Public URL: https://missoesdocaramelito.onrender.com (Render fixes the
+    # subdomain when the service is created; renaming here makes a new service).
+    name: missoesdocaramelito
     runtime: node
     rootDir: portal
     # Rebuild when either the portal or landing inputs change.
@@ -42,11 +44,12 @@ services:
       - key: NEON_AUTH_BASE_URL
         sync: false
       - key: NEON_AUTH_COOKIE_SECRET
-        generateValue: true
+        sync: false
       # Also derives rate-limit keys and player launch signatures. Never
-      # regenerate it once credentials exist (see .env.example key ring).
+      # regenerate it once credentials exist (see .env.example key ring); a
+      # replacement service must reuse the current value.
       - key: APPLICATION_SECRET
-        generateValue: true
+        sync: false
       - key: PLAYER_CREDENTIAL_KEY_ID
         value: default
       - key: OFFLINE_FLUSH_WINDOW_SECONDS
@@ -62,52 +65,3 @@ services:
       #   strips client-supplied forwarding headers, so IP limits stay off.
       # - NEON_AUTH_ADMIN_EMAIL / NEON_AUTH_ADMIN_PASSWORD: add in the
       #   dashboard once the provisioning identity exists ("Equipe > Criar conta").
-
-  # Replacement for sms-portal, so the site lives at missoesdocaramelito.onrender.com
-  # (Render cannot rename an existing service's subdomain). Same settings; the two
-  # secrets are prompted instead of generated so the sync can reuse sms-portal's
-  # values. Remove sms-portal above once this service is live.
-  - type: web
-    name: missoesdocaramelito
-    runtime: node
-    rootDir: portal
-    buildFilter:
-      paths:
-        - portal/**
-        - src/**
-        - public/**
-        - astro.config.mjs
-        - package.json
-        - package-lock.json
-        - tsconfig.json
-    region: virginia
-    plan: starter
-    buildCommand: npm ci && npm run build:landing && npm run build:server
-    preDeployCommand: npx prisma migrate deploy
-    startCommand: npm run start -- --hostname 0.0.0.0
-    healthCheckPath: /api/health/ready
-    autoDeployTrigger: off
-    envVars:
-      - key: NODE_VERSION
-        value: 24.19.0
-      - key: APP_RUNTIME_MODE
-        value: server
-      - key: DATABASE_URL
-        sync: false
-      - key: DIRECT_URL
-        sync: false
-      - key: NEON_AUTH_BASE_URL
-        sync: false
-      - key: NEON_AUTH_COOKIE_SECRET
-        sync: false
-      # Must equal sms-portal's value: it signs existing player credentials.
-      - key: APPLICATION_SECRET
-        sync: false
-      - key: PLAYER_CREDENTIAL_KEY_ID
-        value: default
-      - key: OFFLINE_FLUSH_WINDOW_SECONDS
-        value: "86400"
-      - key: LOG_LEVEL
-        value: info
-      - key: AUTH_DEV_BYPASS
-        value: "false"
