@@ -2623,6 +2623,30 @@
   font-weight: 750;
 }
 
+.credentialLink {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  width: min(100%, 260px);
+  margin: -4px 0 12px;
+}
+
+.credentialLink small {
+  color: var(--text-muted);
+  font-size: var(--type-compact);
+}
+
+.credentialLink input {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  color: var(--text);
+  background: var(--surface);
+  font-size: var(--type-compact);
+}
+
 .credentialPrivacy {
   max-width: 34ch;
   margin-top: 7px;
@@ -2844,6 +2868,10 @@
 
   .credentialPrintCard img {
     width: 58mm;
+  }
+
+  .credentialLink {
+    display: none;
   }
 }
 

@@ -17,6 +17,47 @@ function playerLabel(playerNumber: number): string {
   return `Jogador ${String(playerNumber).padStart(2, "0")}`;
 }
 
+function CopyEntryLinkButton({ url }: { url: string }) {
+  const [state, setState] = useState<"idle" | "copied" | "manual">("idle");
+
+  useEffect(() => {
+    if (state !== "copied") return;
+    const timer = window.setTimeout(() => setState("idle"), 2500);
+    return () => window.clearTimeout(timer);
+  }, [state]);
+
+  return (
+    <div className={styles.credentialLink}>
+      <button
+        className={styles.buttonSecondary}
+        type="button"
+        onClick={async () => {
+          try {
+            await navigator.clipboard.writeText(url);
+            setState("copied");
+          } catch {
+            setState("manual");
+          }
+        }}
+      >
+        <Icon name={state === "copied" ? "check" : "copy"} />
+        {state === "copied" ? "Link copiado" : "Copiar link de entrada"}
+      </button>
+      {state === "manual" ? (
+        <input
+          aria-label="Link de entrada do jogador"
+          readOnly
+          value={url}
+          onFocus={(event) => event.currentTarget.select()}
+          autoFocus
+        />
+      ) : (
+        <small>Para enviar por WhatsApp ou e-mail e jogar em casa.</small>
+      )}
+    </div>
+  );
+}
+
 function playerEntryUrl(token: string): string {
   const basePath = process.env.APP_BASE_PATH ?? "";
   const url = new URL(`${basePath}/jogar/`, window.location.origin);
@@ -150,6 +191,7 @@ export function PlayerCredentialPrintSheet({
             {/* Generated locally; no credential is sent to an image service. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={credential.qrDataUrl} alt="" width={230} height={230} />
+            <CopyEntryLinkButton url={credential.url} />
             <p>Aponte a câmera do tablet para entrar. Não é preciso digitar.</p>
             <span className={styles.credentialPrivacy}>
               Este cartão dá acesso ao jogador numerado. Guarde-o em local
