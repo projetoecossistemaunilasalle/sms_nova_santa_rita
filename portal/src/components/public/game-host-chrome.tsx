@@ -1,7 +1,10 @@
 "use client";
 
+import { useCallback, useEffect, useRef, useState } from "react";
+
 import type { PlayerBootstrapV2 } from "@/contracts/v2";
 import type { RuntimeMode } from "@/runtime/mode";
+import { Icon } from "@/components/shared/icon";
 import { DemoGameAdapter } from "./demo-game-adapter";
 import type { HostAlert, HostPhase, HostSyncState } from "./game-host-model";
 
@@ -85,8 +88,32 @@ export function GameHostFrame({
   onMessage: (message: unknown) => void;
   runtimeMode: RuntimeMode;
 }) {
+  const playable =
+    !contentFailure &&
+    (runtimeMode === "demo" || Boolean(gameClientUrl && gameOrigin));
+  const { stageRef, expanded, enter, exit } = useGameFullscreen(frameRef);
+
   return (
-    <div className={styles.gameHostFrame}>
+    <div
+      className={styles.gameHostFrame}
+      data-expanded={expanded}
+      ref={stageRef}
+    >
+      {playable && (
+        <div className={styles.gameHostToolbar}>
+          <p className={styles.gameRotateHint}>
+            Vire o celular e toque em Tela cheia para ver o jogo inteiro.
+          </p>
+          <button
+            className={styles.gameFullscreenButton}
+            type="button"
+            onClick={expanded ? exit : enter}
+          >
+            <Icon name={expanded ? "shrink" : "expand"} />
+            {expanded ? "Sair" : "Tela cheia"}
+          </button>
+        </div>
+      )}
       {contentFailure ? (
         <div className={styles.gameHostUnavailable} role="alert">
           <h2>Chame o professor</h2>
@@ -125,6 +152,65 @@ export function GameHostFrame({
       )}
     </div>
   );
+}
+
+type OrientationLock = ScreenOrientation & {
+  lock?: (orientation: "landscape") => Promise<void>;
+};
+
+/**
+ * Native fullscreen where the browser offers it for elements (Android), and a
+ * viewport-filling stage everywhere, which is all an iPhone allows a page.
+ */
+function useGameFullscreen(frameRef: { current: HTMLIFrameElement | null }) {
+  const stageRef = useRef<HTMLDivElement>(null);
+  const [expanded, setExpanded] = useState(false);
+
+  const enter = useCallback(async () => {
+    setExpanded(true);
+    const stage = stageRef.current;
+    if (stage?.requestFullscreen && !document.fullscreenElement) {
+      try {
+        await stage.requestFullscreen({ navigationUI: "hide" });
+        await (screen.orientation as OrientationLock | undefined)
+          ?.lock?.("landscape")
+          .catch(() => undefined);
+      } catch {
+        // The stage still fills the window without native fullscreen.
+      }
+    }
+    frameRef.current?.focus();
+  }, [frameRef]);
+
+  const exit = useCallback(async () => {
+    setExpanded(false);
+    if (document.fullscreenElement) {
+      await document.exitFullscreen().catch(() => undefined);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!expanded) return;
+    function onFullscreenChange() {
+      // Leaving native fullscreen with the system back gesture also collapses.
+      if (!document.fullscreenElement) setExpanded(false);
+    }
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") void exit();
+    }
+    const root = document.documentElement;
+    const overflow = root.style.overflow;
+    root.style.overflow = "hidden";
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      root.style.overflow = overflow;
+      document.removeEventListener("fullscreenchange", onFullscreenChange);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [expanded, exit]);
+
+  return { stageRef, expanded, enter, exit };
 }
 
 export function GameHostFooter({

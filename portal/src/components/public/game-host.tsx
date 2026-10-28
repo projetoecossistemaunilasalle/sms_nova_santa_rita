@@ -62,6 +62,16 @@ import styles from "./public.module.css";
 
 type ReadyEntry = Extract<PlayerEntryActionResult, { state: "ready" }>;
 
+/**
+ * The page counts as focused while the game iframe holds its focus. Leaving
+ * the browser still pauses play: the game also watches its own window focus.
+ */
+function hostHasFocus(frame: HTMLIFrameElement | null): boolean {
+  return (
+    document.hasFocus() || (frame !== null && document.activeElement === frame)
+  );
+}
+
 export function GameHost({
   credential,
   entry,
@@ -691,7 +701,7 @@ export function GameHost({
         hostVisibilityV2Schema.parse({
           type: "portal.visibility.v2",
           visible: document.visibilityState === "visible",
-          focused: document.hasFocus(),
+          focused: hostHasFocus(frameRef.current),
           online: navigator.onLine,
         }),
       );
@@ -795,10 +805,19 @@ export function GameHost({
       const visibility = hostVisibilityV2Schema.parse({
         type: "portal.visibility.v2",
         visible: document.visibilityState === "visible",
-        focused: document.hasFocus(),
+        focused: hostHasFocus(frameRef.current),
         online: navigator.onLine,
       });
       target.postMessage(visibility, targetOrigin);
+    }
+
+    // A tap inside the game moves focus from this page into the iframe, and
+    // the page's blur fires before that move settles: Firefox still reports
+    // no focus there, and no later event would ever un-pause the game.
+    let blurTimer: number | undefined;
+    function sendVisibilityAfterBlur() {
+      window.clearTimeout(blurTimer);
+      blurTimer = window.setTimeout(sendVisibility, 50);
     }
 
     function reconnectAndSync() {
@@ -809,7 +828,7 @@ export function GameHost({
 
     window.addEventListener("message", onWindowMessage);
     window.addEventListener("focus", sendVisibility);
-    window.addEventListener("blur", sendVisibility);
+    window.addEventListener("blur", sendVisibilityAfterBlur);
     window.addEventListener("online", reconnectAndSync);
     window.addEventListener("offline", sendVisibility);
     document.addEventListener("visibilitychange", sendVisibility);
@@ -817,9 +836,10 @@ export function GameHost({
     return () => {
       scheduler.reset();
       retryScheduler.current = null;
+      window.clearTimeout(blurTimer);
       window.removeEventListener("message", onWindowMessage);
       window.removeEventListener("focus", sendVisibility);
-      window.removeEventListener("blur", sendVisibility);
+      window.removeEventListener("blur", sendVisibilityAfterBlur);
       window.removeEventListener("online", reconnectAndSync);
       window.removeEventListener("offline", sendVisibility);
       document.removeEventListener("visibilitychange", sendVisibility);

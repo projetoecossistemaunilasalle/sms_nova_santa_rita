@@ -13,6 +13,7 @@ export type IconName =
   | "close"
   | "copy"
   | "download"
+  | "expand"
   | "external"
   | "filter"
   | "flag"
@@ -30,6 +31,7 @@ export type IconName =
   | "plus"
   | "search"
   | "settings"
+  | "shrink"
   | "shield"
   | "school"
   | "upload"
@@ -56,6 +58,8 @@ export function Icon({ name, ...props }: IconProps) {
         </>
       )}
       {name === "flag" && <path d="M5 21V4m0 1h11l-2.5 4L16 13H5" />}
+      {name === "expand" && <path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5" />}
+      {name === "shrink" && <path d="M4 9h5V4M20 9h-5V4M4 15h5v5M20 15h-5v5" />}
       {name === "chart" && <path d="M4 20V10m6 10V4m6 16v-7m5 7H2" />}
       {name === "grid" && (
         <>

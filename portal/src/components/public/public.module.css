@@ -1,5 +1,5 @@
 .page {
-  --game-host-chrome-offset: 204px;
+  --game-host-chrome-offset: 252px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -285,6 +285,108 @@
   margin-inline: auto;
   border: 0;
   background: var(--surface-game);
+}
+
+.gameHostToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 6px;
+}
+
+.gameRotateHint {
+  display: none;
+  flex: 1 1 auto;
+  margin: 0;
+  color: var(--surface);
+  font-size: var(--type-compact);
+  font-weight: 750;
+  line-height: 1.3;
+}
+
+.gameFullscreenButton {
+  display: inline-flex;
+  min-height: 44px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  color: var(--text);
+  background: var(--yellow);
+  box-shadow: 0 3px 0 rgb(0 0 0 / 25%);
+  font: inherit;
+  font-size: var(--font-size-ui-small);
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.gameFullscreenButton svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Phones held upright: the 16:9 game is tiny here, so ask for a turn. */
+@media (orientation: portrait) and (max-width: 600px) {
+  .gameRotateHint {
+    display: block;
+  }
+}
+
+/* Phones on their side: the whole game fits the screen height and the page
+   keeps free margins beside it, because every touch on the game is play. */
+@media (orientation: landscape) and (max-height: 639px) {
+  .gameHost {
+    width: min(1160px, 100%, calc((100vh - 24px) * 16 / 9 + 8px));
+    width: min(1160px, 100%, calc((100dvh - 24px) * 16 / 9 + 8px));
+  }
+}
+
+/* Expanded: the stage fills the window (inside native fullscreen when the
+   browser has it) and the game is sized by its own letterboxing. */
+.gameHostFrame[data-expanded="true"] {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: #000;
+  box-shadow: none;
+}
+
+.gameHostFrame[data-expanded="true"] .demoGame {
+  flex: 1 1 auto;
+}
+
+.gameHostFrame[data-expanded="true"] .gameHostIframe {
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  aspect-ratio: auto;
+}
+
+.gameHostFrame[data-expanded="true"] .gameHostToolbar {
+  position: absolute;
+  top: max(6px, env(safe-area-inset-top, 0px));
+  left: 50%;
+  z-index: 1;
+  padding: 0;
+  transform: translateX(-50%);
+}
+
+.gameHostFrame[data-expanded="true"] .gameRotateHint {
+  display: none;
+}
+
+.gameHostFrame[data-expanded="true"] .gameFullscreenButton {
+  min-height: 36px;
+  padding: 4px 12px;
+  opacity: 0.82;
 }
 
 @media (min-width: 521px) and (min-height: 640px) {

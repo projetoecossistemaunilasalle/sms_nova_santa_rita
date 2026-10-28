@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "buildId": "a981da3761f095f0896808aa",
+  "buildId": "b1aa55a246bb98c3b2405913",
   "manifestVersion": "4.0.0-real",
   "shell": [
     {
@@ -9,9 +9,9 @@
       "sha256": "a606efd530a98a1435470cfc845b018cb08fe9866f7903d915dc567583264719"
     },
     {
-      "path": "assets/game-DCueerdd.js",
-      "bytes": 1998084,
-      "sha256": "6f6b2652bda54f7fd400888f44906d7a287ee70a9d3fe2ae9b8477793be19213"
+      "path": "assets/game-Can2fzSG.js",
+      "bytes": 1998249,
+      "sha256": "27cd86258f8d0b0100f0b7fe6e4ac14999403fedc4a170c1dd9eae6830d6e9b3"
     },
     {
       "path": "assets/loading-art-BcMeO0DY.webp",
@@ -146,7 +146,7 @@
     {
       "path": "index.html",
       "bytes": 20609,
-      "sha256": "e77498c61e736a92c5aa38ec75c187f2105f5b2f9f85443f78124d3b7a8fa3a7"
+      "sha256": "1896aedc00281a9e356e086550edf6a8dd42d18b4438b182e4c1d826ef5ab8f4"
     }
   ],
   "content": [

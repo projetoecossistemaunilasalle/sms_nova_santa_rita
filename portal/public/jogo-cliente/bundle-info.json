@@ -1,9 +1,9 @@
 {
   "source": "Heroes_Trial/web-poc",
-  "commit": "b9e5f57a400ba1779e1d7e7220a89660da516dac",
-  "branch": "main",
+  "commit": "6986c7a168e00fa01eda96368b50d3c427a482da",
+  "branch": "fix/embedded-focus-resume",
   "dirty": false,
   "portalOrigins": "self",
   "contentVersion": "heroes_trial_school_2026_10",
-  "builtAt": "2026-10-23T21:26:09.2255539Z"
+  "builtAt": "2026-10-28T18:41:25.5744342Z"
 }
