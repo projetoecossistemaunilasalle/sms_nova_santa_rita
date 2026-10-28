@@ -171,6 +171,16 @@
   cursor: pointer;
 }
 
+.authLink {
+  justify-self: center;
+  padding: 10px 4px;
+  color: var(--blue-dark);
+  font-size: var(--font-size-body-compact);
+  font-weight: 750;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .authHelp {
   margin-top: 24px !important;
   padding-top: 20px;

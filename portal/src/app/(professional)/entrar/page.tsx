@@ -48,7 +48,7 @@ export default function SignInPage() {
           <p>
             {isDemo
               ? "Explore o portal com dados fictícios, sem usar uma conta real."
-              : "Use a conta profissional configurada no Neon Auth."}
+              : "Use o e-mail e a senha da sua conta profissional."}
           </p>
 
           {isDemo ? (
@@ -80,6 +80,9 @@ export default function SignInPage() {
               <button className={styles.submit} type="submit">
                 Entrar
               </button>
+              <Link className={styles.authLink} href="/entrar/recuperar">
+                Esqueci minha senha
+              </Link>
             </form>
           )}
 
