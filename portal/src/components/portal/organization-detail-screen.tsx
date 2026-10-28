@@ -18,11 +18,9 @@ import styles from "./portal.module.css";
 export function OrganizationDetailScreen({
   initialOrganization,
   runtimeMode,
-  canAccessClasses,
 }: {
   initialOrganization: OrganizationDetailDto;
   runtimeMode: RuntimeMode;
-  canAccessClasses: boolean;
 }) {
   const organization = initialOrganization;
   const canManage = organization.canManage;
@@ -106,23 +104,16 @@ export function OrganizationDetailScreen({
         <section className={styles.detailPanel}>
           <div className={styles.sectionHeader}>
             <h2>Turmas</h2>
-            {canAccessClasses && (
-              <Link
-                className={styles.textLink}
-                href={{
-                  pathname: "/portal/turmas",
-                  query: { organization: organization.id },
-                }}
-              >
-                Gerenciar turmas
-              </Link>
-            )}
+            <Link
+              className={styles.textLink}
+              href={{
+                pathname: "/portal/turmas",
+                query: { organization: organization.id },
+              }}
+            >
+              Gerenciar turmas
+            </Link>
           </div>
-          {!canAccessClasses && (
-            <p className={styles.inlineEmpty}>
-              As turmas são gerenciadas pelos administradores desta organização.
-            </p>
-          )}
           {organization.classes.length === 0 ? (
             <p className={styles.inlineEmpty}>
               Nenhuma turma criada nesta organização.
@@ -144,18 +135,16 @@ export function OrganizationDetailScreen({
                     <StatusBadge
                       status={recordStatusLabel(classGroup.status)}
                     />
-                    {canAccessClasses && <Icon name="chevron" />}
+                    <Icon name="chevron" />
                   </>
                 );
-                return canAccessClasses ? (
+                return (
                   <Link
                     href={`/portal/turmas/${classGroup.id}`}
                     key={classGroup.id}
                   >
                     {content}
                   </Link>
-                ) : (
-                  <article key={classGroup.id}>{content}</article>
                 );
               })}
             </div>

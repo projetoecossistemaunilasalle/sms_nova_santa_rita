@@ -422,6 +422,7 @@ export class AdultPortalService {
     actor: ActorSnapshot,
   ): Promise<ClassSummaryDto[]> {
     const auth = toAuthorizationActor(actor);
+    if (canManageOrganizations(auth)) return this.store.listClasses();
     const adminOrganizationIds = activeOrganizationIds(actor).filter((id) =>
       canManageClasses(auth, id),
     );

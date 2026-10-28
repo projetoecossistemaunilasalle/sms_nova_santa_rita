@@ -253,17 +253,15 @@ export function OverviewScreen({
           </div>
         </section>
       )}
-      {role !== "platform_admin" && (
-        <section className={styles.followUpBand}>
-          <div>
-            <h2>Depois da sessão</h2>
-            <p>Veja quem participou e o tempo ativo registrado por jogador.</p>
-          </div>
-          <Link className={styles.textLink} href="/portal/resultados">
-            Consultar resultados <Icon name="arrow" />
-          </Link>
-        </section>
-      )}
+      <section className={styles.followUpBand}>
+        <div>
+          <h2>Depois da sessão</h2>
+          <p>Veja quem participou e o tempo ativo registrado por jogador.</p>
+        </div>
+        <Link className={styles.textLink} href="/portal/resultados">
+          Consultar resultados <Icon name="arrow" />
+        </Link>
+      </section>
     </>
   );
 }

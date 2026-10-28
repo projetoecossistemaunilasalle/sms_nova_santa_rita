@@ -52,10 +52,14 @@ export function canManageOrganizations(
   );
 }
 
+// Roles are cumulative: a platform administrator can do everything an
+// organization administrator does, in every organization, and an
+// organization administrator can do everything a teacher does in theirs.
 export function canManageOrganizationStaff(
   actor: V1AuthorizationSnapshot,
   organizationId: string,
 ): boolean {
+  if (canManageOrganizations(actor)) return true;
   return activeMemberships(actor).some(
     (membership) =>
       membership.organizationId === organizationId &&
@@ -70,6 +74,7 @@ export function canAccessClass(
   classGroup: V1ClassScope,
 ): boolean {
   if (!isActive(classGroup.status)) return false;
+  if (canManageOrganizations(actor)) return true;
 
   return activeMemberships(actor).some((membership) => {
     if (membership.organizationId !== classGroup.organizationId) return false;

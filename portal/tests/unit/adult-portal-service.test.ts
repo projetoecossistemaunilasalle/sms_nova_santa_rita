@@ -70,6 +70,29 @@ describe("AdultPortalService", () => {
     );
   });
 
+  it("lets the platform administrator run classes in every organization", async () => {
+    const { service } = setup();
+    expect(
+      (await service.listClasses(DEMO_PROFILE_IDS.PLATFORM_ADMIN)).map(
+        (classGroup) => classGroup.id,
+      ),
+    ).toEqual(expect.arrayContaining(Object.values(DEMO_CLASS_IDS)));
+    expect(
+      (
+        await service.getClass(
+          DEMO_PROFILE_IDS.PLATFORM_ADMIN,
+          DEMO_CLASS_IDS.FOURTH_A,
+        )
+      ).canManage,
+    ).toBe(true);
+    await expect(
+      service.createClass(DEMO_PROFILE_IDS.PLATFORM_ADMIN, {
+        organizationId: DEMO_ORGANIZATION_IDS.CAMPOS_VERDES,
+        name: "Turma da plataforma",
+      }),
+    ).resolves.toMatchObject({ name: "Turma da plataforma" });
+  });
+
   it("prevents an organization administrator from crossing organization boundaries", async () => {
     const { service } = setup();
     await expect(
@@ -221,13 +244,6 @@ describe("AdultPortalService", () => {
       platformRole: null,
     });
 
-    await expect(
-      service.assignTeacher(DEMO_PROFILE_IDS.PLATFORM_ADMIN, {
-        organizationId: DEMO_ORGANIZATION_IDS.VICTOR_AGGENS,
-        profileId: "demo-profile-provisioned",
-      }),
-    ).rejects.toMatchObject({ code: "FORBIDDEN" });
-
     const teacher = await service.assignTeacher(
       DEMO_PROFILE_IDS.ORGANIZATION_ADMIN,
       {
@@ -236,6 +252,14 @@ describe("AdultPortalService", () => {
       },
     );
     expect(teacher.role).toBe(OrganizationRole.TEACHER);
+
+    // Platform admins inherit the organization admin's staff permissions.
+    await expect(
+      service.assignTeacher(DEMO_PROFILE_IDS.PLATFORM_ADMIN, {
+        organizationId: DEMO_ORGANIZATION_IDS.CAMPOS_VERDES,
+        profileId: "demo-profile-provisioned",
+      }),
+    ).resolves.toMatchObject({ role: OrganizationRole.TEACHER });
 
     await expect(
       service.changeMembership(DEMO_PROFILE_IDS.ORGANIZATION_ADMIN, {
@@ -323,6 +347,8 @@ const shellScopeCases: ShellScopeCase[] = [
     scopeLabel: "Escopo de toda a plataforma",
     navigation: [
       "/portal",
+      "/portal/turmas",
+      "/portal/resultados",
       "/portal/admin/organizacoes",
       "/portal/admin/equipe",
       "/portal/admin/versoes-do-jogo",

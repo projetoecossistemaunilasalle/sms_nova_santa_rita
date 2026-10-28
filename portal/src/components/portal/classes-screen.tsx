@@ -59,17 +59,7 @@ export function ClassesScreen({
     );
   }
 
-  if (role === "platform_admin") {
-    return (
-      <PortalState
-        icon="lock"
-        title="Turmas são gerenciadas pelas organizações"
-        description="Como administrador da plataforma, use a área de organizações para preparar os administradores responsáveis."
-      />
-    );
-  }
-
-  const canCreate = role === "organization_admin";
+  const canCreate = role === "organization_admin" || role === "platform_admin";
   return (
     <>
       <PageHeader

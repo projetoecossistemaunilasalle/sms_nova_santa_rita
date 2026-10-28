@@ -67,6 +67,31 @@ describe("V1 adult authorization", () => {
     expect(canManageClasses(admin, "organization-b")).toBe(false);
   });
 
+  it("gives an active platform administrator every organization-level permission", () => {
+    const platformAdmin = actor({ platformRole: PlatformRole.PLATFORM_ADMIN });
+
+    expect(canManageClasses(platformAdmin, "organization-b")).toBe(true);
+    expect(canManageOrganizationStaff(platformAdmin, "organization-b")).toBe(
+      true,
+    );
+    expect(canAccessClass(platformAdmin, assignedClass)).toBe(true);
+    expect(
+      canAccessClass(platformAdmin, {
+        ...assignedClass,
+        status: RecordStatus.INACTIVE,
+      }),
+    ).toBe(false);
+    expect(
+      canManageClasses(
+        actor({
+          platformRole: PlatformRole.PLATFORM_ADMIN,
+          profileStatus: RecordStatus.INACTIVE,
+        }),
+        organizationId,
+      ),
+    ).toBe(false);
+  });
+
   it("scopes a teacher to active assignments and active classes", () => {
     const teacher = actor({
       memberships: [

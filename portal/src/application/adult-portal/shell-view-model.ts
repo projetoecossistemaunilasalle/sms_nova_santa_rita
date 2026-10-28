@@ -35,22 +35,20 @@ export function buildPortalShell(
       mobile: true,
     },
   ];
-  if (effectiveRole !== "platform_admin") {
-    navigation.push(
-      {
-        href: "/portal/turmas",
-        label: "Turmas",
-        icon: "school",
-        mobile: true,
-      },
-      {
-        href: "/portal/resultados",
-        label: "Resultados",
-        icon: "chart",
-        mobile: true,
-      },
-    );
-  }
+  navigation.push(
+    {
+      href: "/portal/turmas",
+      label: "Turmas",
+      icon: "school",
+      mobile: true,
+    },
+    {
+      href: "/portal/resultados",
+      label: "Resultados",
+      icon: "chart",
+      mobile: true,
+    },
+  );
   if (effectiveRole === "platform_admin") {
     navigation.push(
       {

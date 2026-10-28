@@ -144,16 +144,27 @@ describe("session content freezing", () => {
     ).rejects.toMatchObject({ code: "VALIDATION" });
   });
 
-  it("denies unassigned, foreign-organization, inactive and platform-only actors without changing defaults", async () => {
-    const { database, service } = setup();
-    for (const profile of [
-      DEMO_PROFILE_IDS.SECOND_TEACHER,
+  it("lets a platform administrator operate any class without an assignment", async () => {
+    const { service } = setup();
+    await service.setClassDefaultContent(
       DEMO_PROFILE_IDS.PLATFORM_ADMIN,
-    ]) {
-      await expect(
-        service.setClassDefaultContent(profile, classId, null),
-      ).rejects.toMatchObject({ code: "FORBIDDEN" });
-    }
+      DEMO_CLASS_IDS.FOURTH_A,
+      null,
+    );
+    await expect(
+      service.startSession(DEMO_PROFILE_IDS.PLATFORM_ADMIN, classId),
+    ).resolves.toMatchObject({ id: expect.any(String) });
+  });
+
+  it("denies unassigned, foreign-organization and inactive actors without changing defaults", async () => {
+    const { database, service } = setup();
+    await expect(
+      service.setClassDefaultContent(
+        DEMO_PROFILE_IDS.SECOND_TEACHER,
+        classId,
+        null,
+      ),
+    ).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(
       service.setClassDefaultContent(
         DEMO_PROFILE_IDS.ORGANIZATION_ADMIN,
