@@ -1,5 +1,5 @@
 .page {
-  --game-host-chrome-offset: 252px;
+  --game-host-chrome-offset: 204px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -184,13 +184,16 @@
 
 .gameHostHeader {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-end;
   justify-content: space-between;
   gap: 12px 24px;
   padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
 }
 
-.gameHostHeader > div {
+.gameHostHeader > div:first-child {
+  flex: 1 1 0;
+  min-width: 0;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -287,21 +290,21 @@
   background: var(--surface-game);
 }
 
-.gameHostToolbar {
+.gameHostActions {
   display: flex;
+  margin-left: auto;
+  flex: 0 0 auto;
   align-items: center;
-  justify-content: flex-end;
-  gap: 10px;
-  padding: 6px;
+  gap: 8px;
 }
 
-.gameRotateHint {
+.gameHostHeader .gameRotateHint {
   display: none;
-  flex: 1 1 auto;
+  flex-basis: 100%;
   margin: 0;
-  color: var(--surface);
+  color: var(--blue-dark);
   font-size: var(--type-compact);
-  font-weight: 750;
+  font-weight: 800;
   line-height: 1.3;
 }
 
@@ -330,7 +333,7 @@
 
 /* Phones held upright: the 16:9 game is tiny here, so ask for a turn. */
 @media (orientation: portrait) and (max-width: 600px) {
-  .gameRotateHint {
+  .gameHostHeader .gameRotateHint {
     display: block;
   }
 }
@@ -370,23 +373,15 @@
   aspect-ratio: auto;
 }
 
-.gameHostFrame[data-expanded="true"] .gameHostToolbar {
+.gameFullscreenExit {
   position: absolute;
   top: max(6px, env(safe-area-inset-top, 0px));
   left: 50%;
   z-index: 1;
-  padding: 0;
-  transform: translateX(-50%);
-}
-
-.gameHostFrame[data-expanded="true"] .gameRotateHint {
-  display: none;
-}
-
-.gameHostFrame[data-expanded="true"] .gameFullscreenButton {
   min-height: 36px;
   padding: 4px 12px;
   opacity: 0.82;
+  transform: translateX(-50%);
 }
 
 @media (min-width: 521px) and (min-height: 640px) {

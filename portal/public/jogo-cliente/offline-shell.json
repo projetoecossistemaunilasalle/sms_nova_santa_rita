@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "buildId": "b1aa55a246bb98c3b2405913",
+  "buildId": "425b6704b7a31b589d964fde",
   "manifestVersion": "4.0.0-real",
   "shell": [
     {
@@ -145,8 +145,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 20609,
-      "sha256": "1896aedc00281a9e356e086550edf6a8dd42d18b4438b182e4c1d826ef5ab8f4"
+      "bytes": 20590,
+      "sha256": "f91958fbc3f9dcb89b006789e3acf2f50c8f13db59419e492b6194c46dd68358"
     }
   ],
   "content": [

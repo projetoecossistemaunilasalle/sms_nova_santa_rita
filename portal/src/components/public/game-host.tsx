@@ -56,6 +56,7 @@ import {
   GameHostFooter,
   GameHostFrame,
   GameHostHeader,
+  useGameFullscreen,
 } from "./game-host-chrome";
 
 import styles from "./public.module.css";
@@ -84,6 +85,12 @@ export function GameHost({
   gameClientUrl: string | null;
 }) {
   const frameRef = useRef<HTMLIFrameElement | null>(null);
+  const {
+    stageRef,
+    expanded,
+    enter: enterFullscreen,
+    exit: exitFullscreen,
+  } = useGameFullscreen(frameRef);
   const transportRef = useRef<ReturnType<
     typeof createGameOfflineTransport
   > | null>(null);
@@ -899,6 +906,12 @@ export function GameHost({
   return (
     <section className={styles.gameHost} aria-label="Entrada do jogo">
       <GameHostHeader
+        onFullscreen={
+          contentFailure ||
+          (runtimeMode === "server" && !(gameClientUrl && gameOrigin))
+            ? null
+            : () => void enterFullscreen()
+        }
         phase={phase}
         playerNumber={entry.playerNumber}
         runtimeMode={runtimeMode}
@@ -919,6 +932,9 @@ export function GameHost({
         </button>
       )}
       <GameHostFrame
+        expanded={expanded}
+        onExitFullscreen={() => void exitFullscreen()}
+        stageRef={stageRef}
         frameGeneration={frameGeneration}
         contentFailure={contentFailure}
         bootstrap={bootstrap}

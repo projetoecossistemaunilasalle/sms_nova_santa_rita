@@ -23,10 +23,12 @@ const phaseCopy: Record<HostPhase, string> = {
 };
 
 export function GameHostHeader({
+  onFullscreen,
   phase,
   playerNumber,
   runtimeMode,
 }: {
+  onFullscreen: (() => void) | null;
   phase: HostPhase;
   playerNumber: number;
   runtimeMode: RuntimeMode;
@@ -44,10 +46,31 @@ export function GameHostHeader({
             : "Seu progresso fica ligado a este jogador e pode continuar em outro dispositivo."}
         </p>
       </div>
-      <span className={styles.gameConnection} data-state={phase} role="status">
-        <span aria-hidden="true" />
-        {phaseCopy[phase]}
-      </span>
+      <div className={styles.gameHostActions}>
+        <span
+          className={styles.gameConnection}
+          data-state={phase}
+          role="status"
+        >
+          <span aria-hidden="true" />
+          {phaseCopy[phase]}
+        </span>
+        {onFullscreen && (
+          <button
+            className={styles.gameFullscreenButton}
+            type="button"
+            onClick={onFullscreen}
+          >
+            <Icon name="expand" />
+            Tela cheia
+          </button>
+        )}
+      </div>
+      {onFullscreen && (
+        <p className={styles.gameRotateHint}>
+          Vire o celular e toque em Tela cheia para ver o jogo inteiro.
+        </p>
+      )}
     </header>
   );
 }
@@ -75,7 +98,13 @@ export function GameHostFrame({
   onFrameLoad,
   onMessage,
   runtimeMode,
+  expanded,
+  onExitFullscreen,
+  stageRef,
 }: {
+  expanded: boolean;
+  onExitFullscreen: () => void;
+  stageRef: { current: HTMLDivElement | null };
   frameGeneration: number;
   contentFailure: string | null;
   bootstrap: PlayerBootstrapV2 | null;
@@ -88,31 +117,21 @@ export function GameHostFrame({
   onMessage: (message: unknown) => void;
   runtimeMode: RuntimeMode;
 }) {
-  const playable =
-    !contentFailure &&
-    (runtimeMode === "demo" || Boolean(gameClientUrl && gameOrigin));
-  const { stageRef, expanded, enter, exit } = useGameFullscreen(frameRef);
-
   return (
     <div
       className={styles.gameHostFrame}
       data-expanded={expanded}
       ref={stageRef}
     >
-      {playable && (
-        <div className={styles.gameHostToolbar}>
-          <p className={styles.gameRotateHint}>
-            Vire o celular e toque em Tela cheia para ver o jogo inteiro.
-          </p>
-          <button
-            className={styles.gameFullscreenButton}
-            type="button"
-            onClick={expanded ? exit : enter}
-          >
-            <Icon name={expanded ? "shrink" : "expand"} />
-            {expanded ? "Sair" : "Tela cheia"}
-          </button>
-        </div>
+      {expanded && (
+        <button
+          className={`${styles.gameFullscreenButton} ${styles.gameFullscreenExit}`}
+          type="button"
+          onClick={onExitFullscreen}
+        >
+          <Icon name="shrink" />
+          Sair
+        </button>
       )}
       {contentFailure ? (
         <div className={styles.gameHostUnavailable} role="alert">
@@ -162,7 +181,9 @@ type OrientationLock = ScreenOrientation & {
  * Native fullscreen where the browser offers it for elements (Android), and a
  * viewport-filling stage everywhere, which is all an iPhone allows a page.
  */
-function useGameFullscreen(frameRef: { current: HTMLIFrameElement | null }) {
+export function useGameFullscreen(frameRef: {
+  current: HTMLIFrameElement | null;
+}) {
   const stageRef = useRef<HTMLDivElement>(null);
   const [expanded, setExpanded] = useState(false);
 
