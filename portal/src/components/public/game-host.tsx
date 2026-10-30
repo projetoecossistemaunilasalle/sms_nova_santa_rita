@@ -398,12 +398,14 @@ export function GameHost({
         gameDocument.current.savedReplies.set(requestId, acknowledgement);
       }
       postToGame(acknowledgement);
-      setAlert({
-        tone: "warning",
-        message: navigator.onLine
-          ? "Registro guardado com segurança e sincronizando."
-          : "Registro guardado com segurança neste dispositivo; será enviado quando a conexão voltar.",
-      });
+      // Routine online saves stay silent; only an offline save needs a note.
+      if (!navigator.onLine) {
+        setAlert({
+          tone: "warning",
+          message:
+            "Registro guardado com segurança neste dispositivo; será enviado quando a conexão voltar.",
+        });
+      }
       await synchronizeQueue();
     } catch (error) {
       if (gameDocument.current.generation !== documentGeneration) return;
@@ -608,12 +610,13 @@ export function GameHost({
       replyToRequest(request.request_id, durable);
       setPhase("playing");
       setSyncState("pending");
-      setAlert({
-        tone: "warning",
-        message: navigator.onLine
-          ? "Progresso guardado neste dispositivo e sincronizando com o servidor."
-          : "Progresso guardado neste dispositivo; será sincronizado quando a conexão voltar.",
-      });
+      if (!navigator.onLine) {
+        setAlert({
+          tone: "warning",
+          message:
+            "Progresso guardado neste dispositivo; será sincronizado quando a conexão voltar.",
+        });
+      }
       await synchronizeQueue();
     } catch (error) {
       if (gameDocument.current.generation !== documentGeneration) return;
