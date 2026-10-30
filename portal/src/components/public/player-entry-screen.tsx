@@ -7,7 +7,13 @@ import { Icon, type IconName } from "@/components/shared/icon";
 import type { RuntimeMode } from "@/runtime/mode";
 import { resolvePlayerEntryAction } from "@/runtime/actions";
 import { GameHost } from "./game-host";
-import { readPlayerEntryCredential } from "./player-entry-credential";
+import { readPlayerEntryWithResume } from "./player-entry-credential";
+import {
+  currentNavigationType,
+  forgetPlayerEntry,
+  playerEntrySessionStorage,
+  rememberPlayerEntry,
+} from "./player-entry-resume";
 import { recoverOfflinePlayerQueue } from "./recover-offline-queue";
 import { GameSyncRetryScheduler } from "@/runtime/offline/network";
 
@@ -67,20 +73,38 @@ export function PlayerEntryScreen({
   const [view, setView] = useState<EntryView>({ state: "loading" });
   const [entryCredential, setEntryCredential] = useState<string | null>(null);
   const credential = useRef<string | null>(null);
+  const entryRead = useRef(false);
 
   async function resolve(token: string) {
     setView({ state: "loading" });
     try {
-      setView(await resolvePlayerEntryAction(token));
+      const result = await resolvePlayerEntryAction(token);
+      if (result.state === "ready" || result.state === "waiting") {
+        rememberPlayerEntry(playerEntrySessionStorage(), token, Date.now());
+      } else {
+        forgetPlayerEntry(playerEntrySessionStorage());
+      }
+      setView(result);
     } catch {
       setView({ state: "unauthorized" });
     }
   }
 
   useEffect(() => {
-    const result = readPlayerEntryCredential(
+    // Also preserve scan/invalid decisions when Strict Mode replays this effect.
+    if (entryRead.current) return;
+    entryRead.current = true;
+    const result = readPlayerEntryWithResume(
       window.location.href,
       credential.current,
+      playerEntrySessionStorage(),
+      {
+        navigationType: currentNavigationType(),
+        wasDiscarded:
+          (document as Document & { wasDiscarded?: boolean }).wasDiscarded ===
+          true,
+        nowMs: Date.now(),
+      },
     );
     if (result.historyUrl) {
       window.history.replaceState(window.history.state, "", result.historyUrl);

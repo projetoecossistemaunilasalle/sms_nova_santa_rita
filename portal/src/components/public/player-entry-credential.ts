@@ -1,3 +1,10 @@
+import {
+  forgetPlayerEntry,
+  readResumablePlayerEntry,
+  type PlayerEntryNavigation,
+  type PlayerEntryStorage,
+} from "./player-entry-resume";
+
 export function readPlayerEntryCredential(
   href: string,
   cachedCredential: string | null,
@@ -26,5 +33,24 @@ export function readPlayerEntryCredential(
     historyUrl: `${url.pathname}${url.search}${url.hash}`,
     shouldResolve: true,
     credentialMissing: values.length === 0,
+  };
+}
+
+export function readPlayerEntryWithResume(
+  href: string,
+  cachedCredential: string | null,
+  storage: PlayerEntryStorage,
+  navigation: PlayerEntryNavigation,
+): ReturnType<typeof readPlayerEntryCredential> {
+  const result = readPlayerEntryCredential(href, cachedCredential);
+  if (!result.shouldResolve) return result;
+  if (!result.credentialMissing) {
+    // A new card must never fall back to the previous child's stored entry.
+    forgetPlayerEntry(storage);
+    return result;
+  }
+  return {
+    ...result,
+    token: readResumablePlayerEntry(storage, navigation),
   };
 }

@@ -23,10 +23,41 @@ const renewalSchema = z.object({
 });
 type ReadyEntry = Extract<PlayerEntryActionResult, { state: "ready" }>;
 
+function accessEnded(response: Response, payload: unknown): boolean {
+  if (retryableHttpStatus(response.status)) return false;
+  if ([401, 403, 410].includes(response.status)) return true;
+  if (!payload || typeof payload !== "object") return false;
+  if (
+    "state" in payload &&
+    typeof payload.state === "string" &&
+    [
+      "invalid",
+      "revoked",
+      "inactive",
+      "ended",
+      "unauthorized",
+      "expired",
+    ].includes(payload.state)
+  )
+    return true;
+  // SESSION_ENDED currently shares 409/CONFLICT with revision conflicts.
+  return (
+    response.status === 409 &&
+    "error" in payload &&
+    !!payload.error &&
+    typeof payload.error === "object" &&
+    "code" in payload.error &&
+    payload.error.code === "CONFLICT" &&
+    "message" in payload.error &&
+    payload.error.message === "The class session has ended."
+  );
+}
+
 export function createGameOfflineTransport(
   credential: string,
   playerSlotId: string,
   initial?: ReadyEntry,
+  onAccessEnded?: (gameSessionId: string) => void,
 ) {
   const tokens = new Map<string, { token: string; expiresAt: number }>();
   const renewals = new Map<string, Promise<string>>();
@@ -64,6 +95,7 @@ export function createGameOfflineTransport(
           body: JSON.stringify({ credential, playerSlotId, gameSessionId }),
         },
       );
+      if (accessEnded(response, payload)) onAccessEnded?.(gameSessionId);
       if (!response.ok)
         throw new GameTransportError(
           retryableHttpStatus(response.status),
@@ -78,6 +110,8 @@ export function createGameOfflineTransport(
           renewed.participationId !== initial.participationId)
       )
         throw new OfflineSessionMismatchError();
+      // Ended sessions may still issue a flush-only token for offline records.
+      if (renewed.purpose === "flush") onAccessEnded?.(gameSessionId);
       tokens.set(gameSessionId, {
         token: renewed.launchToken,
         expiresAt: Date.parse(renewed.expiresAt),
@@ -114,6 +148,7 @@ export function createGameOfflineTransport(
         token = await tokenForSession(gameSessionId, true, allowNearExpiry);
         continue;
       }
+      if (accessEnded(response, payload)) onAccessEnded?.(gameSessionId);
       if (
         !response.ok &&
         !(

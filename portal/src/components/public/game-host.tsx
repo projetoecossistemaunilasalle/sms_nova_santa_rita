@@ -30,6 +30,10 @@ import {
 import { GameSyncRetryScheduler } from "@/runtime/offline/network";
 import { createGameOfflineTransport } from "./game-offline-transport";
 import {
+  forgetPlayerEntry,
+  playerEntrySessionStorage,
+} from "./player-entry-resume";
+import {
   createBridgeRequestId,
   expectedGameOrigin,
   isTrustedGameMessage,
@@ -173,6 +177,11 @@ export function GameHost({
       credential,
       entry.playerSlotId,
       entry,
+      (gameSessionId) => {
+        // A refused historical queue must not invalidate the current entry.
+        if (gameSessionId === entry.gameSessionId)
+          forgetPlayerEntry(playerEntrySessionStorage());
+      },
     ));
   }
 
