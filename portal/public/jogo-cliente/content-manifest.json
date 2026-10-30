@@ -417,6 +417,16 @@
           "key": "changes",
           "label": "Trocas de alimentos",
           "kind": "count"
+        },
+        {
+          "key": "checks",
+          "label": "Conferências da lancheira",
+          "kind": "count"
+        },
+        {
+          "key": "everyday_first",
+          "label": "Escolhas do dia a dia na primeira conferência",
+          "kind": "count"
         }
       ]
     },

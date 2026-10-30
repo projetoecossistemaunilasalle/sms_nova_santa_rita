@@ -6209,7 +6209,7 @@
       "type": "image",
       "owner": "mission:clean_hands_care",
       "exclusive": false,
-      "bytes": 61246,
+      "bytes": 59508,
       "url": "/assets/care/handwash-steps.webp",
       "logicalName": "spr_handwash_steps",
       "gmlName": "spr_handwash_steps",
@@ -6222,8 +6222,8 @@
       "provenance": {
         "source": "sprites/spr_handwash_steps/spr_handwash_steps.yy",
         "sourceSha256": "2ac2eebc390cbf58e015b71ed7d14bc03f96c176446d2f0c7aa5b204bb96790c",
-        "generatedSha256": "38771ebf4ed50f1c08d7adfe736bb119a00854df0925be5ee87bfbe91240c64f",
-        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "generatedSha256": "d71f316a317d2fff23618e511fceda35c92dce1535a348b6318130314091627f",
+        "transform": "Web art for frame(s) 1; xstack normalized GameMaker frames, libwebp q72",
         "frameCount": 5,
         "frameDurationMs": 1000,
         "frameWidth": 256,
@@ -6237,9 +6237,9 @@
             "bottom": 247
           },
           {
-            "left": 31,
+            "left": 41,
             "top": 8,
-            "right": 223,
+            "right": 224,
             "bottom": 247
           },
           {
@@ -6267,8 +6267,8 @@
             "sourceSha256": "700adab57fef882c202c77dfcdabfbc814534e22bc080103668a32730c6e24e1"
           },
           {
-            "source": "sprites/spr_handwash_steps/8c4fa6ba-71fb-49a5-96b4-48f385c179a4.png",
-            "sourceSha256": "4b45cc1fef15401dc7485831bba1a82c3f33bfca987dba9aeb31f6742f43141e"
+            "source": "web-poc/art_source/handwash_steps_soap/cleaned.png",
+            "sourceSha256": "effaa6f124ed4e6befced60301ea18546e7b4a6dfacc2d0271637b5d149af644"
           },
           {
             "source": "sprites/spr_handwash_steps/9ced517e-9df8-4f5a-8659-3e79af9387be.png",
@@ -12845,5 +12845,5 @@
       }
     }
   },
-  "totalBytes": 10247507
+  "totalBytes": 10245769
 }

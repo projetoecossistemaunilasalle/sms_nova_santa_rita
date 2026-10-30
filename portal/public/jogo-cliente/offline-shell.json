@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "buildId": "667b6ab2db4ec184ac85153a",
+  "buildId": "8e247a7c6430702c31fa60dc",
   "manifestVersion": "4.0.0-real",
   "shell": [
     {
@@ -9,9 +9,9 @@
       "sha256": "a606efd530a98a1435470cfc845b018cb08fe9866f7903d915dc567583264719"
     },
     {
-      "path": "assets/game-DF8tER6Y.js",
-      "bytes": 2236017,
-      "sha256": "1ca8f09f3ea1360d7dd30df7b7fd1f9905c2233a7a1d99d83809fe513fe83f4a"
+      "path": "assets/game-DxbSXsRi.js",
+      "bytes": 2253069,
+      "sha256": "d79430ad8825b7f62bc30a55a70301ac61543a677052a3c4f47d4250b914d82c"
     },
     {
       "path": "assets/loading-art-BcMeO0DY.webp",
@@ -20,8 +20,8 @@
     },
     {
       "path": "assets/manifest.generated.json",
-      "bytes": 471867,
-      "sha256": "7b50c3ff15d159678f2cc2e656acbaf7bae9d93ec57e66aa5a3be6010d80e344"
+      "bytes": 471874,
+      "sha256": "57684935bc618d8d755728dfd8fa24a9430906805cfabb75e8b952b2e4b41b97"
     },
     {
       "path": "assets/ui/buttons/cafeteria.webp",
@@ -130,8 +130,8 @@
     },
     {
       "path": "content-manifest.json",
-      "bytes": 11496,
-      "sha256": "496bb7ba5444cd788758f4769228ab628c03e88e51d1b490e55d67333b784495"
+      "bytes": 11770,
+      "sha256": "3eec36ee70d6bccaea4e5236c8752cfe21a2fa5395b3751e697c8984f8b021c1"
     },
     {
       "path": "fonts/LilitaOne-Regular.ttf",
@@ -145,8 +145,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 20590,
-      "sha256": "ddfaad15c7d8d028cebb43fed8a563dd9f08346876c2f24111db1b9556f10ebc"
+      "bytes": 21124,
+      "sha256": "011a776e91aaa940f6b1b4b05e3652ac06e063b687badfc1c32b8246c38c47f8"
     }
   ],
   "content": [
@@ -747,8 +747,8 @@
     {
       "key": "handwash/steps",
       "path": "assets/care/handwash-steps.webp",
-      "bytes": 61246,
-      "sha256": "38771ebf4ed50f1c08d7adfe736bb119a00854df0925be5ee87bfbe91240c64f"
+      "bytes": 59508,
+      "sha256": "d71f316a317d2fff23618e511fceda35c92dce1535a348b6318130314091627f"
     },
     {
       "key": "handwash/washing",
