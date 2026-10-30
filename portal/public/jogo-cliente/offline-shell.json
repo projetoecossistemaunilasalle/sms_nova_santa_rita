@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "buildId": "425b6704b7a31b589d964fde",
+  "buildId": "a160ebbd60c2c63c0f26b8bf",
   "manifestVersion": "4.0.0-real",
   "shell": [
+    {
+      "path": "assets/game-B4Wo4M0Q.js",
+      "bytes": 2235699,
+      "sha256": "61e353c86f52833cbab8d2cbc050419c517ffe4d4216697dcf49e35d6c8f35a4"
+    },
     {
       "path": "assets/game-BJK2xB43.css",
       "bytes": 6639,
       "sha256": "a606efd530a98a1435470cfc845b018cb08fe9866f7903d915dc567583264719"
-    },
-    {
-      "path": "assets/game-Can2fzSG.js",
-      "bytes": 1998249,
-      "sha256": "27cd86258f8d0b0100f0b7fe6e4ac14999403fedc4a170c1dd9eae6830d6e9b3"
     },
     {
       "path": "assets/loading-art-BcMeO0DY.webp",
@@ -20,8 +20,8 @@
     },
     {
       "path": "assets/manifest.generated.json",
-      "bytes": 316073,
-      "sha256": "26d76a8ca5a7f2395d3612880ef1f750a3b118359057760d75afd6a8dcc75752"
+      "bytes": 471867,
+      "sha256": "7b50c3ff15d159678f2cc2e656acbaf7bae9d93ec57e66aa5a3be6010d80e344"
     },
     {
       "path": "assets/ui/buttons/cafeteria.webp",
@@ -130,8 +130,8 @@
     },
     {
       "path": "content-manifest.json",
-      "bytes": 6206,
-      "sha256": "31ef6a153acf7871636b0653c8a9ba8ca9b51f9be8b8f4275c09ef1093269360"
+      "bytes": 11496,
+      "sha256": "496bb7ba5444cd788758f4769228ab628c03e88e51d1b490e55d67333b784495"
     },
     {
       "path": "fonts/LilitaOne-Regular.ttf",
@@ -145,8 +145,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 20590,
-      "sha256": "f91958fbc3f9dcb89b006789e3acf2f50c8f13db59419e492b6194c46dd68358"
+      "bytes": 20591,
+      "sha256": "220930cfcb87e51ee4124fc812bcf0ad7b39fc49afbb9881bd62540405e169c8"
     }
   ],
   "content": [
@@ -221,6 +221,54 @@
       "path": "assets/dental-world/spr_kit_sorriso_toothpaste.webp",
       "bytes": 15818,
       "sha256": "da7d2bdd0cdaefc1c7f799f032dce5a9fb3fa6ab31cd50c4483df5e544216024"
+    },
+    {
+      "key": "aee/child_1",
+      "path": "assets/aee/child_1.webp",
+      "bytes": 31426,
+      "sha256": "001d84e4f22d5aba6458234c72ed1a0a83b0189e2cc45fcc87166ea38a8eb94a"
+    },
+    {
+      "key": "aee/child_1/portrait",
+      "path": "assets/aee/child_1-portrait.webp",
+      "bytes": 24372,
+      "sha256": "86a447f19fbbde3fc61a4079b0cfe4a3ff33f3131413e0c735b84abd1f23c842"
+    },
+    {
+      "key": "aee/child_2",
+      "path": "assets/aee/child_2.webp",
+      "bytes": 27918,
+      "sha256": "82127046ad684bf4ee16ac3e8613a5f7b6b9bdffca4c38ecde0da376ce1e2c4f"
+    },
+    {
+      "key": "aee/child_2/portrait",
+      "path": "assets/aee/child_2-portrait.webp",
+      "bytes": 20178,
+      "sha256": "2cf2f18f12c631c48494339f283caffce34bf1fe021559db7108b645da9fbe7a"
+    },
+    {
+      "key": "aee/child_3",
+      "path": "assets/aee/child_3.webp",
+      "bytes": 32366,
+      "sha256": "feca0acfb501fdf5c5ef97a38ee0c9182ed6b1019e13271bd96592fd8d6b62d6"
+    },
+    {
+      "key": "aee/child_3/portrait",
+      "path": "assets/aee/child_3-portrait.webp",
+      "bytes": 26814,
+      "sha256": "7e8dbe77c21cc75c95437c678385fcefa47d0da9a0442552002337f7fc6a5f9a"
+    },
+    {
+      "key": "aee/teacher",
+      "path": "assets/aee/teacher.webp",
+      "bytes": 24802,
+      "sha256": "e6ed6488f78f755c80ab44228fc4593b9b214932b2019b3c4b16975b2d1b5cc7"
+    },
+    {
+      "key": "aee/teacher/portrait",
+      "path": "assets/aee/teacher-portrait.webp",
+      "bytes": 21094,
+      "sha256": "922388ad951fade28805ce76098e98fe23554d640905f4958d7bd1b212c531f1"
     },
     {
       "key": "audio/music_school",
@@ -343,6 +391,240 @@
       "sha256": "674af036e46874d6367eacb9e47048eedf96a71352d6efaf386d74850041af85"
     },
     {
+      "key": "caramelito.barbaro.idle",
+      "path": "assets/barbaro/idle.webp",
+      "bytes": 54174,
+      "sha256": "aa84d86ecfb8e1adc6d3bbd7a0fe03fb90c9993a94aaee6c5f63173ef998a0e2"
+    },
+    {
+      "key": "caramelito.barbaro.portrait",
+      "path": "assets/barbaro/portrait.webp",
+      "bytes": 7866,
+      "sha256": "35da7c8d109d7d5b1f285fda4f123a44b01f304c92aadd5b2493093c05c6a339"
+    },
+    {
+      "key": "caramelito.barbaro.walk_down",
+      "path": "assets/barbaro/walk_down.webp",
+      "bytes": 52782,
+      "sha256": "6eaaa95e69fcac95f7c650a61a37d504fc70837a5ff606a47c8b2066c10ffa88"
+    },
+    {
+      "key": "caramelito.barbaro.walk_side",
+      "path": "assets/barbaro/walk_side.webp",
+      "bytes": 46808,
+      "sha256": "74795c8fc5ed19216b15060d79f0c6323e039c4f471ef68232330e5fac0b6c6b"
+    },
+    {
+      "key": "caramelito.barbaro.walk_up",
+      "path": "assets/barbaro/walk_up.webp",
+      "bytes": 51868,
+      "sha256": "04a29695239487d90d5fe1fd7f6e4cf5c37d1c7f85aaa83810d900990d7fe042"
+    },
+    {
+      "key": "caramelito.barbaro.walk_west",
+      "path": "assets/barbaro/walk_west.webp",
+      "bytes": 46836,
+      "sha256": "7a60e4fc76ae17a28f285884270114fac4a1379ada3c76de6b845493f07a8af3"
+    },
+    {
+      "key": "caramelito.mago.idle",
+      "path": "assets/mago/idle.webp",
+      "bytes": 48856,
+      "sha256": "66664653072e69f7f4f65de3ccebb7c9b2ee89077f1c369e7575d5cb5b1b4824"
+    },
+    {
+      "key": "caramelito.mago.portrait",
+      "path": "assets/mago/portrait.webp",
+      "bytes": 8514,
+      "sha256": "73fd01b150357eb682ce5f80407c0a1fb9bee889e0c1b77a57f08d74eff64516"
+    },
+    {
+      "key": "caramelito.mago.walk_down",
+      "path": "assets/mago/walk_down.webp",
+      "bytes": 61572,
+      "sha256": "54a09266ef6910298bfaa3d43e3e8916bcabcaab0c32657b4501195ca991fd77"
+    },
+    {
+      "key": "caramelito.mago.walk_side",
+      "path": "assets/mago/walk_side.webp",
+      "bytes": 60550,
+      "sha256": "d46a46874a0993a1172b14390efb3da2970a1c1626081af98e01a51923fd6664"
+    },
+    {
+      "key": "caramelito.mago.walk_up",
+      "path": "assets/mago/walk_up.webp",
+      "bytes": 57600,
+      "sha256": "80c0e155bddeeef634a70e66f58d737b3e693c774a1e6608568a3e220749b1e2"
+    },
+    {
+      "key": "caramelito.mago.walk_west",
+      "path": "assets/mago/walk_west.webp",
+      "bytes": 60806,
+      "sha256": "1c871b6cafadf477a5b2e32f11274241462ef7355b5d035163c95966986cf872"
+    },
+    {
+      "key": "caramelito.phoenix.idle",
+      "path": "assets/phoenix/idle.webp",
+      "bytes": 57992,
+      "sha256": "9e2feff12206160fd5685890dc1ba620962ba30fd9d7c17289dc12d10fe8c328"
+    },
+    {
+      "key": "caramelito.phoenix.portrait",
+      "path": "assets/phoenix/portrait.webp",
+      "bytes": 8460,
+      "sha256": "a6bb340478649858474051217a0a5882820251ae2fba802b73ed570f5fc3593d"
+    },
+    {
+      "key": "caramelito.phoenix.walk_down",
+      "path": "assets/phoenix/walk_down.webp",
+      "bytes": 45604,
+      "sha256": "ca68d48939a7ae28bd028d2cf11844d6485c272c2f651af0a5e63b0d96dd24fd"
+    },
+    {
+      "key": "caramelito.phoenix.walk_side",
+      "path": "assets/phoenix/walk_side.webp",
+      "bytes": 44302,
+      "sha256": "02107c9e9ced1787441a25cc77341c7012ab2141b07774ff656280278b05a107"
+    },
+    {
+      "key": "caramelito.phoenix.walk_up",
+      "path": "assets/phoenix/walk_up.webp",
+      "bytes": 40280,
+      "sha256": "1d6df820fe9d96637f448e711ba0f1598cd8b51b8c9ed995470ae26b602ac33a"
+    },
+    {
+      "key": "caramelito.phoenix.walk_west",
+      "path": "assets/phoenix/walk_west.webp",
+      "bytes": 44414,
+      "sha256": "0556aae15e183760e8fa2a972bde29d6b77236c8f477a0e4bdb58a7910408391"
+    },
+    {
+      "key": "caramelito.pse_flight.fly_down",
+      "path": "assets/pse_flight/fly_down.webp",
+      "bytes": 67824,
+      "sha256": "ca3378b4395ee86b82ac399a3fb7623b9f2169c94448169fe14979eaccb8c16e"
+    },
+    {
+      "key": "caramelito.pse_flight.fly_left",
+      "path": "assets/pse_flight/fly_left.webp",
+      "bytes": 61294,
+      "sha256": "2cd167765339a585397d8dd2d0eeba89e0bd46d8afe7b0bbdbec37600834a3a4"
+    },
+    {
+      "key": "caramelito.pse_flight.fly_right",
+      "path": "assets/pse_flight/fly_right.webp",
+      "bytes": 65658,
+      "sha256": "10777ca12fe0cd7ff7570f7193dc66316b370458cef2e59247c9039127cbe4a2"
+    },
+    {
+      "key": "caramelito.pse_flight.fly_up",
+      "path": "assets/pse_flight/fly_up.webp",
+      "bytes": 60272,
+      "sha256": "05e47ef8cbe5f2100baf0a913fb309154d5802a61fd0f55d0d0e115b832a71c6"
+    },
+    {
+      "key": "caramelito.pse_flight.idle_back",
+      "path": "assets/pse_flight/idle_back.webp",
+      "bytes": 58302,
+      "sha256": "bddfe54ee31dfb3542f2961a28d9da4099f7a37c8f6e34c8d3f7f92de747e810"
+    },
+    {
+      "key": "caramelito.pse_flight.idle_front",
+      "path": "assets/pse_flight/idle_front.webp",
+      "bytes": 66874,
+      "sha256": "94e785a1de43c562654b3713ddc4e3e6dd040adb39b94990ae360f38fc7545c1"
+    },
+    {
+      "key": "caramelito.pse_flight.idle_left",
+      "path": "assets/pse_flight/idle_left.webp",
+      "bytes": 62748,
+      "sha256": "b45668cbf22d49eafb7443d3edba8115de4bb7b23ce2e18e645f39ad0eb969ec"
+    },
+    {
+      "key": "caramelito.pse_flight.idle_right",
+      "path": "assets/pse_flight/idle_right.webp",
+      "bytes": 63936,
+      "sha256": "b8cb3af8f675b9a2bdfe07e8f34da6a0ca3e71719a45c15cf5b5c198bb784f6b"
+    },
+    {
+      "key": "caramelito.pse_flight.portrait",
+      "path": "assets/pse_flight/portrait.webp",
+      "bytes": 11854,
+      "sha256": "09aa600acff86f11f44d1ba7f750a7e3860397854e1c6317abfcdbc09362f1c7"
+    },
+    {
+      "key": "caramelito.speedster.idle",
+      "path": "assets/speedster/idle.webp",
+      "bytes": 58204,
+      "sha256": "0e8c27437bf27a6d95c45e9d4c2f1ab9048dec9f5e042be9ca480887071bd6b6"
+    },
+    {
+      "key": "caramelito.speedster.portrait",
+      "path": "assets/speedster/portrait.webp",
+      "bytes": 7128,
+      "sha256": "da85e8eec63fed2c713ea70bd7aa8a4566b3008c0e8222ecffe029114344ed92"
+    },
+    {
+      "key": "caramelito.speedster.walk_down",
+      "path": "assets/speedster/walk_down.webp",
+      "bytes": 47316,
+      "sha256": "79fcdf0c743690a83f86481967bbbed7f0593a6a8c7b617ac600a3f058fd2e32"
+    },
+    {
+      "key": "caramelito.speedster.walk_side",
+      "path": "assets/speedster/walk_side.webp",
+      "bytes": 55250,
+      "sha256": "df81bcb9ab792f6072b4d720d47abf1fbc6b0b6cc081f2536c2f85b6221c600a"
+    },
+    {
+      "key": "caramelito.speedster.walk_up",
+      "path": "assets/speedster/walk_up.webp",
+      "bytes": 44090,
+      "sha256": "7249c1c3bfd08feee69dadf52b09ae8b217dfcd5c104b7b71d71615a9a69e97b"
+    },
+    {
+      "key": "caramelito.speedster.walk_west",
+      "path": "assets/speedster/walk_west.webp",
+      "bytes": 55220,
+      "sha256": "32f0ac115148d02789fa6f9fb61dc709563c3be0aef4b7481cdad740bac3c887"
+    },
+    {
+      "key": "caramelito.super_heroi.idle",
+      "path": "assets/super_heroi/idle.webp",
+      "bytes": 57216,
+      "sha256": "0c0eac5708d94882c2328a18f72f138328da4032d8b68eaa1748f1293d8e2f3a"
+    },
+    {
+      "key": "caramelito.super_heroi.portrait",
+      "path": "assets/super_heroi/portrait.webp",
+      "bytes": 8610,
+      "sha256": "c04cfa9de083547efa4a461032a9ccb44af34951d58f51153e3666c54df74942"
+    },
+    {
+      "key": "caramelito.super_heroi.walk_down",
+      "path": "assets/super_heroi/walk_down.webp",
+      "bytes": 52024,
+      "sha256": "f0e2f198b7e23070c336cad7aa770fd620a669c9dac617d2bd31c26aeb0d256a"
+    },
+    {
+      "key": "caramelito.super_heroi.walk_side",
+      "path": "assets/super_heroi/walk_side.webp",
+      "bytes": 51390,
+      "sha256": "316d6499d7e13f5e039b137ec96b003294846c8e4c01f2f60dd391c341c0e754"
+    },
+    {
+      "key": "caramelito.super_heroi.walk_up",
+      "path": "assets/super_heroi/walk_up.webp",
+      "bytes": 50316,
+      "sha256": "026e4a748166483850d2fc0b103a83fc4cd2a310308efe5cef9fcbeb745a82a7"
+    },
+    {
+      "key": "caramelito.super_heroi.walk_west",
+      "path": "assets/super_heroi/walk_west.webp",
+      "bytes": 51556,
+      "sha256": "5430e709ba7a5f3e366acb2f75091648c77b6325e65b3773e6c1652927e1ddc7"
+    },
+    {
       "key": "caramelito.vampire.idle",
       "path": "assets/vampire/idle.webp",
       "bytes": 50214,
@@ -437,6 +719,102 @@
       "path": "assets/cutscenes/scene_patio_lia1.webp",
       "bytes": 70722,
       "sha256": "f1246891eee3a7d03754f117e89ee280171324230ce05d3a1fda348fdad00f7f"
+    },
+    {
+      "key": "handwash/child",
+      "path": "assets/dental-world/spr_lunchbox_child.webp",
+      "bytes": 26956,
+      "sha256": "d1bd42907e12c7400ac4a843b52a734e27dc53d396e96ea8869423a90f210bda"
+    },
+    {
+      "key": "handwash/child_portrait",
+      "path": "assets/dental-world/spr_lunchbox_child_portrait.webp",
+      "bytes": 16464,
+      "sha256": "3d9ffaa885ee103ccc68ac1f36218c7d1a32cf5f11ee68d1f9f5cdf90a0380b9"
+    },
+    {
+      "key": "handwash/shield",
+      "path": "assets/dental-world/spr_handwash_shield.webp",
+      "bytes": 14738,
+      "sha256": "b650c7c6e10f7635ab2aae5920b824eec0ab440e2e413088aa3b2e1e807b65f9"
+    },
+    {
+      "key": "handwash/situations",
+      "path": "assets/care/handwash-situations.webp",
+      "bytes": 55816,
+      "sha256": "dd2652944d9031083296f6a8a3f386bb6e4ffc65cb32285c1cd572ad65b7c993"
+    },
+    {
+      "key": "handwash/steps",
+      "path": "assets/care/handwash-steps.webp",
+      "bytes": 61246,
+      "sha256": "38771ebf4ed50f1c08d7adfe736bb119a00854df0925be5ee87bfbe91240c64f"
+    },
+    {
+      "key": "handwash/washing",
+      "path": "assets/dental-world/spr_handwash_washing.webp",
+      "bytes": 23810,
+      "sha256": "fb19b4201693caa008c6c83398a082feaf87c6d9a68ef5ec3bc8b3f3cb11c575"
+    },
+    {
+      "key": "lunchbox/apple",
+      "path": "assets/dental-world/spr_lunchbox_apple.webp",
+      "bytes": 11760,
+      "sha256": "e0aff9d5e75fa932d2c349fca7fb218d8aca4e98a028483ed10daff41b9fc5b5"
+    },
+    {
+      "key": "lunchbox/banana",
+      "path": "assets/dental-world/spr_lunchbox_banana.webp",
+      "bytes": 9056,
+      "sha256": "154123da7343b49ee1cbd8b3c848dc6bb8665b22411012888133a5f4b34658bb"
+    },
+    {
+      "key": "lunchbox/cookie",
+      "path": "assets/dental-world/spr_lunchbox_cookie.webp",
+      "bytes": 9050,
+      "sha256": "28dc7c74205580faa33dff5d2d8a79053b97f9fb5b20a1ce8dba12394e315a22"
+    },
+    {
+      "key": "lunchbox/friend",
+      "path": "assets/dental-world/spr_lunchbox_friend.webp",
+      "bytes": 28410,
+      "sha256": "4085d24315ce664a7a9b142c34654cefef32fb75253852ed09d61f060d6a18f4"
+    },
+    {
+      "key": "lunchbox/friend_portrait",
+      "path": "assets/dental-world/spr_lunchbox_friend_portrait.webp",
+      "bytes": 20982,
+      "sha256": "c8024dbe70e6340fc458fe00eb6653e2a9a4afa5db5954173fba758fd1a27b72"
+    },
+    {
+      "key": "lunchbox/open",
+      "path": "assets/dental-world/spr_lunchbox_open.webp",
+      "bytes": 32758,
+      "sha256": "fd9b7ff3b3924927860d3a92dfa61a1f8ad0f35ddcf0ed83f213dce9aea1cc13"
+    },
+    {
+      "key": "lunchbox/opening",
+      "path": "assets/care/lunchbox-opening.webp",
+      "bytes": 121078,
+      "sha256": "4faf2357da9e08052c6976dfbd649d5ce301146c449547f30ee99810e6d3a00d"
+    },
+    {
+      "key": "lunchbox/sandwich",
+      "path": "assets/dental-world/spr_lunchbox_sandwich.webp",
+      "bytes": 11596,
+      "sha256": "a772165377c2aa6c3cf79722a5bca711d39b0e635fca155a5e5f4c246fc4e28a"
+    },
+    {
+      "key": "lunchbox/soda",
+      "path": "assets/dental-world/spr_lunchbox_soda.webp",
+      "bytes": 8744,
+      "sha256": "76ed7bfba39573c1f066369fc38889e43acd2749207b7d879e4ae2fe76f36c33"
+    },
+    {
+      "key": "lunchbox/water",
+      "path": "assets/dental-world/spr_lunchbox_water.webp",
+      "bytes": 9048,
+      "sha256": "22dbdf0533265c3d13dbe36008bccdd78dfa44b8e72676933043651331bd2d02"
     },
     {
       "key": "player/idle",
@@ -1855,6 +2233,12 @@
       "sha256": "4cdb40a179deb7dcb694882dc1396e9dc28b03ddf696fdcb8dd4b34c04185d99"
     },
     {
+      "key": "world/aee",
+      "path": "assets/world/aee.webp",
+      "bytes": 58776,
+      "sha256": "35a34f9b47905e1cebb77ce846a5657907cdcf9ea9eb68f936c22e039c0e22cc"
+    },
+    {
       "key": "world/cafeteria",
       "path": "assets/world/cafeteria.webp",
       "bytes": 66520,
@@ -1931,6 +2315,18 @@
       "path": "assets/world/props/spr_grama_corredor.webp",
       "bytes": 14446,
       "sha256": "90ac64657432437a8808228e3a14466d5238349bf5dc4aa0d619b5ef4734f29b"
+    },
+    {
+      "key": "world/prop/spr_handwash_washing",
+      "path": "assets/world/props/spr_handwash_washing.webp",
+      "bytes": 26638,
+      "sha256": "4139d6597210824a333c2abe4559152b1beeea1bb7d05ec253367cad5a197a6d"
+    },
+    {
+      "key": "world/prop/spr_lunchbox_child",
+      "path": "assets/world/props/spr_lunchbox_child.webp",
+      "bytes": 26956,
+      "sha256": "d1bd42907e12c7400ac4a843b52a734e27dc53d396e96ea8869423a90f210bda"
     },
     {
       "key": "world/prop/spr_mesa_1",

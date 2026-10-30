@@ -342,6 +342,246 @@
         }
       }
     },
+    "aee/child_1": {
+      "key": "aee/child_1",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:many_ways_to_learn",
+      "exclusive": false,
+      "bytes": 31426,
+      "url": "/assets/aee/child_1.webp",
+      "logicalName": "aee/child_1",
+      "gmlName": "spr_aee_child_1",
+      "dimensions": {
+        "width": 320,
+        "height": 512,
+        "originX": 0.5,
+        "originY": 0.984375
+      },
+      "provenance": {
+        "source": "sprites/spr_aee_child_1/1332d7a2-b33c-49da-bd64-e2ac98bf047b.png",
+        "sourceSha256": "b78d2740eec9f3c4a2331fbc08986c5f55ea5cf1bc6ae9c2f56c9508734224ad",
+        "generatedSha256": "001d84e4f22d5aba6458234c72ed1a0a83b0189e2cc45fcc87166ea38a8eb94a",
+        "transform": "scale=320:512",
+        "alphaBounds": {
+          "left": 28,
+          "top": 4,
+          "right": 291,
+          "bottom": 503
+        },
+        "baseline": 504
+      }
+    },
+    "aee/child_1/portrait": {
+      "key": "aee/child_1/portrait",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:many_ways_to_learn",
+      "exclusive": false,
+      "bytes": 24372,
+      "url": "/assets/aee/child_1-portrait.webp",
+      "logicalName": "aee/child_1/portrait",
+      "gmlName": "spr_aee_child_1_portrait",
+      "dimensions": {
+        "width": 416,
+        "height": 400,
+        "originX": 0.5,
+        "originY": 0.98
+      },
+      "provenance": {
+        "source": "sprites/spr_aee_child_1_portrait/c90d5aef-8e09-44fe-8294-1aa7e93455d1.png",
+        "sourceSha256": "9936fd7d9cd8823c62bcf88e48f22ab4c9fd28a00251c37a6806179529d1b8c5",
+        "generatedSha256": "86a447f19fbbde3fc61a4079b0cfe4a3ff33f3131413e0c735b84abd1f23c842",
+        "transform": "scale=416:400",
+        "alphaBounds": {
+          "left": 46,
+          "top": 8,
+          "right": 368,
+          "bottom": 391
+        },
+        "baseline": 392
+      }
+    },
+    "aee/child_2": {
+      "key": "aee/child_2",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:many_ways_to_learn",
+      "exclusive": false,
+      "bytes": 27918,
+      "url": "/assets/aee/child_2.webp",
+      "logicalName": "aee/child_2",
+      "gmlName": "spr_aee_child_2",
+      "dimensions": {
+        "width": 320,
+        "height": 512,
+        "originX": 0.5,
+        "originY": 0.984375
+      },
+      "provenance": {
+        "source": "sprites/spr_aee_child_2/ed5705f5-759d-4896-b8a9-5a3b16cdcefc.png",
+        "sourceSha256": "76a891aff28c4141e029abd75e03d885fb3befe780982be6358c7aa78b170d92",
+        "generatedSha256": "82127046ad684bf4ee16ac3e8613a5f7b6b9bdffca4c38ecde0da376ce1e2c4f",
+        "transform": "scale=320:512",
+        "alphaBounds": {
+          "left": 55,
+          "top": 4,
+          "right": 264,
+          "bottom": 503
+        },
+        "baseline": 504
+      }
+    },
+    "aee/child_2/portrait": {
+      "key": "aee/child_2/portrait",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:many_ways_to_learn",
+      "exclusive": false,
+      "bytes": 20178,
+      "url": "/assets/aee/child_2-portrait.webp",
+      "logicalName": "aee/child_2/portrait",
+      "gmlName": "spr_aee_child_2_portrait",
+      "dimensions": {
+        "width": 416,
+        "height": 400,
+        "originX": 0.5,
+        "originY": 0.98
+      },
+      "provenance": {
+        "source": "sprites/spr_aee_child_2_portrait/2cd2f362-0703-4d7a-9d42-d8548b22f9a9.png",
+        "sourceSha256": "de43e2a8ff5c89c29e9d23659dd146e795b28b3e8f89bdafc724657d0129e1d8",
+        "generatedSha256": "2cf2f18f12c631c48494339f283caffce34bf1fe021559db7108b645da9fbe7a",
+        "transform": "scale=416:400",
+        "alphaBounds": {
+          "left": 84,
+          "top": 8,
+          "right": 324,
+          "bottom": 391
+        },
+        "baseline": 392
+      }
+    },
+    "aee/child_3": {
+      "key": "aee/child_3",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:many_ways_to_learn",
+      "exclusive": false,
+      "bytes": 32366,
+      "url": "/assets/aee/child_3.webp",
+      "logicalName": "aee/child_3",
+      "gmlName": "spr_aee_child_3",
+      "dimensions": {
+        "width": 320,
+        "height": 512,
+        "originX": 0.5,
+        "originY": 0.984375
+      },
+      "provenance": {
+        "source": "sprites/spr_aee_child_3/ae6a167e-d15a-4e7e-b96c-1cf7a618b055.png",
+        "sourceSha256": "6d4825a099723ffd5447f809474c0c316f465e251a0d0431489379f79ce274ec",
+        "generatedSha256": "feca0acfb501fdf5c5ef97a38ee0c9182ed6b1019e13271bd96592fd8d6b62d6",
+        "transform": "scale=320:512",
+        "alphaBounds": {
+          "left": 38,
+          "top": 4,
+          "right": 280,
+          "bottom": 503
+        },
+        "baseline": 504
+      }
+    },
+    "aee/child_3/portrait": {
+      "key": "aee/child_3/portrait",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:many_ways_to_learn",
+      "exclusive": false,
+      "bytes": 26814,
+      "url": "/assets/aee/child_3-portrait.webp",
+      "logicalName": "aee/child_3/portrait",
+      "gmlName": "spr_aee_child_3_portrait",
+      "dimensions": {
+        "width": 416,
+        "height": 400,
+        "originX": 0.5,
+        "originY": 0.98
+      },
+      "provenance": {
+        "source": "sprites/spr_aee_child_3_portrait/78591ae5-35f2-4f05-9afa-5e95facef0a9.png",
+        "sourceSha256": "4d96830ebd421da17217510fb655bf02a35acfee32d583e585923e43fad6aa28",
+        "generatedSha256": "7e8dbe77c21cc75c95437c678385fcefa47d0da9a0442552002337f7fc6a5f9a",
+        "transform": "scale=416:400",
+        "alphaBounds": {
+          "left": 59,
+          "top": 8,
+          "right": 355,
+          "bottom": 391
+        },
+        "baseline": 392
+      }
+    },
+    "aee/teacher": {
+      "key": "aee/teacher",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:many_ways_to_learn",
+      "exclusive": false,
+      "bytes": 24802,
+      "url": "/assets/aee/teacher.webp",
+      "logicalName": "aee/teacher",
+      "gmlName": "spr_aee_teacher",
+      "dimensions": {
+        "width": 320,
+        "height": 512,
+        "originX": 0.5,
+        "originY": 0.984375
+      },
+      "provenance": {
+        "source": "sprites/spr_aee_teacher/6efbc275-53b1-467f-9e77-d27c0ff82276.png",
+        "sourceSha256": "bb26564fe8731cd8583f7cc230a27e4cb881540bc577c8d7d0cb84e553c2b5f4",
+        "generatedSha256": "e6ed6488f78f755c80ab44228fc4593b9b214932b2019b3c4b16975b2d1b5cc7",
+        "transform": "scale=320:512",
+        "alphaBounds": {
+          "left": 56,
+          "top": 4,
+          "right": 262,
+          "bottom": 503
+        },
+        "baseline": 504
+      }
+    },
+    "aee/teacher/portrait": {
+      "key": "aee/teacher/portrait",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:many_ways_to_learn",
+      "exclusive": false,
+      "bytes": 21094,
+      "url": "/assets/aee/teacher-portrait.webp",
+      "logicalName": "aee/teacher/portrait",
+      "gmlName": "spr_aee_teacher_portrait",
+      "dimensions": {
+        "width": 416,
+        "height": 400,
+        "originX": 0.5,
+        "originY": 0.98
+      },
+      "provenance": {
+        "source": "sprites/spr_aee_teacher_portrait/81f672a8-9d26-42f6-9f6a-a4dad7d626c1.png",
+        "sourceSha256": "80eb0c91caa6f8474526e76edf1e4ab358fc9f81fbd173d91cd8ff6606607d94",
+        "generatedSha256": "922388ad951fade28805ce76098e98fe23554d640905f4958d7bd1b212c531f1",
+        "transform": "scale=416:400",
+        "alphaBounds": {
+          "left": 78,
+          "top": 8,
+          "right": 326,
+          "bottom": 391
+        },
+        "baseline": 392
+      }
+    },
     "audio/music_school": {
       "key": "audio/music_school",
       "tier": "mission",
@@ -1272,6 +1512,3649 @@
         ]
       }
     },
+    "caramelito.barbaro.idle": {
+      "key": "caramelito.barbaro.idle",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.barbaro",
+      "exclusive": false,
+      "bytes": 54174,
+      "url": "/assets/barbaro/idle.webp",
+      "logicalName": "spr_player_idle_barbaro",
+      "gmlName": "spr_player_idle_barbaro",
+      "dimensions": {
+        "width": 1008,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_idle_barbaro/spr_player_idle_barbaro.yy",
+        "sourceSha256": "fe17f31a3f70bdee411086f04ff643b4dae44637c3d72b03e3e2435714639d92",
+        "generatedSha256": "aa84d86ecfb8e1adc6d3bbd7a0fe03fb90c9993a94aaee6c5f63173ef998a0e2",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 7,
+        "frameDurationMs": 333.3333333333333,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 23,
+            "top": 10,
+            "right": 120,
+            "bottom": 148
+          },
+          {
+            "left": 22,
+            "top": 10,
+            "right": 120,
+            "bottom": 148
+          },
+          {
+            "left": 23,
+            "top": 10,
+            "right": 119,
+            "bottom": 148
+          },
+          {
+            "left": 23,
+            "top": 10,
+            "right": 120,
+            "bottom": 148
+          },
+          {
+            "left": 23,
+            "top": 10,
+            "right": 120,
+            "bottom": 148
+          },
+          {
+            "left": 23,
+            "top": 10,
+            "right": 120,
+            "bottom": 148
+          },
+          {
+            "left": 22,
+            "top": 10,
+            "right": 120,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_idle_barbaro/5094c632-4ba2-455e-a18e-829559192df7.png",
+            "sourceSha256": "e0e02f14489c102f9d81ec627893ee1ea5d6923338354dc3217200bd3f76e06d"
+          },
+          {
+            "source": "sprites/spr_player_idle_barbaro/c6179124-87b2-43ea-88cc-efdb49063ffe.png",
+            "sourceSha256": "fd6fd033389e24c51a1e31c07cb27d2e04a451dc7128425f8564e10f65f19681"
+          },
+          {
+            "source": "sprites/spr_player_idle_barbaro/60c972c7-4c9c-4c9e-9d57-f5939615484a.png",
+            "sourceSha256": "dd9a225bbe2313548bce52dff3536f2171bcdebda1968a447b2eed793bd67f54"
+          },
+          {
+            "source": "sprites/spr_player_idle_barbaro/61f97d4a-acf5-49ce-9e11-5ff106da18da.png",
+            "sourceSha256": "47c5539b1abe5822fc14ccced88daf42cd620afad48c51dbef141f7081b1187d"
+          },
+          {
+            "source": "sprites/spr_player_idle_barbaro/2f5d9cdc-1d63-4fac-bdc4-21595663b925.png",
+            "sourceSha256": "c3ccff248171be4bdc7380476c11b1abb1255d333535ed260ce8e164ec551449"
+          },
+          {
+            "source": "sprites/spr_player_idle_barbaro/d0a921d0-4e32-40e4-be4a-2c2b36f22ebf.png",
+            "sourceSha256": "85a240999c68f1cbd777502b0be32aab0d7113984fb9e42f3a8f64a6381c7735"
+          },
+          {
+            "source": "sprites/spr_player_idle_barbaro/e1e5af08-deef-417f-bb57-35558cb80c7b.png",
+            "sourceSha256": "15635d8b402565ee498c483c687246a6d8f8e6386b20a4d4a79115dcc0998e3d"
+          }
+        ]
+      }
+    },
+    "caramelito.barbaro.portrait": {
+      "key": "caramelito.barbaro.portrait",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.barbaro",
+      "exclusive": false,
+      "bytes": 7866,
+      "url": "/assets/barbaro/portrait.webp",
+      "logicalName": "caramelito.barbaro.portrait",
+      "gmlName": "spr_player_idle_barbaro",
+      "dimensions": {
+        "width": 144,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_idle_barbaro/5094c632-4ba2-455e-a18e-829559192df7.png",
+        "sourceSha256": "e0e02f14489c102f9d81ec627893ee1ea5d6923338354dc3217200bd3f76e06d",
+        "generatedSha256": "35da7c8d109d7d5b1f285fda4f123a44b01f304c92aadd5b2493093c05c6a339",
+        "transform": "scale=144:152",
+        "alphaBounds": {
+          "left": 23,
+          "top": 10,
+          "right": 120,
+          "bottom": 148
+        },
+        "baseline": 152
+      }
+    },
+    "caramelito.barbaro.walk_down": {
+      "key": "caramelito.barbaro.walk_down",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.barbaro",
+      "exclusive": false,
+      "bytes": 52782,
+      "url": "/assets/barbaro/walk_down.webp",
+      "logicalName": "spr_player_walk_down_barbaro",
+      "gmlName": "spr_player_walk_down_barbaro",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_walk_down_barbaro/spr_player_walk_down_barbaro.yy",
+        "sourceSha256": "f396418b67415d3cdc483b7159bce852046957cf8a2b76d4f33a0adb53f1baf9",
+        "generatedSha256": "6eaaa95e69fcac95f7c650a61a37d504fc70837a5ff606a47c8b2066c10ffa88",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 166.66666666666666,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 23,
+            "top": 13,
+            "right": 120,
+            "bottom": 148
+          },
+          {
+            "left": 23,
+            "top": 14,
+            "right": 119,
+            "bottom": 148
+          },
+          {
+            "left": 23,
+            "top": 13,
+            "right": 119,
+            "bottom": 148
+          },
+          {
+            "left": 24,
+            "top": 13,
+            "right": 119,
+            "bottom": 148
+          },
+          {
+            "left": 23,
+            "top": 13,
+            "right": 119,
+            "bottom": 148
+          },
+          {
+            "left": 24,
+            "top": 13,
+            "right": 119,
+            "bottom": 148
+          },
+          {
+            "left": 24,
+            "top": 12,
+            "right": 119,
+            "bottom": 148
+          },
+          {
+            "left": 23,
+            "top": 13,
+            "right": 120,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_walk_down_barbaro/7e519671-f59b-4e29-9d64-3dab8829d842.png",
+            "sourceSha256": "555f34578ba932c4ae2955f2efa575b02f18fe22c3049e81a5e92edfa28a5a7c"
+          },
+          {
+            "source": "sprites/spr_player_walk_down_barbaro/979c19c8-2062-4a74-8b47-5f207e3e980c.png",
+            "sourceSha256": "4031cf239dcc9bf3b8dc04d0494ce5eb8feaeca51113164142ee9c45e272553e"
+          },
+          {
+            "source": "sprites/spr_player_walk_down_barbaro/51a7fcb7-8519-4c88-a35a-5c364614b641.png",
+            "sourceSha256": "80f510cb5f53d9fd8c3e9d2c1d0dcbc22ff06469b3a488a28f0f9ba577dae00d"
+          },
+          {
+            "source": "sprites/spr_player_walk_down_barbaro/b3179982-0368-4302-8de2-727ed97228d6.png",
+            "sourceSha256": "51820ca0cd9a90de997d18455144a73b2e4782b630539f05fb57aa44d5295736"
+          },
+          {
+            "source": "sprites/spr_player_walk_down_barbaro/d56a2b2d-e9f9-4816-b664-ef1bae6ac6fa.png",
+            "sourceSha256": "93b8da910efc1f5bdaf01e30e866d74fcc08173b5be388987a312f07554f9117"
+          },
+          {
+            "source": "sprites/spr_player_walk_down_barbaro/f5a97bc8-b94c-43e4-929b-7b18c511e563.png",
+            "sourceSha256": "e303c44c43c887293069b545f232b8b3aa3d9762e736b88e82c7af2276111e16"
+          },
+          {
+            "source": "sprites/spr_player_walk_down_barbaro/2d72870f-d3be-4988-8dc1-d8bbc8a890ba.png",
+            "sourceSha256": "f530d9899f9b326534d7a226f95db7fba20bb1ef426986fb96b42521d266a499"
+          },
+          {
+            "source": "sprites/spr_player_walk_down_barbaro/d91006eb-3548-4b99-bc6e-a876ad63e190.png",
+            "sourceSha256": "555f34578ba932c4ae2955f2efa575b02f18fe22c3049e81a5e92edfa28a5a7c"
+          }
+        ]
+      }
+    },
+    "caramelito.barbaro.walk_side": {
+      "key": "caramelito.barbaro.walk_side",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.barbaro",
+      "exclusive": false,
+      "bytes": 46808,
+      "url": "/assets/barbaro/walk_side.webp",
+      "logicalName": "spr_player_walk_side_barbaro",
+      "gmlName": "spr_player_walk_side_barbaro",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_walk_side_barbaro/spr_player_walk_side_barbaro.yy",
+        "sourceSha256": "528a2436057c959f9d1ed995cd9c9aa38b016a85d40b9698d8e6793eb3092446",
+        "generatedSha256": "74795c8fc5ed19216b15060d79f0c6323e039c4f471ef68232330e5fac0b6c6b",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 166.66666666666666,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 27,
+            "top": 9,
+            "right": 116,
+            "bottom": 148
+          },
+          {
+            "left": 34,
+            "top": 10,
+            "right": 108,
+            "bottom": 148
+          },
+          {
+            "left": 36,
+            "top": 9,
+            "right": 106,
+            "bottom": 148
+          },
+          {
+            "left": 28,
+            "top": 9,
+            "right": 115,
+            "bottom": 148
+          },
+          {
+            "left": 26,
+            "top": 10,
+            "right": 117,
+            "bottom": 148
+          },
+          {
+            "left": 32,
+            "top": 10,
+            "right": 110,
+            "bottom": 148
+          },
+          {
+            "left": 35,
+            "top": 9,
+            "right": 107,
+            "bottom": 148
+          },
+          {
+            "left": 28,
+            "top": 10,
+            "right": 115,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_walk_side_barbaro/54c56114-11c1-499d-b7f7-ffafb710a4ab.png",
+            "sourceSha256": "dc1290956a5a955fa574dca92468aaf9cf5b4c1d5a4c939f054f546d8ef27c18"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_barbaro/520908a4-49f9-4e75-992c-f9aa7bedea3f.png",
+            "sourceSha256": "ea513e710589e400c2d6791f6833bf5ed753905a7f2d932f6d641901b4d8e3ed"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_barbaro/95fefe80-0439-4650-8461-25e948dfe624.png",
+            "sourceSha256": "25697e497a8e4510fcdf80dde4986684c198c5185e4a65b24effe4f1951f5df8"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_barbaro/07132d95-8d6e-4756-b8e8-17b00ad76e3b.png",
+            "sourceSha256": "6c32098715b99cfc1391705a07e1086b9d7b95318f1a4a3c85b158c005d3807e"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_barbaro/7a7c8ece-cb15-47f9-b6c6-54eb69c1cfde.png",
+            "sourceSha256": "ba99fc90097a856ad19ae4c6495706b3c6e8dfb0f7495f12ad0d11264a663568"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_barbaro/60dc7cf0-40c3-414f-b6b5-3c89c1683942.png",
+            "sourceSha256": "0058b201cf4e78877252b80a396b852a7379031d8bc30246095341551f62757c"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_barbaro/7f5a7943-e5bd-47ca-9c4e-46fdd11cf223.png",
+            "sourceSha256": "b0eec5c685f02711ba9fbe8f2d907fa850c908b6709918543922506e3a7f45df"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_barbaro/20bd68a5-cd66-4f8e-8832-154547fa097d.png",
+            "sourceSha256": "ba6c43dbfe0a88ff2566f135f76bcc77c72e07f346eba3d2d0cfbe8f826e3b1e"
+          }
+        ]
+      }
+    },
+    "caramelito.barbaro.walk_up": {
+      "key": "caramelito.barbaro.walk_up",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.barbaro",
+      "exclusive": false,
+      "bytes": 51868,
+      "url": "/assets/barbaro/walk_up.webp",
+      "logicalName": "spr_player_walk_up_barbaro",
+      "gmlName": "spr_player_walk_up_barbaro",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_walk_up_barbaro/spr_player_walk_up_barbaro.yy",
+        "sourceSha256": "6c224c5ac52a0f4f6b80610f6570ba51f8897eb7e4d6a39b75ce9e029757b8bc",
+        "generatedSha256": "04a29695239487d90d5fe1fd7f6e4cf5c37d1c7f85aaa83810d900990d7fe042",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 166.66666666666666,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 23,
+            "top": 10,
+            "right": 120,
+            "bottom": 148
+          },
+          {
+            "left": 22,
+            "top": 10,
+            "right": 121,
+            "bottom": 148
+          },
+          {
+            "left": 24,
+            "top": 11,
+            "right": 118,
+            "bottom": 148
+          },
+          {
+            "left": 23,
+            "top": 10,
+            "right": 119,
+            "bottom": 148
+          },
+          {
+            "left": 24,
+            "top": 11,
+            "right": 119,
+            "bottom": 148
+          },
+          {
+            "left": 24,
+            "top": 11,
+            "right": 119,
+            "bottom": 148
+          },
+          {
+            "left": 22,
+            "top": 9,
+            "right": 120,
+            "bottom": 148
+          },
+          {
+            "left": 23,
+            "top": 10,
+            "right": 120,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_walk_up_barbaro/f9e99c54-c154-4987-9300-f6db03017891.png",
+            "sourceSha256": "581531190054f7fadcbf9c1025fa0d004ff27ef11de25694c86a81b3084e1963"
+          },
+          {
+            "source": "sprites/spr_player_walk_up_barbaro/6814fa70-0464-44c2-bb6c-dc5943599e4d.png",
+            "sourceSha256": "6d9c7bf249ce1c59ec533aeb1d84a8a66efe709f7ff38e896f9dc1fcf6ca717b"
+          },
+          {
+            "source": "sprites/spr_player_walk_up_barbaro/149238cc-f1b5-4af2-830f-d8e5e5e4792b.png",
+            "sourceSha256": "4148955d28bdb864017ae1f9a34fd9fc5847aec08c9952481789850ee4de1092"
+          },
+          {
+            "source": "sprites/spr_player_walk_up_barbaro/f0995bc9-5688-42c4-8dac-731c4139f5e8.png",
+            "sourceSha256": "18a77568634fc047774ee3c49cf5850ce271f07df35f6b6f83c9da62aa7f5261"
+          },
+          {
+            "source": "sprites/spr_player_walk_up_barbaro/f937fb74-02d7-4a21-98f4-5d6d975b25e3.png",
+            "sourceSha256": "664e59747ac11337cf265fef082d292dc511ff4d6f7373544c32a513315a8419"
+          },
+          {
+            "source": "sprites/spr_player_walk_up_barbaro/970e2cb5-186a-4ba9-a296-a67b66150cde.png",
+            "sourceSha256": "9003693ad444f0c20357cede418de22b3c970be90140b5d888d2758079fe6ddd"
+          },
+          {
+            "source": "sprites/spr_player_walk_up_barbaro/2bac2ebf-7e41-4883-afd4-6f9abfe1b19f.png",
+            "sourceSha256": "ac17bfbe60f277eed883e29af4d21834c38282d90b8060c46a9d139b52058172"
+          },
+          {
+            "source": "sprites/spr_player_walk_up_barbaro/1d3af97c-c2e6-4a0f-87cd-c97128a2d692.png",
+            "sourceSha256": "581531190054f7fadcbf9c1025fa0d004ff27ef11de25694c86a81b3084e1963"
+          }
+        ]
+      }
+    },
+    "caramelito.barbaro.walk_west": {
+      "key": "caramelito.barbaro.walk_west",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.barbaro",
+      "exclusive": false,
+      "bytes": 46836,
+      "url": "/assets/barbaro/walk_west.webp",
+      "logicalName": "spr_player_walk_side_barbaro west (per-frame hflip)",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_walk_side_barbaro/spr_player_walk_side_barbaro.yy",
+        "sourceSha256": "528a2436057c959f9d1ed995cd9c9aa38b016a85d40b9698d8e6793eb3092446",
+        "generatedSha256": "7a60e4fc76ae17a28f285884270114fac4a1379ada3c76de6b845493f07a8af3",
+        "transform": "hflip each source frame in original order; xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 166.66666666666666,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 27,
+            "top": 9,
+            "right": 116,
+            "bottom": 148
+          },
+          {
+            "left": 35,
+            "top": 10,
+            "right": 109,
+            "bottom": 148
+          },
+          {
+            "left": 37,
+            "top": 9,
+            "right": 107,
+            "bottom": 148
+          },
+          {
+            "left": 28,
+            "top": 9,
+            "right": 115,
+            "bottom": 148
+          },
+          {
+            "left": 26,
+            "top": 10,
+            "right": 117,
+            "bottom": 148
+          },
+          {
+            "left": 33,
+            "top": 10,
+            "right": 111,
+            "bottom": 148
+          },
+          {
+            "left": 36,
+            "top": 9,
+            "right": 108,
+            "bottom": 148
+          },
+          {
+            "left": 28,
+            "top": 10,
+            "right": 115,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_walk_side_barbaro/54c56114-11c1-499d-b7f7-ffafb710a4ab.png",
+            "sourceSha256": "dc1290956a5a955fa574dca92468aaf9cf5b4c1d5a4c939f054f546d8ef27c18"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_barbaro/520908a4-49f9-4e75-992c-f9aa7bedea3f.png",
+            "sourceSha256": "ea513e710589e400c2d6791f6833bf5ed753905a7f2d932f6d641901b4d8e3ed"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_barbaro/95fefe80-0439-4650-8461-25e948dfe624.png",
+            "sourceSha256": "25697e497a8e4510fcdf80dde4986684c198c5185e4a65b24effe4f1951f5df8"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_barbaro/07132d95-8d6e-4756-b8e8-17b00ad76e3b.png",
+            "sourceSha256": "6c32098715b99cfc1391705a07e1086b9d7b95318f1a4a3c85b158c005d3807e"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_barbaro/7a7c8ece-cb15-47f9-b6c6-54eb69c1cfde.png",
+            "sourceSha256": "ba99fc90097a856ad19ae4c6495706b3c6e8dfb0f7495f12ad0d11264a663568"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_barbaro/60dc7cf0-40c3-414f-b6b5-3c89c1683942.png",
+            "sourceSha256": "0058b201cf4e78877252b80a396b852a7379031d8bc30246095341551f62757c"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_barbaro/7f5a7943-e5bd-47ca-9c4e-46fdd11cf223.png",
+            "sourceSha256": "b0eec5c685f02711ba9fbe8f2d907fa850c908b6709918543922506e3a7f45df"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_barbaro/20bd68a5-cd66-4f8e-8832-154547fa097d.png",
+            "sourceSha256": "ba6c43dbfe0a88ff2566f135f76bcc77c72e07f346eba3d2d0cfbe8f826e3b1e"
+          }
+        ]
+      }
+    },
+    "caramelito.mago.idle": {
+      "key": "caramelito.mago.idle",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.mago",
+      "exclusive": false,
+      "bytes": 48856,
+      "url": "/assets/mago/idle.webp",
+      "logicalName": "spr_player_idle_mago",
+      "gmlName": "spr_player_idle_mago",
+      "dimensions": {
+        "width": 864,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_idle_mago/spr_player_idle_mago.yy",
+        "sourceSha256": "c9c604363aaa66cd793a85fa78ebde013190207b7c5a5a686df480b3792d53fb",
+        "generatedSha256": "66664653072e69f7f4f65de3ccebb7c9b2ee89077f1c369e7575d5cb5b1b4824",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 6,
+        "frameDurationMs": 333.3333333333333,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 20,
+            "top": 14,
+            "right": 123,
+            "bottom": 148
+          },
+          {
+            "left": 19,
+            "top": 14,
+            "right": 124,
+            "bottom": 148
+          },
+          {
+            "left": 19,
+            "top": 14,
+            "right": 124,
+            "bottom": 148
+          },
+          {
+            "left": 19,
+            "top": 16,
+            "right": 124,
+            "bottom": 149
+          },
+          {
+            "left": 19,
+            "top": 16,
+            "right": 124,
+            "bottom": 149
+          },
+          {
+            "left": 18,
+            "top": 16,
+            "right": 124,
+            "bottom": 149
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_idle_mago/450094f2-9446-4456-927c-d03f2f0c5614.png",
+            "sourceSha256": "f1b5f9edccf6ceff3b662191e4782e4854448bd695d06c308dd8eddf3ee0b877"
+          },
+          {
+            "source": "sprites/spr_player_idle_mago/c170f5b6-da35-49df-aaee-787ddb08a995.png",
+            "sourceSha256": "2893d86c08491ddec907ff9be6383f8e89bf5b9f181936710d744f533ec6cca9"
+          },
+          {
+            "source": "sprites/spr_player_idle_mago/7af163e0-009e-41cb-8ae9-090919b08af3.png",
+            "sourceSha256": "31c92589e19690c8b0e2c7edbd24827addf1c6dde04f0c0644c2534fa7c22cae"
+          },
+          {
+            "source": "sprites/spr_player_idle_mago/53617366-462d-4cc0-8308-c18b2179f18d.png",
+            "sourceSha256": "56b0aa1b5b77369a06f8b02019ef6cb33fed87d161c26f04e22e614effc79fca"
+          },
+          {
+            "source": "sprites/spr_player_idle_mago/a2a14773-28f3-4509-bdc5-e6cfe8c9dc5d.png",
+            "sourceSha256": "514cbe63f0c9a07c06cb862c507e7ac82adfa987560f0888ba373d4513be88b3"
+          },
+          {
+            "source": "sprites/spr_player_idle_mago/8d2f061f-bcee-481f-bad6-2177af7cf779.png",
+            "sourceSha256": "6b07adef7299a7f8fc1d7816d68863c8d5e41963f2adf424ddf8c94cf1c74ba1"
+          }
+        ]
+      }
+    },
+    "caramelito.mago.portrait": {
+      "key": "caramelito.mago.portrait",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.mago",
+      "exclusive": false,
+      "bytes": 8514,
+      "url": "/assets/mago/portrait.webp",
+      "logicalName": "caramelito.mago.portrait",
+      "gmlName": "spr_player_idle_mago",
+      "dimensions": {
+        "width": 144,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_idle_mago/450094f2-9446-4456-927c-d03f2f0c5614.png",
+        "sourceSha256": "f1b5f9edccf6ceff3b662191e4782e4854448bd695d06c308dd8eddf3ee0b877",
+        "generatedSha256": "73fd01b150357eb682ce5f80407c0a1fb9bee889e0c1b77a57f08d74eff64516",
+        "transform": "scale=144:152",
+        "alphaBounds": {
+          "left": 20,
+          "top": 14,
+          "right": 123,
+          "bottom": 148
+        },
+        "baseline": 152
+      }
+    },
+    "caramelito.mago.walk_down": {
+      "key": "caramelito.mago.walk_down",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.mago",
+      "exclusive": false,
+      "bytes": 61572,
+      "url": "/assets/mago/walk_down.webp",
+      "logicalName": "spr_player_walk_down_mago",
+      "gmlName": "spr_player_walk_down_mago",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_walk_down_mago/spr_player_walk_down_mago.yy",
+        "sourceSha256": "da916be8c1ea8f6470b7f22309b6a789b79b8abe68e180723d753aeb041eaf1d",
+        "generatedSha256": "54a09266ef6910298bfaa3d43e3e8916bcabcaab0c32657b4501195ca991fd77",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 166.66666666666666,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 24,
+            "top": 9,
+            "right": 120,
+            "bottom": 148
+          },
+          {
+            "left": 23,
+            "top": 9,
+            "right": 120,
+            "bottom": 149
+          },
+          {
+            "left": 23,
+            "top": 10,
+            "right": 120,
+            "bottom": 149
+          },
+          {
+            "left": 24,
+            "top": 10,
+            "right": 119,
+            "bottom": 148
+          },
+          {
+            "left": 24,
+            "top": 8,
+            "right": 119,
+            "bottom": 149
+          },
+          {
+            "left": 23,
+            "top": 10,
+            "right": 119,
+            "bottom": 148
+          },
+          {
+            "left": 24,
+            "top": 11,
+            "right": 119,
+            "bottom": 149
+          },
+          {
+            "left": 23,
+            "top": 9,
+            "right": 120,
+            "bottom": 149
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_walk_down_mago/abccdaa1-d4a7-4eba-aca1-19315e1dc78f.png",
+            "sourceSha256": "731f37b2e087d304a1925cdfe8bfd28a89faa788ee2779e3e85b90414cd4a8e2"
+          },
+          {
+            "source": "sprites/spr_player_walk_down_mago/d7b27288-767c-4561-9dad-3135c654df9f.png",
+            "sourceSha256": "62620d483f102c628938ba857c15eb46834e20396f50907cb9558af164d1af8c"
+          },
+          {
+            "source": "sprites/spr_player_walk_down_mago/84406c67-44dd-424b-b18b-902762ea9744.png",
+            "sourceSha256": "ce7c4f73b19a2172adb8f21978bf983fb311c74279d055bd6a8b3aef5ac1b464"
+          },
+          {
+            "source": "sprites/spr_player_walk_down_mago/25311f2c-0846-44cb-b227-aec6694bb7b0.png",
+            "sourceSha256": "4c9d752ca9ecdd1ea1952e9a4205eef327d08fa4c952203a467b1bbcc5fd1d1d"
+          },
+          {
+            "source": "sprites/spr_player_walk_down_mago/fe96a2f4-5033-40ad-adb5-229855bb7c5f.png",
+            "sourceSha256": "66ddb60951cbc682f18c9523d3728c7372c3529df0b1d2972098f0829384b6db"
+          },
+          {
+            "source": "sprites/spr_player_walk_down_mago/588bdce9-4416-4e94-b5e5-96540d8bd552.png",
+            "sourceSha256": "7481ccc6a5bf3611f68f601aee869a0d68378d06da41a085019a00b80ceb3983"
+          },
+          {
+            "source": "sprites/spr_player_walk_down_mago/8b1f5436-d967-4d8f-b359-4f43af1bb91c.png",
+            "sourceSha256": "7fa756fb0d75c3d54d82826f8527c608d134e8cfb950a974d6f110bda791beea"
+          },
+          {
+            "source": "sprites/spr_player_walk_down_mago/c04a9469-34c1-4051-916f-e70b34ecb9e1.png",
+            "sourceSha256": "7d1353f6755d2128fc46ff61b53730240d33f598ee64608fea496a975873e731"
+          }
+        ]
+      }
+    },
+    "caramelito.mago.walk_side": {
+      "key": "caramelito.mago.walk_side",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.mago",
+      "exclusive": false,
+      "bytes": 60550,
+      "url": "/assets/mago/walk_side.webp",
+      "logicalName": "spr_player_walk_side_mago",
+      "gmlName": "spr_player_walk_side_mago",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_walk_side_mago/spr_player_walk_side_mago.yy",
+        "sourceSha256": "457e3471c79ec88fc9985103cc5f2b6255cefa50addb4f4c73133ea38b8dbdc3",
+        "generatedSha256": "d46a46874a0993a1172b14390efb3da2970a1c1626081af98e01a51923fd6664",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 166.66666666666666,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 19,
+            "top": 14,
+            "right": 124,
+            "bottom": 148
+          },
+          {
+            "left": 21,
+            "top": 13,
+            "right": 122,
+            "bottom": 148
+          },
+          {
+            "left": 20,
+            "top": 14,
+            "right": 123,
+            "bottom": 148
+          },
+          {
+            "left": 19,
+            "top": 15,
+            "right": 123,
+            "bottom": 148
+          },
+          {
+            "left": 19,
+            "top": 17,
+            "right": 125,
+            "bottom": 149
+          },
+          {
+            "left": 20,
+            "top": 17,
+            "right": 123,
+            "bottom": 149
+          },
+          {
+            "left": 20,
+            "top": 16,
+            "right": 123,
+            "bottom": 148
+          },
+          {
+            "left": 20,
+            "top": 18,
+            "right": 123,
+            "bottom": 149
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_walk_side_mago/dcc26620-ac64-4a6b-bea5-abcf78f2daa8.png",
+            "sourceSha256": "3221887173120dd382d37ae68ecf00cd53f06e8bdf60d6360b2e26dcb385e432"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_mago/4ce50aa4-82e1-4780-a002-1ebf0a0df84f.png",
+            "sourceSha256": "8159f7bc93b2abf2e956cf5f0edaa9bf9d530c48f4ca9cba26f2a333bada09d4"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_mago/f2fe7d1e-8192-4f84-bc44-17ff4ef295cb.png",
+            "sourceSha256": "9bf543b93e139eea22e724f6d74ea63810ca88e36c629935d0e0f6220f4569b4"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_mago/7916b093-f874-4618-8f2d-df8f38784cce.png",
+            "sourceSha256": "8f0dcaef30a71b0d5eb9a1b05d7984d7222f46d0d4a82081099ad934254db71b"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_mago/19dbec0a-a43e-4d9a-8686-f7991adfb9ae.png",
+            "sourceSha256": "819d1bb300d3b902d850f07566a3a5a7d10ea6c7c00f6fc3e95b6089f0a95b91"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_mago/f9bf684c-5f71-489a-b21e-aee1582a64c3.png",
+            "sourceSha256": "868d7d07a7ab4360c2f4acd041bb6d5750db943247606ec9616fb442236f6c5d"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_mago/f786a698-ce85-460b-96af-2f94a8f82902.png",
+            "sourceSha256": "8866688cf1ac65c480d82b87b0420a0910bd4b028692e0f46115db712c3d6831"
+          },
+          {
+            "source": "sprites/spr_player_walk_side_mago/1b4228c0-5c71-430e-90ac-ae7d7da858c7.png",
+            "sourceSha256": "c4f4b20037fde86fbbcf579b9d2265e1adbfaf2053935c3069aea90db1c74117"
+          }
+        ]
+      }
+    },
+    "caramelito.mago.walk_up": {
+      "key": "caramelito.mago.walk_up",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.mago",
+      "exclusive": false,
+      "bytes": 57600,
+      "url": "/assets/mago/walk_up.webp",
+      "logicalName": "spr_player_walk_up_mago",
+      "gmlName": "spr_player_walk_up_mago",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_walk_up_mago/spr_player_walk_up_mago.yy",
+        "sourceSha256": "6e1127e3cd828611fcea89e5477d3849461f0c812633bbe3a344d34d5c108062",
+        "generatedSha256": "80c0e155bddeeef634a70e66f58d737b3e693c774a1e6608568a3e220749b1e2",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 166.66666666666666,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 22,
+            "top": 11,
+            "right": 120,
+            "bottom": 149
+          },
+          {
+            "left": 23,
+            "top": 12,
+            "right": 119,
+            "bottom": 149
+          },
+          {
+            "left": 25,
+            "top": 12,
+            "right": 118,
+            "bottom": 149
+          },
+          {
+            "left": 22,
+            "top": 11,
+            "right": 121,
+            "bottom": 148
+          },
+          {
+            "left": 23,
+            "top": 8,
+            "right": 120,
+            "bottom": 148
+          },
+          {
+            "left": 26,
+            "top": 10,
+            "right": 117,
+            "bottom": 148
+          },
+          {
+            "left": 25,
+            "top": 10,
+            "right": 118,
+            "bottom": 149
+          },
+          {
+            "left": 25,
+            "top": 9,
+            "right": 118,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_walk_up_mago/1d449b1a-f79a-47d9-810c-390e07ab1066.png",
+            "sourceSha256": "4ca5e43d85a1c2fbe2f0ee9372c8200e0782ff7e31a8e99f75fb0f87b01e8dd7"
+          },
+          {
+            "source": "sprites/spr_player_walk_up_mago/98aad322-7917-441e-b0eb-e93e3f9942df.png",
+            "sourceSha256": "9715b592ad7e7118995d7ebe4f5656643ec15ba721c10ceb2c5a96c91fe67d57"
+          },
+          {
+            "source": "sprites/spr_player_walk_up_mago/06d72064-2b07-4f74-828a-ca821bb0000d.png",
+            "sourceSha256": "649f630befa52e7db05fd58d4afb317accd7cc5faad0c39aea2463965c55c6e3"
+          },
+          {
+            "source": "sprites/spr_player_walk_up_mago/8dfe92e9-b9b8-4186-a9ca-aad1ea7413e5.png",
+            "sourceSha256": "c4d73b526b0b4ad4e4eb7299b083701fb1db9006177bd9ff2c0ef6c5f2b7d8aa"
+          },
+          {
+            "source": "sprites/spr_player_walk_up_mago/226b621a-dd6a-43bd-ab00-d918b83e6c57.png",
+            "sourceSha256": "c456f1226a70005b68a59f459b8a96af73362e2c7684be66550b2ee5bfb3b997"
+          },
+          {
+            "source": "sprites/spr_player_walk_up_mago/3f8ea0df-9c57-4388-a245-c2e13c746ed2.png",
+            "sourceSha256": "3eb1789ce7dd2f0f4df0d18fbd4b0bbbc3e0ee2931de3fd5ba02ce991609f595"
+          },
+          {
+            "source": "sprites/spr_player_walk_up_mago/e89b846e-51ab-4ae7-8889-301d61ce446b.png",
+            "sourceSha256": "c022cc86f9a7c4b2bb57cc04b98b8e9fb1be14151824399e439861b60b98e921"
+          },
+          {
+            "source": "sprites/spr_player_walk_up_mago/f90d7859-c521-437f-8853-9cb4e8e82b32.png",
+            "sourceSha256": "1ce18f3db9d1bd9a66924878f77d4644c1108466501b305d5a0f31a08490b05d"
+          }
+        ]
+      }
+    },
+    "caramelito.mago.walk_west": {
+      "key": "caramelito.mago.walk_west",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.mago",
+      "exclusive": false,
+      "bytes": 60806,
+      "url": "/assets/mago/walk_west.webp",
+      "logicalName": "spr_player_walk_left_mago",
+      "gmlName": "spr_player_walk_left_mago",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_walk_left_mago/spr_player_walk_left_mago.yy",
+        "sourceSha256": "10f9466a2759e6c107b76ccca1ca09bdb15b958d4f27f52cf8dd8cd109156b11",
+        "generatedSha256": "1c871b6cafadf477a5b2e32f11274241462ef7355b5d035163c95966986cf872",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 166.66666666666666,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 16,
+            "top": 15,
+            "right": 127,
+            "bottom": 148
+          },
+          {
+            "left": 16,
+            "top": 15,
+            "right": 127,
+            "bottom": 149
+          },
+          {
+            "left": 17,
+            "top": 14,
+            "right": 126,
+            "bottom": 148
+          },
+          {
+            "left": 17,
+            "top": 16,
+            "right": 126,
+            "bottom": 148
+          },
+          {
+            "left": 15,
+            "top": 19,
+            "right": 128,
+            "bottom": 148
+          },
+          {
+            "left": 17,
+            "top": 18,
+            "right": 126,
+            "bottom": 148
+          },
+          {
+            "left": 16,
+            "top": 16,
+            "right": 127,
+            "bottom": 148
+          },
+          {
+            "left": 17,
+            "top": 20,
+            "right": 126,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_walk_left_mago/177d2289-288e-431d-92f1-aeec1e0cf853.png",
+            "sourceSha256": "94c7dec657118b4f34fcf171b708bd0af2b03d91e3bd6198fc74e9c245251fc0"
+          },
+          {
+            "source": "sprites/spr_player_walk_left_mago/ab29e8a0-66a3-468c-89ae-84e44fbc4c97.png",
+            "sourceSha256": "603758a4a3a2ad074518f571127de4d7a4a678134342321437c36e18fe3321e6"
+          },
+          {
+            "source": "sprites/spr_player_walk_left_mago/a59cf552-1ab6-456b-aa53-cc5af4271699.png",
+            "sourceSha256": "2aa01812c83cf9c9e843377beada30315a1d85a2489525e008aa48bdf1f26fa0"
+          },
+          {
+            "source": "sprites/spr_player_walk_left_mago/60b3f75c-675e-4e9c-8a1c-b72d5c0b3f00.png",
+            "sourceSha256": "43efbe27f40df03660d04baee4a43b46e6cdb273325fc4876624eb1a59537dd9"
+          },
+          {
+            "source": "sprites/spr_player_walk_left_mago/eac7dcbf-3a54-4e40-80c4-c19718614661.png",
+            "sourceSha256": "22b5f7e22cb8e8be529670afe90a3db38775b0f65f4a0d8383c6d29676f75287"
+          },
+          {
+            "source": "sprites/spr_player_walk_left_mago/b8beff9a-3d8d-4db7-b9f3-44b01a543bba.png",
+            "sourceSha256": "28908fef80cf9472230354ea4b92f404f58efddfc91b48f83d7845c2475278cc"
+          },
+          {
+            "source": "sprites/spr_player_walk_left_mago/3e5b5c46-a29f-4373-bd72-0e748f172308.png",
+            "sourceSha256": "16fd9e102106941049b0c777041ea25f7fbc6b5c9bc751796eca20ac261620cd"
+          },
+          {
+            "source": "sprites/spr_player_walk_left_mago/558014bb-3f29-42f3-b37e-96b0df3d71b7.png",
+            "sourceSha256": "cb5e9eb00af914d5419a96c06a7b44d117b45262ae8d7c0d0c3789585854ce55"
+          }
+        ]
+      }
+    },
+    "caramelito.phoenix.idle": {
+      "key": "caramelito.phoenix.idle",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.phoenix",
+      "exclusive": false,
+      "bytes": 57992,
+      "url": "/assets/phoenix/idle.webp",
+      "logicalName": "spr_player_idle_phoenix",
+      "gmlName": "spr_player_idle_phoenix",
+      "dimensions": {
+        "width": 1008,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_idle_phoenix/spr_player_idle_phoenix.yy",
+        "sourceSha256": "6961e8361e1cc90df6a7e16ce1415e3f9c9e7f8ffe7edfd9a25e4b42a7c0a184",
+        "generatedSha256": "9e2feff12206160fd5685890dc1ba620962ba30fd9d7c17289dc12d10fe8c328",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 7,
+        "frameDurationMs": 333.3333333333333,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 21,
+            "top": 12,
+            "right": 122,
+            "bottom": 148
+          },
+          {
+            "left": 20,
+            "top": 10,
+            "right": 123,
+            "bottom": 148
+          },
+          {
+            "left": 20,
+            "top": 11,
+            "right": 123,
+            "bottom": 148
+          },
+          {
+            "left": 21,
+            "top": 10,
+            "right": 122,
+            "bottom": 148
+          },
+          {
+            "left": 19,
+            "top": 11,
+            "right": 123,
+            "bottom": 148
+          },
+          {
+            "left": 20,
+            "top": 10,
+            "right": 123,
+            "bottom": 148
+          },
+          {
+            "left": 19,
+            "top": 9,
+            "right": 123,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_idle_phoenix/2ed48b5e-c377-4466-b48a-3777afbf81ee.png",
+            "sourceSha256": "67f716669de0d615095efa729f9508bdec7539b58fa7f5a9dd4c13abb850e012"
+          },
+          {
+            "source": "sprites/spr_player_idle_phoenix/28cd54be-612d-4c5f-b117-7cdc385c0549.png",
+            "sourceSha256": "9e644a51cdff8e204824659be65b8d703d63703a8241d68ed4ef5a91e6b3ee7a"
+          },
+          {
+            "source": "sprites/spr_player_idle_phoenix/933282a5-960c-4bc6-8a92-9cd25d32b410.png",
+            "sourceSha256": "85b49308beecdfad8fabbf01aecb2a3c8bd7183a10da2ed2492fdf6c332ae257"
+          },
+          {
+            "source": "sprites/spr_player_idle_phoenix/8a89e4b1-a529-4fc0-8b4e-02f511dce79b.png",
+            "sourceSha256": "e47a7c2fb358396e52b153f2330397ba8afa694e11bcedba1c08120323864ff5"
+          },
+          {
+            "source": "sprites/spr_player_idle_phoenix/df1392f5-9277-48ad-86f2-770674a7bba1.png",
+            "sourceSha256": "e98b5311bcf52765769a48552c0e2e49c35c3113a193f5e4d0ba8e7ef9db9137"
+          },
+          {
+            "source": "sprites/spr_player_idle_phoenix/ebb859d1-cc4a-4f89-b655-4b0015f27dbf.png",
+            "sourceSha256": "557eed06de65e299ebd626e358e5b765c2384613a030ba043cb49aed20d55cb4"
+          },
+          {
+            "source": "sprites/spr_player_idle_phoenix/e6b2bc26-b2cd-41e2-9fe2-18bb9be1d114.png",
+            "sourceSha256": "34b6e1b2de1b01ec8463820f8eedb9fe8b56e510bffe6ac915d640b85a57278b"
+          }
+        ]
+      }
+    },
+    "caramelito.phoenix.portrait": {
+      "key": "caramelito.phoenix.portrait",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.phoenix",
+      "exclusive": false,
+      "bytes": 8460,
+      "url": "/assets/phoenix/portrait.webp",
+      "logicalName": "caramelito.phoenix.portrait",
+      "gmlName": "spr_player_idle_phoenix",
+      "dimensions": {
+        "width": 144,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_idle_phoenix/2ed48b5e-c377-4466-b48a-3777afbf81ee.png",
+        "sourceSha256": "67f716669de0d615095efa729f9508bdec7539b58fa7f5a9dd4c13abb850e012",
+        "generatedSha256": "a6bb340478649858474051217a0a5882820251ae2fba802b73ed570f5fc3593d",
+        "transform": "scale=144:152",
+        "alphaBounds": {
+          "left": 21,
+          "top": 12,
+          "right": 122,
+          "bottom": 148
+        },
+        "baseline": 152
+      }
+    },
+    "caramelito.phoenix.walk_down": {
+      "key": "caramelito.phoenix.walk_down",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.phoenix",
+      "exclusive": false,
+      "bytes": 45604,
+      "url": "/assets/phoenix/walk_down.webp",
+      "logicalName": "spr_player_fly_down_phoenix",
+      "gmlName": "spr_player_fly_down_phoenix",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_fly_down_phoenix/spr_player_fly_down_phoenix.yy",
+        "sourceSha256": "0aeb41bb9774fc53116cbf14c6bf03b9ea0a589666ee25d6b9f3a01347f9ee35",
+        "generatedSha256": "ca68d48939a7ae28bd028d2cf11844d6485c272c2f651af0a5e63b0d96dd24fd",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 166.66666666666666,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 12,
+            "top": 11,
+            "right": 131,
+            "bottom": 148
+          },
+          {
+            "left": 12,
+            "top": 11,
+            "right": 131,
+            "bottom": 148
+          },
+          {
+            "left": 8,
+            "top": 26,
+            "right": 134,
+            "bottom": 148
+          },
+          {
+            "left": 6,
+            "top": 31,
+            "right": 137,
+            "bottom": 148
+          },
+          {
+            "left": 17,
+            "top": 37,
+            "right": 125,
+            "bottom": 148
+          },
+          {
+            "left": 17,
+            "top": 37,
+            "right": 125,
+            "bottom": 148
+          },
+          {
+            "left": 6,
+            "top": 31,
+            "right": 137,
+            "bottom": 148
+          },
+          {
+            "left": 8,
+            "top": 26,
+            "right": 134,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_fly_down_phoenix/55fb62e9-11c9-4ef8-a0d1-50e56738e6ad.png",
+            "sourceSha256": "27300d9ade0d96fe3fa66b63cdba4341e9554f1674f9c84c46712f65477a32c0"
+          },
+          {
+            "source": "sprites/spr_player_fly_down_phoenix/ef471ac0-6992-45b7-8e94-dc4d9353ae1c.png",
+            "sourceSha256": "27300d9ade0d96fe3fa66b63cdba4341e9554f1674f9c84c46712f65477a32c0"
+          },
+          {
+            "source": "sprites/spr_player_fly_down_phoenix/992bf132-0516-4ecf-88a9-4abef054e297.png",
+            "sourceSha256": "9bab6e9b3bf7b969afa16bc878cc1a9e1c38b174ea95608d25f49494483b455a"
+          },
+          {
+            "source": "sprites/spr_player_fly_down_phoenix/ff29055c-3c7a-45b4-972e-cfc13a790ba6.png",
+            "sourceSha256": "dda19b772688298331dd692a6786bec2f41da63664777d9f53d6f229061a1374"
+          },
+          {
+            "source": "sprites/spr_player_fly_down_phoenix/d781c4f9-c1d7-4724-8089-bc1ab36cc291.png",
+            "sourceSha256": "69cf54c9674a0aa9b13ce350c5d7f384767a0e4d097de82082e752e0473ae5ad"
+          },
+          {
+            "source": "sprites/spr_player_fly_down_phoenix/3ec19718-0339-45f3-a810-0a3256650e23.png",
+            "sourceSha256": "69cf54c9674a0aa9b13ce350c5d7f384767a0e4d097de82082e752e0473ae5ad"
+          },
+          {
+            "source": "sprites/spr_player_fly_down_phoenix/5b794df5-9de5-40dc-9856-b9242cd0ebaf.png",
+            "sourceSha256": "dda19b772688298331dd692a6786bec2f41da63664777d9f53d6f229061a1374"
+          },
+          {
+            "source": "sprites/spr_player_fly_down_phoenix/eeb62e98-be5f-45d4-83b5-6e2b176b85a6.png",
+            "sourceSha256": "9bab6e9b3bf7b969afa16bc878cc1a9e1c38b174ea95608d25f49494483b455a"
+          }
+        ]
+      }
+    },
+    "caramelito.phoenix.walk_side": {
+      "key": "caramelito.phoenix.walk_side",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.phoenix",
+      "exclusive": false,
+      "bytes": 44302,
+      "url": "/assets/phoenix/walk_side.webp",
+      "logicalName": "spr_player_fly_side_phoenix",
+      "gmlName": "spr_player_fly_side_phoenix",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_fly_side_phoenix/spr_player_fly_side_phoenix.yy",
+        "sourceSha256": "b1285075f0d601942fb18f8c68cf674734f60f2afe240e91b688364e91439ab4",
+        "generatedSha256": "02107c9e9ced1787441a25cc77341c7012ab2141b07774ff656280278b05a107",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 166.66666666666666,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 11,
+            "top": 21,
+            "right": 131,
+            "bottom": 148
+          },
+          {
+            "left": 11,
+            "top": 21,
+            "right": 131,
+            "bottom": 148
+          },
+          {
+            "left": 13,
+            "top": 31,
+            "right": 129,
+            "bottom": 148
+          },
+          {
+            "left": 13,
+            "top": 35,
+            "right": 130,
+            "bottom": 148
+          },
+          {
+            "left": 19,
+            "top": 38,
+            "right": 124,
+            "bottom": 148
+          },
+          {
+            "left": 19,
+            "top": 38,
+            "right": 124,
+            "bottom": 148
+          },
+          {
+            "left": 13,
+            "top": 35,
+            "right": 130,
+            "bottom": 148
+          },
+          {
+            "left": 13,
+            "top": 31,
+            "right": 129,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_fly_side_phoenix/a14615b3-eaaf-4a42-91c5-4f8aca05d801.png",
+            "sourceSha256": "5a604e7215535c5ef293aef5da5335b117f1e2f46525044faa8f18856266073a"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_phoenix/55958531-c074-416b-ba39-ada9d4ac4f28.png",
+            "sourceSha256": "5a604e7215535c5ef293aef5da5335b117f1e2f46525044faa8f18856266073a"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_phoenix/81ab086e-2b1d-4673-a86a-e2a83336fef8.png",
+            "sourceSha256": "66cfb407f70a0d968035bb07fdd0286383983d90a5548f47fbd02cafe2718680"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_phoenix/8bafa75c-8f28-4e5d-ae2c-5ee50e44ea29.png",
+            "sourceSha256": "c36be50c9acaf2ed1557258ad87aa063a6244ab467f331e11d45e1ef2628e965"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_phoenix/086aa8d2-58c3-4dde-a518-7fcedbd7557a.png",
+            "sourceSha256": "1d399b9dd996d9eee86014b37fb1748ff25e24b8cc45c9a6e6a28370dd92f1d4"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_phoenix/952d6f30-396d-492f-ac66-fccabdcad8ac.png",
+            "sourceSha256": "1d399b9dd996d9eee86014b37fb1748ff25e24b8cc45c9a6e6a28370dd92f1d4"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_phoenix/b9ce8dd0-68d2-44c9-a874-58325e1ae2c4.png",
+            "sourceSha256": "c36be50c9acaf2ed1557258ad87aa063a6244ab467f331e11d45e1ef2628e965"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_phoenix/6aa8441f-93ce-488c-a8ca-89bed2150e0e.png",
+            "sourceSha256": "66cfb407f70a0d968035bb07fdd0286383983d90a5548f47fbd02cafe2718680"
+          }
+        ]
+      }
+    },
+    "caramelito.phoenix.walk_up": {
+      "key": "caramelito.phoenix.walk_up",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.phoenix",
+      "exclusive": false,
+      "bytes": 40280,
+      "url": "/assets/phoenix/walk_up.webp",
+      "logicalName": "spr_player_fly_up_phoenix",
+      "gmlName": "spr_player_fly_up_phoenix",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_fly_up_phoenix/spr_player_fly_up_phoenix.yy",
+        "sourceSha256": "0dfa130c880ae8ee06c1c5ffcd7c79482b929ac8bb53bae4a1b0cf8550d82317",
+        "generatedSha256": "1d6df820fe9d96637f448e711ba0f1598cd8b51b8c9ed995470ae26b602ac33a",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 166.66666666666666,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 11,
+            "top": 22,
+            "right": 131,
+            "bottom": 148
+          },
+          {
+            "left": 11,
+            "top": 22,
+            "right": 131,
+            "bottom": 148
+          },
+          {
+            "left": 10,
+            "top": 29,
+            "right": 132,
+            "bottom": 148
+          },
+          {
+            "left": 9,
+            "top": 33,
+            "right": 134,
+            "bottom": 148
+          },
+          {
+            "left": 19,
+            "top": 32,
+            "right": 123,
+            "bottom": 148
+          },
+          {
+            "left": 19,
+            "top": 32,
+            "right": 123,
+            "bottom": 148
+          },
+          {
+            "left": 9,
+            "top": 33,
+            "right": 134,
+            "bottom": 148
+          },
+          {
+            "left": 10,
+            "top": 29,
+            "right": 132,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_fly_up_phoenix/d3131d92-33e7-42a5-a838-1dba96dbd596.png",
+            "sourceSha256": "9dc3b18ac5607802b03a10ac20709eba13942e072079e57d08835974a034bda0"
+          },
+          {
+            "source": "sprites/spr_player_fly_up_phoenix/7346a192-f5c3-4ab4-ac6e-ff3924013b66.png",
+            "sourceSha256": "9dc3b18ac5607802b03a10ac20709eba13942e072079e57d08835974a034bda0"
+          },
+          {
+            "source": "sprites/spr_player_fly_up_phoenix/12ba7b33-faf9-4837-9e86-7b76be39ca87.png",
+            "sourceSha256": "4ef5b02147c82c660f06b4d5d26003f81fc2c64ad430ffff189fe4bacf382e8e"
+          },
+          {
+            "source": "sprites/spr_player_fly_up_phoenix/4b6e453f-d3d2-4d04-816c-4aa170037e51.png",
+            "sourceSha256": "42642a0078604e2d73d262a8aac41e44d72d3079cea7888dd3dd92dc9369e1ee"
+          },
+          {
+            "source": "sprites/spr_player_fly_up_phoenix/1c692db4-b60b-4a8a-ba2b-c3ad9cbcf046.png",
+            "sourceSha256": "214e9fc971ad73673d833bd9c37c2af0316bb722966ab6e1673cba373c7831e0"
+          },
+          {
+            "source": "sprites/spr_player_fly_up_phoenix/0bfdf44d-e68c-4976-8735-d92ef1d3a773.png",
+            "sourceSha256": "214e9fc971ad73673d833bd9c37c2af0316bb722966ab6e1673cba373c7831e0"
+          },
+          {
+            "source": "sprites/spr_player_fly_up_phoenix/65c4b149-72a5-410b-b03a-d5dd4e5e7c43.png",
+            "sourceSha256": "42642a0078604e2d73d262a8aac41e44d72d3079cea7888dd3dd92dc9369e1ee"
+          },
+          {
+            "source": "sprites/spr_player_fly_up_phoenix/602ccad6-dd3d-4102-a34b-64a26b9eb8df.png",
+            "sourceSha256": "4ef5b02147c82c660f06b4d5d26003f81fc2c64ad430ffff189fe4bacf382e8e"
+          }
+        ]
+      }
+    },
+    "caramelito.phoenix.walk_west": {
+      "key": "caramelito.phoenix.walk_west",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.phoenix",
+      "exclusive": false,
+      "bytes": 44414,
+      "url": "/assets/phoenix/walk_west.webp",
+      "logicalName": "spr_player_fly_side_phoenix west (per-frame hflip)",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_fly_side_phoenix/spr_player_fly_side_phoenix.yy",
+        "sourceSha256": "b1285075f0d601942fb18f8c68cf674734f60f2afe240e91b688364e91439ab4",
+        "generatedSha256": "0556aae15e183760e8fa2a972bde29d6b77236c8f477a0e4bdb58a7910408391",
+        "transform": "hflip each source frame in original order; xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 166.66666666666666,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 12,
+            "top": 21,
+            "right": 132,
+            "bottom": 148
+          },
+          {
+            "left": 12,
+            "top": 21,
+            "right": 132,
+            "bottom": 148
+          },
+          {
+            "left": 14,
+            "top": 31,
+            "right": 130,
+            "bottom": 148
+          },
+          {
+            "left": 13,
+            "top": 35,
+            "right": 130,
+            "bottom": 148
+          },
+          {
+            "left": 19,
+            "top": 38,
+            "right": 124,
+            "bottom": 148
+          },
+          {
+            "left": 19,
+            "top": 38,
+            "right": 124,
+            "bottom": 148
+          },
+          {
+            "left": 13,
+            "top": 35,
+            "right": 130,
+            "bottom": 148
+          },
+          {
+            "left": 14,
+            "top": 31,
+            "right": 130,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_fly_side_phoenix/a14615b3-eaaf-4a42-91c5-4f8aca05d801.png",
+            "sourceSha256": "5a604e7215535c5ef293aef5da5335b117f1e2f46525044faa8f18856266073a"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_phoenix/55958531-c074-416b-ba39-ada9d4ac4f28.png",
+            "sourceSha256": "5a604e7215535c5ef293aef5da5335b117f1e2f46525044faa8f18856266073a"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_phoenix/81ab086e-2b1d-4673-a86a-e2a83336fef8.png",
+            "sourceSha256": "66cfb407f70a0d968035bb07fdd0286383983d90a5548f47fbd02cafe2718680"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_phoenix/8bafa75c-8f28-4e5d-ae2c-5ee50e44ea29.png",
+            "sourceSha256": "c36be50c9acaf2ed1557258ad87aa063a6244ab467f331e11d45e1ef2628e965"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_phoenix/086aa8d2-58c3-4dde-a518-7fcedbd7557a.png",
+            "sourceSha256": "1d399b9dd996d9eee86014b37fb1748ff25e24b8cc45c9a6e6a28370dd92f1d4"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_phoenix/952d6f30-396d-492f-ac66-fccabdcad8ac.png",
+            "sourceSha256": "1d399b9dd996d9eee86014b37fb1748ff25e24b8cc45c9a6e6a28370dd92f1d4"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_phoenix/b9ce8dd0-68d2-44c9-a874-58325e1ae2c4.png",
+            "sourceSha256": "c36be50c9acaf2ed1557258ad87aa063a6244ab467f331e11d45e1ef2628e965"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_phoenix/6aa8441f-93ce-488c-a8ca-89bed2150e0e.png",
+            "sourceSha256": "66cfb407f70a0d968035bb07fdd0286383983d90a5548f47fbd02cafe2718680"
+          }
+        ]
+      }
+    },
+    "caramelito.pse_flight.fly_down": {
+      "key": "caramelito.pse_flight.fly_down",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.pse_flight",
+      "exclusive": false,
+      "bytes": 67824,
+      "url": "/assets/pse_flight/fly_down.webp",
+      "logicalName": "PSE flight fly_down",
+      "dimensions": {
+        "width": 864,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "web-poc/art_source/pse_flight/source.json",
+        "sourceSha256": "974b59a5a07acdddc8998a330248b6696ba03eb51826bfd945bd05c40a266274",
+        "generatedSha256": "ca3378b4395ee86b82ac399a3fb7623b9f2169c94448169fe14979eaccb8c16e",
+        "transform": "approved complete PSE frames; xstack, libwebp q90",
+        "baseline": 152,
+        "frameCount": 6,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "frameDurationMs": 125,
+        "frameAlphaBounds": [
+          {
+            "left": 10,
+            "top": 35,
+            "right": 133,
+            "bottom": 148
+          },
+          {
+            "left": 9,
+            "top": 34,
+            "right": 134,
+            "bottom": 148
+          },
+          {
+            "left": 8,
+            "top": 35,
+            "right": 135,
+            "bottom": 148
+          },
+          {
+            "left": 8,
+            "top": 35,
+            "right": 134,
+            "bottom": 148
+          },
+          {
+            "left": 8,
+            "top": 34,
+            "right": 134,
+            "bottom": 148
+          },
+          {
+            "left": 11,
+            "top": 34,
+            "right": 131,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "web-poc/art_source/pse_flight/fly_down-0.png",
+            "sourceSha256": "e39e3b1d83b3dd5c71061a132afad8e6738a2d8b91c059e6317d2e452bb77b86"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/fly_down-1.png",
+            "sourceSha256": "cd5246b5afe5ac9cb4cdce6852780ab16dbe0341d6d1284c1ec6c42964f59b9d"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/fly_down-2.png",
+            "sourceSha256": "7f9a2370fb08fcae0782638d94d5f68202f286f11a9548161768bfa79fb62290"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/fly_down-3.png",
+            "sourceSha256": "8f51fc4db8336e7be30488cefe7718daf3e45a3166f38730b640ec850dfc89d2"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/fly_down-4.png",
+            "sourceSha256": "197c884ae4957b952880f3c68f5c4681b060c5dcb545c464cf3d4f3a8aab5465"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/fly_down-5.png",
+            "sourceSha256": "9008ddd1aa2ac1a1d690fb0f34a8cde399c4a59b4ca2f7d222a19fac91fcda2d"
+          }
+        ]
+      }
+    },
+    "caramelito.pse_flight.fly_left": {
+      "key": "caramelito.pse_flight.fly_left",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.pse_flight",
+      "exclusive": false,
+      "bytes": 61294,
+      "url": "/assets/pse_flight/fly_left.webp",
+      "logicalName": "PSE flight fly_left",
+      "dimensions": {
+        "width": 864,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "web-poc/art_source/pse_flight/source.json",
+        "sourceSha256": "974b59a5a07acdddc8998a330248b6696ba03eb51826bfd945bd05c40a266274",
+        "generatedSha256": "2cd167765339a585397d8dd2d0eeba89e0bd46d8afe7b0bbdbec37600834a3a4",
+        "transform": "approved complete PSE frames; xstack, libwebp q90",
+        "baseline": 152,
+        "frameCount": 6,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "frameDurationMs": 125,
+        "frameAlphaBounds": [
+          {
+            "left": 10,
+            "top": 41,
+            "right": 133,
+            "bottom": 148
+          },
+          {
+            "left": 8,
+            "top": 44,
+            "right": 134,
+            "bottom": 148
+          },
+          {
+            "left": 7,
+            "top": 44,
+            "right": 135,
+            "bottom": 148
+          },
+          {
+            "left": 8,
+            "top": 50,
+            "right": 135,
+            "bottom": 148
+          },
+          {
+            "left": 7,
+            "top": 44,
+            "right": 135,
+            "bottom": 148
+          },
+          {
+            "left": 8,
+            "top": 43,
+            "right": 134,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "web-poc/art_source/pse_flight/fly_left-0.png",
+            "sourceSha256": "ae50394f31b0bb2ff041b548c5339aa97867620c1879e971d3279afd58f4e2bb"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/fly_left-1.png",
+            "sourceSha256": "3c718b9323e058553754a3f342ff8d1d5f2d91051d27498b89c80f014fee8725"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/fly_left-2.png",
+            "sourceSha256": "7a3bd4303ea0eb143c400db71d8d0e3354e60ce643278ec9843bb238fc827434"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/fly_left-3.png",
+            "sourceSha256": "ae02fd72cac9387833aa792f5815156e21b6bac0c0badbdfe8c6d9ff84de86ef"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/fly_left-4.png",
+            "sourceSha256": "9f9f41641eb073522276296aa336472ef3a6664931cf18840c0941e127c089c5"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/fly_left-5.png",
+            "sourceSha256": "cfc33f0c6dfc6dbc8d8acf53e05b2ccc6a3b7a9586591bf9ac0b8681dbaa2440"
+          }
+        ]
+      }
+    },
+    "caramelito.pse_flight.fly_right": {
+      "key": "caramelito.pse_flight.fly_right",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.pse_flight",
+      "exclusive": false,
+      "bytes": 65658,
+      "url": "/assets/pse_flight/fly_right.webp",
+      "logicalName": "PSE flight fly_right",
+      "dimensions": {
+        "width": 864,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "web-poc/art_source/pse_flight/source.json",
+        "sourceSha256": "974b59a5a07acdddc8998a330248b6696ba03eb51826bfd945bd05c40a266274",
+        "generatedSha256": "10777ca12fe0cd7ff7570f7193dc66316b370458cef2e59247c9039127cbe4a2",
+        "transform": "approved complete PSE frames; xstack, libwebp q90",
+        "baseline": 152,
+        "frameCount": 6,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "frameDurationMs": 125,
+        "frameAlphaBounds": [
+          {
+            "left": 8,
+            "top": 40,
+            "right": 135,
+            "bottom": 148
+          },
+          {
+            "left": 7,
+            "top": 41,
+            "right": 136,
+            "bottom": 148
+          },
+          {
+            "left": 7,
+            "top": 39,
+            "right": 136,
+            "bottom": 148
+          },
+          {
+            "left": 6,
+            "top": 43,
+            "right": 137,
+            "bottom": 148
+          },
+          {
+            "left": 5,
+            "top": 42,
+            "right": 138,
+            "bottom": 148
+          },
+          {
+            "left": 10,
+            "top": 38,
+            "right": 133,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "web-poc/art_source/pse_flight/fly_right-0.png",
+            "sourceSha256": "254915cfed71a32cc0a043c8149afa368ca0b4a33967a7fbe5b4db5ba111cee7"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/fly_right-1.png",
+            "sourceSha256": "cec65b7ce6be97fe5acc3729900e38f11386482df5484e47f8cbf92f26ae7df7"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/fly_right-2.png",
+            "sourceSha256": "4a702b33df176b918da2db6b11b98257381ae16a64c6cc7124169a193198e0f7"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/fly_right-3.png",
+            "sourceSha256": "6f0f5fea3e44287d2b4a097cad28c1b027700ed3738ff7dbea35c9e60990367e"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/fly_right-4.png",
+            "sourceSha256": "d5dbf612ea616a155621897c4372ddf54a1ebf0855833c8d39f5b1a26bf83070"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/fly_right-5.png",
+            "sourceSha256": "d090aa589afec3f67a14a539296d4f80b06039efa037add48ea761a326497385"
+          }
+        ]
+      }
+    },
+    "caramelito.pse_flight.fly_up": {
+      "key": "caramelito.pse_flight.fly_up",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.pse_flight",
+      "exclusive": false,
+      "bytes": 60272,
+      "url": "/assets/pse_flight/fly_up.webp",
+      "logicalName": "PSE flight fly_up",
+      "dimensions": {
+        "width": 864,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "web-poc/art_source/pse_flight/source.json",
+        "sourceSha256": "974b59a5a07acdddc8998a330248b6696ba03eb51826bfd945bd05c40a266274",
+        "generatedSha256": "05e47ef8cbe5f2100baf0a913fb309154d5802a61fd0f55d0d0e115b832a71c6",
+        "transform": "approved complete PSE frames; xstack, libwebp q90",
+        "baseline": 152,
+        "frameCount": 6,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "frameDurationMs": 125,
+        "frameAlphaBounds": [
+          {
+            "left": 13,
+            "top": 36,
+            "right": 130,
+            "bottom": 148
+          },
+          {
+            "left": 14,
+            "top": 38,
+            "right": 129,
+            "bottom": 148
+          },
+          {
+            "left": 14,
+            "top": 32,
+            "right": 128,
+            "bottom": 148
+          },
+          {
+            "left": 14,
+            "top": 37,
+            "right": 129,
+            "bottom": 148
+          },
+          {
+            "left": 13,
+            "top": 37,
+            "right": 129,
+            "bottom": 148
+          },
+          {
+            "left": 13,
+            "top": 36,
+            "right": 129,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "web-poc/art_source/pse_flight/fly_up-0.png",
+            "sourceSha256": "4afb455354728bc8624925dc32757c8d9fd2358e5c986689fad228c18f59ee3e"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/fly_up-1.png",
+            "sourceSha256": "74274d2112473cdc11f8fc5f998e11721735c83a9722b5fc946d9c57bc6930d4"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/fly_up-2.png",
+            "sourceSha256": "163f16552559f00612a1311b34aa0904203115878bc51d43c5ac9789b78df3e3"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/fly_up-3.png",
+            "sourceSha256": "7159c4c9145ffb7ce2da66d6836c8c83e424ddd8e89298e4b8ee97879573357a"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/fly_up-4.png",
+            "sourceSha256": "4b332bd41802a6ac0ebf6afc81650eb74bb83cdefbbf88457b76563d05dda1fd"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/fly_up-5.png",
+            "sourceSha256": "274f35c9290480237553d99e1c9bf6b7506e40fba7bf7f9729365d58bb832b17"
+          }
+        ]
+      }
+    },
+    "caramelito.pse_flight.idle_back": {
+      "key": "caramelito.pse_flight.idle_back",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.pse_flight",
+      "exclusive": false,
+      "bytes": 58302,
+      "url": "/assets/pse_flight/idle_back.webp",
+      "logicalName": "PSE flight idle_back",
+      "dimensions": {
+        "width": 864,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "web-poc/art_source/pse_flight/source.json",
+        "sourceSha256": "974b59a5a07acdddc8998a330248b6696ba03eb51826bfd945bd05c40a266274",
+        "generatedSha256": "bddfe54ee31dfb3542f2961a28d9da4099f7a37c8f6e34c8d3f7f92de747e810",
+        "transform": "approved complete PSE frames; xstack, libwebp q90",
+        "baseline": 152,
+        "frameCount": 6,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "frameDurationMs": 333.3333333333333,
+        "frameAlphaBounds": [
+          {
+            "left": 16,
+            "top": 33,
+            "right": 127,
+            "bottom": 148
+          },
+          {
+            "left": 18,
+            "top": 32,
+            "right": 124,
+            "bottom": 148
+          },
+          {
+            "left": 17,
+            "top": 31,
+            "right": 125,
+            "bottom": 148
+          },
+          {
+            "left": 17,
+            "top": 31,
+            "right": 125,
+            "bottom": 148
+          },
+          {
+            "left": 17,
+            "top": 32,
+            "right": 126,
+            "bottom": 148
+          },
+          {
+            "left": 15,
+            "top": 34,
+            "right": 127,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "web-poc/art_source/pse_flight/idle_back-0.png",
+            "sourceSha256": "7cf23ca8ed08f7a3ce5bc59f0a81b67c9b3d035d25f86ce3d1f2f4d67368c2d7"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/idle_back-1.png",
+            "sourceSha256": "679b2c25b210b4f6bf47632532aac0fc7a6a5850e4c1ab84b42f51026c4eb1eb"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/idle_back-2.png",
+            "sourceSha256": "3fdb10e45dcea82d57884e0f00a2edc4b6746a12241d2b8fb627acb78bc0651b"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/idle_back-3.png",
+            "sourceSha256": "0b8d71a5364239e094faf61babee062cb11dd3256426297e65c6bb39d92d30c0"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/idle_back-4.png",
+            "sourceSha256": "7e0bc9cc3028d56c3fa91f96401ba41c99224b880daba4419834cbf4c87a0a6e"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/idle_back-5.png",
+            "sourceSha256": "8f60322af72ca9574dd5ab94b53ee21c244fac404e904638d7ba9f410627a1d5"
+          }
+        ]
+      }
+    },
+    "caramelito.pse_flight.idle_front": {
+      "key": "caramelito.pse_flight.idle_front",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.pse_flight",
+      "exclusive": false,
+      "bytes": 66874,
+      "url": "/assets/pse_flight/idle_front.webp",
+      "logicalName": "PSE flight idle_front",
+      "dimensions": {
+        "width": 864,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "web-poc/art_source/pse_flight/source.json",
+        "sourceSha256": "974b59a5a07acdddc8998a330248b6696ba03eb51826bfd945bd05c40a266274",
+        "generatedSha256": "94e785a1de43c562654b3713ddc4e3e6dd040adb39b94990ae360f38fc7545c1",
+        "transform": "approved complete PSE frames; xstack, libwebp q90",
+        "baseline": 152,
+        "frameCount": 6,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "frameDurationMs": 333.3333333333333,
+        "frameAlphaBounds": [
+          {
+            "left": 16,
+            "top": 25,
+            "right": 127,
+            "bottom": 148
+          },
+          {
+            "left": 15,
+            "top": 25,
+            "right": 128,
+            "bottom": 148
+          },
+          {
+            "left": 18,
+            "top": 28,
+            "right": 125,
+            "bottom": 148
+          },
+          {
+            "left": 17,
+            "top": 26,
+            "right": 126,
+            "bottom": 148
+          },
+          {
+            "left": 17,
+            "top": 25,
+            "right": 126,
+            "bottom": 148
+          },
+          {
+            "left": 18,
+            "top": 24,
+            "right": 125,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "web-poc/art_source/pse_flight/idle_front-0.png",
+            "sourceSha256": "f8d273ada589346996beac523dee31edd206247867855b951651cb7adbba562d"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/idle_front-1.png",
+            "sourceSha256": "0e95dfb53c1cf2873155dec1e1f0b9848bce0a5649fb2f5b89395e542fe22757"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/idle_front-2.png",
+            "sourceSha256": "6f4b6e780baa3bc852d4237809a501f6e3470c4ccf8730293e1cd5214aadbfec"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/idle_front-3.png",
+            "sourceSha256": "446cf5763acb520a04cb17dc1e33f275a01169f78ad7202eb1aa97c87509417a"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/idle_front-4.png",
+            "sourceSha256": "9d82c28140443da355658e8fa92a11fe144ee87882e1cb71ea86dec57ef5a8b7"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/idle_front-5.png",
+            "sourceSha256": "88f517cd9c91ac8f3841488ace1050d0d59b1c44a4bb3e45fc343d925688a92f"
+          }
+        ]
+      }
+    },
+    "caramelito.pse_flight.idle_left": {
+      "key": "caramelito.pse_flight.idle_left",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.pse_flight",
+      "exclusive": false,
+      "bytes": 62748,
+      "url": "/assets/pse_flight/idle_left.webp",
+      "logicalName": "PSE flight idle_left",
+      "dimensions": {
+        "width": 864,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "web-poc/art_source/pse_flight/source.json",
+        "sourceSha256": "974b59a5a07acdddc8998a330248b6696ba03eb51826bfd945bd05c40a266274",
+        "generatedSha256": "b45668cbf22d49eafb7443d3edba8115de4bb7b23ce2e18e645f39ad0eb969ec",
+        "transform": "approved complete PSE frames; xstack, libwebp q90",
+        "baseline": 152,
+        "frameCount": 6,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "frameDurationMs": 333.3333333333333,
+        "frameAlphaBounds": [
+          {
+            "left": 15,
+            "top": 30,
+            "right": 127,
+            "bottom": 148
+          },
+          {
+            "left": 17,
+            "top": 31,
+            "right": 126,
+            "bottom": 148
+          },
+          {
+            "left": 15,
+            "top": 31,
+            "right": 127,
+            "bottom": 148
+          },
+          {
+            "left": 17,
+            "top": 31,
+            "right": 126,
+            "bottom": 148
+          },
+          {
+            "left": 16,
+            "top": 31,
+            "right": 127,
+            "bottom": 148
+          },
+          {
+            "left": 17,
+            "top": 31,
+            "right": 126,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "web-poc/art_source/pse_flight/idle_left-0.png",
+            "sourceSha256": "d132887fc58cc42e026a6780d2bc2d07bfbd0702d9ae9da6b1ed10d027da42f5"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/idle_left-1.png",
+            "sourceSha256": "d12088ed606684a427814959d280d1c29563c574accb4ffde22f7378debe5af5"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/idle_left-2.png",
+            "sourceSha256": "c84b39d23cf29d0acf9e6f3e565604116ed6ed500c45edabb4a1881d81abe88c"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/idle_left-3.png",
+            "sourceSha256": "3a68045bb8d7c8b7debc582c4a6074e107790b95a22806b5cdd59cbc793f7c59"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/idle_left-4.png",
+            "sourceSha256": "71ef85dcc796670895ee750229d6bc68bcc6509fe94898fea509528b8a060d90"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/idle_left-5.png",
+            "sourceSha256": "4bb644a61a41a0996c28e8a68b2278b86ee7e1b794c718c1a80c07268a67c494"
+          }
+        ]
+      }
+    },
+    "caramelito.pse_flight.idle_right": {
+      "key": "caramelito.pse_flight.idle_right",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.pse_flight",
+      "exclusive": false,
+      "bytes": 63936,
+      "url": "/assets/pse_flight/idle_right.webp",
+      "logicalName": "PSE flight idle_right",
+      "dimensions": {
+        "width": 864,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "web-poc/art_source/pse_flight/source.json",
+        "sourceSha256": "974b59a5a07acdddc8998a330248b6696ba03eb51826bfd945bd05c40a266274",
+        "generatedSha256": "b8cb3af8f675b9a2bdfe07e8f34da6a0ca3e71719a45c15cf5b5c198bb784f6b",
+        "transform": "approved complete PSE frames; xstack, libwebp q90",
+        "baseline": 152,
+        "frameCount": 6,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "frameDurationMs": 333.3333333333333,
+        "frameAlphaBounds": [
+          {
+            "left": 17,
+            "top": 29,
+            "right": 126,
+            "bottom": 148
+          },
+          {
+            "left": 16,
+            "top": 28,
+            "right": 127,
+            "bottom": 148
+          },
+          {
+            "left": 13,
+            "top": 28,
+            "right": 129,
+            "bottom": 148
+          },
+          {
+            "left": 14,
+            "top": 30,
+            "right": 129,
+            "bottom": 148
+          },
+          {
+            "left": 15,
+            "top": 30,
+            "right": 128,
+            "bottom": 148
+          },
+          {
+            "left": 15,
+            "top": 32,
+            "right": 127,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "web-poc/art_source/pse_flight/idle_right-0.png",
+            "sourceSha256": "f3352d0e7d3cc1d8554b81cc0d72681440939d42317a8d70648a7f53778f31f5"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/idle_right-1.png",
+            "sourceSha256": "03cad94e4f4065be0ae209ffeb5c243b2b3fb579a6d4692c5e466cce231c41bd"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/idle_right-2.png",
+            "sourceSha256": "dba2f12e7bc89ad0d2e59e52f2ae2b09d9157fda54a547a2963d96ae2f150caf"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/idle_right-3.png",
+            "sourceSha256": "d489b1d4d0c5f9a207dbabce3cf8ca9ca0e0dbcafce28a876feeb799614c583d"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/idle_right-4.png",
+            "sourceSha256": "e13c003663e8269f6502e30ae3b78c954b66aae50e888ebc815c0f1e3b082fb8"
+          },
+          {
+            "source": "web-poc/art_source/pse_flight/idle_right-5.png",
+            "sourceSha256": "0a0655f18d85b49c30a82109222edf5401959977a3451d540e1084b85429ab82"
+          }
+        ]
+      }
+    },
+    "caramelito.pse_flight.portrait": {
+      "key": "caramelito.pse_flight.portrait",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.pse_flight",
+      "exclusive": false,
+      "bytes": 11854,
+      "url": "/assets/pse_flight/portrait.webp",
+      "logicalName": "PSE flight portrait",
+      "dimensions": {
+        "width": 144,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "web-poc/art_source/pse_flight/source.json",
+        "sourceSha256": "974b59a5a07acdddc8998a330248b6696ba03eb51826bfd945bd05c40a266274",
+        "generatedSha256": "09aa600acff86f11f44d1ba7f750a7e3860397854e1c6317abfcdbc09362f1c7",
+        "transform": "approved complete PSE frames; xstack, libwebp q90",
+        "baseline": 152,
+        "sourceFrames": [
+          {
+            "source": "web-poc/art_source/pse_flight/idle_front-0.png",
+            "sourceSha256": "f8d273ada589346996beac523dee31edd206247867855b951651cb7adbba562d"
+          }
+        ]
+      }
+    },
+    "caramelito.speedster.idle": {
+      "key": "caramelito.speedster.idle",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.speedster",
+      "exclusive": false,
+      "bytes": 58204,
+      "url": "/assets/speedster/idle.webp",
+      "logicalName": "spr_player_idle_speedster",
+      "gmlName": "spr_player_idle_speedster",
+      "dimensions": {
+        "width": 1008,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_idle_speedster/spr_player_idle_speedster.yy",
+        "sourceSha256": "156f47e85cdf8a293c6fe8ef113da553213d129103c241c9725e29bd08c1f6a1",
+        "generatedSha256": "0e8c27437bf27a6d95c45e9d4c2f1ab9048dec9f5e042be9ca480887071bd6b6",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 7,
+        "frameDurationMs": 333.3333333333333,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 24,
+            "top": 13,
+            "right": 119,
+            "bottom": 148
+          },
+          {
+            "left": 23,
+            "top": 10,
+            "right": 120,
+            "bottom": 148
+          },
+          {
+            "left": 23,
+            "top": 11,
+            "right": 120,
+            "bottom": 148
+          },
+          {
+            "left": 24,
+            "top": 9,
+            "right": 119,
+            "bottom": 148
+          },
+          {
+            "left": 23,
+            "top": 11,
+            "right": 120,
+            "bottom": 148
+          },
+          {
+            "left": 24,
+            "top": 10,
+            "right": 119,
+            "bottom": 148
+          },
+          {
+            "left": 23,
+            "top": 10,
+            "right": 120,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_idle_speedster/0db71ace-004c-4b80-97b3-807878cafc7b.png",
+            "sourceSha256": "c32dbe336a8426d4786f15ef298fbd6b45305804b4f33065c7a05fe2355fdd53"
+          },
+          {
+            "source": "sprites/spr_player_idle_speedster/7e9cd3f2-f189-4143-b6f7-dc6e463ea72e.png",
+            "sourceSha256": "03d5b417115f0f233cfe0c374c69a61eb6910beb7694abc3d5f7e36dcd2bb704"
+          },
+          {
+            "source": "sprites/spr_player_idle_speedster/1a4b4d6d-7ecb-4ac0-afcc-103b9f938bc7.png",
+            "sourceSha256": "b5e866b95923833f25d1379eb69add7b452ad4e76ccdc97f683c70fc02718eee"
+          },
+          {
+            "source": "sprites/spr_player_idle_speedster/965a36ad-3db2-448b-bcaf-1b11eed551d7.png",
+            "sourceSha256": "7a9331e83fe9d6ebf73f81bc6465ac937a8b3937b83fe3fb83d0f5d011b148a8"
+          },
+          {
+            "source": "sprites/spr_player_idle_speedster/a3f4f5b9-0d1d-4948-ab2f-8d4d12740766.png",
+            "sourceSha256": "79de017f4a7964f984d649e0e40139c6a0530bb869f8e9ed514a1ddbc9de05c1"
+          },
+          {
+            "source": "sprites/spr_player_idle_speedster/6f310723-5b47-4b8c-a56e-3c7747d70e01.png",
+            "sourceSha256": "1776dde192795106c46c63670aac6304f2136d8361251b7a73bf7b4c2dd9562a"
+          },
+          {
+            "source": "sprites/spr_player_idle_speedster/87349a1f-0c2d-49ad-90a9-d668a57a25b2.png",
+            "sourceSha256": "47b92161d77a13de22887d7bb2d203965b9c2467fa08fb01d00deb34249a5f23"
+          }
+        ]
+      }
+    },
+    "caramelito.speedster.portrait": {
+      "key": "caramelito.speedster.portrait",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.speedster",
+      "exclusive": false,
+      "bytes": 7128,
+      "url": "/assets/speedster/portrait.webp",
+      "logicalName": "caramelito.speedster.portrait",
+      "gmlName": "spr_cutscene_caramelito_speedster",
+      "dimensions": {
+        "width": 144,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_cutscene_caramelito_speedster/cd3fa4ac-0704-482e-a541-1347d6a0b770.png",
+        "sourceSha256": "346d178a7ee8166f6610087215a1007b3a827ba32d866228b7e67bad0d51ff92",
+        "generatedSha256": "da85e8eec63fed2c713ea70bd7aa8a4566b3008c0e8222ecffe029114344ed92",
+        "transform": "scale=144:152",
+        "alphaBounds": {
+          "left": 29,
+          "top": 9,
+          "right": 114,
+          "bottom": 148
+        },
+        "baseline": 152
+      }
+    },
+    "caramelito.speedster.walk_down": {
+      "key": "caramelito.speedster.walk_down",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.speedster",
+      "exclusive": false,
+      "bytes": 47316,
+      "url": "/assets/speedster/walk_down.webp",
+      "logicalName": "spr_player_run_down_speedster",
+      "gmlName": "spr_player_run_down_speedster",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_run_down_speedster/spr_player_run_down_speedster.yy",
+        "sourceSha256": "5804578a6795d5ffc85859f8898a8300e4db4ebdece2620ea3e6ed6bf1ee5f45",
+        "generatedSha256": "79fcdf0c743690a83f86481967bbbed7f0593a6a8c7b617ac600a3f058fd2e32",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 83.33333333333333,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 26,
+            "top": 14,
+            "right": 117,
+            "bottom": 148
+          },
+          {
+            "left": 25,
+            "top": 19,
+            "right": 118,
+            "bottom": 148
+          },
+          {
+            "left": 24,
+            "top": 13,
+            "right": 118,
+            "bottom": 147
+          },
+          {
+            "left": 24,
+            "top": 14,
+            "right": 119,
+            "bottom": 144
+          },
+          {
+            "left": 25,
+            "top": 13,
+            "right": 117,
+            "bottom": 148
+          },
+          {
+            "left": 24,
+            "top": 14,
+            "right": 119,
+            "bottom": 148
+          },
+          {
+            "left": 25,
+            "top": 12,
+            "right": 118,
+            "bottom": 147
+          },
+          {
+            "left": 24,
+            "top": 18,
+            "right": 119,
+            "bottom": 144
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_run_down_speedster/6f6f2cf6-ec2c-4c7d-9fed-3a2bfe7c60ab.png",
+            "sourceSha256": "247afc3e095201dcde04f053291c21b43afa249bd2236521f5e4eca18f2f9388"
+          },
+          {
+            "source": "sprites/spr_player_run_down_speedster/3908ddf2-afc0-49b3-95ba-4d8043a07481.png",
+            "sourceSha256": "d100e609cdf32f1bdc31ffa19c809d61920cda9634787726286fd50081f2f75f"
+          },
+          {
+            "source": "sprites/spr_player_run_down_speedster/4ecf3e65-cf39-4a53-b5ae-6285485834c7.png",
+            "sourceSha256": "f305b3d061e8c9106d2e59664fadd60e073f40256fc1b0f0f61ddab12b10cb2c"
+          },
+          {
+            "source": "sprites/spr_player_run_down_speedster/8ac311f3-16da-42ec-8148-aad6790d71a1.png",
+            "sourceSha256": "da341202cb7940cac839adc5df8c155a8a7f4d6aa5002ddba58b402219e284f4"
+          },
+          {
+            "source": "sprites/spr_player_run_down_speedster/50c6545d-f8c3-4311-873c-13eff11ec541.png",
+            "sourceSha256": "204543060383bf38c9bc31fd6316deb8286d816940a9cf16a1891d1d0b496921"
+          },
+          {
+            "source": "sprites/spr_player_run_down_speedster/2efb6b26-a291-46e0-acf1-edc38d12cfc6.png",
+            "sourceSha256": "ccc02b6516cc16c00cffa19d4ed760cbe850f5bb9ae0c0378b10b6c8987fb9cc"
+          },
+          {
+            "source": "sprites/spr_player_run_down_speedster/233a4e38-25ae-460c-982c-c9b85b9fba26.png",
+            "sourceSha256": "e0af98a8766cbf9a7a155a8f48fc1bc9b1f97e37d32268f6f8359da28c6ae352"
+          },
+          {
+            "source": "sprites/spr_player_run_down_speedster/7535d521-2fa5-4714-a79f-26b3434ab20f.png",
+            "sourceSha256": "452ee7af405e793f5caa5ddf9b3e5921bab49835974ffeb0d522e5e35344f340"
+          }
+        ]
+      }
+    },
+    "caramelito.speedster.walk_side": {
+      "key": "caramelito.speedster.walk_side",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.speedster",
+      "exclusive": false,
+      "bytes": 55250,
+      "url": "/assets/speedster/walk_side.webp",
+      "logicalName": "spr_player_run_side_speedster",
+      "gmlName": "spr_player_run_side_speedster",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_run_side_speedster/spr_player_run_side_speedster.yy",
+        "sourceSha256": "9c1c3ff1879ab5cbf850fe223a7a2d206f778e6e8aba1a7641953ce03242a69f",
+        "generatedSha256": "df81bcb9ab792f6072b4d720d47abf1fbc6b0b6cc081f2536c2f85b6221c600a",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 83.33333333333333,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 13,
+            "top": 16,
+            "right": 129,
+            "bottom": 148
+          },
+          {
+            "left": 19,
+            "top": 15,
+            "right": 124,
+            "bottom": 148
+          },
+          {
+            "left": 15,
+            "top": 14,
+            "right": 127,
+            "bottom": 147
+          },
+          {
+            "left": 18,
+            "top": 11,
+            "right": 125,
+            "bottom": 144
+          },
+          {
+            "left": 11,
+            "top": 16,
+            "right": 131,
+            "bottom": 148
+          },
+          {
+            "left": 17,
+            "top": 13,
+            "right": 126,
+            "bottom": 148
+          },
+          {
+            "left": 18,
+            "top": 14,
+            "right": 124,
+            "bottom": 147
+          },
+          {
+            "left": 15,
+            "top": 12,
+            "right": 128,
+            "bottom": 144
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_run_side_speedster/668b1ca5-8018-42e8-8d47-47fefb389190.png",
+            "sourceSha256": "2990b5eece4e789adee99e29c655b9df331eecc1ce327d0e6ea016df5f4241c7"
+          },
+          {
+            "source": "sprites/spr_player_run_side_speedster/fec1cc29-8f6d-4b91-88f5-7b7718fef5ef.png",
+            "sourceSha256": "f89cbd3c1e2dfe093fec0742018289312524913d00e957972f08473307522152"
+          },
+          {
+            "source": "sprites/spr_player_run_side_speedster/6c8a815a-d5ba-45d4-98d4-72e5602ea691.png",
+            "sourceSha256": "9725afa18868dec618294b9d55b94e7e0035e1cd4a1407e3bc705088188d14c5"
+          },
+          {
+            "source": "sprites/spr_player_run_side_speedster/dfd298e1-d7bc-4058-853e-b79bddd519ed.png",
+            "sourceSha256": "5685cbd1c9b39f9387bbfb1eb7d7ca901944dc2f83260ff7537051851b6eaba0"
+          },
+          {
+            "source": "sprites/spr_player_run_side_speedster/1edff606-ee6a-4d97-89b5-fa7cf88172bd.png",
+            "sourceSha256": "dca4c56ad441b0ece3fcdd18c231022a9ab8c818271a8bb32e60a3c86446bf66"
+          },
+          {
+            "source": "sprites/spr_player_run_side_speedster/82842262-2f8c-407a-b9f7-0d1676249678.png",
+            "sourceSha256": "954f77bfe2ffc379fe471baffe7bfab2573c2b132237e27f869641b74066b601"
+          },
+          {
+            "source": "sprites/spr_player_run_side_speedster/bcec0e19-9042-4a6c-995d-5811cd2bb401.png",
+            "sourceSha256": "f2cb62f9b42a3a1bd10e8dd05718ccf9ad348787319e7195c57704591aad368c"
+          },
+          {
+            "source": "sprites/spr_player_run_side_speedster/a928d94f-32b7-4fdc-a2b6-d3b334567e3d.png",
+            "sourceSha256": "3d1472c2b8da1a273931102dc5bae0c0f58b8b917a2305e0f456788036aa296b"
+          }
+        ]
+      }
+    },
+    "caramelito.speedster.walk_up": {
+      "key": "caramelito.speedster.walk_up",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.speedster",
+      "exclusive": false,
+      "bytes": 44090,
+      "url": "/assets/speedster/walk_up.webp",
+      "logicalName": "spr_player_run_up_speedster",
+      "gmlName": "spr_player_run_up_speedster",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_run_up_speedster/spr_player_run_up_speedster.yy",
+        "sourceSha256": "85130bbb5616423a21bebf0e07e4e2a9e469d84ee46e81c8ea10bb773c9325e6",
+        "generatedSha256": "7249c1c3bfd08feee69dadf52b09ae8b217dfcd5c104b7b71d71615a9a69e97b",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 83.33333333333333,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 27,
+            "top": 19,
+            "right": 115,
+            "bottom": 148
+          },
+          {
+            "left": 28,
+            "top": 22,
+            "right": 115,
+            "bottom": 148
+          },
+          {
+            "left": 28,
+            "top": 16,
+            "right": 115,
+            "bottom": 147
+          },
+          {
+            "left": 27,
+            "top": 9,
+            "right": 116,
+            "bottom": 144
+          },
+          {
+            "left": 27,
+            "top": 18,
+            "right": 115,
+            "bottom": 148
+          },
+          {
+            "left": 27,
+            "top": 20,
+            "right": 115,
+            "bottom": 148
+          },
+          {
+            "left": 27,
+            "top": 17,
+            "right": 115,
+            "bottom": 147
+          },
+          {
+            "left": 27,
+            "top": 10,
+            "right": 115,
+            "bottom": 144
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_run_up_speedster/4879da0f-6bd0-40f0-a2b0-a61a1397219e.png",
+            "sourceSha256": "439d8e073a3fe8f22cb56c7d55f0b3b63a869dfb07ae0aa75a56a5c3ec69aef0"
+          },
+          {
+            "source": "sprites/spr_player_run_up_speedster/b3abf31a-f05a-4ea1-ae70-4ecf22f69c08.png",
+            "sourceSha256": "1ddcf5eac7d73207a42437e1906d8b84a34b8debbe8fa8ffaee4b53508ff9263"
+          },
+          {
+            "source": "sprites/spr_player_run_up_speedster/b730b93d-dae9-4012-b27f-19e6094412b1.png",
+            "sourceSha256": "284bd32fe7d8ca118853c65945a26a2312207905c3af4a5d0d7c5018f1476c87"
+          },
+          {
+            "source": "sprites/spr_player_run_up_speedster/66ba7813-b220-4885-a264-f72d31b421bb.png",
+            "sourceSha256": "e210a818e4146b09131380c3ce845ca5ef0dc4c36f78034115cf87653177707a"
+          },
+          {
+            "source": "sprites/spr_player_run_up_speedster/978702d2-e52c-461e-a505-06d909cac57e.png",
+            "sourceSha256": "651e40ff06a722c2271b18d1024d9c83fa999c1124b7a2351436636997095545"
+          },
+          {
+            "source": "sprites/spr_player_run_up_speedster/1d75efab-f5aa-4231-b51f-a087ec1f0793.png",
+            "sourceSha256": "0025ceeb3b4f88080de3a8a3dee0dcd118012352c832ba88d9671cd114a899ab"
+          },
+          {
+            "source": "sprites/spr_player_run_up_speedster/6c97b64d-29c1-4e52-a3a1-a178bf6d77ee.png",
+            "sourceSha256": "1a6b70e0f05fb186884dffe81bed389c6f63ab5fd875aaeb0e381ac0679bbc48"
+          },
+          {
+            "source": "sprites/spr_player_run_up_speedster/99aa4500-c8a0-492a-a571-b14ffefb0308.png",
+            "sourceSha256": "2eccf759ec23724aef1180bb636e91e6ba786ad24fe63753981639ae3db6580c"
+          }
+        ]
+      }
+    },
+    "caramelito.speedster.walk_west": {
+      "key": "caramelito.speedster.walk_west",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.speedster",
+      "exclusive": false,
+      "bytes": 55220,
+      "url": "/assets/speedster/walk_west.webp",
+      "logicalName": "spr_player_run_side_speedster west (per-frame hflip)",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_run_side_speedster/spr_player_run_side_speedster.yy",
+        "sourceSha256": "9c1c3ff1879ab5cbf850fe223a7a2d206f778e6e8aba1a7641953ce03242a69f",
+        "generatedSha256": "32f0ac115148d02789fa6f9fb61dc709563c3be0aef4b7481cdad740bac3c887",
+        "transform": "hflip each source frame in original order; xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 83.33333333333333,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 14,
+            "top": 16,
+            "right": 130,
+            "bottom": 148
+          },
+          {
+            "left": 19,
+            "top": 15,
+            "right": 124,
+            "bottom": 148
+          },
+          {
+            "left": 16,
+            "top": 14,
+            "right": 128,
+            "bottom": 147
+          },
+          {
+            "left": 18,
+            "top": 11,
+            "right": 125,
+            "bottom": 144
+          },
+          {
+            "left": 12,
+            "top": 16,
+            "right": 132,
+            "bottom": 148
+          },
+          {
+            "left": 17,
+            "top": 13,
+            "right": 126,
+            "bottom": 148
+          },
+          {
+            "left": 19,
+            "top": 14,
+            "right": 125,
+            "bottom": 147
+          },
+          {
+            "left": 15,
+            "top": 12,
+            "right": 128,
+            "bottom": 144
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_run_side_speedster/668b1ca5-8018-42e8-8d47-47fefb389190.png",
+            "sourceSha256": "2990b5eece4e789adee99e29c655b9df331eecc1ce327d0e6ea016df5f4241c7"
+          },
+          {
+            "source": "sprites/spr_player_run_side_speedster/fec1cc29-8f6d-4b91-88f5-7b7718fef5ef.png",
+            "sourceSha256": "f89cbd3c1e2dfe093fec0742018289312524913d00e957972f08473307522152"
+          },
+          {
+            "source": "sprites/spr_player_run_side_speedster/6c8a815a-d5ba-45d4-98d4-72e5602ea691.png",
+            "sourceSha256": "9725afa18868dec618294b9d55b94e7e0035e1cd4a1407e3bc705088188d14c5"
+          },
+          {
+            "source": "sprites/spr_player_run_side_speedster/dfd298e1-d7bc-4058-853e-b79bddd519ed.png",
+            "sourceSha256": "5685cbd1c9b39f9387bbfb1eb7d7ca901944dc2f83260ff7537051851b6eaba0"
+          },
+          {
+            "source": "sprites/spr_player_run_side_speedster/1edff606-ee6a-4d97-89b5-fa7cf88172bd.png",
+            "sourceSha256": "dca4c56ad441b0ece3fcdd18c231022a9ab8c818271a8bb32e60a3c86446bf66"
+          },
+          {
+            "source": "sprites/spr_player_run_side_speedster/82842262-2f8c-407a-b9f7-0d1676249678.png",
+            "sourceSha256": "954f77bfe2ffc379fe471baffe7bfab2573c2b132237e27f869641b74066b601"
+          },
+          {
+            "source": "sprites/spr_player_run_side_speedster/bcec0e19-9042-4a6c-995d-5811cd2bb401.png",
+            "sourceSha256": "f2cb62f9b42a3a1bd10e8dd05718ccf9ad348787319e7195c57704591aad368c"
+          },
+          {
+            "source": "sprites/spr_player_run_side_speedster/a928d94f-32b7-4fdc-a2b6-d3b334567e3d.png",
+            "sourceSha256": "3d1472c2b8da1a273931102dc5bae0c0f58b8b917a2305e0f456788036aa296b"
+          }
+        ]
+      }
+    },
+    "caramelito.super_heroi.idle": {
+      "key": "caramelito.super_heroi.idle",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.super_heroi",
+      "exclusive": false,
+      "bytes": 57216,
+      "url": "/assets/super_heroi/idle.webp",
+      "logicalName": "spr_player_idle_super_heroi",
+      "gmlName": "spr_player_idle_super_heroi",
+      "dimensions": {
+        "width": 1008,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_idle_super_heroi/spr_player_idle_super_heroi.yy",
+        "sourceSha256": "26ed804d31f016d64e81f3905303b365fde850b88749e064bb44e4eddd3e9bde",
+        "generatedSha256": "0c0eac5708d94882c2328a18f72f138328da4032d8b68eaa1748f1293d8e2f3a",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 7,
+        "frameDurationMs": 333.3333333333333,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 13,
+            "top": 9,
+            "right": 130,
+            "bottom": 148
+          },
+          {
+            "left": 13,
+            "top": 10,
+            "right": 130,
+            "bottom": 148
+          },
+          {
+            "left": 13,
+            "top": 10,
+            "right": 129,
+            "bottom": 148
+          },
+          {
+            "left": 15,
+            "top": 10,
+            "right": 127,
+            "bottom": 148
+          },
+          {
+            "left": 11,
+            "top": 12,
+            "right": 132,
+            "bottom": 148
+          },
+          {
+            "left": 12,
+            "top": 11,
+            "right": 130,
+            "bottom": 148
+          },
+          {
+            "left": 12,
+            "top": 12,
+            "right": 130,
+            "bottom": 148
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_idle_super_heroi/0c84a9e3-0979-4b9e-bef8-c4564dc91101.png",
+            "sourceSha256": "e2f5a4158fd0cac8a33fff84b902ce75fcd21aedd2c50b3cd6fd886b06bdb716"
+          },
+          {
+            "source": "sprites/spr_player_idle_super_heroi/9826c55c-b582-4912-91a0-e6f0b5af944c.png",
+            "sourceSha256": "82b67d185a1af759f4f81b7673567031f85af7d9dd680a8b3f185dc010c0f173"
+          },
+          {
+            "source": "sprites/spr_player_idle_super_heroi/7394e57c-7d9b-46a2-868c-56dbb5dde1ca.png",
+            "sourceSha256": "fb25cf144122fcaf1081021aff9786616b2238164318ae9bc2f0c95731d24bf2"
+          },
+          {
+            "source": "sprites/spr_player_idle_super_heroi/0e333bfe-1dbd-4461-b055-51964894934f.png",
+            "sourceSha256": "5004feb3786d7a9f0f4060b69e85d0233e0cadc6fbd2f26170f50c7982bbd30e"
+          },
+          {
+            "source": "sprites/spr_player_idle_super_heroi/75e00ed9-973b-4dbf-8926-bedff6ef7223.png",
+            "sourceSha256": "b1b147c355315194d4537c802913d6ccf75c3ab7d9888488896365c1b2343e6f"
+          },
+          {
+            "source": "sprites/spr_player_idle_super_heroi/2ec6d5cf-22b9-4bca-8bd4-240d8c2eb3e7.png",
+            "sourceSha256": "3076d6e99751369a5d7c20f2ba28ebd94b26d4cb2da51b08c7695422dcac2164"
+          },
+          {
+            "source": "sprites/spr_player_idle_super_heroi/5a48a85c-e96b-4da7-b4bd-dc628ac6f403.png",
+            "sourceSha256": "1d89bb47a0fddb90f6733347dd69ee57a49fb911a1caae8388ccb0580e81d22d"
+          }
+        ]
+      }
+    },
+    "caramelito.super_heroi.portrait": {
+      "key": "caramelito.super_heroi.portrait",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.super_heroi",
+      "exclusive": false,
+      "bytes": 8610,
+      "url": "/assets/super_heroi/portrait.webp",
+      "logicalName": "caramelito.super_heroi.portrait",
+      "gmlName": "spr_player_idle_super_heroi",
+      "dimensions": {
+        "width": 144,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_idle_super_heroi/0c84a9e3-0979-4b9e-bef8-c4564dc91101.png",
+        "sourceSha256": "e2f5a4158fd0cac8a33fff84b902ce75fcd21aedd2c50b3cd6fd886b06bdb716",
+        "generatedSha256": "c04cfa9de083547efa4a461032a9ccb44af34951d58f51153e3666c54df74942",
+        "transform": "scale=144:152",
+        "alphaBounds": {
+          "left": 13,
+          "top": 9,
+          "right": 130,
+          "bottom": 148
+        },
+        "baseline": 152
+      }
+    },
+    "caramelito.super_heroi.walk_down": {
+      "key": "caramelito.super_heroi.walk_down",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.super_heroi",
+      "exclusive": false,
+      "bytes": 52024,
+      "url": "/assets/super_heroi/walk_down.webp",
+      "logicalName": "spr_player_fly_down_super_heroi",
+      "gmlName": "spr_player_fly_down_super_heroi",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_fly_down_super_heroi/spr_player_fly_down_super_heroi.yy",
+        "sourceSha256": "7297a9fbc0fd6a7b7dbc47f396d880dbfecff916112c2e31c7b408c192e6cfbd",
+        "generatedSha256": "f0e2f198b7e23070c336cad7aa770fd620a669c9dac617d2bd31c26aeb0d256a",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 166.66666666666666,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 6,
+            "top": 28,
+            "right": 136,
+            "bottom": 144
+          },
+          {
+            "left": 9,
+            "top": 30,
+            "right": 133,
+            "bottom": 143
+          },
+          {
+            "left": 7,
+            "top": 25,
+            "right": 135,
+            "bottom": 142
+          },
+          {
+            "left": 6,
+            "top": 36,
+            "right": 137,
+            "bottom": 143
+          },
+          {
+            "left": 7,
+            "top": 31,
+            "right": 136,
+            "bottom": 144
+          },
+          {
+            "left": 9,
+            "top": 31,
+            "right": 133,
+            "bottom": 145
+          },
+          {
+            "left": 6,
+            "top": 31,
+            "right": 136,
+            "bottom": 146
+          },
+          {
+            "left": 8,
+            "top": 34,
+            "right": 135,
+            "bottom": 145
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_fly_down_super_heroi/7a0465b3-9393-431f-8b49-3ec6272a36f8.png",
+            "sourceSha256": "bc2693a8fee15a38083af8268e7f41b39711318edc07ad4fafa91b01f8bb20a6"
+          },
+          {
+            "source": "sprites/spr_player_fly_down_super_heroi/f4cdb514-3097-42f8-8557-8b4ab019947c.png",
+            "sourceSha256": "c733726bcb529ff98897e5629db5f2c1c37309b0f22a0b4862e42f9e3529d294"
+          },
+          {
+            "source": "sprites/spr_player_fly_down_super_heroi/8457b9fa-88a4-40d3-8de4-1d458af9073e.png",
+            "sourceSha256": "f6fd3821d4cf6122263adef5298bf897fa45c81f575fdd4a3a8596d3f11923c4"
+          },
+          {
+            "source": "sprites/spr_player_fly_down_super_heroi/4cf714e4-5993-4c1b-8e9f-78799a86cce0.png",
+            "sourceSha256": "c5e7977bc31696f0f3e322d97b83b42f99e895b53ef2343548b64722ee85f547"
+          },
+          {
+            "source": "sprites/spr_player_fly_down_super_heroi/328ba401-ea45-4217-a59a-8b6248bdea7e.png",
+            "sourceSha256": "1cdaf5e7086a5ffa4f93a76b4dca3f07d3697b1884f49aa337d81d1872adf356"
+          },
+          {
+            "source": "sprites/spr_player_fly_down_super_heroi/e72238d4-4840-4e19-934c-bf8a7c9ef074.png",
+            "sourceSha256": "b2dcc9947c71fb30509e30e08295259071df103aac52239a2fb91bf947cfc094"
+          },
+          {
+            "source": "sprites/spr_player_fly_down_super_heroi/a02e86f2-3b72-43c4-a9a0-e5d624515089.png",
+            "sourceSha256": "80a8c718c1c6c10c89c344c7316efbafc9bc3dd7d4e1112106723e5fdd8ab98f"
+          },
+          {
+            "source": "sprites/spr_player_fly_down_super_heroi/cdc42470-0d89-48b4-88fe-c0f54a72848c.png",
+            "sourceSha256": "b3d1d98f6932acb74443d09a9e1699d8e78a9bbca71db433cb1ffd96f8c7d0b9"
+          }
+        ]
+      }
+    },
+    "caramelito.super_heroi.walk_side": {
+      "key": "caramelito.super_heroi.walk_side",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.super_heroi",
+      "exclusive": false,
+      "bytes": 51390,
+      "url": "/assets/super_heroi/walk_side.webp",
+      "logicalName": "spr_player_fly_side_super_heroi",
+      "gmlName": "spr_player_fly_side_super_heroi",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_fly_side_super_heroi/spr_player_fly_side_super_heroi.yy",
+        "sourceSha256": "c010a8e9468986c8dde45c7e795c1d31d52ecd059e9384e3ff6752c2099e69dd",
+        "generatedSha256": "316d6499d7e13f5e039b137ec96b003294846c8e4c01f2f60dd391c341c0e754",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 166.66666666666666,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 6,
+            "top": 38,
+            "right": 137,
+            "bottom": 144
+          },
+          {
+            "left": 8,
+            "top": 38,
+            "right": 134,
+            "bottom": 143
+          },
+          {
+            "left": 7,
+            "top": 37,
+            "right": 135,
+            "bottom": 142
+          },
+          {
+            "left": 6,
+            "top": 33,
+            "right": 136,
+            "bottom": 143
+          },
+          {
+            "left": 7,
+            "top": 41,
+            "right": 136,
+            "bottom": 144
+          },
+          {
+            "left": 7,
+            "top": 40,
+            "right": 135,
+            "bottom": 145
+          },
+          {
+            "left": 6,
+            "top": 43,
+            "right": 137,
+            "bottom": 146
+          },
+          {
+            "left": 7,
+            "top": 41,
+            "right": 135,
+            "bottom": 145
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_fly_side_super_heroi/c98e45d4-aa13-4b9d-8103-8049d971e69e.png",
+            "sourceSha256": "de92f3825845f64252601160f9411e5ac47d1c113774803e5232be324a7f6ea1"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_super_heroi/26d5d766-c567-442d-8d96-b24e85d9f852.png",
+            "sourceSha256": "39704440b7ebe52e35f29dc83ec98dfb501572c33e4f48bec4f46250858389e4"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_super_heroi/46d8a43d-07fb-45a5-85f9-f2179d8ef4a8.png",
+            "sourceSha256": "5fe7b61b727b4cb25e179d4a4a5286699ff1aa8548c36a0e16467a3fe142e204"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_super_heroi/9ddffae3-a3a5-46c2-8cd4-492c1a82e5c1.png",
+            "sourceSha256": "a8a3f1296dbbee144cc70f21e354502e57e274d1c02e76baac0b79103fe506d6"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_super_heroi/49485d9b-14a8-43e4-bad9-76ee37d63f6c.png",
+            "sourceSha256": "27a77b45ad82fb701325b0cf7e978a7ffe52b0f5cee4a2f4be992a4e12e6ada2"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_super_heroi/2ea03e5a-8983-489c-93e5-66825b3eda76.png",
+            "sourceSha256": "652d6680ca03e3ab775eb4c14501275118418a20c1a859ba324e34f3d879041c"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_super_heroi/3847a854-fbf3-4fe6-ad48-e4f07d4151c7.png",
+            "sourceSha256": "ccadd416005e2425e166b7036482500fc593c7f31f5d51cd8b8b20f2953f659f"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_super_heroi/cce3af34-5494-4367-995a-4f3227fd26c1.png",
+            "sourceSha256": "606fd88d61625a9745fba558ca478893964a6e34428ba7f941ce698e5e8ac81f"
+          }
+        ]
+      }
+    },
+    "caramelito.super_heroi.walk_up": {
+      "key": "caramelito.super_heroi.walk_up",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.super_heroi",
+      "exclusive": false,
+      "bytes": 50316,
+      "url": "/assets/super_heroi/walk_up.webp",
+      "logicalName": "spr_player_fly_up_super_heroi",
+      "gmlName": "spr_player_fly_up_super_heroi",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_fly_up_super_heroi/spr_player_fly_up_super_heroi.yy",
+        "sourceSha256": "3f7cf1d0818e3602d911ec8b3d93c769175aacb6a7ae6ac9587b7090fbfc8f97",
+        "generatedSha256": "026e4a748166483850d2fc0b103a83fc4cd2a310308efe5cef9fcbeb745a82a7",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 166.66666666666666,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 7,
+            "top": 22,
+            "right": 136,
+            "bottom": 144
+          },
+          {
+            "left": 7,
+            "top": 18,
+            "right": 135,
+            "bottom": 143
+          },
+          {
+            "left": 6,
+            "top": 20,
+            "right": 137,
+            "bottom": 142
+          },
+          {
+            "left": 9,
+            "top": 24,
+            "right": 134,
+            "bottom": 143
+          },
+          {
+            "left": 7,
+            "top": 23,
+            "right": 135,
+            "bottom": 144
+          },
+          {
+            "left": 8,
+            "top": 25,
+            "right": 135,
+            "bottom": 145
+          },
+          {
+            "left": 7,
+            "top": 29,
+            "right": 136,
+            "bottom": 146
+          },
+          {
+            "left": 7,
+            "top": 24,
+            "right": 135,
+            "bottom": 145
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_fly_up_super_heroi/5747c622-459b-477f-9c21-bb806dffac64.png",
+            "sourceSha256": "491c956c5a0395f391e8e255bdae0dd8fc192d889ed70f89e4df18c4e60b886a"
+          },
+          {
+            "source": "sprites/spr_player_fly_up_super_heroi/943f21d2-57fe-44fc-a5c0-e9ba58cb0718.png",
+            "sourceSha256": "474aaf67f4cb972a5ca6a247c46a1f116090c9847db76105480e3634c2cae9ba"
+          },
+          {
+            "source": "sprites/spr_player_fly_up_super_heroi/89167202-8d92-4f29-a92f-d1f8618e8d75.png",
+            "sourceSha256": "a38bb9e7977d6a6ff03d0b51ba08bd2be647b96d987dbc48a4c6df474a17876d"
+          },
+          {
+            "source": "sprites/spr_player_fly_up_super_heroi/eb92143b-7c59-46e0-9aec-d1edf70c1563.png",
+            "sourceSha256": "31678087aebe2ca1a619df4e4717123d14aa17c333feba55c60b5177fa16f92e"
+          },
+          {
+            "source": "sprites/spr_player_fly_up_super_heroi/f9158ee5-0814-45bd-8f13-38b8c11f7eb5.png",
+            "sourceSha256": "dc26e90a1a8403f6cca6c263e31ad976608b0d237703acf092d66534fa3fcb99"
+          },
+          {
+            "source": "sprites/spr_player_fly_up_super_heroi/c926f350-e3a1-486a-8dad-2cc6afd972da.png",
+            "sourceSha256": "b20344aea3eeb59f6c05949174a58feb7542e3dd1d7b65e376ebc683106770ca"
+          },
+          {
+            "source": "sprites/spr_player_fly_up_super_heroi/e6ce2c5a-9e6a-440d-aa7f-f2eced1fd89a.png",
+            "sourceSha256": "03185033c7edc8b097d56ab1f82376d686cf3a3a6b7a6bb649b89f3d6e8d48de"
+          },
+          {
+            "source": "sprites/spr_player_fly_up_super_heroi/3aa3df62-d2d6-4a6e-beda-9cc739f90e13.png",
+            "sourceSha256": "2c07b47ac5d2e35f9bf52b87ec23eaff24f5e18623f841c7932b4d603bcb0f1d"
+          }
+        ]
+      }
+    },
+    "caramelito.super_heroi.walk_west": {
+      "key": "caramelito.super_heroi.walk_west",
+      "tier": "mission",
+      "type": "image",
+      "owner": "appearance:caramelito.super_heroi",
+      "exclusive": false,
+      "bytes": 51556,
+      "url": "/assets/super_heroi/walk_west.webp",
+      "logicalName": "spr_player_fly_side_super_heroi west (per-frame hflip)",
+      "dimensions": {
+        "width": 1152,
+        "height": 152,
+        "originX": 0.5,
+        "originY": 1
+      },
+      "provenance": {
+        "source": "sprites/spr_player_fly_side_super_heroi/spr_player_fly_side_super_heroi.yy",
+        "sourceSha256": "c010a8e9468986c8dde45c7e795c1d31d52ecd059e9384e3ff6752c2099e69dd",
+        "generatedSha256": "5430e709ba7a5f3e366acb2f75091648c77b6325e65b3773e6c1652927e1ddc7",
+        "transform": "hflip each source frame in original order; xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 8,
+        "frameDurationMs": 166.66666666666666,
+        "frameWidth": 144,
+        "frameHeight": 152,
+        "baseline": 152,
+        "frameAlphaBounds": [
+          {
+            "left": 6,
+            "top": 38,
+            "right": 137,
+            "bottom": 144
+          },
+          {
+            "left": 9,
+            "top": 38,
+            "right": 135,
+            "bottom": 143
+          },
+          {
+            "left": 8,
+            "top": 37,
+            "right": 136,
+            "bottom": 142
+          },
+          {
+            "left": 7,
+            "top": 33,
+            "right": 137,
+            "bottom": 143
+          },
+          {
+            "left": 7,
+            "top": 41,
+            "right": 136,
+            "bottom": 144
+          },
+          {
+            "left": 8,
+            "top": 40,
+            "right": 136,
+            "bottom": 145
+          },
+          {
+            "left": 6,
+            "top": 43,
+            "right": 137,
+            "bottom": 146
+          },
+          {
+            "left": 8,
+            "top": 41,
+            "right": 136,
+            "bottom": 145
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_player_fly_side_super_heroi/c98e45d4-aa13-4b9d-8103-8049d971e69e.png",
+            "sourceSha256": "de92f3825845f64252601160f9411e5ac47d1c113774803e5232be324a7f6ea1"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_super_heroi/26d5d766-c567-442d-8d96-b24e85d9f852.png",
+            "sourceSha256": "39704440b7ebe52e35f29dc83ec98dfb501572c33e4f48bec4f46250858389e4"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_super_heroi/46d8a43d-07fb-45a5-85f9-f2179d8ef4a8.png",
+            "sourceSha256": "5fe7b61b727b4cb25e179d4a4a5286699ff1aa8548c36a0e16467a3fe142e204"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_super_heroi/9ddffae3-a3a5-46c2-8cd4-492c1a82e5c1.png",
+            "sourceSha256": "a8a3f1296dbbee144cc70f21e354502e57e274d1c02e76baac0b79103fe506d6"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_super_heroi/49485d9b-14a8-43e4-bad9-76ee37d63f6c.png",
+            "sourceSha256": "27a77b45ad82fb701325b0cf7e978a7ffe52b0f5cee4a2f4be992a4e12e6ada2"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_super_heroi/2ea03e5a-8983-489c-93e5-66825b3eda76.png",
+            "sourceSha256": "652d6680ca03e3ab775eb4c14501275118418a20c1a859ba324e34f3d879041c"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_super_heroi/3847a854-fbf3-4fe6-ad48-e4f07d4151c7.png",
+            "sourceSha256": "ccadd416005e2425e166b7036482500fc593c7f31f5d51cd8b8b20f2953f659f"
+          },
+          {
+            "source": "sprites/spr_player_fly_side_super_heroi/cce3af34-5494-4367-995a-4f3227fd26c1.png",
+            "sourceSha256": "606fd88d61625a9745fba558ca478893964a6e34428ba7f941ce698e5e8ac81f"
+          }
+        ]
+      }
+    },
     "caramelito.vampire.idle": {
       "key": "caramelito.vampire.idle",
       "tier": "mission",
@@ -2148,6 +6031,671 @@
         "generatedSha256": "f1246891eee3a7d03754f117e89ee280171324230ce05d3a1fda348fdad00f7f",
         "transform": "scale=1280:720:flags=lanczos"
       }
+    },
+    "handwash/child": {
+      "key": "handwash/child",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:clean_hands_care",
+      "exclusive": false,
+      "bytes": 26956,
+      "url": "/assets/dental-world/spr_lunchbox_child.webp",
+      "logicalName": "handwash/child",
+      "gmlName": "spr_lunchbox_child",
+      "dimensions": {
+        "width": 320,
+        "height": 512,
+        "originX": 0.5,
+        "originY": 0.984375
+      },
+      "provenance": {
+        "source": "sprites/spr_lunchbox_child/d5a972fa-be20-438d-8810-112a766cc72a.png",
+        "sourceSha256": "de1af3f757fe560ad316a022911b5d1b1051ec7877513b624d241ad7aa4fa17e",
+        "generatedSha256": "d1bd42907e12c7400ac4a843b52a734e27dc53d396e96ea8869423a90f210bda",
+        "transform": "scale=320:512",
+        "alphaBounds": {
+          "left": 55,
+          "top": 8,
+          "right": 263,
+          "bottom": 503
+        },
+        "baseline": 504
+      }
+    },
+    "handwash/child_portrait": {
+      "key": "handwash/child_portrait",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:clean_hands_care",
+      "exclusive": false,
+      "bytes": 16464,
+      "url": "/assets/dental-world/spr_lunchbox_child_portrait.webp",
+      "logicalName": "handwash/child_portrait",
+      "gmlName": "spr_lunchbox_child_portrait",
+      "dimensions": {
+        "width": 416,
+        "height": 400,
+        "originX": 0.5,
+        "originY": 0.98
+      },
+      "provenance": {
+        "source": "sprites/spr_lunchbox_child_portrait/c64610a6-b309-4f93-a5c5-eb76b03dada0.png",
+        "sourceSha256": "8dfe12e2adb7c6c90b0aecb36fd5ac4b3ec0c039fd43a0d45125575e1980973d",
+        "generatedSha256": "3d9ffaa885ee103ccc68ac1f36218c7d1a32cf5f11ee68d1f9f5cdf90a0380b9",
+        "transform": "scale=416:400",
+        "alphaBounds": {
+          "left": 106,
+          "top": 62,
+          "right": 322,
+          "bottom": 391
+        }
+      }
+    },
+    "handwash/shield": {
+      "key": "handwash/shield",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:clean_hands_care",
+      "exclusive": false,
+      "bytes": 14738,
+      "url": "/assets/dental-world/spr_handwash_shield.webp",
+      "logicalName": "handwash/shield",
+      "gmlName": "spr_handwash_shield",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "originX": 0.5,
+        "originY": 0.5
+      },
+      "provenance": {
+        "source": "sprites/spr_handwash_shield/ea9e6921-8621-41aa-ae46-87c699995091.png",
+        "sourceSha256": "089b8b4620ab1c0a4eb16e13df7d7757fbdc5fcd27e64a51bdf8a4a8d7811e4f",
+        "generatedSha256": "b650c7c6e10f7635ab2aae5920b824eec0ab440e2e413088aa3b2e1e807b65f9",
+        "transform": "scale=256:256",
+        "alphaBounds": {
+          "left": 18,
+          "top": 8,
+          "right": 237,
+          "bottom": 247
+        },
+        "baseline": 128
+      },
+      "sharedOwners": [
+        "activity:handwash_order",
+        "activity:handwash_apply",
+        "room:infirmary"
+      ]
+    },
+    "handwash/situations": {
+      "key": "handwash/situations",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:clean_hands_care",
+      "exclusive": false,
+      "bytes": 55816,
+      "url": "/assets/care/handwash-situations.webp",
+      "logicalName": "spr_handwash_situations",
+      "gmlName": "spr_handwash_situations",
+      "dimensions": {
+        "width": 1024,
+        "height": 256,
+        "originX": 0.5,
+        "originY": 0.5
+      },
+      "provenance": {
+        "source": "sprites/spr_handwash_situations/spr_handwash_situations.yy",
+        "sourceSha256": "69813b32c8b18ec343f5639ecd955a6a5c6755028e11aba59f4c2d639d001643",
+        "generatedSha256": "dd2652944d9031083296f6a8a3f386bb6e4ffc65cb32285c1cd572ad65b7c993",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 4,
+        "frameDurationMs": 1000,
+        "frameWidth": 256,
+        "frameHeight": 256,
+        "baseline": 128,
+        "frameAlphaBounds": [
+          {
+            "left": 8,
+            "top": 10,
+            "right": 247,
+            "bottom": 244
+          },
+          {
+            "left": 8,
+            "top": 11,
+            "right": 247,
+            "bottom": 243
+          },
+          {
+            "left": 9,
+            "top": 8,
+            "right": 246,
+            "bottom": 247
+          },
+          {
+            "left": 21,
+            "top": 8,
+            "right": 234,
+            "bottom": 247
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_handwash_situations/c1f94b00-13f4-445a-bec1-00fb84c2b852.png",
+            "sourceSha256": "442c807913c3beb4580f126bd3571dafd6df1729988a9a58a26df6eb31f7fe37"
+          },
+          {
+            "source": "sprites/spr_handwash_situations/5215d6f9-86b4-478a-bf9c-324aa4b7bac3.png",
+            "sourceSha256": "8b4bc69fadc892dd2cdcb4b365af934c8ce731140b703e7613be0c7abfd45406"
+          },
+          {
+            "source": "sprites/spr_handwash_situations/cec159b1-c835-4c8c-9bf8-b61d2c7952f8.png",
+            "sourceSha256": "9796fcea49412cad5daa01a44b2a197531fa1ef6c23259d4ba740efe7d1ff443"
+          },
+          {
+            "source": "sprites/spr_handwash_situations/1d57c53b-dd4b-4e87-bec2-30f4dcc34765.png",
+            "sourceSha256": "54f01438da059caa445a3cf4e8b350e2cb5f2b877ccf3d6606dd0090a4bd2cba"
+          }
+        ]
+      },
+      "sharedOwners": [
+        "activity:handwash_order",
+        "activity:handwash_apply",
+        "room:infirmary"
+      ]
+    },
+    "handwash/steps": {
+      "key": "handwash/steps",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:clean_hands_care",
+      "exclusive": false,
+      "bytes": 61246,
+      "url": "/assets/care/handwash-steps.webp",
+      "logicalName": "spr_handwash_steps",
+      "gmlName": "spr_handwash_steps",
+      "dimensions": {
+        "width": 1280,
+        "height": 256,
+        "originX": 0.5,
+        "originY": 0.5
+      },
+      "provenance": {
+        "source": "sprites/spr_handwash_steps/spr_handwash_steps.yy",
+        "sourceSha256": "2ac2eebc390cbf58e015b71ed7d14bc03f96c176446d2f0c7aa5b204bb96790c",
+        "generatedSha256": "38771ebf4ed50f1c08d7adfe736bb119a00854df0925be5ee87bfbe91240c64f",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 5,
+        "frameDurationMs": 1000,
+        "frameWidth": 256,
+        "frameHeight": 256,
+        "baseline": 128,
+        "frameAlphaBounds": [
+          {
+            "left": 37,
+            "top": 8,
+            "right": 217,
+            "bottom": 247
+          },
+          {
+            "left": 31,
+            "top": 8,
+            "right": 223,
+            "bottom": 247
+          },
+          {
+            "left": 31,
+            "top": 8,
+            "right": 224,
+            "bottom": 247
+          },
+          {
+            "left": 35,
+            "top": 8,
+            "right": 219,
+            "bottom": 247
+          },
+          {
+            "left": 35,
+            "top": 8,
+            "right": 219,
+            "bottom": 247
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_handwash_steps/d111622f-8d25-4a09-b388-65a38a42f61e.png",
+            "sourceSha256": "700adab57fef882c202c77dfcdabfbc814534e22bc080103668a32730c6e24e1"
+          },
+          {
+            "source": "sprites/spr_handwash_steps/8c4fa6ba-71fb-49a5-96b4-48f385c179a4.png",
+            "sourceSha256": "4b45cc1fef15401dc7485831bba1a82c3f33bfca987dba9aeb31f6742f43141e"
+          },
+          {
+            "source": "sprites/spr_handwash_steps/9ced517e-9df8-4f5a-8659-3e79af9387be.png",
+            "sourceSha256": "385803d784d58195a726e9565f6fd5cd7addeda14b894d19476a4b1372b47d59"
+          },
+          {
+            "source": "sprites/spr_handwash_steps/6800da94-583c-448d-86f0-bc019cd13c2b.png",
+            "sourceSha256": "cff4d1a011bcb44b19bb1c3d5cd130ad9ce0b5cebcf4e5db9d916ac36dcaa858"
+          },
+          {
+            "source": "sprites/spr_handwash_steps/03ffb2c9-e165-437b-af1f-ba2ae476d015.png",
+            "sourceSha256": "de851d519bb33e04bdde0f64667f45f67424f60810911998ac0ae4121c5696ca"
+          }
+        ]
+      },
+      "sharedOwners": [
+        "activity:handwash_order",
+        "activity:handwash_apply",
+        "room:infirmary"
+      ]
+    },
+    "handwash/washing": {
+      "key": "handwash/washing",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:clean_hands_care",
+      "sharedOwners": [
+        "activity:handwash_order",
+        "activity:handwash_apply",
+        "room:infirmary"
+      ],
+      "exclusive": false,
+      "bytes": 23810,
+      "url": "/assets/dental-world/spr_handwash_washing.webp",
+      "logicalName": "handwash/washing",
+      "gmlName": "spr_handwash_washing",
+      "dimensions": {
+        "width": 320,
+        "height": 512,
+        "originX": 0.5,
+        "originY": 0.984375
+      },
+      "provenance": {
+        "source": "web-poc/art_source/handwash_stool/cleaned.png",
+        "sourceSha256": "c88fc46cfc5ead4a22c8dd6febb69ff93f11eed39606b4419b76125d42ab6cb5",
+        "generatedSha256": "fb19b4201693caa008c6c83398a082feaf87c6d9a68ef5ec3bc8b3f3cb11c575",
+        "transform": "scale=320:512",
+        "alphaBounds": {
+          "left": 46,
+          "top": 8,
+          "right": 272,
+          "bottom": 503
+        },
+        "baseline": 504
+      }
+    },
+    "lunchbox/apple": {
+      "key": "lunchbox/apple",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:lunchbox_superpowers",
+      "exclusive": false,
+      "bytes": 11760,
+      "url": "/assets/dental-world/spr_lunchbox_apple.webp",
+      "logicalName": "lunchbox/apple",
+      "gmlName": "spr_lunchbox_apple",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "originX": 0.5,
+        "originY": 0.5
+      },
+      "provenance": {
+        "source": "sprites/spr_lunchbox_apple/596b0dc2-80db-4699-9b41-8ca3c5a52196.png",
+        "sourceSha256": "c8c9749aee62f5ee052975208c588185e87ccac6e7768a6f542f3f34f8af7c8a",
+        "generatedSha256": "e0aff9d5e75fa932d2c349fca7fb218d8aca4e98a028483ed10daff41b9fc5b5",
+        "transform": "scale=256:256",
+        "alphaBounds": {
+          "left": 19,
+          "top": 8,
+          "right": 235,
+          "bottom": 247
+        },
+        "baseline": 128
+      },
+      "sharedOwners": [
+        "activity:lunchbox_assembly"
+      ]
+    },
+    "lunchbox/banana": {
+      "key": "lunchbox/banana",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:lunchbox_superpowers",
+      "exclusive": false,
+      "bytes": 9056,
+      "url": "/assets/dental-world/spr_lunchbox_banana.webp",
+      "logicalName": "lunchbox/banana",
+      "gmlName": "spr_lunchbox_banana",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "originX": 0.5,
+        "originY": 0.5
+      },
+      "provenance": {
+        "source": "sprites/spr_lunchbox_banana/80bfa991-a5f9-4602-a621-55e7bcd7b8ba.png",
+        "sourceSha256": "80daa8150b1b63c8e50b8f8f6dbaa909a3ca8a3064e36657d43bd8f9ed2bb558",
+        "generatedSha256": "154123da7343b49ee1cbd8b3c848dc6bb8665b22411012888133a5f4b34658bb",
+        "transform": "scale=256:256",
+        "alphaBounds": {
+          "left": 8,
+          "top": 10,
+          "right": 247,
+          "bottom": 245
+        },
+        "baseline": 128
+      },
+      "sharedOwners": [
+        "activity:lunchbox_assembly"
+      ]
+    },
+    "lunchbox/cookie": {
+      "key": "lunchbox/cookie",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:lunchbox_superpowers",
+      "exclusive": false,
+      "bytes": 9050,
+      "url": "/assets/dental-world/spr_lunchbox_cookie.webp",
+      "logicalName": "lunchbox/cookie",
+      "gmlName": "spr_lunchbox_cookie",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "originX": 0.5,
+        "originY": 0.5
+      },
+      "provenance": {
+        "source": "sprites/spr_lunchbox_cookie/023512dd-d18b-412b-9eb9-d6adfe40f29c.png",
+        "sourceSha256": "1b49ea70ec143a018ad947617ff88f049c8a2053279ecface214dc3496dd441b",
+        "generatedSha256": "28dc7c74205580faa33dff5d2d8a79053b97f9fb5b20a1ce8dba12394e315a22",
+        "transform": "scale=256:256",
+        "alphaBounds": {
+          "left": 8,
+          "top": 46,
+          "right": 247,
+          "bottom": 209
+        },
+        "baseline": 128
+      },
+      "sharedOwners": [
+        "activity:lunchbox_assembly"
+      ]
+    },
+    "lunchbox/friend": {
+      "key": "lunchbox/friend",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:lunchbox_superpowers",
+      "exclusive": false,
+      "bytes": 28410,
+      "url": "/assets/dental-world/spr_lunchbox_friend.webp",
+      "logicalName": "lunchbox/friend",
+      "gmlName": "spr_lunchbox_friend",
+      "dimensions": {
+        "width": 320,
+        "height": 512,
+        "originX": 0.5,
+        "originY": 0.984375
+      },
+      "provenance": {
+        "source": "sprites/spr_lunchbox_friend/e67afba6-31a3-47d0-9a65-37e118970d8b.png",
+        "sourceSha256": "3f6f1e83cc2e29c4e8c1d532ffd2c193be09eee80a0f6b48102990a244739911",
+        "generatedSha256": "4085d24315ce664a7a9b142c34654cefef32fb75253852ed09d61f060d6a18f4",
+        "transform": "scale=320:512",
+        "alphaBounds": {
+          "left": 23,
+          "top": 8,
+          "right": 296,
+          "bottom": 503
+        },
+        "baseline": 504
+      },
+      "sharedOwners": [
+        "activity:lunchbox_assembly"
+      ]
+    },
+    "lunchbox/friend_portrait": {
+      "key": "lunchbox/friend_portrait",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:lunchbox_superpowers",
+      "exclusive": false,
+      "bytes": 20982,
+      "url": "/assets/dental-world/spr_lunchbox_friend_portrait.webp",
+      "logicalName": "lunchbox/friend_portrait",
+      "gmlName": "spr_lunchbox_friend_portrait",
+      "dimensions": {
+        "width": 416,
+        "height": 400,
+        "originX": 0.5,
+        "originY": 0.98
+      },
+      "provenance": {
+        "source": "sprites/spr_lunchbox_friend_portrait/ff704959-158e-43f9-a154-d2809008aab1.png",
+        "sourceSha256": "c8792c3621359308f056b148b951798f37baa61125e237974006c5ec5acd3150",
+        "generatedSha256": "c8024dbe70e6340fc458fe00eb6653e2a9a4afa5db5954173fba758fd1a27b72",
+        "transform": "scale=416:400",
+        "alphaBounds": {
+          "left": 42,
+          "top": 8,
+          "right": 372,
+          "bottom": 391
+        },
+        "baseline": 392
+      },
+      "sharedOwners": [
+        "activity:lunchbox_assembly"
+      ]
+    },
+    "lunchbox/open": {
+      "key": "lunchbox/open",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:lunchbox_superpowers",
+      "exclusive": false,
+      "bytes": 32758,
+      "url": "/assets/dental-world/spr_lunchbox_open.webp",
+      "logicalName": "lunchbox/open",
+      "gmlName": "spr_lunchbox_open",
+      "dimensions": {
+        "width": 720,
+        "height": 440,
+        "originX": 0.5,
+        "originY": 0.5
+      },
+      "provenance": {
+        "source": "sprites/spr_lunchbox_open/ae9e9db2-c9ed-45e0-b210-c702ec50c5ed.png",
+        "sourceSha256": "4835480851640b6e015b38a702ce67916a6e91fbf03128ed58b85d5ee82acb19",
+        "generatedSha256": "fd9b7ff3b3924927860d3a92dfa61a1f8ad0f35ddcf0ed83f213dce9aea1cc13",
+        "transform": "scale=720:440",
+        "alphaBounds": {
+          "left": 112,
+          "top": 8,
+          "right": 607,
+          "bottom": 431
+        },
+        "baseline": 220
+      },
+      "sharedOwners": [
+        "activity:lunchbox_assembly"
+      ]
+    },
+    "lunchbox/opening": {
+      "key": "lunchbox/opening",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:lunchbox_superpowers",
+      "exclusive": false,
+      "bytes": 121078,
+      "url": "/assets/care/lunchbox-opening.webp",
+      "logicalName": "spr_lunchbox_opening",
+      "gmlName": "spr_lunchbox_opening",
+      "dimensions": {
+        "width": 2880,
+        "height": 440,
+        "originX": 0.5,
+        "originY": 0.5
+      },
+      "provenance": {
+        "source": "sprites/spr_lunchbox_opening/spr_lunchbox_opening.yy",
+        "sourceSha256": "17c36bd1d00b40b730f6fa84defc5ed22565ee8db384217a856dd28c7ac2dd2f",
+        "generatedSha256": "4faf2357da9e08052c6976dfbd649d5ce301146c449547f30ee99810e6d3a00d",
+        "transform": "xstack normalized GameMaker frames, libwebp q72",
+        "frameCount": 4,
+        "frameDurationMs": 180,
+        "frameWidth": 720,
+        "frameHeight": 440,
+        "baseline": 220,
+        "frameAlphaBounds": [
+          {
+            "left": 136,
+            "top": 141,
+            "right": 589,
+            "bottom": 431
+          },
+          {
+            "left": 129,
+            "top": 107,
+            "right": 582,
+            "bottom": 431
+          },
+          {
+            "left": 139,
+            "top": 46,
+            "right": 581,
+            "bottom": 431
+          },
+          {
+            "left": 137,
+            "top": 8,
+            "right": 583,
+            "bottom": 431
+          }
+        ],
+        "sourceFrames": [
+          {
+            "source": "sprites/spr_lunchbox_opening/4bd2bf0b-068e-4698-8c6d-9643f1b2cbcb.png",
+            "sourceSha256": "891fb5cbb3f924a98728dad492c5eadbabfe16c90acdc1b21d11484fe29cd6a2"
+          },
+          {
+            "source": "sprites/spr_lunchbox_opening/fdeb8903-0b37-4e75-b2d6-8c3b0cb7b923.png",
+            "sourceSha256": "3935253a419319b66e09adb3f2d6b580a4bc481b8b271f314b4e8e796ded8ff3"
+          },
+          {
+            "source": "sprites/spr_lunchbox_opening/1628dd22-edd2-4378-bbef-0cb0cfdd26a1.png",
+            "sourceSha256": "8ee09ba06edeebdba8e35732e45db0aef7d1cbc741eb8131d1caa74e4ed99c1b"
+          },
+          {
+            "source": "sprites/spr_lunchbox_opening/44207886-4c95-4d25-8448-c7f39524d966.png",
+            "sourceSha256": "45c1e434524af75282aee3a69438a1d15a7cb92461a59692c3f50dc97b6d3beb"
+          }
+        ]
+      },
+      "sharedOwners": [
+        "activity:lunchbox_assembly"
+      ]
+    },
+    "lunchbox/sandwich": {
+      "key": "lunchbox/sandwich",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:lunchbox_superpowers",
+      "exclusive": false,
+      "bytes": 11596,
+      "url": "/assets/dental-world/spr_lunchbox_sandwich.webp",
+      "logicalName": "lunchbox/sandwich",
+      "gmlName": "spr_lunchbox_sandwich",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "originX": 0.5,
+        "originY": 0.5
+      },
+      "provenance": {
+        "source": "sprites/spr_lunchbox_sandwich/a6811c0e-6e3a-4f24-8ed2-c882cd75dac2.png",
+        "sourceSha256": "743963e7334dc7fefbe7d3c2ce8a230598ba21bb1c288357b41c8d9ab0165755",
+        "generatedSha256": "a772165377c2aa6c3cf79722a5bca711d39b0e635fca155a5e5f4c246fc4e28a",
+        "transform": "scale=256:256",
+        "alphaBounds": {
+          "left": 8,
+          "top": 29,
+          "right": 247,
+          "bottom": 225
+        },
+        "baseline": 128
+      },
+      "sharedOwners": [
+        "activity:lunchbox_assembly"
+      ]
+    },
+    "lunchbox/soda": {
+      "key": "lunchbox/soda",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:lunchbox_superpowers",
+      "exclusive": false,
+      "bytes": 8744,
+      "url": "/assets/dental-world/spr_lunchbox_soda.webp",
+      "logicalName": "lunchbox/soda",
+      "gmlName": "spr_lunchbox_soda",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "originX": 0.5,
+        "originY": 0.5
+      },
+      "provenance": {
+        "source": "sprites/spr_lunchbox_soda/2784189b-8e67-4504-9d13-61da823f4a96.png",
+        "sourceSha256": "6a5d221479fc78266aaa0e9ac20839da24cd20e3c15b15b145b26b4877377525",
+        "generatedSha256": "76ed7bfba39573c1f066369fc38889e43acd2749207b7d879e4ae2fe76f36c33",
+        "transform": "scale=256:256",
+        "alphaBounds": {
+          "left": 60,
+          "top": 8,
+          "right": 194,
+          "bottom": 247
+        },
+        "baseline": 128
+      },
+      "sharedOwners": [
+        "activity:lunchbox_assembly"
+      ]
+    },
+    "lunchbox/water": {
+      "key": "lunchbox/water",
+      "tier": "mission",
+      "type": "image",
+      "owner": "mission:lunchbox_superpowers",
+      "exclusive": false,
+      "bytes": 9048,
+      "url": "/assets/dental-world/spr_lunchbox_water.webp",
+      "logicalName": "lunchbox/water",
+      "gmlName": "spr_lunchbox_water",
+      "dimensions": {
+        "width": 256,
+        "height": 256,
+        "originX": 0.5,
+        "originY": 0.5
+      },
+      "provenance": {
+        "source": "sprites/spr_lunchbox_water/3149bf68-5431-426f-97c2-9425944d9f9d.png",
+        "sourceSha256": "c3f706260970ae6be2a22f98ffda565a8f96f2e65f5482dcec28d90710a0ce43",
+        "generatedSha256": "22dbdf0533265c3d13dbe36008bccdd78dfa44b8e72676933043651331bd2d02",
+        "transform": "scale=256:256",
+        "alphaBounds": {
+          "left": 71,
+          "top": 8,
+          "right": 184,
+          "bottom": 247
+        },
+        "baseline": 128
+      },
+      "sharedOwners": [
+        "activity:lunchbox_assembly"
+      ]
     },
     "player/idle": {
       "key": "player/idle",
@@ -7437,6 +11985,30 @@
         "transform": "ffmpeg libopus 48k"
       }
     },
+    "world/aee": {
+      "key": "world/aee",
+      "tier": "mission",
+      "type": "image",
+      "owner": "room:aee",
+      "sharedOwners": [],
+      "exclusive": false,
+      "bytes": 58776,
+      "url": "/assets/world/aee.webp",
+      "logicalName": "world/aee",
+      "gmlName": "spr_aee_room",
+      "dimensions": {
+        "width": 1280,
+        "height": 720,
+        "originX": 0,
+        "originY": 0
+      },
+      "provenance": {
+        "source": "sprites/spr_aee_room/0f510ee4-4e76-4f39-8ce6-f4198e38deb4.png",
+        "sourceSha256": "30398a00fae29c8225efb77f85f28393c2a5cc05a8032c21717eb40a5c9df78e",
+        "generatedSha256": "35a34f9b47905e1cebb77ce846a5657907cdcf9ea9eb68f936c22e039c0e22cc",
+        "transform": "scale=1280:720"
+      }
+    },
     "world/cafeteria": {
       "key": "world/cafeteria",
       "tier": "mission",
@@ -7776,6 +12348,64 @@
           "top": 0,
           "right": 1279,
           "bottom": 174
+        }
+      }
+    },
+    "world/prop/spr_handwash_washing": {
+      "key": "world/prop/spr_handwash_washing",
+      "tier": "mission",
+      "type": "image",
+      "owner": "room:infirmary",
+      "exclusive": false,
+      "bytes": 26638,
+      "url": "/assets/world/props/spr_handwash_washing.webp",
+      "logicalName": "world/prop/spr_handwash_washing",
+      "gmlName": "spr_handwash_washing",
+      "dimensions": {
+        "width": 320,
+        "height": 512,
+        "originX": 0.396875,
+        "originY": 0.984375
+      },
+      "provenance": {
+        "source": "sprites/spr_handwash_washing/87775e65-d791-4ab3-a8b9-78617d0ad354.png",
+        "sourceSha256": "92e61217032a8566d37c18b8219d7bb76833f7d6b026dc61bc3fd0e579c63c66",
+        "generatedSha256": "4139d6597210824a333c2abe4559152b1beeea1bb7d05ec253367cad5a197a6d",
+        "transform": "scale=320:512",
+        "alphaBounds": {
+          "left": 29,
+          "top": 8,
+          "right": 289,
+          "bottom": 503
+        }
+      }
+    },
+    "world/prop/spr_lunchbox_child": {
+      "key": "world/prop/spr_lunchbox_child",
+      "tier": "mission",
+      "type": "image",
+      "owner": "room:hub",
+      "exclusive": false,
+      "bytes": 26956,
+      "url": "/assets/world/props/spr_lunchbox_child.webp",
+      "logicalName": "world/prop/spr_lunchbox_child",
+      "gmlName": "spr_lunchbox_child",
+      "dimensions": {
+        "width": 320,
+        "height": 512,
+        "originX": 0.5,
+        "originY": 0.984375
+      },
+      "provenance": {
+        "source": "sprites/spr_lunchbox_child/d5a972fa-be20-438d-8810-112a766cc72a.png",
+        "sourceSha256": "de1af3f757fe560ad316a022911b5d1b1051ec7877513b624d241ad7aa4fa17e",
+        "generatedSha256": "d1bd42907e12c7400ac4a843b52a734e27dc53d396e96ea8869423a90f210bda",
+        "transform": "scale=320:512",
+        "alphaBounds": {
+          "left": 55,
+          "top": 8,
+          "right": 263,
+          "bottom": 503
         }
       }
     },
@@ -8215,5 +12845,5 @@
       }
     }
   },
-  "totalBytes": 7608289
+  "totalBytes": 10247507
 }

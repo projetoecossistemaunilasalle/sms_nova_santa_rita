@@ -11,7 +11,8 @@
         "lia_memory",
         "pingpong_soccer",
         "respect_also_cares",
-        "when_play_stops_being_play"
+        "when_play_stops_being_play",
+        "many_ways_to_learn"
       ]
     },
     {
@@ -22,6 +23,16 @@
       "mission_ids": [
         "brushing_teeth",
         "smile_kit"
+      ]
+    },
+    {
+      "module_id": "cuidados_diarios",
+      "title": "Cuidados do dia a dia",
+      "summary": "Variedade no lanche e higiene das mãos como cuidado, sem julgamento.",
+      "order": 3,
+      "mission_ids": [
+        "lunchbox_superpowers",
+        "clean_hands_care"
       ]
     }
   ],
@@ -100,6 +111,48 @@
       "completion_reward": {
         "coins": 10,
         "stars": 1
+      }
+    },
+    {
+      "mission_id": "many_ways_to_learn",
+      "module_id": "convivencia",
+      "title": "Muitas Formas de Aprender",
+      "summary": "Conhecer recursos e atitudes que ajudam todos a participar e aprender.",
+      "activity_ids": [
+        "aee_resource_functions",
+        "aee_learning_paths",
+        "aee_inclusive_attitudes"
+      ],
+      "completion_reward": {
+        "coins": 0,
+        "stars": 0
+      }
+    },
+    {
+      "mission_id": "lunchbox_superpowers",
+      "module_id": "cuidados_diarios",
+      "title": "A Lancheira dos Superpoderes",
+      "summary": "Preparar uma lancheira variada e respeitar as possibilidades de cada família.",
+      "activity_ids": [
+        "lunchbox_assembly"
+      ],
+      "completion_reward": {
+        "coins": 10,
+        "stars": 1
+      }
+    },
+    {
+      "mission_id": "clean_hands_care",
+      "module_id": "cuidados_diarios",
+      "title": "Xô, Sujeira! A Missão das Mãos Limpas",
+      "summary": "Aprender quando e como lavar as mãos, brincar e cuidar de todos.",
+      "activity_ids": [
+        "handwash_order",
+        "handwash_apply"
+      ],
+      "completion_reward": {
+        "coins": 0,
+        "stars": 0
       }
     }
   ],
@@ -245,6 +298,168 @@
         {
           "key": "erros",
           "label": "Erros",
+          "kind": "count"
+        }
+      ]
+    },
+    {
+      "activity_id": "aee_resource_functions",
+      "mission_id": "many_ways_to_learn",
+      "content_id": "aee_resource_functions",
+      "mechanic_id": "aee_cards",
+      "activity_version": 1,
+      "title": "Recursos para aprender",
+      "presets": [
+        {
+          "preset_id": "padrao",
+          "label": "Padrão",
+          "default": true
+        }
+      ],
+      "metrics": [
+        {
+          "key": "modo",
+          "label": "Etapa",
+          "kind": "count"
+        },
+        {
+          "key": "erros",
+          "label": "Tentativas de revisão",
+          "kind": "count"
+        },
+        {
+          "key": "escolhas",
+          "label": "Escolhas",
+          "kind": "count"
+        }
+      ]
+    },
+    {
+      "activity_id": "aee_learning_paths",
+      "mission_id": "many_ways_to_learn",
+      "content_id": "aee_learning_paths",
+      "mechanic_id": "aee_cards",
+      "activity_version": 1,
+      "title": "Caminhos para aprender",
+      "presets": [
+        {
+          "preset_id": "padrao",
+          "label": "Padrão",
+          "default": true
+        }
+      ],
+      "metrics": [
+        {
+          "key": "modo",
+          "label": "Etapa",
+          "kind": "count"
+        },
+        {
+          "key": "erros",
+          "label": "Tentativas de revisão",
+          "kind": "count"
+        },
+        {
+          "key": "escolhas",
+          "label": "Escolhas",
+          "kind": "count"
+        }
+      ]
+    },
+    {
+      "activity_id": "aee_inclusive_attitudes",
+      "mission_id": "many_ways_to_learn",
+      "content_id": "aee_inclusive_attitudes",
+      "mechanic_id": "aee_cards",
+      "activity_version": 1,
+      "title": "Atitudes inclusivas",
+      "presets": [
+        {
+          "preset_id": "padrao",
+          "label": "Padrão",
+          "default": true
+        }
+      ],
+      "metrics": [
+        {
+          "key": "modo",
+          "label": "Etapa",
+          "kind": "count"
+        },
+        {
+          "key": "erros",
+          "label": "Tentativas de revisão",
+          "kind": "count"
+        },
+        {
+          "key": "escolhas",
+          "label": "Escolhas",
+          "kind": "count"
+        }
+      ]
+    },
+    {
+      "activity_id": "lunchbox_assembly",
+      "mission_id": "lunchbox_superpowers",
+      "content_id": "lunchbox_assembly",
+      "mechanic_id": "lunchbox_choices",
+      "activity_version": 1,
+      "title": "Montar a lancheira",
+      "presets": [
+        {
+          "preset_id": "padrao",
+          "label": "Padrão",
+          "default": true
+        }
+      ],
+      "metrics": [
+        {
+          "key": "changes",
+          "label": "Trocas de alimentos",
+          "kind": "count"
+        }
+      ]
+    },
+    {
+      "activity_id": "handwash_order",
+      "mission_id": "clean_hands_care",
+      "content_id": "handwash_order",
+      "mechanic_id": "handwash_cards",
+      "activity_version": 1,
+      "title": "Coloque na ordem",
+      "presets": [
+        {
+          "preset_id": "padrao",
+          "label": "Padrão",
+          "default": true
+        }
+      ],
+      "metrics": [
+        {
+          "key": "ordered",
+          "label": "Sequência confirmada",
+          "kind": "count"
+        }
+      ]
+    },
+    {
+      "activity_id": "handwash_apply",
+      "mission_id": "clean_hands_care",
+      "content_id": "handwash_apply",
+      "mechanic_id": "handwash_cards",
+      "activity_version": 1,
+      "title": "Lavar as mãos",
+      "presets": [
+        {
+          "preset_id": "padrao",
+          "label": "Padrão",
+          "default": true
+        }
+      ],
+      "metrics": [
+        {
+          "key": "washed",
+          "label": "Cuidado concluído",
           "kind": "count"
         }
       ]
