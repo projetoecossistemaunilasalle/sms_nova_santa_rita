@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "buildId": "a160ebbd60c2c63c0f26b8bf",
+  "buildId": "7c5c198e8d7d2401619e0d52",
   "manifestVersion": "4.0.0-real",
   "shell": [
     {
-      "path": "assets/game-B4Wo4M0Q.js",
-      "bytes": 2235699,
-      "sha256": "61e353c86f52833cbab8d2cbc050419c517ffe4d4216697dcf49e35d6c8f35a4"
+      "path": "assets/game-B-fzqkaE.js",
+      "bytes": 2235697,
+      "sha256": "9c0bab19f6fdd03202efef1eeee5c3ed5053bd6ed44d34c0671c11aea00525ec"
     },
     {
       "path": "assets/game-BJK2xB43.css",
@@ -145,8 +145,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 20591,
-      "sha256": "220930cfcb87e51ee4124fc812bcf0ad7b39fc49afbb9881bd62540405e169c8"
+      "bytes": 20615,
+      "sha256": "d2c0794e7907b95e148e12796a659520ff99deccce80b53be95083d612ed0758"
     }
   ],
   "content": [

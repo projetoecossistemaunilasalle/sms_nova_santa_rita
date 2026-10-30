@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "buildId": "95d1f96c895af5eb70cf52c6",
+  "buildId": "aa0fde56c8b541ea411e7fa0",
   "manifestVersion": "4.0.0-real",
   "shell": [
     {
@@ -9,9 +9,9 @@
       "sha256": "a606efd530a98a1435470cfc845b018cb08fe9866f7903d915dc567583264719"
     },
     {
-      "path": "assets/game-BVFm7GMM.js",
-      "bytes": 2235695,
-      "sha256": "63aad6c6f2fb4a445f51875f197469e1a1ac967e0e09e710e51e28b00a2c6c88"
+      "path": "assets/game-C_WSMZYs.js",
+      "bytes": 2235693,
+      "sha256": "71f0f7cc587734991a820f90d0a2d313ba81de3b5b6bc26da8a0e8672cce01bd"
     },
     {
       "path": "assets/loading-art-BcMeO0DY.webp",
@@ -145,13 +145,13 @@
     },
     {
       "path": "index.html",
-      "bytes": 20591,
-      "sha256": "4624411014897b10e216f96d308fa701b1b31bc63684021c7da635c0a1a51107"
+      "bytes": 20615,
+      "sha256": "adc3809d10e143ba6783c374060b7d30b084751ab606745b9af931549abb2505"
     },
     {
       "path": "pages-source.json",
       "bytes": 271,
-      "sha256": "39e5d8bf428ef5924b00baa97cb36d5b7fc832739c0631612e966286a4249db5"
+      "sha256": "694386e4af643933d9d8799c99a899e6394bb6fb298d09184fcc45fca8094357"
     }
   ],
   "content": [

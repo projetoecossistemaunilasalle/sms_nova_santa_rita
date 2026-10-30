@@ -1,9 +1,9 @@
 {
   "source": "Heroes_Trial/web-poc",
-  "commit": "d2c800b80a1a7acc540f96dd0bc6e07e9e3fb201",
-  "branch": "feat/presentation-readiness",
+  "commit": "7733db3e383238c72cd7d82cd15087f087542aed",
+  "branch": null,
   "dirty": false,
   "portalOrigins": "self",
   "contentVersion": "heroes_trial_school_2026_10",
-  "builtAt": "2026-10-30T02:16:55.8691800Z"
+  "builtAt": "2026-10-30T03:36:14.4749910Z"
 }
